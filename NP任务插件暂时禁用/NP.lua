@@ -30,9 +30,6 @@ do
   needrespawnAWACS = false
 
   function activateBlueCenterFlight()
-    -- trigger.action.setUserFlag("苏呼米(中间) Ka-50 Blue #001", 0)
-    -- trigger.action.setUserFlag("苏呼米(中间) Ka-50 Blue #002", 0)
-
     trigger.action.setUserFlag("【奥恰姆奇拉】黑鲨（对地+运输）B1-1", 0)
     trigger.action.setUserFlag("【奥恰姆奇拉】黑鲨（对地+运输）B1-2", 0)
     trigger.action.setUserFlag("【奥恰姆奇拉】黑鲨（对地+运输）B1-3", 0)
