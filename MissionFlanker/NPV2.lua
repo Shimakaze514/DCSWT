@@ -72,21 +72,28 @@ function NP.capture(_args)
         oppsiteCountryID =country.id.CJTF_BLUE
         oppsiteCountrySide="blue"
     end
-    _logisticData.groupName=_logisticData.groupName.. ' t '
+    _logisticData.groupName=_logisticData.groupName.. ' '
     _logisticData.countryId= oppsiteCountryID
     _logisticData.groupId=ctld.getNextGroupId()
     _logisticData.units[1].countryId= oppsiteCountryID
     _logisticData.units[1].coalition= oppsiteCountrySide
     _logisticData.units[1].unitId= ctld.getNextUnitId()
-    _logisticData.units[1].unitName=_logisticData.units[1].unitName..' t '
+    _logisticData.units[1].unitName=_logisticData.units[1].unitName..' '
     --_logisticData.units[1].alt=_logisticData.units[1].alt-5 --TODO cc浮空
 
-    _logistic:destroy()
-    mist.dynAddStatic(_logisticData)
-    dsave.recordAllCCsElements()
-    table.insert(ctld.logisticUnits, _logisticData.units[1].unitName)
+    _logistic:destroy()--把老一边的cc做掉
+    mist.dynAddStatic(_logisticData)--生成另一阵营的新cc，同一位置
+    dsave.recordAllCCsElements()--动态保存cc
+    table.insert(ctld.logisticUnits, _logisticData.units[1].unitName)--新的单位加到cc的白名单
+    --TODO 把离这个最近的zone，所关联的红蓝直升机的flag值设置，让上飞机权限翻转
     trigger.action.outText("战区".._logisticData.groupName.."被".._side.."占领", 10)
 end
+--TODO 无人机可以生成，但是无法被动态存储代码捕捉载入
+function NP.findNearestZone(_logistic)
+
+end
+
+
 
 function NP.getLogisticData(_logistic)
     for _, _group in pairs(mist.DBs.groupsByName) do

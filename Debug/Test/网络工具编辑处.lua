@@ -287,18 +287,23 @@ NP.logDebug('_logisticData : '..ctld.formatTable(_logisticData))
 
 
 for _, _group in pairs(mist.DBs.groupsByName) do
-local needSave = false
 for _key , _unitTable in pairs(_group.units) do
 if _unitTable.type~=nil and _unitTable.unitName~=nil and NP.typeBelongsToCC(_unitTable.type) then
 local _unitObject = Unit.getByName(_unitTable.unitName)
 NP.logDebug('_unitObject : '..ctld.formatTable(_unitObject))
-if _unitObject ~= nil and _unitObject:getLife() > 0 then
-needSave = true
-end
 end
 end
 
 if needSave == true then
 dsave.saveToCache(_group)
 end
+end
+
+for _, _group in pairs(mist.DBs.groupsByName) do
+    for _key , _unitTable in pairs(_group.units) do
+        if _unitTable.type~=nil and _unitTable.unitName~=nil then
+        local _unitObject = Unit.getByName(_unitTable.unitName)
+        NP.logDebug('_unitObject : '..ctld.formatTable(_unitObject))
+        end
+    end
 end

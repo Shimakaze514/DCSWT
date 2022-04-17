@@ -1,10 +1,10 @@
---[[
 local status, error =
 pcall(
         function()
 
             net.log('[Debugger]开始加载Debugger')
             dofile(lfs.writedir() .. 'Scripts/Debug/Hooks/Main.lua')
+            --dofile(lfs.writedir() .. 'Scripts/ServerData/init.lua')
             dofile(lfs.writedir() .. 'Scripts/Debug/LoadMissionScript/Main.lua')
 
         end
@@ -14,4 +14,3 @@ if (not status) then
 else
     net.log('Hooks 加载完成')
 end
-]]

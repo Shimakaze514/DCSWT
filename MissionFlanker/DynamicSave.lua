@@ -195,7 +195,14 @@ function dsave.loadDsaveData()
 
     for _, _group in pairs(tableData) do
         local _spawnedGroup
+        if _group.units[1]~=nil and _group.units[1].type == "RQ-1A Predator"then
+            _group = ctld.groupToPlanes(_group)
+            coalition.addGroup(_group.countryId, Group.Category.AIRPLANE, _group)
+            _spawnedGroup = Group.getByName(_group.groupName)
+        else
             _spawnedGroup = Group.getByName(mist.dynAdd(_group).name)
+        end
+
         if ctld.isJTACUnitType(_group.units[1].type) and ctld.JTAC_dropEnabled  and _spawnedGroup~=nil then --为jtac激活
             local _code = table.remove(ctld.jtacGeneratedLaserCodes, 1)
             table.insert(ctld.jtacGeneratedLaserCodes, _code)

@@ -593,152 +593,14 @@ ctld.extractableGroups = {
 -- When a logistic unit is destroyed, you will no longer be able to spawn crates
 
 ctld.logisticUnits = {
-    "logistic Red Test #001",
-    "logistic Blue #001",
-    "logistic Blue #002",
-    "logistic Blue #003",
-    "logistic Blue #004",
-    "logistic Blue #005",
-    "logistic Blue #006",
-    "logistic Blue #007",
-    "logistic Blue #008",
-    "logistic Blue #009",
-    "logistic Blue #010",
-
-    "logistic Blue #011",
-    "logistic Blue #012",
-    "logistic Blue #013",
-    "logistic Blue #014",
-    "logistic Blue #015",
-    "logistic Blue #016",
-    "logistic Blue #017",
-    "logistic Blue #018",
-    "logistic Blue #019",
-    "logistic Blue #020",
-
-    "logistic Red #001",
-    "logistic Red #002",
-    "logistic Red #003",
-    "logistic Red #004",
-    "logistic Red #005",
-    "logistic Red #006",
-    "logistic Red #007",
-    "logistic Red #008",
-    "logistic Red #009",
-    "logistic Red #010",
-
-    "logistic Red #011",
-    "logistic Red #012",
-    "logistic Red #013",
-    "logistic Red #014",
-    "logistic Red #015",
-    "logistic Red #016",
-    "logistic Red #017",
-    "logistic Red #018",
-    "logistic Red #019",
-    "logistic Red #020",
-
-    "USA static 1",
-    "USA static 2",
-    "USA static 3",
-    "USA static 4",
-    "USA static 5",
-    "USA static 6",
-    "USA static 7",
-    "USA static 8",
-    "USA static 9",
-    "USA static 10",
-    "USA static 11",
-    "USA static 12",
-    "USA static 13",
-    "USA static 14",
-    "USA static 15",
-    "USA static 16",
-    "USA static 17",
-    "USA static 18",
-    "USA static 19",
-    "USA static 20",
-    "USA static 21",
-    "USA static 22",
-    "USA static 23",
-    "USA static 24",
-    "USA static 25",
-    "USA static 26",
-    "USA static 27",
-    "USA static 28",
-    "USA static 29",
-    "USA static 30",
-    "USA static 31",
-    "USA static 32",
-    "USA static 33",
-    "USA static 34",
-    "USA static 35",
-    "USA static 36",
-    "USA static 37",
-    "USA static 38",
-    "USA static 39",
-    "USA static 40",
-    "USA static 41",
-    "USA static 42",
-    "USA static 43",
-    "USA static 44",
-    "USA static 45",
-    "USA static 46",
-    "USA static 47",
-    "USA static 48",
-    "USA static 49",
-    "USA static 50",
-
-    "AGGRESSORS static 1",
-    "AGGRESSORS static 2",
-    "AGGRESSORS static 3",
-    "AGGRESSORS static 4",
-    "AGGRESSORS static 5",
-    "AGGRESSORS static 6",
-    "AGGRESSORS static 7",
-    "AGGRESSORS static 8",
-    "AGGRESSORS static 9",
-    "AGGRESSORS static 10",
-    "AGGRESSORS static 11",
-    "AGGRESSORS static 12",
-    "AGGRESSORS static 13",
-    "AGGRESSORS static 14",
-    "AGGRESSORS static 15",
-    "AGGRESSORS static 16",
-    "AGGRESSORS static 17",
-    "AGGRESSORS static 18",
-    "AGGRESSORS static 19",
-    "AGGRESSORS static 20",
-    "AGGRESSORS static 21",
-    "AGGRESSORS static 22",
-    "AGGRESSORS static 23",
-    "AGGRESSORS static 24",
-    "AGGRESSORS static 25",
-    "AGGRESSORS static 26",
-    "AGGRESSORS static 27",
-    "AGGRESSORS static 28",
-    "AGGRESSORS static 29",
-    "AGGRESSORS static 30",
-    "AGGRESSORS static 31",
-    "AGGRESSORS static 32",
-    "AGGRESSORS static 33",
-    "AGGRESSORS static 34",
-    "AGGRESSORS static 35",
-    "AGGRESSORS static 36",
-    "AGGRESSORS static 37",
-    "AGGRESSORS static 38",
-    "AGGRESSORS static 39",
-    "AGGRESSORS static 40",
-    "AGGRESSORS static 41",
-    "AGGRESSORS static 42",
-    "AGGRESSORS static 43",
-    "AGGRESSORS static 44",
-    "AGGRESSORS static 45",
-    "AGGRESSORS static 46",
-    "AGGRESSORS static 47",
-    "AGGRESSORS static 48",
-    "AGGRESSORS static 49",
-    "AGGRESSORS static 50",
+    '库塔伊西本场CC',
+    'logistic Blue #001-1',
+    '科尔奇前线CC',
+    'logistic Blue #006',
+    '阿纳克里厄中场CC',
+    '奥恰姆奇拉中场CC',
+    '苏呼米前线CC',
+    '古达乌塔本场CC',
 }
 
 -- ************** UNITS ABLE TO TRANSPORT VEHICLES ******************
@@ -974,7 +836,9 @@ ctld.spawnableCratesModel_sling = {
 
 -- if the unit is on this list, it will be made into a JTAC when deployed
 ctld.jtacUnitTypes = {
-    "SKP", "Hummer","RQ-1A Predator", -- there are some wierd encoding issues so if you write SKP-11 it wont match as the - sign is encoded differently...
+    "SKP",
+    "Hummer",
+    "RQ-1A Predator", --there are some wierd encoding issues so if you write SKP-11 it wont match as the - sign is encoded differently...
 }
 
 
@@ -3539,7 +3403,6 @@ function ctld.unpackCrates(_arguments)
                 local _groupTemplate = ctld.getGroupTemplate(_crate.details.unit)
 
                 if _groupTemplate then
-
                     if _crate.details.unit == _groupTemplate.repair then
                         ctld.repairGroupSystem(_heli, _crate, _groupTemplate)
                     else
@@ -3589,11 +3452,11 @@ function ctld.unpackCrates(_arguments)
                     trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " successfully deployed " .. _crate.details.desc .. " to the field", 10)
 
                     if ctld.isJTACUnitType(_crate.details.unit) and ctld.JTAC_dropEnabled then
-
                         local _code = table.remove(ctld.jtacGeneratedLaserCodes, 1)
                         --put to the end
                         table.insert(ctld.jtacGeneratedLaserCodes, _code)
-
+                        --ctld.logTrace('_spawnedGroups:' .. ctld.formatTable(_spawnedGroups).."~~~")
+                        --ctld.logTrace('_spawnedGroups name:' .. ctld.formatTable(_spawnedGroups):getName().."~~~")
                         ctld.JTACAutoLase(_spawnedGroups:getName(), _code) --(_jtacGroupName, _laserCode, _smoke, _lock, _colour)
                     end
                 end
@@ -4541,53 +4404,23 @@ function ctld.spawnCrateGroup(_heli, _positions, _types)
     else
 
         for _i, _pos in ipairs(_positions) do
-
             local _unitId = ctld.getNextUnitId()
             local _details = { type = _types[_i], unitId = _unitId, name = string.format("Unpacked %s #%i", _types[_i], _unitId) }
-
             _group.units[_i] = ctld.createUnit(_pos.x + 5, _pos.z + 5, 120, _details)
         end
     end
 
-    --TODO
+    --TODO payload
     local _spawnedGroup
     if _types[1] == "RQ-1A Predator" then --之前问题出在mist上，改用dcs自己的生成方法
-        _group.category = Group.Category.AIRPLANE
-        _group.units[1].alt=1000
-        _group.units[1].speed=250
-        _group.units[1].category=Unit.Category.AIRPLANE
+
+        _group=ctld.groupToPlanes(_group,_positions[1].x+1000,_positions[1].z +1000)
         local _countryID
         if _side==1 then
             _countryID=country.id.CJTF_RED
         else
             _countryID=country.id.CJTF_BLUE
         end
-        _group.route={
-            ["points"] =
-            {
-                [1] =
-                {
-                    ["alt"] = 1000,
-                    ["type"] = "Turning Point",
-                    ["action"] = "Turning Point",
-                    ["alt_type"] = "BARO",
-                    ["form"] = "Turning Point",
-                    ["x"] = _positions[1].x+1000,
-                    ["y"] = _positions[1].z +1000,
-                    ["speed"] = 250,
-                    ["task"] =
-                    {
-                        ["id"] = "ComboTask",
-                        ["params"] =
-                        {
-                            ["tasks"] =
-                            {
-                            }, -- end of ["tasks"]
-                        }, -- end of ["params"]
-                    }, -- end of ["task"]
-                }, -- end of [2]
-            }, -- end of ["points"]
-        }
         coalition.addGroup(_countryID, Group.Category.AIRPLANE, _group)
         _spawnedGroup=Group.getByName(_groupName)
     else
@@ -4603,6 +4436,53 @@ function ctld.spawnCrateGroup(_heli, _positions, _types)
     return _spawnedGroup
 end
 
+
+function ctld.groupToPlanes(_group,_x,_y)
+    _group.category = Group.Category.AIRPLANE
+    _group.units[1].alt=1000
+    _group.units[1].speed=250
+    _group.units[1].category=Unit.Category.AIRPLANE
+
+    _group.units[1].payload={
+        ["fuel"] = 1000,
+        --["flare"] = 60,
+        --["ammo_type"] = 5,
+        --["chaff"] = 60,
+        --["gun"] = 100,
+    }
+    _group.route={
+        ["points"] =
+        {
+            [1] =
+            {
+                ["alt"] = 1000,
+                ["type"] = "Turning Point",
+                ["action"] = "Turning Point",
+                ["alt_type"] = "BARO",
+                ["form"] = "Turning Point",
+                ["speed"] = 250,
+                ["task"] =
+                {
+                    ["id"] = "ComboTask",
+                    ["params"] =
+                    {
+                        ["tasks"] =
+                        {
+                        }, -- end of ["tasks"]
+                    }, -- end of ["params"]
+                }, -- end of ["task"]
+            }, -- end of [2]
+        }, -- end of ["points"]
+    }
+    if _x then
+        _group.route.points[1].x =_x+1000
+    end
+    if _y then
+        _group.route.points[1].y =_y+1000
+    end
+
+    return _group
+end
 
 
 -- spawn normal group
@@ -5172,10 +5052,13 @@ end
 function ctld.isJTACUnitType(_type)
 
     _type = string.lower(_type)
-
+    --ctld.logTrace('_type_________:' .._type.."~~~")
     for _, _name in ipairs(ctld.jtacUnitTypes) do
         local _nameLower = string.lower(_name)
-        if string.match(_type, _nameLower) then
+        --ctld.logTrace('_nameLower__________:' .._type.."~~~")
+        --ctld.logTrace('answer________:' .._type == _nameLower.."~~~")
+        --ctld.logTrace('answer2:' ..string.match(_type,_nameLower).."~~~")
+        if _type == _nameLower then
             return true
         end
     end
@@ -5591,7 +5474,7 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
                 ctld.logTrace(string.format("_frequency=%s", ctld.p(_frequency)))
                 _radio.freq = _frequency
                 _radio.mod = "fm"
-            end        
+            end
         end
     end
 
@@ -5718,7 +5601,7 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
         ctld.jtacSmokeMarks[_tempUnitInfo.name] = nil
 
     	-- JTAC Unit: resume his route ------------
-	    trigger.action.groupContinueMoving(Group.getByName(_jtacGroupName)) 	
+	    trigger.action.groupContinueMoving(Group.getByName(_jtacGroupName))
 
         -- remove from target list
         ctld.jtacCurrentTargets[_jtacGroupName] = nil
@@ -5750,7 +5633,7 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
 
 	        -- JTAC Unit stop his route -----------------
 	        trigger.action.groupStopMoving(Group.getByName(_jtacGroupName)) -- stop JTAC
-            
+
             -- create smoke
             if _smoke == true then
 
@@ -5825,10 +5708,10 @@ function ctld.notifyCoalition(_message, _displayFor, _side, _radio, _shortMessag
     ctld.logTrace(string.format("_radio=%s", ctld.p(_radio)))
 
     local _shortMessage = _shortMessage
-    if _shortMessage == nil then 
+    if _shortMessage == nil then
         _shortMessage = _message
     end
-    
+
     if STTS and STTS.TextToSpeech and _radio and _radio.freq then
         local _freq = _radio.freq
         local _modulation = _radio.mod or "FM"
