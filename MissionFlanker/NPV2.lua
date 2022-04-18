@@ -32,6 +32,24 @@ NP.timeStartBlueAWACS = 0
 NP.timeStartRedAWACS = 0
 NP.needrespawnAWACS = false
 
+NP.CCList = {
+    '古达乌塔本场CC',
+    '苏呼米前线CC',
+    '奥恰姆奇拉中场CC',
+    '阿纳克里厄中场CC',
+    '科尔奇前线CC',
+    '库塔伊西本场CC',
+}
+
+NP.ZoneList = {
+    '古达乌塔',
+    '库塔伊西',
+    '科尔奇前线停机坪',
+    '科尔奇机场',
+    '苏呼米前线停机坪',
+    '苏呼米机场',
+}
+
 function NP.logError(message)
     env.info("[NP] Err: "  .. message)
 end
@@ -85,12 +103,31 @@ function NP.capture(_args)
     mist.dynAddStatic(_logisticData)--生成另一阵营的新cc，同一位置
     dsave.recordAllCCsElements()--动态保存cc
     table.insert(ctld.logisticUnits, _logisticData.units[1].unitName)--新的单位加到cc的白名单
-    --TODO 把离这个最近的zone，所关联的红蓝直升机的flag值设置，让上飞机权限翻转
+    NP.setRelatedZone(_logisticData.groupName,_logisticData.units[1].coalition)
+    --maybe Done 把离这个最近的zone，所关联的红蓝直升机的flag值设置，让上飞机权限翻转
     trigger.action.outText("战区".._logisticData.groupName.."被".._side.."占领", 10)
 end
 --TODO 无人机可以生成，但是无法被动态存储代码捕捉载入
-function NP.findNearestZone(_logistic)
-
+function NP.setRelatedZone(groupName,coalition)
+    local ccname
+    for k,v in pairs(NP.CCList) do
+        if string.match(v, groupName) ~= nil then
+            ccname = v
+            break
+        end
+    end
+    for k,v in pairs(Unitlist[ccname][coalition]) do
+        trigger.action.setUserFlag(v, 0)    
+    end
+    local oppsitecoalition
+    if coalition == 'red' then
+       oppsitecoalition = 'blue'
+    else
+       oppsitecoalition = 'red'
+    end
+    for k,v in pairs(Unitlist[ccname][oppsitecoalition]) do
+        trigger.action.setUserFlag(v, 100)    
+    end
 end
 
 
