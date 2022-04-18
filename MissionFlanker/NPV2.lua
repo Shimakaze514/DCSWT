@@ -111,7 +111,7 @@ end
 function NP.setRelatedZone(groupName,coalition)
     local ccname
     for k,v in pairs(NP.CCList) do
-        if string.match(v, groupName) ~= nil then
+        if string.find(groupName, v) ~= nil then
             ccname = v
             break
         end
