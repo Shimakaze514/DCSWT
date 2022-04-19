@@ -53,7 +53,7 @@ ctld.slingLoad = false -- if false, crates can be used WITHOUT slingloading, by 
 -- to use the other method.
 -- Set staticBugFix  to FALSE if use set ctld.slingLoad to TRUE
 
-ctld.enableSmokeDrop = true -- if false, helis and c-130 will not be able to drop smoke
+ctld.enableSmokeDrop = false -- if false, helis and c-130 will not be able to drop smoke
 
 ctld.maxExtractDistance = 125 -- max distance from vehicle to troops to allow a group extraction
 ctld.multiCrateMaxDistance = 200 --生成一个组需要的箱子之间的最大距离
@@ -840,16 +840,16 @@ ctld.spawnableCrates = {
         --{ weight = 503, desc = "BMD-1伞兵战车(1箱1车)", unit = "BMD-1", cratesRequired = 1, loadable = true },
         { weight = 401, desc = "彩蛋(Easter Egg)", unit = "Pz_IV_H", cratesRequired = 1, loadable = true },
 		--{ weight = 400, desc = "(小队可装载)悍马吉普 JTAC(1箱2车)", unit = "Hummer Group",cratesRequired = 1, loadable = true }, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
-		--{ weight = 325, desc = "捕食者无人机 JTAC", unit = "RQ-1A Predator", cratesRequired = 1, loadable = true }, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
+		{ weight = 325, desc = "捕食者无人机 JTAC", unit = "RQ-1A Predator", cratesRequired = 1, loadable = true }, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
     },
     
-    ["造船厂(SHIP)集装箱"] = {
-		--{ weight = 1508, desc = "052B驱逐舰（4箱一船,一边最多两船）", unit = "052 Repair", cratesRequired = 4, loadable = true },
-		{ weight = 1409, desc = "不惧级(Neustrashimyy-class frigate)护卫舰（3箱一船,一边最多两船）", unit = "052 Repair", cratesRequired = 3, loadable = true },
-		{ weight = 1315, desc = "勇士级导弹艇（2箱一船,一边最多两船）", unit = "yongshi Repair", cratesRequired = 2, loadable = true },
-		--{ weight = 523, desc = "箭-10(SA-13)红外地空导弹发射车", unit = "Strela-10M3", cratesRequired = 1, loadable = false },
-
-    },
+    --["造船厂(SHIP)集装箱"] = {
+	--	--{ weight = 1508, desc = "052B驱逐舰（4箱一船,一边最多两船）", unit = "052 Repair", cratesRequired = 4, loadable = true },
+	--	{ weight = 1409, desc = "不惧级(Neustrashimyy-class frigate)护卫舰（3箱一船,一边最多两船）", unit = "052 Repair", cratesRequired = 3, loadable = true },
+	--	{ weight = 1315, desc = "勇士级导弹艇（2箱一船,一边最多两船）", unit = "yongshi Repair", cratesRequired = 2, loadable = true },
+	--	--{ weight = 523, desc = "箭-10(SA-13)红外地空导弹发射车", unit = "Strela-10M3", cratesRequired = 1, loadable = false },
+    --
+    --},
 }
 
 --- 3D model that will be used to represent a loadable crate ; by default, a generator
@@ -1672,7 +1672,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "M1128 Stryker MGS Group",
 		cratesRequired = 1,
 		aaLaunchers = 2,
-		unitsCnt = 2,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1685,7 +1685,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "ZBD04A Group",
 		cratesRequired = 1,
 		aaLaunchers = 2,
-		unitsCnt = 2,
+
         count = 2,
 		hasLimit = false,
         parts = {
@@ -1699,7 +1699,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "M1A2 Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
-		unitsCnt = 1,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1712,7 +1712,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "L2A6 Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
-		unitsCnt = 1,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1725,7 +1725,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "L2A5 Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
-		unitsCnt = 1,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1738,7 +1738,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "L2A4 Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
-		unitsCnt = 1,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1751,7 +1751,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "Lec Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
-		unitsCnt = 1,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1764,7 +1764,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "Challenger2 Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
-		unitsCnt = 1,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1777,7 +1777,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "Merkava Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
-		unitsCnt = 1,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1790,7 +1790,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "T-80 Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
-		unitsCnt = 1,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1803,7 +1803,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "T-90 Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
-		unitsCnt = 1,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1816,7 +1816,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "ZTZ96B Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
-		unitsCnt = 1,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1829,7 +1829,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "BTR82 Group",
 		cratesRequired = 1,
 		aaLaunchers = 2,
-		unitsCnt = 2,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1842,7 +1842,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "BMP2 Group",
 		cratesRequired = 1,
 		aaLaunchers = 2,
-		unitsCnt = 2,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1855,7 +1855,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "MCV80 Group",
 		cratesRequired = 1,
 		aaLaunchers = 2,
-		unitsCnt = 2,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1868,7 +1868,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "Marder Group",
 		cratesRequired = 1,
 		aaLaunchers = 3,
-		unitsCnt = 3,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1881,7 +1881,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "ZU23 Group",
 		cratesRequired = 1,
 		aaLaunchers = 2,
-		unitsCnt = 2,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1894,7 +1894,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "Roland Group",
 		cratesRequired = 1,
 		aaLaunchers = 2,
-		unitsCnt = 2,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -1907,7 +1907,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "HQ-7_Group",
 		cratesRequired = 1,
 		aaLaunchers = 2,
-		unitsCnt = 2,
+
         count = 1,
 		hasLimit = true,
         parts = {
@@ -1921,7 +1921,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "Gepard Group",
 		cratesRequired = 1,
 		aaLaunchers = 2,
-		unitsCnt = 2,
+
         count = 2,
 		hasLimit = false,
         parts = {
@@ -1934,7 +1934,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "BM27 Group",
 		cratesRequired = 2,
 		aaLaunchers = 2,
-		unitsCnt = 3,
+
         count = 2,
 		hasLimit = false,
         parts = {
@@ -2015,7 +2015,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "Back Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
-		unitsCnt = 2,
+
         count = 2,
 		hasLimit = false,
         parts = {
@@ -2027,7 +2027,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "SAU Msta Group",
 		cratesRequired = 1,
 		aaLaunchers = 2,
-		unitsCnt = 2,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -2039,7 +2039,7 @@ ctld.GroupSystemTemplate = {
             sysName = "M109 Group",
             cratesRequired = 1,
             aaLaunchers = 2,
-            unitsCnt = 2,
+
             count = 1,
             hasLimit = false,
             parts = {
@@ -2051,7 +2051,7 @@ ctld.GroupSystemTemplate = {
             sysName = "PLZ05 Group",
             cratesRequired = 1,
             aaLaunchers = 2,
-            unitsCnt = 2,
+
             count = 1,
             hasLimit = false,
             parts = {
@@ -2063,7 +2063,7 @@ ctld.GroupSystemTemplate = {
                 sysName = "T155 Group",
                 cratesRequired = 1,
                 aaLaunchers = 2,
-                unitsCnt = 2,
+
                 count = 1,
                 hasLimit = false,
                 parts = {
@@ -2075,7 +2075,7 @@ ctld.GroupSystemTemplate = {
             sysName = "Dana Group",
             cratesRequired = 1,
             aaLaunchers = 2,
-            unitsCnt = 2,
+
             count = 1,
             hasLimit = false,
             parts = {
@@ -2087,7 +2087,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "M1045 HMMWV Armament Group",
 		cratesRequired = 1,
 		aaLaunchers = 2,
-		unitsCnt = 2,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -2098,7 +2098,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "LAV-25 Group",
 		cratesRequired = 1,
 		aaLaunchers = 2,
-		unitsCnt = 2,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -2109,7 +2109,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "M-2 Bradley Group",
 		cratesRequired = 1,
 		aaLaunchers = 2,
-		unitsCnt = 2,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -2120,7 +2120,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "M1134 Stryker ATGM Group",
 		cratesRequired = 1,
 		aaLaunchers = 2,
-		unitsCnt = 2,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -2133,7 +2133,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "2S6 Tunguska Group",
 		cratesRequired = 1,
 		aaLaunchers = 2,
-		unitsCnt = 2,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -2145,7 +2145,7 @@ ctld.GroupSystemTemplate = {
 		sysName = "Scud_B Group",
 		cratesRequired = 2,
 		aaLaunchers = 1,
-		unitsCnt = 1,
+
         count = 1,
 		hasLimit = false,
         parts = {
@@ -3899,7 +3899,7 @@ function ctld.unpackCrates(_arguments)
             local _crate = ctld.getClosestCrate(_heli, _crates)
 
 
-
+            --TODO
             --if ctld.inLogisticsZone(_heli) == true  or  ctld.farEnoughFromLogisticZone(_heli) == false then
             if ctld.farEnoughFromLogisticZone(_heli) == false then
                 ctld.displayMessageToGroup(_heli, "You can't unpack that here! Take it to where it's needed!", 20)
@@ -5708,8 +5708,6 @@ end
 function ctld.addF10MenuOptions()
     -- Loop through all Heli units
 
-    timer.scheduleFunction(ctld.addF10MenuOptions, nil, timer.getTime() + 60)
-
     for _, _unitName in pairs(ctld.transportPilotNames) do
 
         local status, error = pcall(function()
@@ -5731,52 +5729,50 @@ function ctld.addF10MenuOptions()
 
                         missionCommands.addCommandForGroup(_groupId, "Check Cargo", _rootPath, ctld.checkTroopStatus, { _unitName })
 
-                        if _unitActions.troops then
-
-                            local _troopCommandsPath = missionCommands.addSubMenuForGroup(_groupId, "Troop Transport", _rootPath)
-
-                            missionCommands.addCommandForGroup(_groupId, "Unload / Extract Troops", _troopCommandsPath, ctld.unloadExtractTroops, { _unitName })
-
-
-                            -- local _loadPath = missionCommands.addSubMenuForGroup(_groupId, "Load From Zone", _troopCommandsPath)
-                            local _transportLimit = ctld.getTransportLimit(_unit:getTypeName())
-                            ctld.logTrace(string.format("_transportLimit=%s", ctld.p(_transportLimit)))
-                            for _,_loadGroup in pairs(ctld.loadableGroups) do
-                                ctld.logTrace(string.format("_loadGroup=%s", ctld.p(_loadGroup)))
-                                if not _loadGroup.side or _loadGroup.side == _unit:getCoalition() then
-
-                                    -- check size & unit
-                                    if _transportLimit >= _loadGroup.total then
-                                        missionCommands.addCommandForGroup(_groupId, "Load ".._loadGroup.name, _troopCommandsPath, ctld.loadTroopsFromZone, { _unitName, true,_loadGroup,false })
-                                    end
-                                end
-                            end
-
-                            if ctld.unitCanCarryVehicles(_unit) then
-
-                                local _vehicleCommandsPath = missionCommands.addSubMenuForGroup(_groupId, "Vehicle / FOB Transport", _rootPath)
-
-                                missionCommands.addCommandForGroup(_groupId, "Unload Vehicles", _vehicleCommandsPath, ctld.unloadTroops, { _unitName, false })
-                                missionCommands.addCommandForGroup(_groupId, "Load / Extract Vehicles", _vehicleCommandsPath, ctld.loadTroopsFromZone, { _unitName, false,"",true })
-
-                                if ctld.enabledFOBBuilding and ctld.staticBugWorkaround == false then
-
-                                    missionCommands.addCommandForGroup(_groupId, "Load / Unload FOB Crate", _vehicleCommandsPath, ctld.loadUnloadFOBCrate, { _unitName, false })
-                                end
-                                missionCommands.addCommandForGroup(_groupId, "Check Cargo", _vehicleCommandsPath, ctld.checkTroopStatus, { _unitName })
-                            end
-
-                        end
+                        --TODO
+                        --if _unitActions.troops then
+                        --
+                        --    local _troopCommandsPath = missionCommands.addSubMenuForGroup(_groupId, "Troop Transport", _rootPath)
+                        --
+                        --    missionCommands.addCommandForGroup(_groupId, "Unload / Extract Troops", _troopCommandsPath, ctld.unloadExtractTroops, { _unitName })
+                        --
+                        --
+                        --    -- local _loadPath = missionCommands.addSubMenuForGroup(_groupId, "Load From Zone", _troopCommandsPath)
+                        --    local _transportLimit = ctld.getTransportLimit(_unit:getTypeName())
+                        --    ctld.logTrace(string.format("_transportLimit=%s", ctld.p(_transportLimit)))
+                        --    for _,_loadGroup in pairs(ctld.loadableGroups) do
+                        --        ctld.logTrace(string.format("_loadGroup=%s", ctld.p(_loadGroup)))
+                        --        if not _loadGroup.side or _loadGroup.side == _unit:getCoalition() then
+                        --
+                        --            -- check size & unit
+                        --            if _transportLimit >= _loadGroup.total then
+                        --                missionCommands.addCommandForGroup(_groupId, "Load ".._loadGroup.name, _troopCommandsPath, ctld.loadTroopsFromZone, { _unitName, true,_loadGroup,false })
+                        --            end
+                        --        end
+                        --    end
+                        --
+                        --    if ctld.unitCanCarryVehicles(_unit) then
+                        --
+                        --        local _vehicleCommandsPath = missionCommands.addSubMenuForGroup(_groupId, "Vehicle / FOB Transport", _rootPath)
+                        --
+                        --        missionCommands.addCommandForGroup(_groupId, "Unload Vehicles", _vehicleCommandsPath, ctld.unloadTroops, { _unitName, false })
+                        --        missionCommands.addCommandForGroup(_groupId, "Load / Extract Vehicles", _vehicleCommandsPath, ctld.loadTroopsFromZone, { _unitName, false,"",true })
+                        --
+                        --        if ctld.enabledFOBBuilding and ctld.staticBugWorkaround == false then
+                        --
+                        --            missionCommands.addCommandForGroup(_groupId, "Load / Unload FOB Crate", _vehicleCommandsPath, ctld.loadUnloadFOBCrate, { _unitName, false })
+                        --        end
+                        --        missionCommands.addCommandForGroup(_groupId, "Check Cargo", _vehicleCommandsPath, ctld.checkTroopStatus, { _unitName })
+                        --    end
+                        --
+                        --end
 
 
                         if ctld.enableCrates and _unitActions.crates then
-
                             if ctld.unitCanCarryVehicles(_unit) == false then
-
                                 -- local _cratePath = missionCommands.addSubMenuForGroup(_groupId, "Spawn Crate", _rootPath)
                                 -- add menu for spawning crates
                                 for _subMenuName, _crates in pairs(ctld.spawnableCrates) do
-
                                     local _cratePath = missionCommands.addSubMenuForGroup(_groupId, _subMenuName, _rootPath)
                                     for _, _crate in pairs(_crates) do
 
@@ -5890,7 +5886,7 @@ function ctld.addF10MenuOptions()
         env.error(string.format("Error adding f10 to other players: %s", error), false)
     end
 
-
+    timer.scheduleFunction(ctld.addF10MenuOptions, nil, timer.getTime() + 60)
 end
 
 --add to all players that arent transport
@@ -7177,7 +7173,6 @@ function ctld.initialize(force)
     timer.scheduleFunction(ctld.checkTransportStatus, nil, timer.getTime() + 10)
 
     timer.scheduleFunction(function()
-
         --timer.scheduleFunction(ctld.refreshRadioBeacons, nil, timer.getTime() + 5)
         timer.scheduleFunction(ctld.refreshSmoke, nil, timer.getTime() + 10)
         timer.scheduleFunction(ctld.addF10MenuOptions, nil, timer.getTime() + 10)
