@@ -702,7 +702,7 @@ ctld.loadableGroups = {
 --
 ctld.spawnableCrates = {
     -- name of the sub menu on F10 for spawning crates
-    ["Ground Forces"] = {
+    ["主战坦克(Tank)"] = {
         --crates you can spawn
         -- weight in KG
         -- Desc is the description on the F10 MENU
@@ -710,69 +710,145 @@ ctld.spawnableCrates = {
         -- cratesRequired - if set requires that many crates of the same type within 100m of each other in order build the unit
         -- side is optional but 2 is BLUE and 1 is RED
         -- dont use that option with the HAWK Crates
-        { weight = 500, desc = "HMMWV - TOW", unit = "M1045 HMMWV TOW", side = 2 },
-        { weight = 505, desc = "HMMWV - MG", unit = "M1043 HMMWV Armament", side = 2 },
+        --{ weight = 500, desc = "HMMWV - TOW", unit = "M1045 HMMWV TOW", side = 2 },
+        --{ weight = 505, desc = "HMMWV - MG", unit = "M1043 HMMWV Armament", side = 2 },
+		{ weight = 1506, desc = "随机主战坦克(Random MBT)", unit = "tank Repair", cratesRequired = 1, loadable = true },  
+    },   
+    
+    ["步兵战车(IFV)"] = {   
+        --{ weight = 1340, desc = "随机步战车", unit = "IFV Repair", cratesRequired = 1, loadable = true },
+        
 
-        { weight = 510, desc = "BTR-D", unit = "BTR_D", side = 1 },
-        { weight = 515, desc = "BRDM-2", unit = "BRDM-2", side = 1 },
 
-        { weight = 520, desc = "HMMWV - JTAC", unit = "Hummer", side = 2, }, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
-        { weight = 525, desc = "SKP-11 - JTAC", unit = "SKP-11", side = 1, }, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
+		--{ weight = 925, desc = "主战坦克M1A2", unit = "M-1 Abrams", cratesRequired = 1, loadable = false },
+		--{ weight = 1150, desc = "主战坦克T-90", unit = "T-90", cratesRequired = 1, loadable = false },
+		{ weight = 1200, desc = "轮式轻型坦克(M1128)", unit = "M1128 Stryker MGS Group", cratesRequired = 1, loadable = true },
+		{ weight = 1065, desc = "轻型装甲坦克战车(Type04A)", unit = "ZBD04A Group", cratesRequired = 1, loadable = true },
+		{ weight = 1119, desc = "反坦克导弹战车(M1134 ATGM)", unit = "M1134 Stryker ATGM Group", cratesRequired = 1, loadable = true },
+        --{ weight = 1364, desc = "(BETA)主战坦克M1A2小队", unit = "M-1 Abrams Group", cratesRequired = 1, loadable = true },
+        { weight = 976, desc = "步兵装甲战车(BTR-82A)", unit = "BTR82 Group", cratesRequired = 1, loadable = true },
+        { weight = 977, desc = "步兵装甲战车(LAV-25)", unit = "LAV-25 Group", cratesRequired = 1, loadable = true },
+        { weight = 978, desc = "步兵装甲战车(M2 Bradley)", unit = "M-2 Bradley Group", cratesRequired = 1, loadable = true },
+        --{ weight = 975, desc = "步兵装甲战车(BTR-RD)小队", unit = "BTR_D Group", cratesRequired = 1, loadable = true },
 
-        { weight = 100, desc = "2B11 Mortar", unit = "2B11 mortar" },
+		--{ weight = 920, desc = "主战坦克ZTZ-96B", unit = "ZTZ96B", cratesRequired = 1, loadable = false },
+		--{ weight = 500, desc = "可装载轻型装甲坦克战车(04A式)", unit = "ZBD04A", cratesRequired = 1, loadable = true },
 
-        { weight = 250, desc = "SPH 2S19 Msta", unit = "SAU Msta", side = 1, cratesRequired = 3 },
-        { weight = 255, desc = "M-109", unit = "M-109", side = 2, cratesRequired = 3 },
+		--{ weight = 1100, desc = "自行榴弹炮 M-109", unit = "M-109", cratesRequired = 1, loadable = false },
+        --{ weight = 515, desc = "BRDM-2", unit = "BRDM-2", side = 1 },
 
-        { weight = 252, desc = "Ural-375 Ammo Truck", unit = "Ural-375", side = 1, cratesRequired = 2 },
-        { weight = 253, desc = "M-818 Ammo Truck", unit = "M 818", side = 2, cratesRequired = 2 },
+        --{ weight = 600, desc = "悍马 JTAC(可装载)", unit = "Hummer", cratesRequired = 1, loadable = true}, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
+        --{ weight = 525, desc = "SKP-11 - JTAC", unit = "SKP-11", side = 1, }, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
 
-        { weight = 800, desc = "FOB Crate", unit = "FOB" }, -- Builds a FOB! - requires 3 * ctld.cratesRequiredForFOB
-        { weight = 801, desc = "悍马吉普 JTAC(侦察）", unit = "Hummer"},
-        { weight = 802, desc = "捕食者无人机 JTAC", unit = "RQ-1A Predator", cratesRequired = 1},
+        --{ weight = 100, desc = "2B11 Mortar", unit = "2B11 mortar" },
+
+        --{ weight = 250, desc = "SPH 2S19 Msta", unit = "SAU Msta", side = 1, cratesRequired = 3 },
+        --{ weight = 255, desc = "M-109", unit = "M-109", side = 2, cratesRequired = 3 },
+
+        --{ weight = 252, desc = "Ural-375 Ammo Truck", unit = "Ural-375", side = 1, cratesRequired = 2 },
+        --{ weight = 253, desc = "M-818 Ammo Truck", unit = "M 818", side = 2, cratesRequired = 2 },
+
+        --{ weight = 800, desc = "FOB Crate - Small", unit = "FOB", cratesRequired = 1, loadable = true }, -- Builds a FOB! - requires 3 * ctld.cratesRequiredForFOB
     },
-    ["AA short range"] = {
-        { weight = 50, desc = "Stinger", unit = "Soldier stinger", side = 2 },
-        { weight = 55, desc = "Igla", unit = "SA-18 Igla manpad", side = 1 },
 
-        { weight = 405, desc = "Strela-1 9P31", unit = "Strela-1 9P31", side = 1, cratesRequired = 3 },
-        { weight = 400, desc = "M1097 Avenger", unit = "M1097 Avenger", side = 2, cratesRequired = 3 },
-    },
-    ["AA mid range"] = {
+
+	["远程火力(Artillery)"] = {
+		  { weight = 1446, desc = "远程火箭炮(BM27)发射阵地(2箱2车+补给)", unit = "BM27 Group", cratesRequired = 2, loadable = true },
+          { weight = 1460, desc = "PLZ05自行火炮(1箱2车)", unit = "PLZ05 Group", cratesRequired = 1, loadable = true },
+          { weight = 1447, desc = "2S19自行火炮(1箱2车)", unit = "SAU Msta Group", cratesRequired = 1, loadable = true },
+          { weight = 1431, desc = "M109自行火炮(1箱2车)", unit = "M109 Group", cratesRequired = 1, loadable = true },
+          { weight = 1431, desc = "T155自行火炮(1箱2车)", unit = "T155 Group", cratesRequired = 1, loadable = true },
+          { weight = 1432, desc = "达纳卡车炮(SpGH_Dana)(1箱2车)", unit = "Dana Group", cratesRequired = 1, loadable = true },
+          { weight = 1581, desc = "飞毛腿导弹(Scud)(2箱1车)", unit = "Scud_B Group", cratesRequired = 2, loadable = true },
+	},
+
+    ["近程防空(Short Range AA)"] = {
+		
+		{ weight = 963, desc = "后卫(M6)野战红外地空导弹战车", unit = "M6 Linebacker", cratesRequired = 1, loadable = true },
+		
+		{ weight = 964, desc = "箭-10(SA-13)红外地空导弹发射车", unit = "Strela-10M3", cratesRequired = 1, loadable = true },
+
+        { weight = 965, desc = "ZU-23卡车高炮(1箱2车)", unit = "ZU23 Group", cratesRequired = 1, loadable = true },
+        
+        { weight = 960, desc = "猎豹(Gepard)双管自行高炮(1箱2车)", unit = "Gepard Group", cratesRequired = 1, loadable = true },
+
+		{ weight = 1206, desc = "通古斯卡(SA-19)防空战车小队(1箱2车)", unit = "2S6 Tunguska Group", cratesRequired = 1, loadable = true },
+		--{ weight = 966, desc = "复仇者红外地空导弹发射车", unit = "M1097 Avenger", cratesRequired = 1, loadable = false },
+
+    }, 
+   
+   
+   
+    ["中远程防空(Mid&Long Range AA)"] = {
+		--{ weight = 950, desc = "道尔(SA-15)雷达地空导弹发射车", unit = "Tor 9A331", cratesRequired = 1, loadable = false },
+        { weight = 1448, desc = "罗兰(Roland)近程地空导弹(1箱2车)", unit = "Roland Group", cratesRequired = 1, loadable = true },
+        
+        { weight = 1451, desc = "HQ-7近程地空导弹(1箱2车)", unit = "HQ-7_Group", cratesRequired = 1, loadable = true },
+        
+        { weight = 1452, desc = "道尔(SA-15)地空导弹阵地(3箱3车+补给)", unit = "SA-15 Buk", cratesRequired = 3, loadable = true },
+
+        --{ weight = 1454, desc = "(小队)NASAMS地空导弹阵地(2箱4车+补给)", unit = "NASAMS Group", cratesRequired = 2, loadable = false },
+        
+        { weight = 1449, desc = "(小队)库班河(SA-6)地空导弹阵地(3箱4车+补给)", unit = "SA-6 Buk", cratesRequired = 2, loadable = true },
+
+        { weight = 1453, desc = "山毛榉(SA-11)地空导弹阵地(3箱5车+补给)", unit = "SA-11 Buk", cratesRequired = 3, loadable = true },
+
+
+        --{ weight = 50, desc = "Stinger", unit = "Stinger manpad", side = 2 },
+        --{ weight = 55, desc = "Igla", unit = "SA-18 Igla manpad", side = 1 },
+
         -- HAWK System
-        { weight = 540, desc = "HAWK Launcher", unit = "Hawk ln", side = 2},
-        { weight = 545, desc = "HAWK Search Radar", unit = "Hawk sr", side = 2 },
-        { weight = 546, desc = "HAWK Track Radar", unit = "Hawk tr", side = 2 },
-        { weight = 547, desc = "HAWK PCP", unit = "Hawk pcp" , side = 2 }, -- Remove this if on 1.2
-	    { weight = 548, desc = "HAWK CWAR", unit = "Hawk cwar" , side = 2 }, -- Remove this if on 2.5	
-        { weight = 549, desc = "HAWK Repair", unit = "HAWK Repair" , side = 2 },
+        --{ weight = 540, desc = "HAWK Launcher", unit = "Hawk ln", side = 2},
+        --{ weight = 545, desc = "HAWK Search Radar", unit = "Hawk sr", side = 2 },
+        --{ weight = 550, desc = "HAWK Track Radar", unit = "Hawk tr", side = 2 },
+        --{ weight = 551, desc = "HAWK PCP", unit = "Hawk pcp" , side = 2 }, -- Remove this if on 1.2
+        --{ weight = 552, desc = "HAWK Repair", unit = "HAWK Repair" , side = 2 },
         -- End of HAWK
 
         -- KUB SYSTEM
-        { weight = 560, desc = "KUB Launcher", unit = "Kub 2P25 ln", side = 1},
-        { weight = 565, desc = "KUB Radar", unit = "Kub 1S91 str", side = 1 },
-        { weight = 570, desc = "KUB Repair", unit = "KUB Repair", side = 1},
+        --{ weight = 560, desc = "KUB Launcher", unit = "Kub 2P25 ln", side = 1},
+        --{ weight = 565, desc = "KUB Radar", unit = "Kub 1S91 str", side = 1 },
+        --{ weight = 570, desc = "KUB Repair", unit = "KUB Repair", side = 1},
         -- End of KUB
 
         -- BUK System
-        --        { weight = 575, desc = "BUK Launcher", unit = "SA-11 Buk LN 9A310M1"},
-        --        { weight = 580, desc = "BUK Search Radar", unit = "SA-11 Buk SR 9S18M1"},
-        --        { weight = 585, desc = "BUK CC Radar", unit = "SA-11 Buk CC 9S470M1"},
-        --        { weight = 590, desc = "BUK Repair", unit = "BUK Repair"},
+        --{ weight = 1022, desc = "山毛榉地空导弹发射车 SA-11", unit = "SA-11 Buk LN 9A310M1", loadable = false },
+        --{ weight = 1023, desc = "山毛榉地空导弹雷达车 SA-11", unit = "SA-11 Buk SR 9S18M1", loadable = false },
+        --{ weight = 1024, desc = "山毛榉地空导弹指挥车 SA-11", unit = "SA-11 Buk CC 9S470M1", loadable = false },
         -- END of BUK
-    },
-    ["AA long range"] = {
-        -- Patriot System
-        { weight = 555, desc = "Patriot Launcher", unit = "Patriot ln", side = 2 },
-        { weight = 556, desc = "Patriot Radar", unit = "Patriot str" , side = 2 },
-        { weight = 557, desc = "Patriot ECS", unit = "Patriot ECS", side = 2 },
-        -- { weight = 553, desc = "Patriot ICC", unit = "Patriot cp", side = 2 },
-        -- { weight = 554, desc = "Patriot EPP", unit = "Patriot EPP", side = 2 },
-        { weight = 558, desc = "Patriot AMG (optional)", unit = "Patriot AMG" , side = 2 },
-        { weight = 559, desc = "Patriot Repair", unit = "Patriot Repair" , side = 2 },
-        -- End of Patriot
 
-        { weight = 595, desc = "Early Warning Radar", unit = "1L13 EWR", side = 1 }, -- cant be used by BLUE coalition
+        --{ weight = 595, desc = "Early Warning Radar", unit = "1L13 EWR", side = 1 }, -- cant be used by BLUE coalition
+
+        --{ weight = 405, desc = "Strela-1 9P31", unit = "Strela-1 9P31", side = 1, cratesRequired = 3 },
+        --{ weight = 400, desc = "M1097 Avenger", unit = "M1097 Avenger", side = 2, cratesRequired = 1 },
+
+    },
+	
+	["维护用集装箱(repair)"] = {
+        { weight = 821, desc = "山毛榉(SA-11 repair)维护箱", unit = "SA-11 BUK Repair", loadable = true },
+		{ weight = 823, desc = "道尔(SA-15 repair)维护箱", unit = "SA-15 BUK Repair", loadable = true },
+        --{ weight = 825, desc = "NASAMS地空导弹阵地维护箱", unit = "NASAMS Repair", loadable = false },
+		{ weight = 824, desc = "火箭炮(BM27 repair)发射阵地维护箱", unit = "BM27 Group Repair", loadable = true },
+		--{ weight = 350, desc = "指挥部及停机坪设施维修箱", unit = "CC Repair", loadable = true },
+		
+
+	},
+	["JTAC&OTHERS等小型单位集装箱"] = {
+        { weight = 492, desc = "悍马吉普 JTAC(侦察）", unit = "Hummer", loadable = true },
+        { weight = 402, desc = "补给车(Supply Truck)", unit = "M 818", loadable = true },
+        { weight = 591, desc = "陶悍马(TOW HUMVEE) (1箱1车)", unit = "M1045 HMMWV TOW", cratesRequired = 1, loadable = true },
+        --{ weight = 503, desc = "BMD-1伞兵战车(1箱1车)", unit = "BMD-1", cratesRequired = 1, loadable = true },
+        { weight = 401, desc = "彩蛋(Easter Egg)", unit = "Pz_IV_H", cratesRequired = 1, loadable = true },
+		--{ weight = 400, desc = "(小队可装载)悍马吉普 JTAC(1箱2车)", unit = "Hummer Group",cratesRequired = 1, loadable = true }, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
+		--{ weight = 325, desc = "捕食者无人机 JTAC", unit = "RQ-1A Predator", cratesRequired = 1, loadable = true }, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
+    },
+    
+    ["造船厂(SHIP)集装箱"] = {
+		--{ weight = 1508, desc = "052B驱逐舰（4箱一船,一边最多两船）", unit = "052 Repair", cratesRequired = 4, loadable = true },
+		{ weight = 1409, desc = "不惧级(Neustrashimyy-class frigate)护卫舰（3箱一船,一边最多两船）", unit = "052 Repair", cratesRequired = 3, loadable = true },
+		{ weight = 1315, desc = "勇士级导弹艇（2箱一船,一边最多两船）", unit = "yongshi Repair", cratesRequired = 2, loadable = true },
+		--{ weight = 523, desc = "箭-10(SA-13)红外地空导弹发射车", unit = "Strela-10M3", cratesRequired = 1, loadable = false },
+
     },
 }
 
@@ -1592,46 +1668,489 @@ end
 ctld.GroupSystemTemplate = {
 
     {
-        name = "HAWK AA System",
-        count = 4,
+        name = "轮式轻型坦克(M1128)小队",
+		sysName = "M1128 Stryker MGS Group",
+		cratesRequired = 1,
+		aaLaunchers = 2,
+		unitsCnt = 2,
+        count = 1,
+		hasLimit = false,
         parts = {
-            {name = "Hawk ln", desc = "HAWK Launcher", launcher = true},
-            {name = "Hawk tr", desc = "HAWK Track Radar"},
-            {name = "Hawk sr", desc = "HAWK Search Radar"},
-            {name = "Hawk pcp", desc = "HAWK PCP"},
-	    {name = "Hawk cwar", desc = "HAWK CWAR"},
+            {name = "M1128 Stryker MGS", desc = "轮式轻型坦克(M1128)" , launcher = true},
         },
-        repair = "HAWK Repair",
-    },
-    {
-        name = "ctld",
-        count = 4,
-        parts = {
-            {name = "Patriot ln", desc = "Patriot Launcher", launcher = true},
-            {name = "Patriot ECS", desc = "Patriot Control Unit"},
-            {name = "Patriot str", desc = "Patriot Search and Track Radar"},
-        },
-        repair = "Patriot Repair",
+        --repair = "BTR_D Group Repair",
     },
 	{
-        name = "BUK AA System",
-        count = 3,
+        name = "步兵装甲战车(04A)小队",
+		sysName = "ZBD04A Group",
+		cratesRequired = 1,
+		aaLaunchers = 2,
+		unitsCnt = 2,
+        count = 2,
+		hasLimit = false,
         parts = {
-            {name = "SA-11 Buk LN 9A310M1", desc = "BUK Launcher" , launcher = true},
-            {name = "SA-11 Buk CC 9S470M1", desc = "BUK CC Radar"},
-            {name = "SA-11 Buk SR 9S18M1", desc = "BUK Search Radar"},
+            {name = "ZBD04A", desc = "步兵装甲战车(04A)" , launcher = true},
         },
-        repair = "BUK Repair",
+        --repair = "ZBD04A Group Repair",
+    },
+	--{ weight = 925, desc = "主战坦克M1A2", unit = "M-1 Abrams", cratesRequired = 1, loadable = false },
+	{
+        name = "主战坦克M1A2小队",
+		sysName = "M1A2 Group",
+		cratesRequired = 1,
+		aaLaunchers = 1,
+		unitsCnt = 1,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "M-1 Abrams", desc = "主战坦克M1A2" , launcher = true},
+        },
+        --repair = "ZBD04A Group Repair",
     },
     {
-        name = "KUB AA System",
-        count = 2,
+        name = "主战坦克豹2A6小队",
+		sysName = "L2A6 Group",
+		cratesRequired = 1,
+		aaLaunchers = 1,
+		unitsCnt = 1,
+        count = 1,
+		hasLimit = false,
         parts = {
-            {name = "Kub 2P25 ln", desc = "KUB Launcher", launcher = true},
-            {name = "Kub 1S91 str", desc = "KUB Radar"},
+            {name = "Leopard-2", desc = "主战坦克豹2A6" , launcher = true},
         },
-        repair = "KUB Repair",
+        --repair = "ZBD04A Group Repair",
     },
+    {
+        name = "主战坦克豹2A5小队",
+		sysName = "L2A5 Group",
+		cratesRequired = 1,
+		aaLaunchers = 1,
+		unitsCnt = 1,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "leopard-2a5", desc = "主战坦克豹2A5" , launcher = true},
+        },
+        --repair = "ZBD04A Group Repair",
+    },
+    {
+        name = "主战坦克豹2A4小队",
+		sysName = "L2A4 Group",
+		cratesRequired = 1,
+		aaLaunchers = 1,
+		unitsCnt = 1,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "leopard-2A4", desc = "主战坦克豹2A4" , launcher = true},
+        },
+        --repair = "ZBD04A Group Repair",
+    },
+    {
+        name = "主战坦克勒克莱尔小队",
+		sysName = "Lec Group",
+		cratesRequired = 1,
+		aaLaunchers = 1,
+		unitsCnt = 1,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "Leclerc", desc = "主战坦克勒克莱尔" , launcher = true},
+        },
+        --repair = "ZBD04A Group Repair",
+    },
+    {
+        name = "主战坦克挑战者2小队",
+		sysName = "Challenger2 Group",
+		cratesRequired = 1,
+		aaLaunchers = 1,
+		unitsCnt = 1,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "Challenger2", desc = "主战坦克挑战者2" , launcher = true},
+        },
+        --repair = "ZBD04A Group Repair",
+    },
+    {
+        name = "主战坦克梅卡瓦4小队",
+		sysName = "Merkava Group",
+		cratesRequired = 1,
+		aaLaunchers = 1,
+		unitsCnt = 1,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "Merkava_Mk4", desc = "主战坦克梅卡瓦" , launcher = true},
+        },
+        --repair = "ZBD04A Group Repair",
+    },
+    {
+        name = "主战坦克T80U小队",
+		sysName = "T-80 Group",
+		cratesRequired = 1,
+		aaLaunchers = 1,
+		unitsCnt = 1,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "T-80UD", desc = "主战坦克T-80" , launcher = true},
+        },
+        --repair = "ZBD04A Group Repair",
+    },
+    {
+        name = "主战坦克T-90小队",
+		sysName = "T-90 Group",
+		cratesRequired = 1,
+		aaLaunchers = 1,
+		unitsCnt = 1,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "T-90", desc = "主战坦克T-90" , launcher = true},
+        },
+        --repair = "ZBD04A Group Repair",
+    },
+	{
+        name = "主战坦克ZTZ96B小队",
+		sysName = "ZTZ96B Group",
+		cratesRequired = 1,
+		aaLaunchers = 1,
+		unitsCnt = 1,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "ZTZ96B", desc = "主战坦克ZTZ96B" , launcher = true},
+        },
+        --repair = "ZBD04A Group Repair",
+    },
+	{
+        name = "步兵装甲战车(BTR82)小队",
+		sysName = "BTR82 Group",
+		cratesRequired = 1,
+		aaLaunchers = 2,
+		unitsCnt = 2,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "BTR-82A", desc = "步兵装甲战车(BTR-82)" , launcher = true},
+        },
+        --repair = "BTR82 Group Repair",
+    },
+    {
+        name = "步兵装甲战车(BMP-2)小队",
+		sysName = "BMP2 Group",
+		cratesRequired = 1,
+		aaLaunchers = 2,
+		unitsCnt = 2,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "BMP-2", desc = "步兵装甲战车(BMP-2)" , launcher = true},
+        },
+        --repair = "BTR82 Group Repair",
+    },
+    --[[{
+        name = "步兵装甲战车(MCV80武士)小队",
+		sysName = "MCV80 Group",
+		cratesRequired = 1,
+		aaLaunchers = 2,
+		unitsCnt = 2,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "MCV-80", desc = "步兵装甲战车(MCV80)" , launcher = true},
+        },
+        --repair = "BTR82 Group Repair",
+    },
+    {
+        name = "步兵装甲战车(黄鼠狼)小队",
+		sysName = "Marder Group",
+		cratesRequired = 1,
+		aaLaunchers = 3,
+		unitsCnt = 3,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "Marder", desc = "步兵装甲战车(黄鼠狼)" , launcher = true},
+        },
+        --repair = "BTR82 Group Repair",
+    },]]
+    {
+        name = "ZU-23卡车高炮小队",
+		sysName = "ZU23 Group",
+		cratesRequired = 1,
+		aaLaunchers = 2,
+		unitsCnt = 2,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "Ural-375 ZU-23 Insurgent", desc = "ZU-23卡车高炮" , launcher = true},
+        },
+        --repair = "HQ-7_LN_SP Group Repair",
+    },
+    {
+        name = "罗兰近程地空导弹小队",
+		sysName = "Roland Group",
+		cratesRequired = 1,
+		aaLaunchers = 2,
+		unitsCnt = 2,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "Roland ADS", desc = "罗兰自行防空导弹车" , launcher = true},
+        },
+        --repair = "HQ-7_LN_SP Group Repair",
+    },
+    {
+        name = "红旗-7(HQ-7)近程地空导弹小队",
+		sysName = "HQ-7_Group",
+		cratesRequired = 1,
+		aaLaunchers = 2,
+		unitsCnt = 2,
+        count = 1,
+		hasLimit = true,
+        parts = {
+            {name = "HQ-7_LN_SP", desc = "红旗-7(HQ-7)近程地空导弹发射车" , launcher = true},
+			--{name = "HQ-7_STR_SP", desc = "红旗-7(HQ-7)近程地空导弹雷达车" },
+        },
+        --repair = "HQ-7_LN_SP Group Repair",
+    },
+	{
+        name = "猎豹(Gepard)双管自行高炮小队",
+		sysName = "Gepard Group",
+		cratesRequired = 1,
+		aaLaunchers = 2,
+		unitsCnt = 2,
+        count = 2,
+		hasLimit = false,
+        parts = {
+            {name = "Gepard", desc = "猎豹(Gepard)双管自行高炮" , launcher = true},
+        },
+        --repair = "HQ-7_LN_SP Group Repair",
+    },
+    {
+        name = "远程火箭炮(BM27)发射阵地",
+		sysName = "BM27 Group",
+		cratesRequired = 2,
+		aaLaunchers = 2,
+		unitsCnt = 3,
+        count = 2,
+		hasLimit = false,
+        parts = {
+            {name = "Uragan_BM-27", desc = "远程火箭炮(BM27)" , launcher = true},
+			{name = "ZIL-135", desc = "远程火箭炮(BM27)补弹车2"},
+        },
+        repair = "BM27 Group Repair",
+    },
+	{
+        name = "山毛榉(SA-11)地空导弹阵地",
+		sysName = "SA-11 Buk",
+		cratesRequired = 3,
+		aaLaunchers = 3,
+		unitsCnt = 7,
+        count = 5,
+		hasLimit = true,
+        parts = {
+            {name = "SA-11 Buk LN 9A310M1", desc = "山毛榉地空导弹发射车" , launcher = true},
+            {name = "SA-11 Buk CC 9S470M1", desc = "山毛榉地空导弹指挥车"},
+            {name = "SA-11 Buk SR 9S18M1", desc = "山毛榉地空导弹雷达车"},
+			{name = "ZIL-135", desc = "山毛榉(SA-11)地空导弹阵地补弹车2"},
+        },
+        repair = "SA-11 BUK Repair",
+    },
+    {
+        name = "库班河(SA-6)地空导弹阵地",
+		sysName = "SA-6 Buk",
+		cratesRequired = 2,
+		aaLaunchers = 3,
+		unitsCnt = 5,
+        count = 3,
+		hasLimit = true,
+        parts = {
+            {name = "Kub 2P25 ln", desc = "库班河地空导弹发射车" , launcher = true},
+            {name = "Kub 1S91 str", desc = "库班河地空导弹雷达车"},
+			{name = "ZIL-135", desc = "库班河(SA-6)地空导弹阵地补弹车"},
+        },
+        repair = "SA-6 BUK Repair",
+    },
+    --[[{
+        name = "NASAMS地空导弹阵地",
+		sysName = "NASAMS Group",
+		cratesRequired = 2,
+		aaLaunchers = 2,
+		unitsCnt = 6,
+        count = 4,
+		hasLimit = false,
+        parts = {
+            {name = "NASAMS_LN_C", desc = "NASAMS地空导弹发射车" , launcher = true},
+            {name = "NASAMS_Radar_MPQ64F1", desc = "NASAMS地空导弹雷达车"},
+            {name = "NASAMS_Command_Post", desc = "NASAMS地空导弹指挥车"},
+			{name = "ZIL-135", desc = "NASAMS地空导弹阵地补弹车2"},
+        },
+        repair = "NASAMS Repair",
+    },]]
+	{
+        name = "道尔阵地（3箱3车+补给）",
+		sysName = "SA-15 Buk",
+		cratesRequired = 3,
+		aaLaunchers = 3,
+		unitsCnt = 5,
+        count = 3,
+		hasLimit = true,
+        parts = {
+            --{name = "SA-11 Buk LN 9A310M1", desc = "山毛榉地空导弹发射车" , launcher = true},
+            --{name = "SA-11 Buk CC 9S470M1", desc = "山毛榉地空导弹指挥车"},
+           -- {name = "SA-11 Buk SR 9S18M1", desc = "山毛榉地空导弹雷达车"},
+			{name = "ZIL-135", desc = "道尔(SA-15)地空导弹阵地补弹车2"},
+			{name = "Tor 9A331", desc = "道尔(SA-15)雷达地空导弹发射车", launcher = true },
+			--{name = "Dog Ear radar", desc = "指挥车"},
+			--{ weight = 625, desc = "通古斯卡(SA-19)防空系统战车", unit = "2S6 Tunguska", cratesRequired = 1, loadable = false },
+			--{ weight = 775, desc = "山毛榉(SA-11)地空导弹阵地", unit = "SA-11 Buk", cratesRequired = 2, loadable = false },
+        },
+        repair = "SA-15 BUK Repair",
+    },
+	 {
+        name = "补给小队",
+		sysName = "Back Group",
+		cratesRequired = 1,
+		aaLaunchers = 1,
+		unitsCnt = 2,
+        count = 2,
+		hasLimit = false,
+        parts = {
+            --{name = "Ural-375", desc = "补弹车1"},
+            {name = "M 818", desc = "补弹车2"},
+        },},
+		 {
+        name = "SAU Msta小队",
+		sysName = "SAU Msta Group",
+		cratesRequired = 1,
+		aaLaunchers = 2,
+		unitsCnt = 2,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "SAU Msta", desc = "SAU Msta自行火炮", launcher = true  },
+
+        },},
+        {
+            name = "M109小队",
+            sysName = "M109 Group",
+            cratesRequired = 1,
+            aaLaunchers = 2,
+            unitsCnt = 2,
+            count = 1,
+            hasLimit = false,
+            parts = {
+                {name = "M-109", desc = "M109自行火炮", launcher = true  },
+    
+            },},
+        {
+            name = "PLZ05小队",
+            sysName = "PLZ05 Group",
+            cratesRequired = 1,
+            aaLaunchers = 2,
+            unitsCnt = 2,
+            count = 1,
+            hasLimit = false,
+            parts = {
+                {name = "PLZ05", desc = "M109自行火炮", launcher = true  },
+    
+            },},
+            {
+                name = "T155小队",
+                sysName = "T155 Group",
+                cratesRequired = 1,
+                aaLaunchers = 2,
+                unitsCnt = 2,
+                count = 1,
+                hasLimit = false,
+                parts = {
+                    {name = "T155_Firtina", desc = "T155自行火炮", launcher = true  },
+        
+                },},
+        {
+            name = "达纳小队",
+            sysName = "Dana Group",
+            cratesRequired = 1,
+            aaLaunchers = 2,
+            unitsCnt = 2,
+            count = 1,
+            hasLimit = false,
+            parts = {
+                {name = "SpGH_Dana", desc = "达纳卡车炮", launcher = true  },
+    
+            },},
+		 {
+        name = "M1045 HMMWV Armament小队",
+		sysName = "M1045 HMMWV Armament Group",
+		cratesRequired = 1,
+		aaLaunchers = 2,
+		unitsCnt = 2,
+        count = 1,
+		hasLimit = false,
+        parts = {
+			{name = "M1045 HMMWV Armament", desc = "M1045 HMMWV Armament陶氏悍马", launcher = true  },
+        },},
+		 {
+        name = "LAV-25小队",
+		sysName = "LAV-25 Group",
+		cratesRequired = 1,
+		aaLaunchers = 2,
+		unitsCnt = 2,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "LAV-25", desc = "LAV-25步战车", launcher = true },
+        },},
+		 {
+        name = "M-2 Bradley小队",
+		sysName = "M-2 Bradley Group",
+		cratesRequired = 1,
+		aaLaunchers = 2,
+		unitsCnt = 2,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "M-2 Bradley", desc = "M-2 Bradley步战", launcher = true },
+        },},
+		{
+        name = "M1134 Stryker ATGM小队",
+		sysName = "M1134 Stryker ATGM Group",
+		cratesRequired = 1,
+		aaLaunchers = 2,
+		unitsCnt = 2,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "M1134 Stryker ATGM", desc = "M1134 Stryker ATGM导弹车", launcher = true },
+        },},
+
+
+		 {
+        name = "通古斯卡小队",
+		sysName = "2S6 Tunguska Group",
+		cratesRequired = 1,
+		aaLaunchers = 2,
+		unitsCnt = 2,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "2S6 Tunguska", desc = "通古斯卡", launcher = true },
+        },},
+
+		{
+        name = "飞毛腿导弹",
+		sysName = "Scud_B Group",
+		cratesRequired = 2,
+		aaLaunchers = 1,
+		unitsCnt = 1,
+        count = 1,
+		hasLimit = false,
+        parts = {
+            {name = "Scud_B", desc = "飞毛腿导弹", launcher = true },
+        },},
 }
 
 
