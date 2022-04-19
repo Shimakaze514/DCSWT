@@ -133,44 +133,18 @@ flankerObj.prefixes = {
 }
 
 flankerObj.instructorPlayerUCID = {
-  --"7c97087882d2400431e1582fa84e521c", --Power
-  --"53ef258f67939c3ef7f8af8be99c3605", --GS15
   "5779b29a3c40ed26bbc82529c83c8d89", --Killer
-  --"54f64a25beed2f9e858c0820b8031b10", --Leafyyy
-  --"cfe69a1ad3c14c13df965a521587d426", --707
   "f638e532a5489d1255f4c9dcea3d7ad2", --XZF
-  --"438dcc14ab7e0354d0c7a8da5d058c43", --躲猫猫
-  --"7bfce855f7659b70719406943d638681", --CYW（ACT）
-  --"2834454fe35144ce8283ef2ac97c63ea", --烟雨焉（ACT）
-  --"2fd51998f3534b2de242fe19a5fc1404", --E7-4（ACT）
-  --"2ba36d92536c2b5b270dc31d92b2ec06", --CHINA096（ACT）
   "47b5d124a9fa7718bbfe820a57074e0d", --jacky
   "0110829137d2d76812b0bdac636d197c", --jacky2
-  --"e1edb8eabd69354dba103dadcb7594a8", --GTX740
-  --"34a4a2a6a8939621fc568bbef69bcad4", --Mobius118
-  --"e13723cf908a5af20b6c0970c1dc8265", --
-  --"e13723cf908a5af20b6c0970c1dc8265", --ling
-
-
   "bc5894bb75db1d2451ef5a7e95c3cd0f" --老三小号
 }
 
 flankerObj.observerPlayerUCID = {
-  -- "7c97087882d2400431e1582fa84e521c", --Power
-  -- "53ef258f67939c3ef7f8af8be99c3605", --GS15
    "5779b29a3c40ed26bbc82529c83c8d89", --Killer
-  -- "54f64a25beed2f9e858c0820b8031b10", --Leafyyy
-  -- "cfe69a1ad3c14c13df965a521587d426", --707
    "f638e532a5489d1255f4c9dcea3d7ad2", --XZF
-  -- "438dcc14ab7e0354d0c7a8da5d058c43", --躲猫猫
    "47b5d124a9fa7718bbfe820a57074e0d", --jacky
    "0110829137d2d76812b0bdac636d197c", --jacky2
-  -- "e13723cf908a5af20b6c0970c1dc8265", --ling
-  -- "34a4a2a6a8939621fc568bbef69bcad4", --Mobius118
-  -- "e1edb8eabd69354dba103dadcb7594a8", --GTX740
-
-
-
   "bc5894bb75db1d2451ef5a7e95c3cd0f" --老三小号
 }
 
@@ -182,100 +156,26 @@ flankerObj.commanderPlayerUCID = {
    "cfe69a1ad3c14c13df965a521587d426", --707
    "bc5894bb75db1d2451ef5a7e95c3cd0f", --老三小号
    "e13723cf908a5af20b6c0970c1dc8265", --ling
-  -- "bb43cf810930a7da6ca06fd66022e0cb", --BFA-SIR
    "2834454fe35144ce8283ef2ac97c63ea", --烟雨兮
-  -- "bc44055c29043ef394b55c527c1d34ac", --topworker
-  -- "28231375a464e605549bcbad586d6adf", --勇士-03/冰箱
-  -- "70851dd3018186dc58b9c0417e468c59", --黑蛇-99/老油条
-  -- "fa711baad5d9becf3b9954eb764150b1", --seafox
    "b74bd82c6786a28b4a266332cfd73a78", --JG54_NF2
-  -- "92128647e1f1c3824f0639a1468aed87", --Needle
-  -- "09cce0cbb24a007fa44ad091fa16a493", --solo
-  -- "b96c10e850802b0d6da81d385b137777", --yanyu
-  -- "c03bea9b1408200a2857c9053c6c5e61", --=CNF=101
-  -- "fdcdf87fc9f76a2121e8707daddadc16", --=CNF=405
    "cda5196b39a41922664447ca5d355625", --=CNF=801
-  -- "f1d20ddfd5f19c20e58d79f7839fde8c", --TG-790/LingYun
-  -- "9c385a36f8df68ac0bc8b27af328799d", --3GO*SN-1911
-  -- "ed3cadf3d6a8e1574116f9493b4a4d38", --1027
-  -- "42a4c3feef1500df35d6153ed5fdf84c", --大大怪将军
    "438dcc14ab7e0354d0c7a8da5d058c43", --躲猫猫
-  -- "4e0e11b27ebb3db35283af9a3c817756", --Jet
    "e1edb8eabd69354dba103dadcb7594a8", --GTX740
-  -- "a6ad8b1ba824c909956426a849c76df7", --tree8418
    "f638e532a5489d1255f4c9dcea3d7ad2", --XZF
-  -- "8e0d8501900ec802e1fd37eb31487cec", --inSky_1979
-  -- "b5dd5119a13a773718969019a8294cca", --inSky_1155
-  -- "95b25ae7b1d6fbdc3f142f302f9b0b30", --5G
-  -- "2ce1b0acd6384623152fd70a3ce38d18", --inSky_1821
-  -- "c0c3f039b781b06d66f50bcc1b7dc23f", --lunzi
-  -- "1544538a4aa76f113cc809a2b0ccc812", --靶机5号
-  -- "2e62443d6baa779d9f51139270e8255f", --L9493(来之不易服务器成员)
-
    "ea354e953e367623a21e1fb0e380f163", --453
    "113b8f49955db71265fc0b9a314b11d0", --Akamu-LIN
-  -- "1af829a04058bded13ccd50f91ad866c", --hardrian
-  -- "c2e6ed1fce9133b957e4cbf4412824a8", --逍
    "e99d5cd57c2ebc8b33ac0193a9b7d37d", --TY-127
-  -- --"c178de5e261dde37bdc2ae05adad9d0e", --Lau-Hornet--打自己家载具
    "70bab935c8a142b867767578f8ee5d86", --时光（少尉）
-  -- "eae6f83ee3693287e92229d7eeab25b3", --nerf on board
-  -- "7233fef166e3ed8bab060f91b0391cd0", --17
-  -- "091ad3d350257a38880d2d972aac2f91", --Hanson
-  -- "ed51e834169636fb1d19c2cf9eed1dc8", --MAC28
    "47b5d124a9fa7718bbfe820a57074e0d", --jacky
    "0110829137d2d76812b0bdac636d197c", --jacky2
-  -- "41b992a2b5169fb3a572813af9fb1641", --608
-  -- "edce540eb574ca8ebd9661bd103325a4", --大兔兔（狐狸）
-  -- "3530d77a525afcec161b9f1b23a602b9", --噬魂真龙
-  -- "f3ac0edaf417b2d42313d38a83bc0f96", --702
    "7bfce855f7659b70719406943d638681", --CYW（ACT）
-  -- "2e8d44d1b41597ce8c87cd693c99f17d", --foxmate
    "2fd51998f3534b2de242fe19a5fc1404", --E7-4
-  -- "2cff00d1c05f84bb44c67fe2771d413f", --shenhao
    "370b4626a2d29f5d508025c3eb323fc0", --咸鱼48
-  -- "4f9d041e551426a59368c2a1803a45a4", --QFAN
-  -- "97a83017053e3a77fb330779d2d8d311", --Libertyboy
-  -- "f5ff4acbf6caf8d90d57429dc98b0dbe", --liebestraum
-  -- "d8c04a6e3d3d37fcd3b4b1c4fd6cac8f", --MengYing
-  -- "4de6c0e8ee50859dafb22654b7246ced", --拉普兰德是条傻狗
    "b2aedd36524b343813ace0ea2e1ec557", --SharkFred-324
-  -- "a33b6fd07e57b319a0d0c9f58920fc7c", --blacklotus
-  -- "1bf8bab423d10b5d4c59aa666418525a", --FTXZ
    "7fe81017d08d3ba2a867583bf05ed198", --TY-127_steam
    "715c9dbd0e28d6e609baadfe74e66502", --1527-2
-  -- "fe03b50934b07bad9fac1d3458657835", --lkyfly1957
-  -- "6a409da661221e29ec730ff838a8f902", --企鹅046
-  -- "da5ead5090a19373c05935faa01f0069", --silver-LYN
-  -- "b3ef7e5892b76bc1e348cf10c7c45747", --银河天路
-  -- "228cee4ad5a9657ba34d339b47781314", --Blingbling
-  -- "bfb6a797d141c39b2ffedb63fee31b8e", --transizirco
-  -- "007d24ed33d403b6a6bfa200fc46c8e1", --caesar36(SDL-036雷龙)
-  -- "1d4da3b6a91d7f56c43fb4a73944c446", --mackurt
-  -- "0ed82e5f077c8cce5b2eff7c59469c7e", --会飞小狐狸的浮莲子
-  -- "29df88dec3911ff0baed5ff8bffda309", --M117
-  -- "d5910be629d54e82f4fd67965bc78456", --ANA6047
-  -- "1882bd06cd73423f4bce5b4bfe0c3285", --S-FC-GiantRat
-  -- "f11c85e8e10cedce3c44719e41e227b6", --happy
-  -- "f5e4723eeacd8eaa090ab173761141a7", --蒙大拿
-  -- "7fc7e9e5668e5e01f6c9a7f9444d8807", --creeper
-  -- "124c92f96034a940f72633215a4d06a3", --S-FC-神奇飞船
-  -- "a69b60ed4a565811db5c0cac08e55ff7", --203同时也是Gs.Fhuidao1942(集装箱杀手)是否同一人未知
-  -- "0dbc28ee7f2f1a30999ba7bb011512ea", --acc
    "34a4a2a6a8939621fc568bbef69bcad4", --Mobius118
-  -- "31eefe9527fa79d7a7119f6c1cff1935", --lanfeng123
-  -- "b9c3f9f7d49122fb35c131b7c831e5f6", --Black Shadow
-  -- "759acd7e72e6a016618ad8e8c8d9b9e9", --白满川
-  -- "f9b693cde53ed126c51dbbb861f143f3", --Hawk
-  -- "eec424c726973330eef5f5ea28c3603a", --Taiho
-  -- "e51ce8bae0583541c57083e4d700da63", --暗星一号
-  -- "3de7696ebf0d54f4c5aa60e34a0eec81", --flankerjun
-  -- "dbc3cb45ac9d5d75d85ff5e3090605d2", --马桶里翻滚(ooo)
-  -- --"d0abffeaa72a8e8576a1d26373e70175", --Yukikaze(NP小屁孩)
   "86675e0445d196527d8cda5e8394b0c1", --CHL-124西瓜
-  -- "984adc972a43a806870bc63b47b2e200", --O_O (qq:491073474)
-  -- "2cf7dd1260c9f167e389b315332ae1cc", --RedNeck-白石清kb
-  -- "83d77298eb43d5af4f3084dd404ba63e", --BLUE(qq:22260222)
   "ba83f771724995a3be7d25427c6c2541", --thunder(qq:1483254940)
   "26181d97dd4b19537da03d18d465df59", --新手进场好烦(qq:873098104)
   "0ac5550518c7ecdc46e34442fc1eec1f", --雨夜的闯荡(qq:743464405)
@@ -298,9 +198,7 @@ flankerObj.commanderPlayerUCID = {
   "2abea9f8e286b3fa5ebca1c8b3705ca6", --咸某小号
   "1882bd06cd73423f4bce5b4bfe0c3285", --大老鼠
   "c931d2c32f894a9c134591c14ed0616b", --555
-
-  "dfdcc8c5e909c607a360b74c8026fd1b" 
-  --afarros045
+  "dfdcc8c5e909c607a360b74c8026fd1b"--afarros045
 }
 
 -- Time interval determing if a player can change to the oppsite side
@@ -862,3 +760,5 @@ end
 DCS.setUserCallbacks(flankerObj) -- here we set our callbacks
 
 net.log("Loaded - SIMPLE SLOT BLOCK v" .. flankerObj.version .. " modified by Flanker")
+
+

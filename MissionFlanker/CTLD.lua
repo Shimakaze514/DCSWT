@@ -593,14 +593,14 @@ ctld.extractableGroups = {
 -- When a logistic unit is destroyed, you will no longer be able to spawn crates
 
 ctld.logisticUnits = {
+    '古达乌塔本场CC',
+    '苏呼米前线CC',
+    '奥恰姆奇拉中场CC',
+    '阿纳克里厄中场CC',
+    '科尔奇前线CC',
     '库塔伊西本场CC',
     'logistic Blue #001-1',
-    '科尔奇前线CC',
     'logistic Blue #006',
-    '阿纳克里厄中场CC',
-    '奥恰姆奇拉中场CC',
-    '苏呼米前线CC',
-    '古达乌塔本场CC',
 }
 
 -- ************** UNITS ABLE TO TRANSPORT VEHICLES ******************
@@ -2794,7 +2794,7 @@ end
 -- Removes troops from transport when it dies
 function ctld.checkTransportStatus()
 
-    timer.scheduleFunction(ctld.checkTransportStatus, nil, timer.getTime() + 3)
+    timer.scheduleFunction(ctld.checkTransportStatus, nil, timer.getTime() + 10)
 
     for _, _name in ipairs(ctld.transportPilotNames) do
 
@@ -2876,7 +2876,7 @@ end
 
 function ctld.checkHoverStatus()
     --ctld.logDebug(string.format("ctld.checkHoverStatus()"))
-    timer.scheduleFunction(ctld.checkHoverStatus, nil, timer.getTime() + 1.0)
+    timer.scheduleFunction(ctld.checkHoverStatus, nil, timer.getTime() + 5)
 
     local _status, _result = pcall(function()
 
@@ -3361,7 +3361,10 @@ function ctld.getCrateObject(_name)
     return _crate
 end
 
-
+function ctld.dropAndUnpackCrates(_arguments)
+    ctld.dropSlingCrate(_arguments)
+    ctld.unpackCrates(_arguments)
+end
 
 function ctld.unpackCrates(_arguments)
 
@@ -5186,7 +5189,7 @@ end
 function ctld.addF10MenuOptions()
     -- Loop through all Heli units
 
-    timer.scheduleFunction(ctld.addF10MenuOptions, nil, timer.getTime() + 10)
+    timer.scheduleFunction(ctld.addF10MenuOptions, nil, timer.getTime() + 60)
 
     for _, _unitName in pairs(ctld.transportPilotNames) do
 
@@ -5285,7 +5288,7 @@ function ctld.addF10MenuOptions()
                                     missionCommands.addCommandForGroup(_groupId, "Load Nearby Crate", _crateCommands, ctld.loadNearbyCrate,  _unitName )
                                 end
                             end]]
-
+                            missionCommands.addCommandForGroup(_groupId, "卸下 AND 部署", _crateCommands, ctld.dropAndUnpackCrates, { _unitName })
                             missionCommands.addCommandForGroup(_groupId, "Unpack Any Crate", _crateCommands, ctld.unpackCrates, { _unitName })
 
                             if ctld.slingLoad == false then
@@ -6658,7 +6661,7 @@ function ctld.initialize(force)
 
         --timer.scheduleFunction(ctld.refreshRadioBeacons, nil, timer.getTime() + 5)
         timer.scheduleFunction(ctld.refreshSmoke, nil, timer.getTime() + 10)
-        timer.scheduleFunction(ctld.addF10MenuOptions, nil, timer.getTime() + 30)
+        timer.scheduleFunction(ctld.addF10MenuOptions, nil, timer.getTime() + 10)
 
         if ctld.enableCrates == true and ctld.slingLoad == false and ctld.hoverPickup == true then
             timer.scheduleFunction(ctld.checkHoverStatus, nil, timer.getTime() + 1)

@@ -173,7 +173,7 @@ function dsave.typeBelongsToCC(_typename)
 end
 
 
-function dsave.loadDsaveData()
+function dsave.loadDsaveUnitsData()
     local File,err=io.open(dsave.DSaveGroupsFilePath,"r");
 
     local tableData
@@ -214,7 +214,7 @@ function dsave.loadDsaveData()
     dsave.logInfo('地面单位载入完成')
 end
 
-function dsave.loadDsaveData2()
+function dsave.loadDsaveCCsData()
 
     local File2,err2=io.open(dsave.DSaveCCsFilePath,"r");
     local tableData2
@@ -249,11 +249,28 @@ function dsave.loadDsaveData2()
     dsave.logInfo('Load records from saved data success! ')]]
 end
 
+function dsave.refreshFlagsAtMissionStart()
+    for _, _name in pairs(ctld.logisticUnits) do
+        local _logistic = StaticObject.getByName(_name)
+        if _logistic ~= nil and _logistic:getLife() > 0 then
+            NP.setRelatedZone(_logistic:getName(),dsave.coalitionToString(_logistic:getCoalition()))
+        end
+    end
+    dsave.logInfo("Refresh userFlags complete!")
+end
 
-timer.scheduleFunction(dsave.loadDsaveData, nil, timer.getTime() + 20)
-timer.scheduleFunction(dsave.loadDsaveData2, nil, timer.getTime() + 5)
+function dsave.coalitionToString(_coalition)
+    if _coalition==1 then
+        return "red"
+    else
+        return "blue"
+    end
+end
+
+timer.scheduleFunction(dsave.loadDsaveUnitsData, nil, timer.getTime() + 20)
+timer.scheduleFunction(dsave.loadDsaveCCsData, nil, timer.getTime() + 5)
+timer.scheduleFunction(dsave.refreshFlagsAtMissionStart, nil, timer.getTime() + 12)
+
 timer.scheduleFunction(dsave.recordAllVehiclesElements, mist.DBs.dynGroupsAdded, timer.getTime() + 50)
---timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + 30)
 
-
-net.log("LOADING SUCCESS - DYNAMIC SAVE version "..dsave.Version ..", script by VL")
+net.log("LOAD SUCCESS - DYNAMIC SAVE version "..dsave.Version ..", script by VL")

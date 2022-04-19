@@ -32,24 +32,6 @@ NP.timeStartBlueAWACS = 0
 NP.timeStartRedAWACS = 0
 NP.needrespawnAWACS = false
 
-NP.CCList = {
-    '古达乌塔本场CC',
-    '苏呼米前线CC',
-    '奥恰姆奇拉中场CC',
-    '阿纳克里厄中场CC',
-    '科尔奇前线CC',
-    '库塔伊西本场CC',
-}
-
-NP.ZoneList = {
-    '古达乌塔',
-    '库塔伊西',
-    '科尔奇前线停机坪',
-    '科尔奇机场',
-    '苏呼米前线停机坪',
-    '苏呼米机场',
-}
-
 function NP.logError(message)
     env.info("[NP] Err: "  .. message)
 end
@@ -90,13 +72,13 @@ function NP.capture(_args)
         oppsiteCountryID =country.id.CJTF_BLUE
         oppsiteCountrySide="blue"
     end
-    _logisticData.groupName=_logisticData.groupName.. ' '
+    _logisticData.groupName=_logisticData.groupName.. '`'
     _logisticData.countryId= oppsiteCountryID
     _logisticData.groupId=ctld.getNextGroupId()
     _logisticData.units[1].countryId= oppsiteCountryID
     _logisticData.units[1].coalition= oppsiteCountrySide
     _logisticData.units[1].unitId= ctld.getNextUnitId()
-    _logisticData.units[1].unitName=_logisticData.units[1].unitName..' '
+    _logisticData.units[1].unitName=_logisticData.units[1].unitName..'`'
     --_logisticData.units[1].alt=_logisticData.units[1].alt-5 --TODO cc浮空
 
     _logistic:destroy()--把老一边的cc做掉
@@ -107,17 +89,26 @@ function NP.capture(_args)
     --maybe Done 把离这个最近的zone，所关联的红蓝直升机的flag值设置，让上飞机权限翻转
     trigger.action.outText("战区".._logisticData.groupName.."被".._side.."占领", 10)
 end
---TODO 无人机可以生成，但是无法被动态存储代码捕捉载入
+
 function NP.setRelatedZone(groupName,coalition)
     local ccname
-    for k,v in pairs(NP.CCList) do
+    for k,v in pairs(ctld.logisticUnits) do
         if string.find(groupName, v) ~= nil then
             ccname = v
             break
         end
     end
-    for k,v in pairs(Unitlist[ccname][coalition]) do
-        trigger.action.setUserFlag(v, 0)    
+    if ccname == nil then
+        NP.logError('[setRelatedZone] 在ctld.logisticUnits数据表中找不到对应的cc: '..groupName ..'| 阵营:'..coalition)
+        return
+    end
+    if  Unitlist[ccname] == nil then
+        NP.logError('[setRelatedZone] 在Unitlist.list数据表中找不到对应cc的数据: '.. ccname..'| 阵营:'..coalition)
+        return
+    end
+
+    for _,_Unit in pairs(Unitlist[ccname][coalition]) do
+        trigger.action.setUserFlag(_Unit, 0)
     end
     local oppsitecoalition
     if coalition == 'red' then
@@ -125,11 +116,12 @@ function NP.setRelatedZone(groupName,coalition)
     else
        oppsitecoalition = 'red'
     end
-    for k,v in pairs(Unitlist[ccname][oppsitecoalition]) do
-        trigger.action.setUserFlag(v, 100)    
+    for _,_Unit in pairs(Unitlist[ccname][oppsitecoalition]) do
+        trigger.action.setUserFlag(_Unit, 100)
     end
-end
 
+    NP.logInfo('[setRelatedZone] 翻转直升机机位权限完成: '.. ccname..'| 阵营:'..coalition)
+end
 
 
 function NP.getLogisticData(_logistic)
@@ -249,4 +241,4 @@ end
 mist.scheduleFunction(NP.respawnTankerFlanker, {}, timer.getTime() + 300)
 mist.scheduleFunction(NP.respawnAWACSOnlyFlanker, {}, timer.getTime() + 300)
 
-net.log("LOADING SUCCESS - NP version "..NP.Version ..", script by VL")
+net.log("LOAD SUCCESS - NP version "..NP.Version ..", script by VL")

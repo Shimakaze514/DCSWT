@@ -307,3 +307,26 @@ for _, _group in pairs(mist.DBs.groupsByName) do
         end
     end
 end
+NP.logDebug(Unitlist.list['苏呼米前线CC']['red'])
+
+for k,v in pairs(Unitlist.list['苏呼米前线CC']['red']) do
+NP.logDebug(v)
+end
+
+for k,_Units in pairs(Unitlist.list['科尔奇前线CC']['blue']) do
+NP.logDebug(_Units)
+NP.logDebug(k)
+    --for _,_unit in pairs(_Units) do
+    --    NP.logDebug(ctld.p(_unit))
+    --end
+end
+
+for _, _name in pairs(ctld.logisticUnits) do
+local _logistic = StaticObject.getByName(_name)
+if _logistic ~= nil and _logistic:getLife() > 0 then
+NP.logDebug(ctld.p(_logistic))
+end
+end
+
+NP.logDebug(trigger.action.getUserFlag('【科尔奇】雌鹿（对地+运输）B1-2'))
+NP.logDebug(trigger.action.getUserFlag('【苏呼米】黑鲨（对地+运输）B1-2'))

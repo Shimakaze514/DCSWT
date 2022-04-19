@@ -24,7 +24,9 @@ dofile(lfs.writedir() .. "Scripts/MissionFlanker/CTLD.lua")
 
 dofile(lfs.writedir() .. "Scripts/MissionFlanker/DynamicSave.lua")
 
+dofile(lfs.writedir() .. "Scripts/StaticDataBase/UnitsList.lua")
 dofile(lfs.writedir() .. "Scripts/MissionFlanker/NPV2.lua")
+
 
 --dofile(lfs.writedir() .. 'Scripts/ServerData/init.lua')
 
