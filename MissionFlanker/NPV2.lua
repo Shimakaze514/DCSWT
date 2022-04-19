@@ -3,8 +3,10 @@
     依赖ctld和mist
 
  ]]
-
-
+--TODO 红方选蓝方的前线有问题
+--TODO 任务里面蓝方的名字
+--TODO 任务里面是不是有脚本
+--TODO 选边限制
 NP = {}
 
 NP.Id = "NP - "
@@ -54,13 +56,18 @@ end
 
 
 function NP.capture(_args)
+    NP.logDebug('进入cap函数')
     local _unit = _args[1]
+    NP.logDebug('开始找最近的cc')
     local _closeEnough,_logistic=NP.closeEnoughFromLogisticZone(_unit)
     if _closeEnough == false then
+        NP.logDebug('不够进')
+        --TODO 这个无法通知到人
         trigger.action.outTextForGroup(ctld.getGroupId(_unit), "你附近有敌方cc吗就想占领，等你开到cc脚下了再按啊~", 10)
         return
     end
 
+    NP.logDebug('开始从mist获取数据')
     local _logisticData = NP.getLogisticData(_logistic)
     local _side = _logistic:getCoalition()
     local oppsiteCountryID
@@ -80,14 +87,16 @@ function NP.capture(_args)
     _logisticData.units[1].unitId= ctld.getNextUnitId()
     _logisticData.units[1].unitName=_logisticData.units[1].unitName..'`'
     --_logisticData.units[1].alt=_logisticData.units[1].alt-5 --TODO cc浮空
-
+    NP.logDebug('_logistic:'..ctld.p(_logistic))
+    NP.logDebug('_logisticData:'..ctld.formatTable(_logisticData))
+    NP.logDebug('_unit:'..ctld.p(_unit))
     _logistic:destroy()--把老一边的cc做掉
     mist.dynAddStatic(_logisticData)--生成另一阵营的新cc，同一位置
     dsave.recordAllCCsElements()--动态保存cc
     table.insert(ctld.logisticUnits, _logisticData.units[1].unitName)--新的单位加到cc的白名单
     NP.setRelatedZone(_logisticData.groupName,_logisticData.units[1].coalition)
     --maybe Done 把离这个最近的zone，所关联的红蓝直升机的flag值设置，让上飞机权限翻转
-    trigger.action.outText("战区".._logisticData.groupName.."被".._side.."占领", 10)
+    trigger.action.outText("战区".._logisticData.groupName.."被".._side.."占领", 20)
 end
 
 function NP.setRelatedZone(groupName,coalition)

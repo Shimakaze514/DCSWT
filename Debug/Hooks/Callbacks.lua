@@ -115,7 +115,7 @@ function LoadLua.allowEnterSlot (_playerID,_side,_slotID)
   local _unitRole = DCS.getUnitType(_slotID)
   local _ucid = net.get_player_info(_playerID, "ucid")
 
-  --TODO
+
   if _category ~= nil and _category=='helicopter' then
     if LoadLua.getFlagValue(_groupName) == 0 then
       return true
@@ -137,7 +137,7 @@ function LoadLua.allowEnterSlot (_playerID,_side,_slotID)
 
   return true
 end
---TODO 搞清楚换边为什么没法用
+
 function LoadLua.getFlagValue(_flag)
   local _status, _error = net.dostring_in("server", ' return trigger.misc.getUserFlag("' .. _flag .. '"); ')
   if not _status and _error then

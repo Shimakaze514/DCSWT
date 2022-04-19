@@ -232,6 +232,7 @@ function dsave.loadDsaveCCsData()
         if File~=nil then
             io.close(File2)
         end
+        timer.scheduleFunction(dsave.loadDsaveCCsData, nil, timer.getTime() + 4)
         return
     end
     dsave.logInfo('extract data from json file cc')
@@ -268,7 +269,7 @@ function dsave.coalitionToString(_coalition)
 end
 
 timer.scheduleFunction(dsave.loadDsaveUnitsData, nil, timer.getTime() + 20)
-timer.scheduleFunction(dsave.loadDsaveCCsData, nil, timer.getTime() + 5)
+timer.scheduleFunction(dsave.loadDsaveCCsData, nil, timer.getTime() + 2)
 timer.scheduleFunction(dsave.refreshFlagsAtMissionStart, nil, timer.getTime() + 12)
 
 timer.scheduleFunction(dsave.recordAllVehiclesElements, mist.DBs.dynGroupsAdded, timer.getTime() + 50)

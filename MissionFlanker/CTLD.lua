@@ -712,135 +712,66 @@ ctld.spawnableCrates = {
         -- dont use that option with the HAWK Crates
         --{ weight = 500, desc = "HMMWV - TOW", unit = "M1045 HMMWV TOW", side = 2 },
         --{ weight = 505, desc = "HMMWV - MG", unit = "M1043 HMMWV Armament", side = 2 },
-		{ weight = 1506, desc = "随机主战坦克(Random MBT)", unit = "tank Repair", cratesRequired = 1, loadable = true },  
+		{ weight = 1506, desc = "随机主战坦克(Random MBT)", unit = "tank Repair"},
     },   
     
-    ["步兵战车(IFV)"] = {   
-        --{ weight = 1340, desc = "随机步战车", unit = "IFV Repair", cratesRequired = 1, loadable = true },
-        
-
-
-		--{ weight = 925, desc = "主战坦克M1A2", unit = "M-1 Abrams", cratesRequired = 1, loadable = false },
-		--{ weight = 1150, desc = "主战坦克T-90", unit = "T-90", cratesRequired = 1, loadable = false },
-		{ weight = 1200, desc = "轮式轻型坦克(M1128)", unit = "M1128 Stryker MGS Group", cratesRequired = 1, loadable = true },
-		{ weight = 1065, desc = "轻型装甲坦克战车(Type04A)", unit = "ZBD04A Group", cratesRequired = 1, loadable = true },
-		{ weight = 1119, desc = "反坦克导弹战车(M1134 ATGM)", unit = "M1134 Stryker ATGM Group", cratesRequired = 1, loadable = true },
+    ["步兵战车(IFV)"] = {
+		{ weight = 1200, desc = "轮式轻型坦克(M1128)", unit = "M1128 Stryker MGS Group" },
+		{ weight = 1065, desc = "轻型装甲坦克战车(Type04A)", unit = "ZBD04A Group"},
+		{ weight = 1119, desc = "反坦克导弹战车(M1134 ATGM)", unit = "M1134 Stryker ATGM Group"},
         --{ weight = 1364, desc = "(BETA)主战坦克M1A2小队", unit = "M-1 Abrams Group", cratesRequired = 1, loadable = true },
-        { weight = 976, desc = "步兵装甲战车(BTR-82A)", unit = "BTR82 Group", cratesRequired = 1, loadable = true },
-        { weight = 977, desc = "步兵装甲战车(LAV-25)", unit = "LAV-25 Group", cratesRequired = 1, loadable = true },
-        { weight = 978, desc = "步兵装甲战车(M2 Bradley)", unit = "M-2 Bradley Group", cratesRequired = 1, loadable = true },
-        --{ weight = 975, desc = "步兵装甲战车(BTR-RD)小队", unit = "BTR_D Group", cratesRequired = 1, loadable = true },
-
-		--{ weight = 920, desc = "主战坦克ZTZ-96B", unit = "ZTZ96B", cratesRequired = 1, loadable = false },
-		--{ weight = 500, desc = "可装载轻型装甲坦克战车(04A式)", unit = "ZBD04A", cratesRequired = 1, loadable = true },
-
-		--{ weight = 1100, desc = "自行榴弹炮 M-109", unit = "M-109", cratesRequired = 1, loadable = false },
-        --{ weight = 515, desc = "BRDM-2", unit = "BRDM-2", side = 1 },
-
-        --{ weight = 600, desc = "悍马 JTAC(可装载)", unit = "Hummer", cratesRequired = 1, loadable = true}, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
-        --{ weight = 525, desc = "SKP-11 - JTAC", unit = "SKP-11", side = 1, }, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
-
-        --{ weight = 100, desc = "2B11 Mortar", unit = "2B11 mortar" },
-
-        --{ weight = 250, desc = "SPH 2S19 Msta", unit = "SAU Msta", side = 1, cratesRequired = 3 },
-        --{ weight = 255, desc = "M-109", unit = "M-109", side = 2, cratesRequired = 3 },
-
-        --{ weight = 252, desc = "Ural-375 Ammo Truck", unit = "Ural-375", side = 1, cratesRequired = 2 },
-        --{ weight = 253, desc = "M-818 Ammo Truck", unit = "M 818", side = 2, cratesRequired = 2 },
-
-        --{ weight = 800, desc = "FOB Crate - Small", unit = "FOB", cratesRequired = 1, loadable = true }, -- Builds a FOB! - requires 3 * ctld.cratesRequiredForFOB
-    },
+        { weight = 976, desc = "步兵装甲战车(BTR-82A)", unit = "BTR82 Group"},
+        { weight = 977, desc = "步兵装甲战车(LAV-25)", unit = "LAV-25 Group" },
+        { weight = 978, desc = "步兵装甲战车(M2 Bradley)", unit = "M-2 Bradley Group"},
+       },
 
 
 	["远程火力(Artillery)"] = {
-		  { weight = 1446, desc = "远程火箭炮(BM27)发射阵地(2箱2车+补给)", unit = "BM27 Group", cratesRequired = 2, loadable = true },
-          { weight = 1460, desc = "PLZ05自行火炮(1箱2车)", unit = "PLZ05 Group", cratesRequired = 1, loadable = true },
-          { weight = 1447, desc = "2S19自行火炮(1箱2车)", unit = "SAU Msta Group", cratesRequired = 1, loadable = true },
-          { weight = 1431, desc = "M109自行火炮(1箱2车)", unit = "M109 Group", cratesRequired = 1, loadable = true },
-          { weight = 1431, desc = "T155自行火炮(1箱2车)", unit = "T155 Group", cratesRequired = 1, loadable = true },
-          { weight = 1432, desc = "达纳卡车炮(SpGH_Dana)(1箱2车)", unit = "Dana Group", cratesRequired = 1, loadable = true },
-          { weight = 1581, desc = "飞毛腿导弹(Scud)(2箱1车)", unit = "Scud_B Group", cratesRequired = 2, loadable = true },
+		  { weight = 1446, desc = "远程火箭炮(BM27)发射阵地(2箱2车+补给)", unit = "BM27 Group"},
+          { weight = 1460, desc = "PLZ05自行火炮(1箱2车)", unit = "PLZ05 Group"},
+          { weight = 1447, desc = "2S19自行火炮(1箱2车)", unit = "SAU Msta Group"},
+          { weight = 1431, desc = "M109自行火炮(1箱2车)", unit = "M109 Group"},
+          { weight = 1435, desc = "T155自行火炮(1箱2车)", unit = "T155 Group"},
+          { weight = 1432, desc = "达纳卡车炮(SpGH_Dana)(1箱2车)", unit = "Dana Group"},
+          { weight = 1581, desc = "飞毛腿导弹(Scud)(2箱1车)", unit = "Scud_B Group"},
 	},
 
     ["近程防空(Short Range AA)"] = {
-		
-		{ weight = 963, desc = "后卫(M6)野战红外地空导弹战车", unit = "M6 Linebacker", cratesRequired = 1, loadable = true },
-		
-		{ weight = 964, desc = "箭-10(SA-13)红外地空导弹发射车", unit = "Strela-10M3", cratesRequired = 1, loadable = true },
-
-        { weight = 965, desc = "ZU-23卡车高炮(1箱2车)", unit = "ZU23 Group", cratesRequired = 1, loadable = true },
-        
-        { weight = 960, desc = "猎豹(Gepard)双管自行高炮(1箱2车)", unit = "Gepard Group", cratesRequired = 1, loadable = true },
-
-		{ weight = 1206, desc = "通古斯卡(SA-19)防空战车小队(1箱2车)", unit = "2S6 Tunguska Group", cratesRequired = 1, loadable = true },
-		--{ weight = 966, desc = "复仇者红外地空导弹发射车", unit = "M1097 Avenger", cratesRequired = 1, loadable = false },
-
+		{ weight = 963, desc = "后卫(M6)野战红外地空导弹战车", unit = "M6 Linebacker" },
+		{ weight = 964, desc = "箭-10(SA-13)红外地空导弹发射车", unit = "Strela-10M3"},
+        { weight = 965, desc = "ZU-23卡车高炮(1箱2车)", unit = "ZU23 Group" },
+        { weight = 960, desc = "猎豹(Gepard)双管自行高炮(1箱2车)", unit = "Gepard Group"},
+		{ weight = 1206, desc = "通古斯卡(SA-19)防空战车小队(1箱2车)", unit = "2S6 Tunguska Group"},
     }, 
    
    
    
     ["中远程防空(Mid&Long Range AA)"] = {
 		--{ weight = 950, desc = "道尔(SA-15)雷达地空导弹发射车", unit = "Tor 9A331", cratesRequired = 1, loadable = false },
-        { weight = 1448, desc = "罗兰(Roland)近程地空导弹(1箱2车)", unit = "Roland Group", cratesRequired = 1, loadable = true },
-        
-        { weight = 1451, desc = "HQ-7近程地空导弹(1箱2车)", unit = "HQ-7_Group", cratesRequired = 1, loadable = true },
-        
-        { weight = 1452, desc = "道尔(SA-15)地空导弹阵地(3箱3车+补给)", unit = "SA-15 Buk", cratesRequired = 3, loadable = true },
-
+        { weight = 1448, desc = "罗兰(Roland)近程地空导弹(1箱2车)", unit = "Roland Group"},
+        { weight = 1451, desc = "HQ-7近程地空导弹(1箱2车)", unit = "HQ-7_Group"},
+        { weight = 1452, desc = "道尔(SA-15)地空导弹阵地(3箱3车+补给)", unit = "SA-15 Buk" },
         --{ weight = 1454, desc = "(小队)NASAMS地空导弹阵地(2箱4车+补给)", unit = "NASAMS Group", cratesRequired = 2, loadable = false },
-        
-        { weight = 1449, desc = "(小队)库班河(SA-6)地空导弹阵地(3箱4车+补给)", unit = "SA-6 Buk", cratesRequired = 2, loadable = true },
-
-        { weight = 1453, desc = "山毛榉(SA-11)地空导弹阵地(3箱5车+补给)", unit = "SA-11 Buk", cratesRequired = 3, loadable = true },
-
-
-        --{ weight = 50, desc = "Stinger", unit = "Stinger manpad", side = 2 },
-        --{ weight = 55, desc = "Igla", unit = "SA-18 Igla manpad", side = 1 },
-
-        -- HAWK System
-        --{ weight = 540, desc = "HAWK Launcher", unit = "Hawk ln", side = 2},
-        --{ weight = 545, desc = "HAWK Search Radar", unit = "Hawk sr", side = 2 },
-        --{ weight = 550, desc = "HAWK Track Radar", unit = "Hawk tr", side = 2 },
-        --{ weight = 551, desc = "HAWK PCP", unit = "Hawk pcp" , side = 2 }, -- Remove this if on 1.2
-        --{ weight = 552, desc = "HAWK Repair", unit = "HAWK Repair" , side = 2 },
-        -- End of HAWK
-
-        -- KUB SYSTEM
-        --{ weight = 560, desc = "KUB Launcher", unit = "Kub 2P25 ln", side = 1},
-        --{ weight = 565, desc = "KUB Radar", unit = "Kub 1S91 str", side = 1 },
-        --{ weight = 570, desc = "KUB Repair", unit = "KUB Repair", side = 1},
-        -- End of KUB
-
-        -- BUK System
-        --{ weight = 1022, desc = "山毛榉地空导弹发射车 SA-11", unit = "SA-11 Buk LN 9A310M1", loadable = false },
-        --{ weight = 1023, desc = "山毛榉地空导弹雷达车 SA-11", unit = "SA-11 Buk SR 9S18M1", loadable = false },
-        --{ weight = 1024, desc = "山毛榉地空导弹指挥车 SA-11", unit = "SA-11 Buk CC 9S470M1", loadable = false },
-        -- END of BUK
-
-        --{ weight = 595, desc = "Early Warning Radar", unit = "1L13 EWR", side = 1 }, -- cant be used by BLUE coalition
-
-        --{ weight = 405, desc = "Strela-1 9P31", unit = "Strela-1 9P31", side = 1, cratesRequired = 3 },
-        --{ weight = 400, desc = "M1097 Avenger", unit = "M1097 Avenger", side = 2, cratesRequired = 1 },
-
+        { weight = 1449, desc = "(小队)库班河(SA-6)地空导弹阵地(3箱4车+补给)", unit = "SA-6 Buk"},
+        { weight = 1453, desc = "山毛榉(SA-11)地空导弹阵地(3箱5车+补给)", unit = "SA-11 Buk"},
     },
 	
 	["维护用集装箱(repair)"] = {
-        { weight = 821, desc = "山毛榉(SA-11 repair)维护箱", unit = "SA-11 BUK Repair", loadable = true },
-		{ weight = 823, desc = "道尔(SA-15 repair)维护箱", unit = "SA-15 BUK Repair", loadable = true },
+        { weight = 821, desc = "山毛榉(SA-11 repair)维护箱", unit = "SA-11 BUK Repair" },
+		{ weight = 823, desc = "道尔(SA-15 repair)维护箱", unit = "SA-15 BUK Repair"},
         --{ weight = 825, desc = "NASAMS地空导弹阵地维护箱", unit = "NASAMS Repair", loadable = false },
-		{ weight = 824, desc = "火箭炮(BM27 repair)发射阵地维护箱", unit = "BM27 Group Repair", loadable = true },
+		{ weight = 824, desc = "火箭炮(BM27 repair)发射阵地维护箱", unit = "BM27 Group Repair"},
 		--{ weight = 350, desc = "指挥部及停机坪设施维修箱", unit = "CC Repair", loadable = true },
 		
 
 	},
 	["JTAC&OTHERS等小型单位集装箱"] = {
-        { weight = 492, desc = "悍马吉普 JTAC(侦察）", unit = "Hummer", loadable = true },
-        { weight = 402, desc = "补给车(Supply Truck)", unit = "M 818", loadable = true },
-        { weight = 591, desc = "陶悍马(TOW HUMVEE) (1箱1车)", unit = "M1045 HMMWV TOW", cratesRequired = 1, loadable = true },
-        --{ weight = 503, desc = "BMD-1伞兵战车(1箱1车)", unit = "BMD-1", cratesRequired = 1, loadable = true },
-        { weight = 401, desc = "彩蛋(Easter Egg)", unit = "Pz_IV_H", cratesRequired = 1, loadable = true },
-		--{ weight = 400, desc = "(小队可装载)悍马吉普 JTAC(1箱2车)", unit = "Hummer Group",cratesRequired = 1, loadable = true }, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
-		{ weight = 325, desc = "捕食者无人机 JTAC", unit = "RQ-1A Predator", cratesRequired = 1, loadable = true }, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
+        { weight = 492, desc = "悍马吉普 JTAC(侦察）", unit = "Hummer"},
+        { weight = 402, desc = "补给车(Supply Truck)", unit = "M 818"},
+        { weight = 591, desc = "陶悍马(TOW HUMVEE) (1箱1车)", unit = "M1045 HMMWV TOW" },
+        { weight = 401, desc = "彩蛋(Easter Egg)", unit = "Pz_IV_H"},
+		{ weight = 325, desc = "捕食者无人机 JTAC", unit = "RQ-1A Predator"}, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
+        { weight = 800, desc = "FOB Crate", unit = "FOB" },
     },
     
     --["造船厂(SHIP)集装箱"] = {
@@ -1666,13 +1597,11 @@ end
 --- Tells CTLD What multipart AA Systems there are and what parts they need
 -- A New system added here also needs the launcher added
 ctld.GroupSystemTemplate = {
-
     {
         name = "轮式轻型坦克(M1128)小队",
 		sysName = "M1128 Stryker MGS Group",
 		cratesRequired = 1,
 		aaLaunchers = 2,
-
         count = 1,
 		hasLimit = false,
         parts = {
@@ -4489,12 +4418,16 @@ function ctld.getGroupTemplate(_unitName)
             return _system
         end
 
-        for _,_part in pairs(_system.parts) do
-
-            if _unitName == _part.name  then
-                return _system
-            end
+        if _system.sysName == _unitName then
+            return _system
         end
+--TODO
+        --for _,_part in pairs(_system.parts) do
+        --
+        --    if _unitName == _part.name  then
+        --        return _system
+        --    end
+        --end
     end
 
     return nil
@@ -4641,7 +4574,10 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
 
 
     local _txt = ""
-
+    local _point = _nearestCrate.crateUnit:getPoint()
+    local _xOffset = 0
+    local _yOffset = 0
+    local num = 1
     local _posArray = {}
     local _typeArray = {}
     for _name, _systemPart in pairs(_systemParts) do
@@ -4651,22 +4587,32 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
                 --add multiple launcher
                 local _launchers = _groupSystemTemplate.aaLaunchers
 
+
+
+
                 for _i = 1, _launchers do
 
                     -- spawn in a circle around the crate
                     local _angle = math.pi * 2 * (_i - 1) / _launchers
-                    local _xOffset = math.cos(_angle) * 12
-                    local _yOffset = math.sin(_angle) * 12
-
-                    local _point = _systemPart.crate.crateUnit:getPoint()
-
+                     _xOffset = math.cos(_angle) * 12
+                     _yOffset = math.sin(_angle) * 12
+                    num = num + 1
                     _point = { x = _point.x + _xOffset, y = _point.y, z = _point.z + _yOffset }
+                    --local _point = _systemPart.crate.crateUnit:getPoint()
+                    --_point = { x = _point.x + _xOffset, y = _point.y, z = _point.z + _yOffset }
 
                     table.insert(_posArray, _point)
                     table.insert(_typeArray, _name)
                 end
             else
-                table.insert(_posArray, _systemPart.crate.crateUnit:getPoint())
+                --table.insert(_posArray, _systemPart.crate.crateUnit:getPoint())
+                --table.insert(_typeArray, _name)
+                local _angle = math.pi * 2 * (num - 1) / _launchers
+                _xOffset = math.cos(_angle) * 15
+                _yOffset = math.sin(_angle) * 15
+                _point = { x = _point.x + _xOffset, y = _point.y, z = _point.z + _yOffset }
+
+                table.insert(_posArray, _point)
                 table.insert(_typeArray, _name)
             end
     end
@@ -4690,9 +4636,9 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
         for _, _nearbyCrate in pairs(_nearbyCrates) do
             if _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
                 if _heli:getCoalition() == 1  then
-                    ctld2.spawnedCratesRED[_nearbyCrate.crateUnit:getName()] = nil
+                    ctld.spawnedCratesRED[_nearbyCrate.crateUnit:getName()] = nil
                 else
-                    ctld2.spawnedCratesBLUE[_nearbyCrate.crateUnit:getName()] = nil
+                    ctld.spawnedCratesBLUE[_nearbyCrate.crateUnit:getName()] = nil
                 end
                 _nearbyCrate.crateUnit:destroy()
             end
@@ -4904,7 +4850,7 @@ function ctld.spawnCrateGroup(_heli, _positions, _types)
     local _side = _heli:getCoalition()
 
     local _group = {
-        --["PlayerName"] = tostring(initName),
+        ["PlayerName"] = tostring(initName),
         ["visible"] = false,
        -- ["groupId"] = _id,
         ["hidden"] = false,
@@ -4932,10 +4878,9 @@ function ctld.spawnCrateGroup(_heli, _positions, _types)
         end
     end
 
-    --TODO payload
+
     local _spawnedGroup
     if _types[1] == "RQ-1A Predator" then --之前问题出在mist上，改用dcs自己的生成方法
-
         _group=ctld.groupToPlanes(_group,_positions[1].x+1000,_positions[1].z +1000)
         local _countryID
         if _side==1 then
@@ -7175,7 +7120,7 @@ function ctld.initialize(force)
     timer.scheduleFunction(function()
         --timer.scheduleFunction(ctld.refreshRadioBeacons, nil, timer.getTime() + 5)
         timer.scheduleFunction(ctld.refreshSmoke, nil, timer.getTime() + 10)
-        timer.scheduleFunction(ctld.addF10MenuOptions, nil, timer.getTime() + 10)
+        timer.scheduleFunction(ctld.addF10MenuOptions, nil, timer.getTime() + 30)
 
         if ctld.enableCrates == true and ctld.slingLoad == false and ctld.hoverPickup == true then
             timer.scheduleFunction(ctld.checkHoverStatus, nil, timer.getTime() + 1)
