@@ -30,6 +30,70 @@ local _volume = {
 }
 
 
+local _aliveGroupNum = 0
+local _playerInfo=#ctld.UnitLimitPlayerInfo['BB']['步兵战车(IFV)']
+local _category='步兵战车(IFV)'
+for index, _groupName in pairs(_playerInfo[_category]) do
+    local _group = Group.getByName(_groupName)
+    local _groupAlive = false
+
+    if _group ~= nil then
+        local _units = _group:getUnits()
+        if _units ~= nil and #_units > 0 then
+            for x = 1, #_units do
+                if _units[x]:getLife() > 0 then
+                    _groupAlive = true
+                end
+            end
+        end
+    end
+
+    if _groupAlive then
+        _aliveGroupNum = _aliveGroupNum+1
+    else
+    end
+
+end
+
+for _, _group in pairs(mist.DBs.groupsByName) do
+    local needSave = false
+    for _key , _unitTable in pairs(_group.units) do
+        if _unitTable.type~=nil and _unitTable.unitName~=nil and dsave.typeBelongsToCC(_unitTable.type) then
+            local _unitObject = StaticObject.getByName(_unitTable.unitName)
+            --dsave.logDebug("_unitObject"..ctld.formatTable(_unitObject))
+            if _unitObject ~= nil and _unitObject:getLife() > 0 then
+                needSave = true
+                dsave.logDebug('_unitObject:getLife()'..ctld.formatTable(_unitTable))
+            end
+        end
+    end
+end
+
+
+local _unitObject =StaticObject.getByName('logistic Blue #001-1-1`')
+dsave.logDebug('_unitObject:getLife()'..ctld.formatTable(_unitObject))
+dsave.logDebug('name'..ctld.formatTable(_unitObject:getName()))
+
+
+for _, _name in pairs(ctld.logisticUnits) do
+    local _logistic = StaticObject.getByName(_name)
+    dsave.logDebug('_name'.._name)
+    dsave.logDebug('name'..ctld.formatTable(_logistic))
+    --if _logistic ~= nil and _logistic:getCoalition() == _heli:getCoalition() then
+    --    local _dist = ctld.getDistance(_heliPoint, _logistic:getPoint())
+    --    if _dist <= distance then
+    --        _farEnough = false
+    --    end
+    --end
+end
+
+
+
+ctld.logTrace('_aliveGroupNum'.._aliveGroupNum)
+
+local a =ctld.getGroupTemplate(ctld.RandomTankPool[math.random(#ctld.RandomTankPool)])
+ctld.logInfo(ctld.formatTable(a))
+
 local gp = mist.getCurrentGroupData('=CNF=011(BB) RQ-1A Predator  #2')
 ctld.logTrace(ctld.p(gp))
 
@@ -330,3 +394,10 @@ end
 
 NP.logDebug(trigger.action.getUserFlag('【科尔奇】雌鹿（对地+运输）B1-2'))
 NP.logDebug(trigger.action.getUserFlag('【苏呼米】黑鲨（对地+运输）B1-2'))
+NP.logDebug(ctld.formatTable(ctld.UnitLimitPlayerInfo))
+
+
+:["groupId"] = 2 ["coalitionId"] = 2, ["hidden"] = false, ["groupName"] = "logistic Blue #001-1-1`", ["units"] = { [1] = { ["alt"] = 44, ["point"] = { ["y"] = 684015, ["x"] = -286045, } ["categoryStatic"] = "Fortifications" ["coalitionId"] = 1 ["category"] = "static" ["unitName"] = "logistic Blue #001-1-1`" ["shape_name"] = "ComCenter" ["heading"] = 0 ["groupId"] = 2163, ["groupName"] = "logistic Blue #001-1-1", ["countryId"] = 80, ["x"] = -286045, ["country"] = "CJTF_BLUE", ["type"] = ".Command Center", ["y"] = 684015, ["coalition"] = "blue", ["unitId"] = 2, } } ["countryId"] = 80, ["coalition"] = "red", ["timeAdded"] = 23402.19, ["category"] = "static", ["country"] = "CJTF_BLUE", ["startTime"] = 0, ["name"] = "logistic Blue #001-1-1", ["uncontrolled"] = false,
+
+
+

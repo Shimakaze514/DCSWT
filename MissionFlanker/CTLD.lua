@@ -62,6 +62,7 @@ ctld.maximumSearchDistance = 4000 -- max distance for troops to search for enemy
 ctld.maximumMoveDistance = 2000 -- max distance for troops to move from drop point if no enemy is nearby
 
 ctld.minimumDeployDistance = 1 -- minimum distance from a friendly pickup zone where you can deploy a crate
+ctld.minimumDistanceBetweenFobs = 100
 
 ctld.numberOfTroops = 10 -- default number of troops to load on a transport heli or C-130 
 							-- also works as maximum size of group that'll fit into a helicopter unless overridden
@@ -96,7 +97,8 @@ ctld.troopPickupAtFOB = true -- if true, troops can also be picked up at a creat
 
 ctld.buildTimeFOB = 1 --time in seconds for the FOB to be built
 
-ctld.crateWaitTime = 20 -- time in seconds to wait before you can spawn another crate
+--ctld.crateWaitTime = 20 -- time in seconds to wait before you can spawn another crate
+ctld.crateWaitTime = 1
 
 ctld.forceCrateToBeMoved = false -- a crate must be picked up at least once and moved before it can be unpacked. Helps to reduce crate spam
 
@@ -125,12 +127,18 @@ ctld.hoverTime = 10 -- Time to hold hover above a crate for loading in seconds
 -- When this limit is hit, a player will still be able to get crates for an AA system, just unable
 -- to unpack them
 
-ctld.AASystemLimitRED = 20 -- Red side limit
-
-ctld.AASystemLimitBLUE = 20 -- Blue side limit
+--ctld.AASystemLimitRED = 20 -- Red side limit --不再使用阵营总计数
+--ctld.AASystemLimitBLUE = 20 -- Blue side limit
+ctld.UnitLimitPerPlayer= {
+    ["主战坦克(Tank)"] = 5,
+    ["步兵战车(IFV)"] =5,
+    ["远程火力(Artillery)"] =5,
+    ["近程防空(Short Range AA)"] =5,
+    ["中远程防空(Mid&Long Range AA)"] =10,
+}
+ctld.UnitLimitPlayerInfo= {}
 
 --END AA SYSTEM CONFIG --
-
 -- ***************** JTAC CONFIGURATION *****************
 
 ctld.JTAC_LIMIT_RED = 10 -- max number of JTAC Crates for the RED Side
@@ -236,7 +244,6 @@ ctld.wpZones = {
 -- Use any of the predefined names or set your own ones
 ctld.transportPilotNames = {
      --"helicargo1",
-
     "transport Red #001",
     "transport Red #002",
     "transport Red #003",
@@ -412,17 +419,14 @@ ctld.transportPilotNames = {
     "transport Blue #083",
     "transport Blue #083",
 
-    -------运输机--------------------------------
-
-
     "【库塔伊西】蚊子（运输）R1-1",
     "【库塔伊西】蚊子（运输）R1-2",
 
     "【科尔奇】蚊子（运输）R1-1",
     "【科尔奇】蚊子（运输）R1-2",
 
-    "【阿纳克里厄 】蚊子（运输）R1-1",
-    "【阿纳克里厄 】蚊子（运输）R1-2",
+    "【阿纳克里厄】蚊子（运输）R1-1",
+    "【阿纳克里厄】蚊子（运输）R1-2",
 
     "【奥恰姆奇拉】蚊子（运输）R1-1",
     "【奥恰姆奇拉】蚊子（运输）R1-2",
@@ -440,8 +444,8 @@ ctld.transportPilotNames = {
     "【科尔奇】野驴（运输）R1-1",
     "【科尔奇】野驴（运输）R1-2",
 
-    "【阿纳克里厄 】野驴（运输）R1-1",
-    "【阿纳克里厄 】野驴（运输）R1-2",
+    "【阿纳克里厄】野驴（运输）R1-1",
+    "【阿纳克里厄】野驴（运输）R1-2",
 
     "【奥恰姆奇拉】野驴（运输）R1-1",
     "【奥恰姆奇拉】野驴（运输）R1-2",
@@ -459,8 +463,8 @@ ctld.transportPilotNames = {
     "【科尔奇】蚊子（运输）B1-1",
     "【科尔奇】蚊子（运输）B1-2",
 
-    "【阿纳克里厄 】蚊子（运输）B1-1",
-    "【阿纳克里厄 】蚊子（运输）B1-2",
+    "【阿纳克里厄】蚊子（运输）B1-1",
+    "【阿纳克里厄】蚊子（运输）B1-2",
 
     "【奥恰姆奇拉】蚊子（运输）B1-1",
     "【奥恰姆奇拉】蚊子（运输）B1-2",
@@ -479,8 +483,8 @@ ctld.transportPilotNames = {
     "【科尔奇】野驴（运输）B1-1",
     "【科尔奇】野驴（运输）B1-2",
 
-    "【阿纳克里厄 】野驴（运输）B1-1",
-    "【阿纳克里厄 】野驴（运输）B1-2",
+    "【阿纳克里厄】野驴（运输）B1-1",
+    "【阿纳克里厄】野驴（运输）B1-2",
 
     "【奥恰姆奇拉】野驴（运输）B1-1",
     "【奥恰姆奇拉】野驴（运输）B1-2",
@@ -490,10 +494,6 @@ ctld.transportPilotNames = {
 
     "【古达乌塔】野驴（运输）B1-1",
     "【古达乌塔】野驴（运输）B1-2",
-
-
-
-    ------------------------------------------------------
 
     "transport Red AH64D-1",
     "transport Red AH64D-2",
@@ -543,14 +543,6 @@ ctld.transportPilotNames = {
     "transport Blue AH64D-22",
     "transport Blue AH64D-23",
     "transport Blue AH64D-24",
-
-
-
-    -- *** AI transports names (different names only to ease identification in mission) ***
-
-    -- Use any of the predefined names or set your own ones
-
-     --"transport25",
 }
 
 -- *************** Optional Extractable GROUPS *****************
@@ -712,11 +704,11 @@ ctld.spawnableCrates = {
         -- dont use that option with the HAWK Crates
         --{ weight = 500, desc = "HMMWV - TOW", unit = "M1045 HMMWV TOW", side = 2 },
         --{ weight = 505, desc = "HMMWV - MG", unit = "M1043 HMMWV Armament", side = 2 },
-		{ weight = 1506, desc = "随机主战坦克(Random MBT)", unit = "tank Repair"},
+		{ weight = 1506, desc = "随机主战坦克(Random MBT)", unit = "Tank RandomGroup"},
     },   
     
     ["步兵战车(IFV)"] = {
-		{ weight = 1200, desc = "轮式轻型坦克(M1128)", unit = "M1128 Stryker MGS Group" },
+		{ weight = 1200, desc = "轮式轻型坦克(M1128)", unit = "M1128 Stryker MGS Group"},
 		{ weight = 1065, desc = "轻型装甲坦克战车(Type04A)", unit = "ZBD04A Group"},
 		{ weight = 1119, desc = "反坦克导弹战车(M1134 ATGM)", unit = "M1134 Stryker ATGM Group"},
         --{ weight = 1364, desc = "(BETA)主战坦克M1A2小队", unit = "M-1 Abrams Group", cratesRequired = 1, loadable = true },
@@ -1596,7 +1588,25 @@ end
 
 --- Tells CTLD What multipart AA Systems there are and what parts they need
 -- A New system added here also needs the launcher added
+
+ctld.RandomTankPool = {
+    'Tank RandomGroup L2A6 Group',
+    'Tank RandomGroup L2A4 Group',
+    'Tank RandomGroup M1A2 Group',
+    'Tank RandomGroup Lec Group',
+    'Tank RandomGroup Challenger2 Group',
+    'Tank RandomGroup ZTZ96B Group',
+    'Tank RandomGroup Merkava Group',
+    'Tank RandomGroup T-80 Group',
+    'Tank RandomGroup T-90 Group',
+    'Tank RandomGroup L2A5 Group'
+}
+
 ctld.GroupSystemTemplate = {
+    {
+        name = "随机坦克",
+        sysName = "Tank RandomGroup",
+    },
     {
         name = "轮式轻型坦克(M1128)小队",
 		sysName = "M1128 Stryker MGS Group",
@@ -1625,7 +1635,7 @@ ctld.GroupSystemTemplate = {
 	--{ weight = 925, desc = "主战坦克M1A2", unit = "M-1 Abrams", cratesRequired = 1, loadable = false },
 	{
         name = "主战坦克M1A2小队",
-		sysName = "M1A2 Group",
+		sysName = "Tank RandomGroup M1A2 Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
 
@@ -1638,7 +1648,7 @@ ctld.GroupSystemTemplate = {
     },
     {
         name = "主战坦克豹2A6小队",
-		sysName = "L2A6 Group",
+		sysName = "Tank RandomGroup L2A6 Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
 
@@ -1651,7 +1661,7 @@ ctld.GroupSystemTemplate = {
     },
     {
         name = "主战坦克豹2A5小队",
-		sysName = "L2A5 Group",
+		sysName = "Tank RandomGroup L2A5 Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
 
@@ -1664,7 +1674,7 @@ ctld.GroupSystemTemplate = {
     },
     {
         name = "主战坦克豹2A4小队",
-		sysName = "L2A4 Group",
+		sysName = "Tank RandomGroup L2A4 Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
 
@@ -1677,7 +1687,7 @@ ctld.GroupSystemTemplate = {
     },
     {
         name = "主战坦克勒克莱尔小队",
-		sysName = "Lec Group",
+		sysName = "Tank RandomGroup Lec Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
 
@@ -1690,7 +1700,7 @@ ctld.GroupSystemTemplate = {
     },
     {
         name = "主战坦克挑战者2小队",
-		sysName = "Challenger2 Group",
+		sysName = "Tank RandomGroup Challenger2 Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
 
@@ -1703,7 +1713,7 @@ ctld.GroupSystemTemplate = {
     },
     {
         name = "主战坦克梅卡瓦4小队",
-		sysName = "Merkava Group",
+		sysName = "Tank RandomGroup Merkava Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
 
@@ -1716,7 +1726,7 @@ ctld.GroupSystemTemplate = {
     },
     {
         name = "主战坦克T80U小队",
-		sysName = "T-80 Group",
+		sysName = "Tank RandomGroup T-80 Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
 
@@ -1729,7 +1739,7 @@ ctld.GroupSystemTemplate = {
     },
     {
         name = "主战坦克T-90小队",
-		sysName = "T-90 Group",
+		sysName = "Tank RandomGroup T-90 Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
 
@@ -1742,7 +1752,7 @@ ctld.GroupSystemTemplate = {
     },
 	{
         name = "主战坦克ZTZ96B小队",
-		sysName = "ZTZ96B Group",
+		sysName = "Tank RandomGroup ZTZ96B Group",
 		cratesRequired = 1,
 		aaLaunchers = 1,
 
@@ -3830,7 +3840,7 @@ function ctld.unpackCrates(_arguments)
 
             --TODO
             --if ctld.inLogisticsZone(_heli) == true  or  ctld.farEnoughFromLogisticZone(_heli) == false then
-            if ctld.farEnoughFromLogisticZone(_heli) == false then
+            if ctld.farEnoughFromLogisticZone(_heli,ctld.minimumDeployDistance) == false then
                 ctld.displayMessageToGroup(_heli, "You can't unpack that here! Take it to where it's needed!", 20)
 
                 return
@@ -3927,11 +3937,9 @@ end
 
 -- builds a fob!
 function ctld.unpackFOBCrates(_crates, _heli)
-
-    if ctld.inLogisticsZone(_heli) == true then
-
-        ctld.displayMessageToGroup(_heli, "You can't unpack that here! Take it to where it's needed!", 20)
-
+    if ctld.inLogisticsZone(_heli) == true or ctld.farEnoughFromLogisticZone(_heli,ctld.minimumDistanceBetweenFobs) == false then
+        ctld.displayMessageToGroup(_heli, "野战FOB以及CC之间必须至少间隔"..ctld.minimumDistanceBetweenFobs, 20)
+        --ctld.displayMessageToGroup(_heli, "You can't unpack that here! Take it to where it's needed!", 20)
         return
     end
 
@@ -4001,7 +4009,7 @@ function ctld.unpackFOBCrates(_crates, _heli)
 
             --make it able to deploy crates
             table.insert(ctld.logisticUnits, _fob:getName())
-
+            timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + 10)
             --不需要塔康信标
 --[[
             ctld.beaconCount = ctld.beaconCount + 1
@@ -4421,18 +4429,18 @@ function ctld.getGroupTemplate(_unitName)
         if _system.sysName == _unitName then
             return _system
         end
---TODO
+
         --for _,_part in pairs(_system.parts) do
         --
         --    if _unitName == _part.name  then
         --        return _system
         --    end
         --end
+
     end
-
     return nil
-
 end
+
 
 function ctld.getLauncherUnitFromAATemplate(_aaTemplate)
     for _,_part in pairs(_aaTemplate.parts) do
@@ -4526,20 +4534,21 @@ function ctld.getAASystemDetails(_hawkGroup,_aaSystemTemplate)
 end
 
 function ctld.countTableEntries(_table)
-
     if _table == nil then
         return 0
     end
-
-
     local _count = 0
-
     for _key, _value in pairs(_table) do
-
         _count = _count + 1
     end
-
     return _count
+end
+
+function ctld.rollRandomTank(_nearestCrate)
+    if _nearestCrate.details.unit == "Tank RandomGroup" then
+        return true,ctld.getGroupTemplate(ctld.RandomTankPool[math.random(#ctld.RandomTankPool)])
+    end
+    return false,nil
 end
 
 function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSystemTemplate)
@@ -4550,6 +4559,14 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
     end]]
 
     -- are there all the pieces close enough together
+    ctld.logDebug('进去之前    '.. ctld.formatTable(_groupSystemTemplate))
+    local ok , _template = ctld.rollRandomTank(_nearestCrate)
+    ctld.logDebug('_template    '.. ctld.formatTable(_template))
+    if ok then
+        _groupSystemTemplate=_template
+    end
+    ctld.logDebug('进去之后  '.. ctld.formatTable(_groupSystemTemplate))
+
     local _systemParts = {}
 
     --initialise list of parts
@@ -4561,7 +4578,8 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
     local _crateCnt = 0
     for _, _nearbyCrate in pairs(_nearbyCrates) do
         if _nearbyCrate.dist < ctld.multiCrateMaxDistance then
-            if _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
+            if string.find(_groupSystemTemplate.sysName,_nearbyCrate.details.unit) ~= nil then
+            --if _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
                 _crateCnt = _crateCnt + 1
             end
         end
@@ -4582,16 +4600,10 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
     local _typeArray = {}
     for _name, _systemPart in pairs(_systemParts) do
             local _launcherPart = ctld.getLauncherUnitFromAATemplate(_groupSystemTemplate)
-
             if _launcherPart == _name and _groupSystemTemplate.aaLaunchers > 1 then
                 --add multiple launcher
                 local _launchers = _groupSystemTemplate.aaLaunchers
-
-
-
-
                 for _i = 1, _launchers do
-
                     -- spawn in a circle around the crate
                     local _angle = math.pi * 2 * (_i - 1) / _launchers
                      _xOffset = math.cos(_angle) * 12
@@ -4607,7 +4619,7 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
             else
                 --table.insert(_posArray, _systemPart.crate.crateUnit:getPoint())
                 --table.insert(_typeArray, _name)
-                local _angle = math.pi * 2 * (num - 1) / _launchers
+                local _angle = math.pi * 2 * (num - 1)
                 _xOffset = math.cos(_angle) * 15
                 _yOffset = math.sin(_angle) * 15
                 _point = { x = _point.x + _xOffset, y = _point.y, z = _point.z + _yOffset }
@@ -4617,24 +4629,27 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
             end
     end
 
-    local _deployedNum = ctld.countCompleteAASystems(_heli)
-
-    local _allowedNum = ctld.getAllowedAASystems(_heli)
-
-    ctld.logInfo("Coalition:" .._heli:getCoalition().. "Active: ".. _deployedNum .." Allowed: ".._allowedNum)
-
-    if _deployedNum + 1 > _allowedNum then
-        trigger.action.outTextForCoalition(_heli:getCoalition(), "Out of parts for AA Systems. Current limit is ".._allowedNum.." \n", 10)
-        return
-    end
+    --去掉原来的limit逻辑
+    --local _deployedNum = ctld.countCompleteAASystems(_heli)
+    --local _allowedNum = ctld.getAllowedAASystems(_heli)
+    --ctld.logInfo("Coalition:" .._heli:getCoalition().. "Active: ".. _deployedNum .." Allowed: ".._allowedNum)
+    --if _deployedNum + 1 > _allowedNum then
+    --    trigger.action.outTextForCoalition(_heli:getCoalition(), "Out of parts for AA Systems. Current limit is ".._allowedNum.." \n", 10)
+    --    return
+    --end
 
     if _txt ~= ""  then
         ctld.displayMessageToGroup(_heli, "Cannot build ".. _groupSystemTemplate.name.."\n" .. _txt .. "\n\nOr the crates are not close enough together", 20)
         return
     else
+
+
+        local _spawnedGroup = ctld.spawnCrateGroup(_heli, _posArray, _typeArray,_groupSystemTemplate)
+
         -- destroy crates
         for _, _nearbyCrate in pairs(_nearbyCrates) do
-            if _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
+            if string.find(_groupSystemTemplate.sysName,_nearbyCrate.details.unit) ~= nil then
+            --if _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
                 if _heli:getCoalition() == 1  then
                     ctld.spawnedCratesRED[_nearbyCrate.crateUnit:getName()] = nil
                 else
@@ -4644,17 +4659,13 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
             end
         end
 
-        local _spawnedGroup = ctld.spawnCrateGroup(_heli, _posArray, _typeArray)
-
         ctld.completeGroupSystems[_spawnedGroup:getName()] = ctld.getAASystemDetails(_spawnedGroup, _groupSystemTemplate)
-
         ctld.processCallback({unit = _heli, crate = _nearestCrate , spawnedGroup = _spawnedGroup, action = "unpack"})
+        --trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " successfully deployed a full ".. _groupSystemTemplate.name.." to the field. \n\nAA Active System limit is: ".._allowedNum.."\nActive: "..(_deployedNum +1), 10)
 
-        trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " successfully deployed a full ".. _groupSystemTemplate.name.." to the field. \n\nAA Active System limit is: ".._allowedNum.."\nActive: "..(_deployedNum +1), 10)
-
-        if _groupSystemTemplate.hasLimit then
-            trigger.action.outTextForCoalition(_heli:getCoalition(), "\n\n最多能部署的集群阵地数量: ".._allowed.."\n已部署的数量: "..(_activeLaunchers+1), 20)
-        end
+        --if _groupSystemTemplate.hasLimit then
+        --    trigger.action.outTextForCoalition(_heli:getCoalition(), "\n\n最多能部署的集群阵地数量: ".._allowed.."\n已部署的数量: "..(_activeLaunchers+1), 20)
+        --end
 
         if _heli:getPlayerName() ~= nil then
             ctld.addSpawnedGroupsToPlayer(_heli:getPlayerName(), _spawnedGroup:getName())
@@ -4671,17 +4682,15 @@ function ctld.addSpawnedGroupsToPlayer(playerName, spawnedGroupName)
 end
 
 --count the number of captured cities, sets the amount of allowed AA Systems
-function ctld.getAllowedAASystems(_heli)
-
-    if _heli:getCoalition() == 1 then
-        return ctld.AASystemLimitBLUE
-    else
-        return ctld.AASystemLimitRED
-    end
-
-
-end
-
+--红蓝和数字间的切换
+--function ctld.getAllowedAASystems(_heli)
+--
+--    if _heli:getCoalition() == 1 then
+--        return ctld.AASystemLimitBLUE
+--    else
+--        return ctld.AASystemLimitRED
+--    end
+--end
 
 function ctld.countCompleteAASystems(_heli)
 
@@ -4842,15 +4851,17 @@ function ctld.unpackMultiCrate(_heli, _nearestCrate, _nearbyCrates)
 end
 
 
-function ctld.spawnCrateGroup(_heli, _positions, _types)
+function ctld.spawnCrateGroup(_heli, _positions, _types,_groupSystemTemplate)
     local _id = ctld.getNextGroupId()
-
     local _groupName = _heli:getPlayerName().. " " .. _types[1] .. " #" .. _id
-
     local _side = _heli:getCoalition()
 
+    --TODO 添加到动态保存
+    ctld.logDebug('ctld.checkPlayerLimit(_heli,_groupSystemTemplate)    '.. ctld.formatTable(_groupSystemTemplate))
+    local _category=ctld.checkPlayerLimit(_heli,_groupSystemTemplate)
+
     local _group = {
-        ["PlayerName"] = tostring(initName),
+        --["PlayerName"] = tostring(initName),
         ["visible"] = false,
        -- ["groupId"] = _id,
         ["hidden"] = false,
@@ -4863,14 +4874,10 @@ function ctld.spawnCrateGroup(_heli, _positions, _types)
     }
 
     if #_positions == 1 then
-
         local _unitId = ctld.getNextUnitId()
         local _details = { type = _types[1], unitId = _unitId, name = string.format("Unpacked %s #%i", _types[1], _unitId) }
-
         _group.units[1] = ctld.createUnit(_positions[1].x + 5, _positions[1].z + 5, 120, _details)
-
     else
-
         for _i, _pos in ipairs(_positions) do
             local _unitId = ctld.getNextUnitId()
             local _details = { type = _types[_i], unitId = _unitId, name = string.format("Unpacked %s #%i", _types[_i], _unitId) }
@@ -4880,7 +4887,7 @@ function ctld.spawnCrateGroup(_heli, _positions, _types)
 
 
     local _spawnedGroup
-    if _types[1] == "RQ-1A Predator" then --之前问题出在mist上，改用dcs自己的生成方法
+    if _types[1] == "RQ-1A Predator" then --之前问题出在mist上，改用dcs自己的生成方法 --TODO 把这里的判断抽象
         _group=ctld.groupToPlanes(_group,_positions[1].x+1000,_positions[1].z +1000)
         local _countryID
         if _side==1 then
@@ -4898,9 +4905,88 @@ function ctld.spawnCrateGroup(_heli, _positions, _types)
         _dest = { x = _dest.x + 0.5, _y = _dest.y + 0.5, z = _dest.z + 0.5 }
         ctld.orderGroupToMoveToPoint(_spawnedGroup:getUnit(1), _dest)
     end
-
-
+    ctld.addUnitInfoToPlayer(_heli,_category,_groupName)
     return _spawnedGroup
+end
+
+function ctld.addUnitInfoToPlayer(_heli,_category,_groupName)
+    if ctld.UnitLimitPlayerInfo[_heli:getPlayerName()]==nil then
+        ctld.UnitLimitPlayerInfo[_heli:getPlayerName()]={}
+    end
+    if ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category] ==nil then
+        ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category] ={}
+    end
+
+    table.insert(ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category],_groupName)
+    local _leftNum = ctld.UnitLimitPerPlayer[_category]-#ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category]
+    local _message = string.format("你还可以生成%d组 %s 类型的单位",_leftNum,_category)
+    ctld.displayMessageToGroup(_heli, _message, 10)
+    ctld.logDebug(_heli:getPlayerName()..'新加了'.._category..'类别的'.._groupName)
+end
+
+function ctld.checkPlayerLimit(_heli,_groupSystemTemplate)
+    local _category
+    for _categoryName, _table in pairs(ctld.spawnableCrates) do
+        for index,_crate in pairs(_table) do
+            if _groupSystemTemplate.sysName == _crate.unit then
+                _category = _categoryName --找到了对应的分类
+            end
+        end
+    end
+    --坦克 ctld.RandomTankPool
+    for _, _tankGroupName in pairs(ctld.RandomTankPool) do
+        if _groupSystemTemplate.sysName == _tankGroupName then
+            _category = "主战坦克(Tank)" --找到了对应的分类
+        end
+    end
+
+    if _category==nil  then
+        ctld.displayMessageToGroup(_heli, '生成单位有问题，请找群管理汇报bug', 10)
+        ctld.logError('严重错误，生成单位时找不到对应的类别！')
+    end
+
+    ctld.handlePlayerLimitInfo(_heli,_category)
+    return _category
+end
+
+function ctld.handlePlayerLimitInfo(_heli, _category)
+    local _playerInfo=ctld.UnitLimitPlayerInfo[_heli:getPlayerName()]
+    if _playerInfo == nil or _playerInfo[_category]==nil  then
+        return
+    end
+
+    local _aliveGroupNum = 0
+    for index, _groupName in pairs(_playerInfo[_category]) do
+        local _group = Group.getByName(_groupName)
+        local _groupAlive = false
+
+        if _group ~= nil then
+            local _units = _group:getUnits()
+            if _units ~= nil and #_units > 0 then
+                for x = 1, #_units do
+                    if _units[x]:getLife() > 0 then
+                        _groupAlive = true
+                    end
+                end
+            end
+        end
+
+        if _groupAlive then
+            _aliveGroupNum = _aliveGroupNum+1
+        else
+            table.remove(ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category],index)
+            ctld.logDebug(_heli:getPlayerName()..'没血所以移除了'.._category..'类别的'..ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category][index])
+        end
+    end
+
+    if _aliveGroupNum>=ctld.UnitLimitPerPlayer[_category] then
+        local _toDeleteGroupName=table.remove(ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category],1)
+        local _toDeleteGroup = Group.getByName(_toDeleteGroupName)
+        _toDeleteGroup:destroy()
+        local _message = string.format("你存活%d组 %s 单位，超过了限制数量%d组,自动为你销毁了最早的组:%s",_aliveGroupNum,_category,ctld.UnitLimitPerPlayer[_category],_toDeleteGroupName)
+        ctld.displayMessageToGroup(_heli, _message, 10)
+        ctld.logDebug(_heli:getPlayerName()..'销毁了'.._category..'类别的'.._toDeleteGroupName)
+    end
 end
 
 
@@ -5378,32 +5464,24 @@ end
 
 
 -- are far enough from a friendly logistics zone
-function ctld.farEnoughFromLogisticZone(_heli)
-
+function ctld.farEnoughFromLogisticZone(_heli,distance)
     if ctld.inAir(_heli) then
         return false
     end
-
     local _heliPoint = _heli:getPoint()
-
     local _farEnough = true
-
     for _, _name in pairs(ctld.logisticUnits) do
-
         local _logistic = StaticObject.getByName(_name)
-
         if _logistic ~= nil and _logistic:getCoalition() == _heli:getCoalition() then
-
             --get distance
             local _dist = ctld.getDistance(_heliPoint, _logistic:getPoint())
             -- ctld.logInfo("DIST ".._dist)
-            if _dist <= ctld.minimumDeployDistance then
+            if _dist <= distance then
                 -- ctld.logInfo("TOO CLOSE ".._dist)
                 _farEnough = false
             end
         end
     end
-
     return _farEnough
 end
 

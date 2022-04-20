@@ -98,14 +98,16 @@ end
 
 
 function dsave.recordAllCCsElements()
+    local checkRepeat = {}
     for _, _group in pairs(mist.DBs.groupsByName) do
         local needSave = false
         for _key , _unitTable in pairs(_group.units) do
             if _unitTable.type~=nil and _unitTable.unitName~=nil and dsave.typeBelongsToCC(_unitTable.type) then
                 local _unitObject = StaticObject.getByName(_unitTable.unitName)
                 --dsave.logDebug("_unitObject"..ctld.formatTable(_unitObject))
-                if _unitObject ~= nil and _unitObject:getLife() > 0 then
+                if _unitObject ~= nil and _unitObject:getLife() > 0 and checkRepeat[_unitTable.unitName]==nil then
                     needSave = true
+                    checkRepeat[_unitTable.unitName]=true
                     --dsave.logDebug("_unitObject:getLife()"..ctld.formatTable(_unitObject))
                 end
             end
@@ -130,14 +132,14 @@ function dsave.destoryMissionEditorCCs() --在任务一开始把所有任务编�
         local _needDestory = false
         for _key , _unitTable in pairs(_group.units) do
             if _unitTable.type~=nil and dsave.typeBelongsToCC(_unitTable.type) then
-                --dsave.logDebug("需要摧毁的cc"..ctld.formatTable(_unitTable))
+                dsave.logDebug("需要摧毁的cc"..ctld.formatTable(_unitTable))
                 _needDestory = true
             end
         end
 
         if _needDestory == true then
             local _groupObject = StaticObject.getByName(_group.groupName)
-            --dsave.logDebug("_needDestory _groupObject"..ctld.formatTable(_groupObject))
+            dsave.logDebug("_needDestory _groupObject"..ctld.formatTable(_groupObject))
             if _groupObject ~= nil then
                 _groupObject:destroy()
             end
@@ -239,10 +241,9 @@ function dsave.loadDsaveCCsData()
     dsave.logInfo(ctld.formatTable(tableData2))
 
     for _, _group in pairs(tableData2) do
-
         mist.dynAddStatic(_group)
         table.insert(ctld.logisticUnits, _group.units[1].unitName)
-        dsave.logInfo('CC:'.._group.groupName ..' generated!')
+        dsave.logInfo('CC:'.._group.groupName ..' generated!'.. '阵营:' .._group.country)
     end
     dsave.logInfo('CC载入完成')
 --[[
@@ -269,8 +270,8 @@ function dsave.coalitionToString(_coalition)
 end
 
 timer.scheduleFunction(dsave.loadDsaveUnitsData, nil, timer.getTime() + 20)
-timer.scheduleFunction(dsave.loadDsaveCCsData, nil, timer.getTime() + 2)
-timer.scheduleFunction(dsave.refreshFlagsAtMissionStart, nil, timer.getTime() + 12)
+timer.scheduleFunction(dsave.loadDsaveCCsData, nil, timer.getTime() + 2+10)
+timer.scheduleFunction(dsave.refreshFlagsAtMissionStart, nil, timer.getTime() + 12+10)
 
 timer.scheduleFunction(dsave.recordAllVehiclesElements, mist.DBs.dynGroupsAdded, timer.getTime() + 50)
 

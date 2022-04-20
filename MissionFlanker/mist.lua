@@ -1615,10 +1615,14 @@ do -- the main scope
 				newObj.shape_name = mist.DBs.const.shapeNames[newObj.type]
 			end
 		end
-		
+
+
 		mistAddedObjects[#mistAddedObjects + 1] = mist.utils.deepCopy(newObj)
 		if newObj.x and newObj.y and newObj.type and type(newObj.x) == 'number' and type(newObj.y) == 'number' and type(newObj.type) == 'string' then
 			--log:warn(newObj)
+			ctld.logDebug('newObj:'..ctld.formatTable(newObj))
+			ctld.logDebug('newCountry:'..newCountry)
+			ctld.logDebug('country.id[newCountry]:'..country.id[newCountry])
 			coalition.addStaticObject(country.id[newCountry], newObj)
 
 			return newObj

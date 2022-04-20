@@ -1,3 +1,5 @@
+
+--TODO 动态保存
 UserList = {
     commander = {
         "7c97087882d2400431e1582fa84e521c", --Power
@@ -90,11 +92,12 @@ function SLOT.allowEnterSlot (_playerID,_side,_slotID)
     local _unitName = DCS.getUnitProperty(_slotID,DCS.UNIT_NAME)
     local _ucid = net.get_player_info(_playerID, "ucid")
 
-    if _category ~= nil and _category=='helicopter' then
+    --TODO 检查教练机的flag
+    if _category ~= nil and _category=='helicopter' and _category=='plane' then
         if SLOT.getFlagValue(_groupName) == 0 then
             return true
         else
-            net.send_chat_to('该直升机不可选', _playerID)
+            net.send_chat_to('该机位不可选', _playerID)
             return false
         end
     end
