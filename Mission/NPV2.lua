@@ -6,9 +6,9 @@
 
 --TODO 选边限制
 --TODO 螺旋桨转载货物
---TODO 无人机有bug
 --TODO fob的击杀更新
 --TODO 被回收的单位会复活
+--TODO 玩家限制信息加入动态保存
 NP = {}
 
 NP.Id = "NP - "

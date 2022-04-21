@@ -63,12 +63,14 @@ function dsave.recordAllVehiclesElements(inputDB)
     end
 
     for _, _group in pairs(inputDB) do
+        local needSave =false
         if _group.category ~= 'static' then
             for _key , _unitTable in pairs(_group.units) do
                 if _unitTable.unitName ~= nil and _unitTable.type ~= 'GeneratorF'then
                     local _unit=Unit.getByName(_unitTable.unitName)
                     if _unit~=nil then
-                        if _unit:getLife()>1 then
+                        if _unit:getLife()>0 then
+                            needSave =true
                             local _point = _unit:getPoint()
                             local _pos2 = { x = _point.x, y = _point.z }
 
@@ -84,7 +86,11 @@ function dsave.recordAllVehiclesElements(inputDB)
                     _group.units[_key]=nil
                 end
             end
-            table.insert(dsave.DSaveGroupsCache,_group)
+
+            if needSave then
+                table.insert(dsave.DSaveGroupsCache,_group)
+            end
+
         end
     end
 

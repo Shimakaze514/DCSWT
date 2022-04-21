@@ -45,6 +45,13 @@ ctld.staticBugWorkaround = false --  DCS had a bug where destroying statics woul
 
 
 if ctld.Debug == false then
+    ctld.UnitLimitPerPlayer= {
+        ["主战坦克(Tank)"] = 5,
+        ["步兵战车(IFV)"] =5,
+        ["远程火力(Artillery)"] =5,
+        ["近程防空(Short Range AA)"] =5,
+        ["中远程防空(Mid&Long Range AA)"] =10,
+    }
     ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
 
     ctld.hoverPickup = false --  if set to false you can load crates with the F10 menu instead of hovering... Only if not using real crates!
@@ -80,7 +87,15 @@ if ctld.Debug == false then
     --ctld.crateWaitTime = 20 -- time in seconds to wait before you can spawn another crate
     ctld.crateWaitTime = 20
     ctld.forceCrateToBeMoved = true -- a crate must be picked up at least once and moved before it can be unpacked. Helps to reduce crate spam
+    ctld.UseInfraRed=false
 else --测试用的参数
+    ctld.UnitLimitPerPlayer= {
+        ["主战坦克(Tank)"] = 2,
+        ["步兵战车(IFV)"] =2,
+        ["远程火力(Artillery)"] =2,
+        ["近程防空(Short Range AA)"] =2,
+        ["中远程防空(Mid&Long Range AA)"] =2,
+    }
     ctld.IsCheckfarEnoughFromLogisticZone=false
     ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
 
@@ -164,14 +179,7 @@ ctld.hoverTime = 10 -- Time to hold hover above a crate for loading in seconds
 
 --ctld.AASystemLimitRED = 20 -- Red side limit --不再使用阵营总计数
 --ctld.AASystemLimitBLUE = 20 -- Blue side limit
-ctld.UnitLimitPerPlayer= {
-    ["主战坦克(Tank)"] = 5,
-    ["步兵战车(IFV)"] =5,
-    ["远程火力(Artillery)"] =5,
-    ["近程防空(Short Range AA)"] =5,
-    ["中远程防空(Mid&Long Range AA)"] =10,
-    ["JTAC&OTHERS等小型单位集装箱"] =  99,
-}
+
 ctld.UnitLimitPlayerInfo= {}
 
 --END AA SYSTEM CONFIG --
@@ -4893,7 +4901,7 @@ function ctld.spawnCrateGroup(_heli, _positions, _types,_groupSystemTemplate)
 
     --TODO 限制参数添加到动态保存中
     ctld.logDebug('ctld.checkPlayerLimit(_heli,_groupSystemTemplate)    '.. ctld.formatTable(_groupSystemTemplate))
-    local _category=ctld.checkPlayerLimit(_heli,_groupSystemTemplate)
+    local _category=ctld.checkPlayerLimit(_heli,_groupSystemTemplate,_types[1])
 
     local _group = {
         --["PlayerName"] = tostring(initName),
@@ -4945,6 +4953,10 @@ function ctld.spawnCrateGroup(_heli, _positions, _types,_groupSystemTemplate)
 end
 
 function ctld.addUnitInfoToPlayer(_heli,_category,_groupName)
+    if _category==nil then
+        return
+    end
+
     if ctld.UnitLimitPlayerInfo[_heli:getPlayerName()]==nil then
         ctld.UnitLimitPlayerInfo[_heli:getPlayerName()]={}
     end
@@ -4961,8 +4973,12 @@ function ctld.addUnitInfoToPlayer(_heli,_category,_groupName)
     ctld.logInfo(_heli:getPlayerName()..'新加了'.._category..'类别的'.._groupName)
 end
 
-function ctld.checkPlayerLimit(_heli,_groupSystemTemplate)
+function ctld.checkPlayerLimit(_heli,_groupSystemTemplate,unitName)
     local _category
+    if  _groupSystemTemplate==nil then
+        return
+    end
+
     for _categoryName, _table in pairs(ctld.spawnableCrates) do
         for index,_crate in pairs(_table) do
             if _groupSystemTemplate.sysName == _crate.unit then
@@ -5019,6 +5035,7 @@ function ctld.handlePlayerLimitInfo(_heli, _category)
     if _aliveGroupNum>=ctld.UnitLimitPerPlayer[_category] then
         local _toDeleteGroupName=table.remove(ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category],1)
         local _toDeleteGroup = Group.getByName(_toDeleteGroupName)
+        --TODO 动态保存的时间到了吗
         _toDeleteGroup:destroy()
         local _message = string.format("你存活%d组 %s 单位，超过了限制数量%d组,自动为你销毁了最早的组:%s",_aliveGroupNum,_category,ctld.UnitLimitPerPlayer[_category],_toDeleteGroupName)
         ctld.displayMessageToGroup(_heli, _message, 10)
@@ -6374,7 +6391,9 @@ function ctld.laseUnit(_enemyUnit, _jtacUnit, _jtacGroupName, _laserCode)
         -- create lase
 
         local _status, _result = pcall(function()
-            _spots['irPoint'] = Spot.createInfraRed(_jtacUnit, { x = 0, y = 2.0, z = 0 }, _enemyVectorUpdated)
+            if ctld.UseInfraRed == true then
+                _spots['irPoint'] = Spot.createInfraRed(_jtacUnit, { x = 0, y = 2.0, z = 0 }, _enemyVectorUpdated)
+            end
             _spots['laserPoint'] = Spot.createLaser(_jtacUnit, { x = 0, y = 2.0, z = 0 }, _enemyVectorUpdated, _laserCode)
             return _spots
         end)
