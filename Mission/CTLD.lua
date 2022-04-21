@@ -43,26 +43,81 @@ ctld.alreadyInitialized = false -- if true, ctld.initialize() will not run
 -- ************************************************************************
 ctld.staticBugWorkaround = false --  DCS had a bug where destroying statics would cause a crash. If this happens again, set this to TRUE
 
-ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
 
-ctld.hoverPickup = false --  if set to false you can load crates with the F10 menu instead of hovering... Only if not using real crates!
+if ctld.Debug == false then
+    ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
 
-ctld.enableCrates = true -- if false, Helis will not be able to spawn or unpack crates so will be normal CTTS
-ctld.slingLoad = false -- if false, crates can be used WITHOUT slingloading, by hovering above the crate, simulating slingloading but not the weight...
--- There are some bug with Sling-loading that can cause crashes, if these occur set slingLoad to false
--- to use the other method.
--- Set staticBugFix  to FALSE if use set ctld.slingLoad to TRUE
+    ctld.hoverPickup = false --  if set to false you can load crates with the F10 menu instead of hovering... Only if not using real crates!
 
-ctld.enableSmokeDrop = false -- if false, helis and c-130 will not be able to drop smoke
+    ctld.enableCrates = true -- if false, Helis will not be able to spawn or unpack crates so will be normal CTTS
+    ctld.slingLoad = false -- if false, crates can be used WITHOUT slingloading, by hovering above the crate, simulating slingloading but not the weight...
+    -- There are some bug with Sling-loading that can cause crashes, if these occur set slingLoad to false
+    -- to use the other method.
+    -- Set staticBugFix  to FALSE if use set ctld.slingLoad to TRUE
 
-ctld.maxExtractDistance = 125 -- max distance from vehicle to troops to allow a group extraction
-ctld.multiCrateMaxDistance = 200 --生成一个组需要的箱子之间的最大距离
-ctld.maximumDistanceLogistic = 200 -- max distance from vehicle to logistics to allow a loading or spawning operation
-ctld.maximumSearchDistance = 4000 -- max distance for troops to search for enemy
-ctld.maximumMoveDistance = 2000 -- max distance for troops to move from drop point if no enemy is nearby
+    ctld.enableSmokeDrop = false -- if false, helis and c-130 will not be able to drop smoke
 
-ctld.minimumDeployDistance = 1 -- minimum distance from a friendly pickup zone where you can deploy a crate
-ctld.minimumDistanceBetweenFobs = 100
+    ctld.maxExtractDistance = 125 -- max distance from vehicle to troops to allow a group extraction
+    ctld.multiCrateMaxDistance = 200 --生成一个组需要的箱子之间的最大距离
+    ctld.maximumDistanceLogistic = 200 -- max distance from vehicle to logistics to allow a loading or spawning operation
+    ctld.maximumSearchDistance = 4000 -- max distance for troops to search for enemy
+    ctld.maximumMoveDistance = 2000 -- max distance for troops to move from drop point if no enemy is nearby
+
+    ctld.minimumDeployDistance = 1000 -- minimum distance from a friendly pickup zone where you can deploy a crate
+    ctld.minimumDistanceBetweenFobs = 2000
+    ctld.spawnRPGWithCoalition = true --spawns a friendly RPG unit with Coalition forces
+    ctld.spawnStinger = false -- spawns a stinger / igla soldier with a group of 6 or more soldiers!
+
+    ctld.enabledFOBBuilding = true -- if true, you can load a crate INTO a C-130 than when unpacked creates a Forward Operating Base (FOB) which is a new place to spawn (crates) and carry crates from
+    -- In future i'd like it to be a FARP but so far that seems impossible...
+    -- You can also enable troop Pickup at FOBS
+    ctld.cratesRequiredForFOB = 1 -- The amount of crates required to build a FOB. Once built, helis can spawn crates at this outpost to be carried and deployed in another area.
+    -- The large crates can only be loaded and dropped by large aircraft, like the C-130 and listed in ctld.vehicleTransportEnabled
+    -- Small FOB crates can be moved by helicopter. The FOB will require ctld.cratesRequiredForFOB larges crates and small crates are 1/3 of a large fob crate
+    -- To build the FOB entirely out of small crates you will need ctld.cratesRequiredForFOB * 3
+    ctld.troopPickupAtFOB = true -- if true, troops can also be picked up at a created FOB
+    ctld.buildTimeFOB = 60 --time in seconds for the FOB to be built
+    --ctld.crateWaitTime = 20 -- time in seconds to wait before you can spawn another crate
+    ctld.crateWaitTime = 20
+    ctld.forceCrateToBeMoved = true -- a crate must be picked up at least once and moved before it can be unpacked. Helps to reduce crate spam
+else --测试用的参数
+    ctld.IsCheckfarEnoughFromLogisticZone=false
+    ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
+
+    ctld.hoverPickup = false --  if set to false you can load crates with the F10 menu instead of hovering... Only if not using real crates!
+
+    ctld.enableCrates = true -- if false, Helis will not be able to spawn or unpack crates so will be normal CTTS
+    ctld.slingLoad = false -- if false, crates can be used WITHOUT slingloading, by hovering above the crate, simulating slingloading but not the weight...
+    -- There are some bug with Sling-loading that can cause crashes, if these occur set slingLoad to false
+    -- to use the other method.
+    -- Set staticBugFix  to FALSE if use set ctld.slingLoad to TRUE
+
+    ctld.enableSmokeDrop = false -- if false, helis and c-130 will not be able to drop smoke
+
+    ctld.maxExtractDistance = 125 -- max distance from vehicle to troops to allow a group extraction
+    ctld.multiCrateMaxDistance = 200 --生成一个组需要的箱子之间的最大距离
+    ctld.maximumDistanceLogistic = 200 -- max distance from vehicle to logistics to allow a loading or spawning operation
+    ctld.maximumSearchDistance = 4000 -- max distance for troops to search for enemy
+    ctld.maximumMoveDistance = 2000 -- max distance for troops to move from drop point if no enemy is nearby
+
+    ctld.minimumDeployDistance = 1 -- minimum distance from a friendly pickup zone where you can deploy a crate
+    ctld.minimumDistanceBetweenFobs = 100
+    ctld.spawnRPGWithCoalition = true --spawns a friendly RPG unit with Coalition forces
+    ctld.spawnStinger = false -- spawns a stinger / igla soldier with a group of 6 or more soldiers!
+
+    ctld.enabledFOBBuilding = true -- if true, you can load a crate INTO a C-130 than when unpacked creates a Forward Operating Base (FOB) which is a new place to spawn (crates) and carry crates from
+    -- In future i'd like it to be a FARP but so far that seems impossible...
+    -- You can also enable troop Pickup at FOBS
+    ctld.cratesRequiredForFOB = 1 -- The amount of crates required to build a FOB. Once built, helis can spawn crates at this outpost to be carried and deployed in another area.
+    -- The large crates can only be loaded and dropped by large aircraft, like the C-130 and listed in ctld.vehicleTransportEnabled
+    -- Small FOB crates can be moved by helicopter. The FOB will require ctld.cratesRequiredForFOB larges crates and small crates are 1/3 of a large fob crate
+    -- To build the FOB entirely out of small crates you will need ctld.cratesRequiredForFOB * 3
+    ctld.troopPickupAtFOB = true -- if true, troops can also be picked up at a created FOB
+    ctld.buildTimeFOB = 1 --time in seconds for the FOB to be built
+    --ctld.crateWaitTime = 20 -- time in seconds to wait before you can spawn another crate
+    ctld.crateWaitTime = 1
+    ctld.forceCrateToBeMoved = false -- a crate must be picked up at least once and moved before it can be unpacked. Helps to reduce crate spam
+end
 
 ctld.numberOfTroops = 10 -- default number of troops to load on a transport heli or C-130 
 							-- also works as maximum size of group that'll fit into a helicopter unless overridden
@@ -78,29 +133,9 @@ ctld.vehiclesWeight = {
     ["M1043 HMMWV Armament"] = 2500
 }
 
-ctld.aaLaunchers = 3 -- controls how many launchers to add to the kub/buk when its spawned.
-ctld.hawkLaunchers = 8 -- controls how many launchers to add to the hawk when its spawned.
+--ctld.aaLaunchers = 3 -- controls how many launchers to add to the kub/buk when its spawned.
+--ctld.hawkLaunchers = 8 -- controls how many launchers to add to the hawk when its spawned.
 
-ctld.spawnRPGWithCoalition = true --spawns a friendly RPG unit with Coalition forces
-ctld.spawnStinger = false -- spawns a stinger / igla soldier with a group of 6 or more soldiers!
-
-ctld.enabledFOBBuilding = true -- if true, you can load a crate INTO a C-130 than when unpacked creates a Forward Operating Base (FOB) which is a new place to spawn (crates) and carry crates from
--- In future i'd like it to be a FARP but so far that seems impossible...
--- You can also enable troop Pickup at FOBS
-
-ctld.cratesRequiredForFOB = 1 -- The amount of crates required to build a FOB. Once built, helis can spawn crates at this outpost to be carried and deployed in another area.
--- The large crates can only be loaded and dropped by large aircraft, like the C-130 and listed in ctld.vehicleTransportEnabled
--- Small FOB crates can be moved by helicopter. The FOB will require ctld.cratesRequiredForFOB larges crates and small crates are 1/3 of a large fob crate
--- To build the FOB entirely out of small crates you will need ctld.cratesRequiredForFOB * 3
-
-ctld.troopPickupAtFOB = true -- if true, troops can also be picked up at a created FOB
-
-ctld.buildTimeFOB = 1 --time in seconds for the FOB to be built
-
---ctld.crateWaitTime = 20 -- time in seconds to wait before you can spawn another crate
-ctld.crateWaitTime = 1
-
-ctld.forceCrateToBeMoved = false -- a crate must be picked up at least once and moved before it can be unpacked. Helps to reduce crate spam
 
 ctld.radioSound = "beacon.ogg" -- the name of the sound file to use for the FOB radio beacons. If this isnt added to the mission BEACONS WONT WORK!
 ctld.radioSoundFC3 = "beaconsilent.ogg" -- name of the second silent radio file, used so FC3 aircraft dont hear ALL the beacon noises... :)
@@ -3839,8 +3874,8 @@ function ctld.unpackCrates(_arguments)
 
 
             --TODO
-            --if ctld.inLogisticsZone(_heli) == true  or  ctld.farEnoughFromLogisticZone(_heli) == false then
-            if ctld.farEnoughFromLogisticZone(_heli,ctld.minimumDeployDistance) == false then
+            if ctld.inLogisticsZone(_heli) == true  or  ctld.farEnoughFromLogisticZone(_heli,ctld.minimumDeployDistance,ctld.IsCheckfarEnoughFromLogisticZone) == false then
+            --if ctld.farEnoughFromLogisticZone(_heli,ctld.minimumDeployDistance) == false then
                 ctld.displayMessageToGroup(_heli, "You can't unpack that here! Take it to where it's needed!", 20)
 
                 return
@@ -4741,7 +4776,7 @@ end
 
 
 function ctld.repairGroupSystem(_heli, _nearestCrate,_aaSystem)
-
+    ctld.logInfo('进入了repairGroupSystem,aa:'..ctld.formatTable(_aaSystem))
     -- find nearest COMPLETE AA system
     local _nearestHawk = ctld.findNearestAASystem(_heli,_aaSystem)
 
@@ -4790,7 +4825,7 @@ function ctld.repairGroupSystem(_heli, _nearestCrate,_aaSystem)
 end
 
 function ctld.unpackMultiCrate(_heli, _nearestCrate, _nearbyCrates)
-
+    ctld.logError('错误！箱子生成触发了unpackMultiCrate，箱子:'..ctld.formatTable(_nearestCrate))
     -- unpack multi crate
     local _nearbyMultiCrates = {}
 
@@ -4856,7 +4891,7 @@ function ctld.spawnCrateGroup(_heli, _positions, _types,_groupSystemTemplate)
     local _groupName = _heli:getPlayerName().. " " .. _types[1] .. " #" .. _id
     local _side = _heli:getCoalition()
 
-    --TODO 添加到动态保存
+    --TODO 限制参数添加到动态保存中
     ctld.logDebug('ctld.checkPlayerLimit(_heli,_groupSystemTemplate)    '.. ctld.formatTable(_groupSystemTemplate))
     local _category=ctld.checkPlayerLimit(_heli,_groupSystemTemplate)
 
@@ -4919,9 +4954,11 @@ function ctld.addUnitInfoToPlayer(_heli,_category,_groupName)
 
     table.insert(ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category],_groupName)
     local _leftNum = ctld.UnitLimitPerPlayer[_category]-#ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category]
-    local _message = string.format("你还可以生成%d组 %s 类型的单位",_leftNum,_category)
+
+    local _message = string.format("你生成了%s, 你还可以生成%d组 %s 类型的单位。超过的话会按顺序回收",_groupName,_leftNum,_category)
     ctld.displayMessageToGroup(_heli, _message, 10)
-    ctld.logDebug(_heli:getPlayerName()..'新加了'.._category..'类别的'.._groupName)
+
+    ctld.logInfo(_heli:getPlayerName()..'新加了'.._category..'类别的'.._groupName)
 end
 
 function ctld.checkPlayerLimit(_heli,_groupSystemTemplate)
@@ -4975,7 +5012,7 @@ function ctld.handlePlayerLimitInfo(_heli, _category)
             _aliveGroupNum = _aliveGroupNum+1
         else
             table.remove(ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category],index)
-            ctld.logDebug(_heli:getPlayerName()..'没血所以移除了'.._category..'类别的'..ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category][index])
+            ctld.logInfo(_heli:getPlayerName()..'没血所以移除了'.._category..'类别的'..ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category][index])
         end
     end
 
@@ -4985,7 +5022,7 @@ function ctld.handlePlayerLimitInfo(_heli, _category)
         _toDeleteGroup:destroy()
         local _message = string.format("你存活%d组 %s 单位，超过了限制数量%d组,自动为你销毁了最早的组:%s",_aliveGroupNum,_category,ctld.UnitLimitPerPlayer[_category],_toDeleteGroupName)
         ctld.displayMessageToGroup(_heli, _message, 10)
-        ctld.logDebug(_heli:getPlayerName()..'销毁了'.._category..'类别的'.._toDeleteGroupName)
+        ctld.logInfo(_heli:getPlayerName()..'销毁了'.._category..'类别的'.._toDeleteGroupName)
     end
 end
 
@@ -5464,7 +5501,10 @@ end
 
 
 -- are far enough from a friendly logistics zone
-function ctld.farEnoughFromLogisticZone(_heli,distance)
+function ctld.farEnoughFromLogisticZone(_heli,distance,needcheck)
+    if needcheck ==false then
+        return true
+    end
     if ctld.inAir(_heli) then
         return false
     end
@@ -5999,7 +6039,7 @@ ctld.jtacLaserPointCodes = {}
 ctld.jtacRadioData = {}
 
 function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _radio)
-    ctld.logDebug(string.format("ctld.JTACAutoLase(_jtacGroupName=%s, _laserCode=%s", ctld.p(_jtacGroupName), ctld.p(_laserCode)))
+    ctld.logInfo(string.format("ctld.JTACAutoLase(_jtacGroupName=%s, _laserCode=%s", ctld.p(_jtacGroupName), ctld.p(_laserCode)))
 
     local _radio = _radio
     if not _radio then

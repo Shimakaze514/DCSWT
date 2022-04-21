@@ -93,7 +93,7 @@ function SLOT.allowEnterSlot (_playerID,_side,_slotID)
     local _ucid = net.get_player_info(_playerID, "ucid")
 
     --TODO 检查教练机的flag
-    if _category ~= nil and _category=='helicopter' and _category=='plane' then
+    if _category ~= nil and (_category=='helicopter' or _category=='airplane' or _category=='plane') then
         if SLOT.getFlagValue(_groupName) == 0 then
             return true
         else
@@ -147,3 +147,4 @@ end
 
 --设置用户callbacs,使用上面定义的功能映射DCS事件处理程序
 DCS.setUserCallbacks(SLOT.callbacks)
+net.log('SLOTAUTH 权限脚本 加载完成')

@@ -132,20 +132,19 @@ function dsave.destoryMissionEditorCCs() --在任务一开始把所有任务编�
         local _needDestory = false
         for _key , _unitTable in pairs(_group.units) do
             if _unitTable.type~=nil and dsave.typeBelongsToCC(_unitTable.type) then
-                dsave.logDebug("需要摧毁的cc"..ctld.formatTable(_unitTable))
                 _needDestory = true
             end
         end
 
         if _needDestory == true then
             local _groupObject = StaticObject.getByName(_group.groupName)
-            dsave.logDebug("_needDestory _groupObject"..ctld.formatTable(_groupObject))
             if _groupObject ~= nil then
+                dsave.logInfo("CC已被摧毁:".._group.groupName)
                 _groupObject:destroy()
             end
         end
     end
-    dsave.logDebug("所有默认出生的cc都已经摧毁")
+    dsave.logInfo("所有默认出生的cc都已经摧毁")
 end
 
 

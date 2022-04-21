@@ -120,6 +120,7 @@ function NP.capture(_args)
     table.insert(ctld.logisticUnits, _logisticData.units[1].unitName)--新的单位加到cc的白名单
     NP.setRelatedZone(_logisticData.groupName,_logisticData.units[1].coalition)
     --maybe Done 把离这个最近的zone，所关联的红蓝直升机的flag值设置，让上飞机权限翻转
+    NP.logInfo("战区".._logisticData.groupName.."被"..oppsiteCountrySide.."占领")
     trigger.action.outText("战区".._logisticData.groupName.."被"..oppsiteCountrySide.."占领", 20)
 end
 
@@ -141,8 +142,10 @@ function NP.setRelatedZone(groupName,coalition)
     end
 
     for _,_Unit in pairs(Unitlist[ccname][coalition]) do
+        NP.logInfo('[setRelatedZone] 翻转直升机机位: |'.. _Unit..'| flag为0(true)')
         trigger.action.setUserFlag(_Unit, 0)
     end
+
     local oppsitecoalition
     if coalition == 'red' then
        oppsitecoalition = 'blue'
@@ -150,6 +153,7 @@ function NP.setRelatedZone(groupName,coalition)
        oppsitecoalition = 'red'
     end
     for _,_Unit in pairs(Unitlist[ccname][oppsitecoalition]) do
+        NP.logInfo('[setRelatedZone] 翻转直升机机位: |'.. _Unit..'| flag为100(false)')
         trigger.action.setUserFlag(_Unit, 100)
     end
 
