@@ -3,11 +3,12 @@
     依赖ctld和mist
 
  ]]
---TODO 红方选蓝方的前线有问题
---TODO 任务里面蓝方的名字
---TODO 任务里面是不是有脚本
+
 --TODO 选边限制
---TODO 坦克生成的通知
+--TODO 螺旋桨转载货物
+--TODO 无人机有bug
+--TODO fob的击杀更新
+--TODO 被回收的单位会复活
 NP = {}
 
 NP.Id = "NP - "

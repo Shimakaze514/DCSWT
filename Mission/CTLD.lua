@@ -170,6 +170,7 @@ ctld.UnitLimitPerPlayer= {
     ["远程火力(Artillery)"] =5,
     ["近程防空(Short Range AA)"] =5,
     ["中远程防空(Mid&Long Range AA)"] =10,
+    ["JTAC&OTHERS等小型单位集装箱"] =  99,
 }
 ctld.UnitLimitPlayerInfo= {}
 
@@ -3874,10 +3875,9 @@ function ctld.unpackCrates(_arguments)
 
 
             --TODO
-            if ctld.inLogisticsZone(_heli) == true  or  ctld.farEnoughFromLogisticZone(_heli,ctld.minimumDeployDistance,ctld.IsCheckfarEnoughFromLogisticZone) == false then
+            if ctld.inLogisticsZone(_heli,ctld.IsCheckfarEnoughFromLogisticZone) == true  or  ctld.farEnoughFromLogisticZone(_heli,ctld.minimumDeployDistance,ctld.IsCheckfarEnoughFromLogisticZone) == false then
             --if ctld.farEnoughFromLogisticZone(_heli,ctld.minimumDeployDistance) == false then
                 ctld.displayMessageToGroup(_heli, "You can't unpack that here! Take it to where it's needed!", 20)
-
                 return
             end
 
@@ -5473,8 +5473,10 @@ function ctld.inWaypointZone(_point,_coalition)
 end
 
 -- are we near friendly logistics zone
-function ctld.inLogisticsZone(_heli)
-
+function ctld.inLogisticsZone(_heli,needcheck)
+    if needcheck ==false then
+        return false
+    end
     if ctld.inAir(_heli) then
         return false
     end
