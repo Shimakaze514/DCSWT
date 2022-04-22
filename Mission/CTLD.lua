@@ -4627,6 +4627,7 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
             end
         end
     end
+    --TODO
     if _crateCnt < _groupSystemTemplate.cratesRequired then
         local _txtCnt = string.format("该阵地需要 %d 个集装箱，目前有 %d 个", _groupSystemTemplate.cratesRequired, _crateCnt)
         ctld.displayMessageToGroup(_heli, "无法部署".._groupSystemTemplate.name.."!\n\n" .. _txtCnt .. "\n或者集装箱之间相距太远（超过" .. ctld.multiCrateMaxDistance.. "m）", 20)
