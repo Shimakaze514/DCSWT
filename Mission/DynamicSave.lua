@@ -20,7 +20,7 @@ dsave.Version = "20220417"
 net.log("LOAD - DYNAMIC SAVE version "..dsave.Version ..", script by VL")
 
 dsave.CCTypes = { '.Command Center', 'outpost'}
-dsave.RefreshTime = 10
+dsave.RefreshTime = 300
 
 -- debug level, specific to this module
 dsave.Debug = true
