@@ -10,6 +10,7 @@
 --TODO 箱子变不出山毛榉
 --TODO 步战车单位占点
 --TODO 箱子调运
+
 NP = {}
 
 NP.Id = "NP - "
@@ -57,23 +58,42 @@ function NP.logTrace(message)
     end
 end
 
+function NP.findUnitControlByPlayer(_groupTable)
+    local _playerUnits = {}
+    for _, _unitsTable in pairs(_groupTable.units) do
+        local _unit = ctld.getAddGroupUnit(_unitsTable.unitName)
+        local playerName = _unit:getPlayerName()
+        if playerName~=nil then
+            _playerUnits[playerName]=_unit
+        end
+    end
+    return _playerUnits
+end
+
 
 function NP.capture(_args)
     NP.logDebug('进入cap函数')
-    local _unit = _args[1]
+    local _playerUnits = NP.findUnitControlByPlayer(_args)
     NP.logDebug('开始找最近的cc')
-    local _closeEnough,_logistic=NP.closeEnoughFromEnemyLogisticZone(_unit)
-    if _closeEnough == false then
-        NP.logDebug('不够进')
-        --TODO 这个无法通知到人
-        --trigger.action.outTextForGroup(ctld.getGroupId(_unit), "你附近有敌方cc吗就想占领，等你开到cc脚下了再按啊~", 10)
+    local _hasCloseEnough, _targetLogistic,_capturedPlayerName
+    for _playerName,_unit in pairs(_playerUnits) do
+        local _closeEnough,_logistic=NP.closeEnoughFromEnemyLogisticZone(_unit)
+        if _closeEnough then
+            _hasCloseEnough=true
+            _targetLogistic=_logistic
+            _capturedPlayerName=_playerName
+        end
+    end
+
+    if _hasCloseEnough == false then
+        NP.logDebug('不够近')
         trigger.action.outText('操作地面单位的指挥官，在靠近敌方cc后再占领。如果你乱按这个按钮，整个服务器都会被这个消息吵到',10)
         return
     end
 
     NP.logDebug('开始从mist获取数据')
-    local _logisticData = NP.getLogisticData(_logistic)
-    local _side = _logistic:getCoalition()
+    local _logisticData = NP.getLogisticData(_targetLogistic)
+    local _side = _targetLogistic:getCoalition()
     local oppsiteCountryID
     local oppsiteSide
     local oppsiteCountry
@@ -113,17 +133,17 @@ function NP.capture(_args)
     _logisticData.units[1].coalitionId= oppsiteSide
 
     --_logisticData.units[1].alt=_logisticData.units[1].alt-5 --TODO cc浮空
-    NP.logDebug('_logistic:'..ctld.p(_logistic))
+    NP.logDebug('_logistic:'..ctld.p(_targetLogistic))
     NP.logDebug('_logisticData:'..ctld.formatTable(_logisticData))
     NP.logDebug('_unit:'..ctld.p(_unit))
-    _logistic:destroy()--把老一边的cc做掉
+    _targetLogistic:destroy()--把老一边的cc做掉
     mist.dynAddStatic(_logisticData)--生成另一阵营的新cc，同一位置
     timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + 10)
     table.insert(ctld.logisticUnits, _logisticData.units[1].unitName)--新的单位加到cc的白名单
     NP.setRelatedZone(_logisticData.groupName,_logisticData.units[1].coalition)
     --maybe Done 把离这个最近的zone，所关联的红蓝直升机的flag值设置，让上飞机权限翻转
-    NP.logInfo("战区".._logisticData.groupName.."被"..oppsiteCountrySide.."占领")
-    trigger.action.outText("战区".._logisticData.groupName.."被"..oppsiteCountrySide.."占领", 20)
+    NP.logInfo("战区".._logisticData.groupName.."被"..oppsiteCountrySide.."占领。操作者是".._capturedPlayerName)
+    trigger.action.outText("战区".._logisticData.groupName.."被"..oppsiteCountrySide.."占领。操作者是".._capturedPlayerName, 20)
 end
 
 function NP.setRelatedZone(groupName,coalition)

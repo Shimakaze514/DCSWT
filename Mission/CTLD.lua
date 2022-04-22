@@ -32,7 +32,7 @@ ctld.Id = "CTLD - "
 ctld.Version = "20211113.01"
 
 -- debug level, specific to this module
-ctld.Debug = false
+ctld.Debug = true
 -- trace level, specific to this module
 ctld.Trace = true
 
@@ -203,7 +203,7 @@ ctld.JTAC_jtacStatusF10 = true -- enables F10 JTAC Status menu
 ctld.JTAC_location = true -- shows location of target in JTAC message
 ctld.location_DMS = false -- shows coordinates as Degrees Minutes Seconds instead of Degrees Decimal minutes
 
-ctld.JTAC_lock = "all" -- "vehicle" OR "troop" OR "all" forces JTAC to only lock vehicles or troops or all ground units
+ctld.JTAC_lock = "vehicle" -- "vehicle" OR "troop" OR "all" forces JTAC to only lock vehicles or troops or all ground units
 
 ctld.JTAC_SearchObjectsCategory={Object.Category.UNIT,Object.Category.STATIC} --jatc理论上也需要搜索FOB,但是目前毛都没有
 
@@ -822,8 +822,8 @@ ctld.spawnableCrates = {
 --- 3D model that will be used to represent a loadable crate ; by default, a generator
 ctld.spawnableCratesModel_load = {
     ["category"] = "Fortifications",
-    ["shape_name"] = "GeneratorF",
-    ["type"] = "GeneratorF"
+    ["shape_name"] = "iso_container_small_cargo",
+    ["type"] = "iso_container_small"
 }
 
 --- 3D model that will be used to represent a slingable crate ; by default, a crate
@@ -2318,7 +2318,7 @@ function ctld.spawnCrateStatic(_country, _unitId, _point, _name, _weight,_side)
             _crate["canCargo"] = true
     	else
             _crate = mist.utils.deepCopy(ctld.spawnableCratesModel_load)
-            _crate["canCargo"] = false
+            _crate["canCargo"] = true
         end
 
         _crate["y"] = _point.z
@@ -4619,15 +4619,18 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
 
     -- find all nearest crates and add them to the list if they're part of the AA System
     local _crateCnt = 0
+    ctld.logDebug('_nearbyCrates'..ctld.formatTable(_nearbyCrates))
     for _, _nearbyCrate in pairs(_nearbyCrates) do
         if _nearbyCrate.dist < ctld.multiCrateMaxDistance then
-            if string.find(_groupSystemTemplate.sysName,_nearbyCrate.details.unit) ~= nil then
+            if string.find(_groupSystemTemplate.sysName,_nearbyCrate.details.unit) ~= nil or _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
             --if _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
                 _crateCnt = _crateCnt + 1
             end
         end
     end
     --TODO
+    ctld.logDebug('_crateCnt'.._crateCnt)
+    ctld.logDebug('_groupSystemTemplate.cratesRequired'.._groupSystemTemplate.cratesRequired)
     if _crateCnt < _groupSystemTemplate.cratesRequired then
         local _txtCnt = string.format("该阵地需要 %d 个集装箱，目前有 %d 个", _groupSystemTemplate.cratesRequired, _crateCnt)
         ctld.displayMessageToGroup(_heli, "无法部署".._groupSystemTemplate.name.."!\n\n" .. _txtCnt .. "\n或者集装箱之间相距太远（超过" .. ctld.multiCrateMaxDistance.. "m）", 20)
@@ -4692,7 +4695,7 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
 
         -- destroy crates
         for _, _nearbyCrate in pairs(_nearbyCrates) do
-            if string.find(_groupSystemTemplate.sysName,_nearbyCrate.details.unit) ~= nil then
+            if string.find(_groupSystemTemplate.sysName,_nearbyCrate.details.unit) ~= nil or _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
             --if _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
                 if _heli:getCoalition() == 1  then
                     ctld.spawnedCratesRED[_nearbyCrate.crateUnit:getName()] = nil
@@ -5933,13 +5936,10 @@ function ctld.addF10MenuOptions()
     end
 
     for _, _groupTable in pairs(mist.DBs.dynGroupsAdded) do
-        for _, _unitsTable in pairs(_groupTable.units) do
-            local _unit = ctld.getAddGroupUnit(_unitsTable.unitName)
-            local _groupID = _groupTable.groupId
-            if ctld.captureCommandAdded[_groupID]==nil then
-                missionCommands.addCommandForGroup(_groupID, "占领", nil, NP.capture, { _unit })
-                ctld.captureCommandAdded[_groupID]=true
-            end
+        local _groupID = _groupTable.groupId
+        if ctld.captureCommandAdded[_groupID]==nil then
+            missionCommands.addCommandForGroup(_groupID, "占领", nil, NP.capture, _groupTable)
+            ctld.captureCommandAdded[_groupID]=true
         end
     end
 

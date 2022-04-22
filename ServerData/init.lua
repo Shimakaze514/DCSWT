@@ -3,10 +3,12 @@ local status, error =
   pcall(
   function()
     ----------------------------------------Common-------------------------------------
+    dofile(lfs.writedir() .. 'Scripts/ServerData/Common/utils.lua')
     dofile(lfs.writedir() .. 'Scripts/ServerData/Common/Config.lua')
     dofile(lfs.writedir() .. 'Scripts/ServerData/Common/common.lua')
     dofile(lfs.writedir() .. 'Scripts/ServerData/Common/Logs.lua')
     dofile(lfs.writedir() .. 'Scripts/ServerData/Common/LogStats.lua')
+    dofile(lfs.writedir() .. 'Scripts/ServerData/Common/Logger.lua')
     ----------------------------------------Event事件-------------------------------------
     dofile(lfs.writedir() .. 'Scripts/ServerData/Callbacks/Event/connect.lua')
     dofile(lfs.writedir() .. 'Scripts/ServerData/Callbacks/Event/change_slot.lua')
