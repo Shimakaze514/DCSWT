@@ -71,6 +71,7 @@ UserList = {
 
 SLOT = SLOT or {}
 SLOT.callbacks = SLOT.callbacks or {}
+
 SLOT.FilePath = lfs.writedir() .. [[SourceData/]] .. '动态槽位限制.json'
 SLOT.UserDataCache = {}
 SLOT.UseNewDynamicSystem = true
