@@ -51,7 +51,7 @@ Weapon.ATG_Zero = {
   "BK90 MJ2",
   'BLG-66 "白鲸" 集束炸弹'
 }
-Weapon.ATG_ZeroPoint = 8000          --临时高收费
+Weapon.ATG_ZeroPoint = 300          --临时高收费
 
 
 
