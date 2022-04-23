@@ -69,7 +69,7 @@ function LoadLua.callbacks.onPlayerTrySendChat(playerID, msg, all)
     local status, error =
       pcall(
       function()
-        -- local path = lfs.writedir() .. 'Scripts/Debug/Test/Main.lua'
+        -- local path = lfs.writedir() .. 'Scripts/Test/Main.lua'
         local path = 'F:\\Office\\GitHub\\DCS_World_Debugger\\test\\test.lua'
         if val[2] then
           path = val[2]
@@ -92,10 +92,6 @@ function LoadLua.callbacks.onSimulationStop()
   local code = [[Tools.net.tcp_send_msg({type = 'ServerStatus', payload = {msg = '游戏界面已停止'}})]]
   Tools.a_do_script(code)
   net.log('API CONTROL SERVER TERMINATED')
-end
-
-function LoadLua.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
-
 end
 
 --设置用户callbacs,使用上面定义的功能映射DCS事件处理程序
