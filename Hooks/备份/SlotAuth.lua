@@ -72,9 +72,9 @@ UserList = {
 
 SLOT = SLOT or {}
 SLOT.callbacks = SLOT.callbacks or {}
-SLOT.FilePath=lfs.writedir() .. [[SourceData/]].. '动态槽位限制.json'
+SLOT.FilePath=lfs.writedir() .. [[SourceData/]].. '动态管理员.json'
 SLOT.UserDataCache={}
-SLOT.UseNewDynamicSystem=true
+SLOT.UseNewDynamicSystem=false
 
 function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
     local _side=side
@@ -291,7 +291,7 @@ end
 DCS.setUserCallbacks(SLOT.callbacks)
 net.log('SLOTAUTH 回调设置完成')
 SLOT.UserDataCache=SLOT.LoadFile(SLOT.FilePath)
-net.log('SLOTAUTH 动态槽位限制信息加载完成')
+net.log('SLOTAUTH 动态管理员信息加载完成')
 net.log('SLOTAUTH 权限脚本 加载完成')
 
 
