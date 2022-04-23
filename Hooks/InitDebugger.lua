@@ -9,7 +9,12 @@
 --
 --            net.log('[Debugger]开始加载Debugger')
 --            dofile(lfs.writedir() .. 'Scripts/Debug/Hooks/Main.lua')
---            --dofile(lfs.writedir() .. 'Scripts/ServerData/init.lua')
+--
+--            dofile(lfs.writedir() .. 'Scripts/ServerData/init.lua')
+--            dofile(lfs.writedir() .. 'Scripts/SlotAuth/SlotAuth.lua')
+--            dofile(lfs.writedir() .. 'Scripts/Source/Version3.0/Callbacks/Init.lua')
+--
+--            net.log('[Debugger]开始加载任务环境和脚本')
 --            dofile(lfs.writedir() .. 'Scripts/Debug/LoadMissionScript/Main.lua')
 --
 --        end

@@ -3,13 +3,8 @@
     依赖ctld和mist
 
  ]]
-
 --TODO 选边限制
 --TODO fob的击杀更新
---TODO 玩家限制信息加入动态保存
---TODO 箱子变不出山毛榉
---TODO 步战车单位占点
---TODO 箱子调运
 
 NP = {}
 
@@ -163,23 +158,49 @@ function NP.setRelatedZone(groupName,coalition)
         return
     end
 
-    for _,_Unit in pairs(Unitlist[ccname][coalition]) do
-        NP.logInfo('[setRelatedZone] 翻转直升机机位: |'.. _Unit..'| flag为0(true)')
-        trigger.action.setUserFlag(_Unit, 0)
-    end
-
     local oppsitecoalition
     if coalition == 'red' then
        oppsitecoalition = 'blue'
     else
        oppsitecoalition = 'red'
     end
+
     for _,_Unit in pairs(Unitlist[ccname][oppsitecoalition]) do
         NP.logInfo('[setRelatedZone] 翻转直升机机位: |'.. _Unit..'| flag为100(false)')
         trigger.action.setUserFlag(_Unit, 100)
     end
+    for _,_Unit in pairs(Unitlist[ccname][coalition]) do
+        NP.logInfo('[setRelatedZone] 翻转直升机机位: |'.. _Unit..'| flag为0(true)')
+        trigger.action.setUserFlag(_Unit, 0)
+    end
 
-    NP.logInfo('[setRelatedZone] 翻转直升机机位权限完成: '.. ccname..'| 阵营:'..coalition)
+    timer.scheduleFunction(function(_args)
+        local _ccname, _coalition, _oppsitecoalition = _args[1],_args[2],_args[3]
+        NP.logDebug('传进生成船的函数的值：'.._ccname.."|".._coalition.."|".._oppsitecoalition)
+
+        if Unitlist[_ccname]['ships']~=nil then
+            for _,_shipGroupName in pairs(Unitlist[_ccname]['ships'][_coalition]) do
+                local myGroup = Group.getByName(_shipGroupName)
+                if myGroup ~= nil then
+                    NP.logInfo('[setRelatedZone] 补给船已存在，不进行生成:'.._shipGroupName.."|")
+                else
+                    mist.respawnGroup(_shipGroupName,true)
+                    NP.logInfo('[setRelatedZone] 生成补给船:'.._shipGroupName.."|")
+                end
+            end
+            for _,_shipGroupName in pairs(Unitlist[_ccname]['ships'][_oppsitecoalition]) do
+                local myGroup = Group.getByName(_shipGroupName)
+                if myGroup ~= nil then
+                    Group.destroy(myGroup)
+                    NP.logInfo('[setRelatedZone] 销毁补给船:'.._shipGroupName.."|")
+                else
+                    NP.logError('[setRelatedZone] 销毁补给船时找不到组:'.._shipGroupName.."|")
+                end
+            end
+        end
+    end, {ccname,coalition,oppsitecoalition} , timer.getTime()+10)
+
+    NP.logInfo('[setRelatedZone] 占领CC的流程完成: '.. ccname..'| 阵营:'..coalition)
 end
 
 

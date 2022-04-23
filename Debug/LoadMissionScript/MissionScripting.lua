@@ -19,18 +19,11 @@ dofile('Scripts/ScriptingSystem.lua')
 dofile(lfs.writedir() .. 'Scripts/Debug/Mission/Main.lua')
 
 dofile(lfs.writedir() .. "Scripts/Mission/mist.lua")
-
 dofile(lfs.writedir() .. "Scripts/Mission/CTLD.lua")
-
 dofile(lfs.writedir() .. "Scripts/Mission/DynamicSave.lua")
-
 dofile(lfs.writedir() .. "Scripts/StaticDataBase/UnitsList.lua")
 dofile(lfs.writedir() .. "Scripts/Mission/NPV2.lua")
-
-
---dofile(lfs.writedir() .. 'Scripts/ServerData/init.lua')
-
---dofile(lfs.writedir() .. "Scripts/MissionFlanker/NP.lua")
+dofile(lfs.writedir() .. "Scripts/Source/Version3.0/Mission/SourceInit.lua")
 
 -----------------------------------清理任务脚本环境-----------------------------------
 
