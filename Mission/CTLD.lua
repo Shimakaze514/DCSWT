@@ -185,8 +185,8 @@ ctld.UnitLimitPlayerInfo= {}
 --END AA SYSTEM CONFIG --
 -- ***************** JTAC CONFIGURATION *****************
 
-ctld.JTAC_LIMIT_RED = 10 -- max number of JTAC Crates for the RED Side
-ctld.JTAC_LIMIT_BLUE = 10 -- max number of JTAC Crates for the BLUE Side
+ctld.JTAC_LIMIT_RED = 9999 -- max number of JTAC Crates for the RED Side
+ctld.JTAC_LIMIT_BLUE = 9999 -- max number of JTAC Crates for the BLUE Side
 
 ctld.JTAC_dropEnabled = true -- allow JTAC Crate spawn from F10 menu
 
@@ -5031,8 +5031,8 @@ function ctld.handlePlayerLimitInfo(_heli, _category)
         if _groupAlive then
             _aliveGroupNum = _aliveGroupNum+1
         else
-            table.remove(ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category],index)
             ctld.logInfo(_heli:getPlayerName()..'没血所以移除了'.._category..'类别的'..ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category][index])
+            table.remove(ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category],index)
         end
     end
 

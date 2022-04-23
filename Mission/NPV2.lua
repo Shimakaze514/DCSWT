@@ -57,9 +57,11 @@ function NP.findUnitControlByPlayer(_groupTable)
     local _playerUnits = {}
     for _, _unitsTable in pairs(_groupTable.units) do
         local _unit = ctld.getAddGroupUnit(_unitsTable.unitName)
-        local playerName = _unit:getPlayerName()
-        if playerName~=nil then
-            _playerUnits[playerName]=_unit
+        if _unit ~= nil then
+            local playerName = _unit:getPlayerName()
+            if playerName~=nil then
+                _playerUnits[playerName]=_unit
+            end
         end
     end
     return _playerUnits
