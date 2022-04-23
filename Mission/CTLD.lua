@@ -6776,14 +6776,13 @@ function ctld.isInfantry(_unit)
     return false
 end
 
--- assume anything that isnt soldier is vehicle
+-- 只有地面载具才是Vehicle
 function ctld.isVehicle(_unit)
-
-    if ctld.isInfantry(_unit) then
+    if _unit:getCategory() == 2 then   
+        return true
+    else 
         return false
     end
-
-    return true
 end
 
 -- The entered value can range from 1111 - 1788,
