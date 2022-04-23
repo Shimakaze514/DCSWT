@@ -39,7 +39,7 @@ Tools.net.sendData = function(response, displayMsg)
   end
   local ip, port = TCP.client:getsockname()
   -- local ip, port = TCP.server:getsockname()
-  --net.log('sendDataTo -->' .. tostring(ip) .. ':' .. tostring(port))
+  net.log('sendDataTo -->' .. tostring(ip) .. ':' .. tostring(port))
   if displayMsg then
     net.log('sendData -->' .. response)
   end
