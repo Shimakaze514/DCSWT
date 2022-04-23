@@ -6778,7 +6778,8 @@ end
 
 -- 只有地面载具才是Vehicle
 function ctld.isVehicle(_unit)
-    if _unit:getCategory() == 2 then   
+    ctld.logDebug('检查载具类型:'.._unit:getName().."|".._unit:getCategory())
+    if _unit:getCategory() == 1 then
         return true
     else 
         return false
