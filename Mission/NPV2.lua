@@ -19,7 +19,7 @@ NP.RefreshTime = 10
 NP.CaptureDistance = 100
 
 -- debug level, specific to this module
-NP.Debug = true
+NP.Debug = false
 -- trace level, specific to this module
 NP.Trace = true
  
@@ -79,8 +79,8 @@ function NP.capture(_args)
         end
     end
 
-    if _hasCloseEnough == false then
-        NP.logDebug('不够近')
+    if _hasCloseEnough == nil then
+        NP.logInfo('占点不够近')
         trigger.action.outText('操作地面单位的指挥官，在靠近敌方cc后再占领。如果你乱按这个按钮，整个服务器都会被这个消息吵到',10)
         return
     end

@@ -52,6 +52,8 @@ if ctld.Debug == false then
         ["近程防空(Short Range AA)"] =3,
         ["中远程防空(Mid&Long Range AA)"] =10,
     }
+    ctld.SideLimitRed = 4 --红方的阵营级大杀器
+    ctld.SideLimitBlue = 4 --蓝方的阵营级大杀器
     ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
 
     ctld.hoverPickup = false --  if set to false you can load crates with the F10 menu instead of hovering... Only if not using real crates!
@@ -96,6 +98,9 @@ else --测试用的参数
         ["近程防空(Short Range AA)"] =2,
         ["中远程防空(Mid&Long Range AA)"] =2,
     }
+    ctld.SideLimitRed = 2 --红方的阵营级大杀器
+    ctld.SideLimitBlue = 2 --蓝方的阵营级大杀器
+
     ctld.IsCheckfarEnoughFromLogisticZone=false
     ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
 
@@ -628,16 +633,7 @@ ctld.extractableGroups = {
 -- Use any of the predefined names or set your own ones
 -- When a logistic unit is destroyed, you will no longer be able to spawn crates
 
-ctld.logisticUnits = {
-    '古达乌塔本场CC',
-    '苏呼米前线CC',
-    '奥恰姆奇拉中场CC',
-    '阿纳克里厄中场CC',
-    '科尔奇前线CC',
-    '库塔伊西本场CC',
-    'logistic Blue #001-1',
-    'logistic Blue #006',
-}
+ctld.logisticUnits = {}--动态保存会刷新一次，所以不用手动添加了
 
 -- ************** UNITS ABLE TO TRANSPORT VEHICLES ******************
 -- Add the model name of the unit that you want to be able to transport and deploy vehicles
@@ -773,7 +769,6 @@ ctld.spawnableCrates = {
 	},
 
     ["近程防空(Short Range AA)"] = {
-		{ weight = 963, desc = "后卫(M6)野战红外地空导弹战车", unit = "M6 Linebacker" },
 		{ weight = 964, desc = "箭-10(SA-13)红外地空导弹发射车", unit = "Strela-10M3"},
         { weight = 965, desc = "ZU-23卡车高炮(1箱2车)", unit = "ZU23 Group" },
         { weight = 960, desc = "猎豹(Gepard)双管自行高炮(1箱2车)", unit = "Gepard Group"},
@@ -792,7 +787,7 @@ ctld.spawnableCrates = {
         { weight = 1453, desc = "山毛榉(SA-11)地空导弹阵地(3箱5车+补给)", unit = "SA-11 Buk"},
     },
 	
-	["维护用集装箱(repair)"] = {
+	["修理箱(repair)"] = {
         { weight = 821, desc = "山毛榉(SA-11 repair)维护箱", unit = "SA-11 BUK Repair" },
 		{ weight = 823, desc = "道尔(SA-15 repair)维护箱", unit = "SA-15 BUK Repair"},
         --{ weight = 825, desc = "NASAMS地空导弹阵地维护箱", unit = "NASAMS Repair", loadable = false },
@@ -801,12 +796,15 @@ ctld.spawnableCrates = {
 		
 
 	},
-	["JTAC&OTHERS等小型单位集装箱"] = {
+	["JTAC等小型单位集装箱"] = {
         { weight = 492, desc = "悍马吉普 JTAC(侦察）", unit = "Hummer"},
         { weight = 402, desc = "补给车(Supply Truck)", unit = "M 818"},
         { weight = 591, desc = "陶悍马(TOW HUMVEE) (1箱1车)", unit = "M1045 HMMWV TOW" },
         { weight = 401, desc = "彩蛋(Easter Egg)", unit = "Pz_IV_H"},
 		{ weight = 325, desc = "捕食者无人机 JTAC", unit = "RQ-1A Predator"}, -- used as jtac and unarmed, not on the crate list if JTAC is disabled
+    },
+    ["阵营级大杀器"] = {
+        { weight = 963, desc = "后卫(M6)野战红外地空导弹战车", unit = "M6 Linebacker" },
         { weight = 800, desc = "FOB Crate", unit = "FOB" },
     },
     
@@ -1976,7 +1974,7 @@ ctld.GroupSystemTemplate = {
 	{
         name = "道尔阵地（3箱3车+补给）",
 		sysName = "SA-15 Buk",
-		cratesRequired = 3,
+		cratesRequired = 2,
 		aaLaunchers = 3,
 		unitsCnt = 5,
         count = 3,
@@ -4052,7 +4050,7 @@ function ctld.unpackFOBCrates(_crates, _heli)
 
             --make it able to deploy crates
             table.insert(ctld.logisticUnits, _fob:getName())
-            timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + 10)
+            timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + 20)
             --不需要塔康信标
 --[[
             ctld.beaconCount = ctld.beaconCount + 1
@@ -4905,7 +4903,8 @@ function ctld.spawnCrateGroup(_heli, _positions, _types,_groupSystemTemplate)
 
     --TODO 限制参数添加到动态保存中
     ctld.logDebug('ctld.checkPlayerLimit(_heli,_groupSystemTemplate)    '.. ctld.formatTable(_groupSystemTemplate))
-    local _category=ctld.checkPlayerLimit(_heli,_groupSystemTemplate,_types[1])
+    local _category=ctld.checkPlayerAndCoalitionLimit(_heli,_groupSystemTemplate,_types[1])
+
 
     local _group = {
         --["PlayerName"] = tostring(initName),
@@ -4977,7 +4976,7 @@ function ctld.addUnitInfoToPlayer(_heli,_category,_groupName)
     ctld.logInfo(_heli:getPlayerName()..'新加了'.._category..'类别的'.._groupName)
 end
 
-function ctld.checkPlayerLimit(_heli,_groupSystemTemplate,unitName)
+function ctld.checkPlayerAndCoalitionLimit(_heli, _groupSystemTemplate, unitName)
     local _category
     if  _groupSystemTemplate==nil then
         return
@@ -5000,10 +4999,15 @@ function ctld.checkPlayerLimit(_heli,_groupSystemTemplate,unitName)
     if _category==nil  then
         ctld.displayMessageToGroup(_heli, '生成单位有问题，请找群管理汇报bug', 10)
         ctld.logError('严重错误，生成单位时找不到对应的类别！')
+    elseif _category == "阵营级大杀器" then
+
+
+        return nil
+    else
+        ctld.handlePlayerLimitInfo(_heli,_category)
+        return _category
     end
 
-    ctld.handlePlayerLimitInfo(_heli,_category)
-    return _category
 end
 
 function ctld.handlePlayerLimitInfo(_heli, _category)
@@ -5538,11 +5542,8 @@ function ctld.farEnoughFromLogisticZone(_heli,distance,needcheck)
     for _, _name in pairs(ctld.logisticUnits) do
         local _logistic = StaticObject.getByName(_name)
         if _logistic ~= nil and _logistic:getCoalition() == _heli:getCoalition() then
-            --get distance
             local _dist = ctld.getDistance(_heliPoint, _logistic:getPoint())
-            -- ctld.logInfo("DIST ".._dist)
             if _dist <= distance then
-                -- ctld.logInfo("TOO CLOSE ".._dist)
                 _farEnough = false
             end
         end
@@ -6780,8 +6781,8 @@ end
 
 -- 只有地面载具才是Vehicle
 function ctld.isVehicle(_unit)
-    ctld.logDebug('检查载具类型:'.._unit:getName().."|".._unit:getCategory())
-    if _unit:getCategory() == 1 then
+    ctld.logDebug('检查载具类型:'.._unit:getName().."|".._unit:getDesc()["category"])
+    if _unit:getDesc()["category"] == 2 then
         return true
     else 
         return false
