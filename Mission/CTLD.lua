@@ -1641,7 +1641,7 @@ ctld.RandomTankPool = {
     'Tank RandomGroup Merkava Group',
     'Tank RandomGroup T-80 Group',
     'Tank RandomGroup T-90 Group',
-    --'Tank RandomGroup L2A5 Group' --这个有bug
+    'Tank RandomGroup L2A5 Group'
 }
 
 ctld.GroupSystemTemplate = {
