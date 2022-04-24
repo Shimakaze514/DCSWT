@@ -239,7 +239,7 @@ function NP.RespawnAwacs()
         local AWCAS = Group.getByName(_plane):getUnit(1)
         if Unit.getFuel(AWCAS) < 0.3 then
             mist.respawnGroup(_plane, true)
-            NP.logInfo(_shipGroupName.."油量低，重生")
+            NP.logInfo(_plane.."油量低，重生")
             trigger.action.outText("预警机梯队没油了，后续梯队正在交接！", 10)
         end
     end
