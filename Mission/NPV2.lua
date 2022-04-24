@@ -330,8 +330,9 @@ mist.scheduleFunction(NP.respawnTankerFlanker, {}, timer.getTime() + 300)
 mist.scheduleFunction(NP.respawnAWACSOnlyFlanker, {}, timer.getTime() + 300)]]
 
 function NP.RespawnAwacs()
-    for _,_plane in pairs(NP.AWACSList) do
-        if Unit.getFuel(_plane) < 0.3 then
+    for _, _plane in pairs(NP.AWACSList) do
+        local AWCAS = Group.getByName(_plane):getUnit(1)
+        if Unit.getFuel(AWCAS) < 0.3 then
             mist.respawnGroup(_plane, true)
             net.log("该预警机油量低".._plane ..", 重生成功")
         end
