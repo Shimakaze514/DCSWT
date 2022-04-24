@@ -1,15 +1,15 @@
 Weapon = {}
 --------------------------------AA---------------------------------
-Weapon.ATA_One = {"AIM-54C-MK47 空空导弹", "AIM-54A-MK47 空空导弹", "AIM-54A-MK60 空空导弹", "ADM-141A 战术诱饵导弹", "AIM-120C-5 空空导弹", "SD-10 空空导弹"}
-Weapon.ATA_OnePoint = 10
+Weapon.ATA_One = {"AIM-54C-MK47 空空导弹", "AIM-54A-MK47 空空导弹", "AIM-54A-MK60 空空导弹", "ADM-141A 战术诱饵导弹","SD-10 空空导弹" ,"AIM-120C-5 空空导弹"}
+Weapon.ATA_OnePoint = 15
 
 Weapon.ATA_Two = {"AIM-120B 空空导弹", "R-27ET 空空导弹", "R-77 空空导弹"}
 --次强
-Weapon.ATA_TwoPoint = 8
+Weapon.ATA_TwoPoint = 10
 
 Weapon.ATA_Three = {"R-27ER 空空导弹", "Matra_S530D",  "R-27R 空空导弹", "R-27T 空空导弹"}
 --中
-Weapon.ATA_ThreePoint = 5
+Weapon.ATA_ThreePoint = 8
 
 Weapon.ATA_Four = {
   "R-73 空空导弹",
@@ -33,7 +33,11 @@ Weapon.ATA_Four = {
   "AIM-7E 空空导弹", 
   "AIM-7MH 空空导弹"
 }
-Weapon.ATA_FourPoint = 3
+Weapon.ATA_FourPoint = 5
+
+--Weapon.ATA_Zero = {"SD-10 空空导弹"}
+--Weapon.ATA_ZeroPoint = 50           -----平衡性调整
+
 
 -----------------------------------AG----------------------------------
 

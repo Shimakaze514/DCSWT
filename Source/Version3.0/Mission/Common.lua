@@ -3,8 +3,8 @@ SourceObj.playerInfo = {}
 SourceObj.playerSource = {}
 SourceObj.sourceInitPoint = 1000
 SourceObj.sourceMaxPoint = 1000
-SourceObj.recoverPoint = 100
-SourceObj.realRecoverTime = 300
+SourceObj.recoverPoint = 200
+SourceObj.realRecoverTime = 600
 SourceObj.autoAddID = {}
 -- SourceObj.landRecoverTime = 60 -- 以秒为单位
 -- SourceObj.skyRecoverTime = 30 -- 以秒为单位
@@ -140,6 +140,10 @@ SourceObj.getSourceObjChange = function(_unit)
           sourcePointChange = sourcePointChange + Weapon.ATA_ThreePoint * ammo.count
         elseif SourceObj.is_include(typeName, Weapon.ATA_Four) then
           sourcePointChange = sourcePointChange + Weapon.ATA_FourPoint * ammo.count
+
+        --elseif SourceObj.is_include(typeName, Weapon.ATA_Zero) then
+          --sourcePointChange = sourcePointChange + Weapon.ATA_ZeroPoint * ammo.count        ----AA弹平衡性调整
+
         end
         if SourceObj.is_include(typeName, Weapon.ATG_One) then
           sourcePointChange = sourcePointChange + Weapon.ATG_OnePoint * ammo.count
