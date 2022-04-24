@@ -3,13 +3,8 @@
     依赖ctld和mist
 
  ]]
-
 --TODO 选边限制
 --TODO fob的击杀更新
---TODO 玩家限制信息加入动态保存
---TODO 箱子变不出山毛榉
---TODO 步战车单位占点
---TODO 箱子调运
 
 NP = {}
 
@@ -27,16 +22,13 @@ NP.CaptureDistance = 100
 NP.Debug = true
 -- trace level, specific to this module
 NP.Trace = true
-
-NP.blueAWACS = "blueAWACS"
-NP.blueAWACS2 = "blueAWACS2"
-NP.redAWACS = "redAWACS"
-NP.redAWACS2 = "redAWACS2"
-NP.timeStartMissionF = 0
-NP.AWACS_TankerRepawnTime = 7200
-NP.timeStartBlueAWACS = 0
-NP.timeStartRedAWACS = 0
-NP.needrespawnAWACS = false
+ 
+NP.AWACSList = {
+    "blueAWACS",
+    "blueAWACS2",
+    "redAWACS",
+    "redAWACS2"
+}
 
 function NP.logError(message)
     env.info("[NP] Err: "  .. message)
@@ -62,9 +54,11 @@ function NP.findUnitControlByPlayer(_groupTable)
     local _playerUnits = {}
     for _, _unitsTable in pairs(_groupTable.units) do
         local _unit = ctld.getAddGroupUnit(_unitsTable.unitName)
-        local playerName = _unit:getPlayerName()
-        if playerName~=nil then
-            _playerUnits[playerName]=_unit
+        if _unit ~= nil then
+            local playerName = _unit:getPlayerName()
+            if playerName~=nil then
+                _playerUnits[playerName]=_unit
+            end
         end
     end
     return _playerUnits
@@ -163,23 +157,49 @@ function NP.setRelatedZone(groupName,coalition)
         return
     end
 
-    for _,_Unit in pairs(Unitlist[ccname][coalition]) do
-        NP.logInfo('[setRelatedZone] 翻转直升机机位: |'.. _Unit..'| flag为0(true)')
-        trigger.action.setUserFlag(_Unit, 0)
-    end
-
     local oppsitecoalition
     if coalition == 'red' then
        oppsitecoalition = 'blue'
     else
        oppsitecoalition = 'red'
     end
+
     for _,_Unit in pairs(Unitlist[ccname][oppsitecoalition]) do
         NP.logInfo('[setRelatedZone] 翻转直升机机位: |'.. _Unit..'| flag为100(false)')
         trigger.action.setUserFlag(_Unit, 100)
     end
+    for _,_Unit in pairs(Unitlist[ccname][coalition]) do
+        NP.logInfo('[setRelatedZone] 翻转直升机机位: |'.. _Unit..'| flag为0(true)')
+        trigger.action.setUserFlag(_Unit, 0)
+    end
 
-    NP.logInfo('[setRelatedZone] 翻转直升机机位权限完成: '.. ccname..'| 阵营:'..coalition)
+    timer.scheduleFunction(function(_args)
+        local _ccname, _coalition, _oppsitecoalition = _args[1],_args[2],_args[3]
+        NP.logDebug('传进生成船的函数的值：'.._ccname.."|".._coalition.."|".._oppsitecoalition)
+
+        if Unitlist[_ccname]['ships']~=nil then
+            for _,_shipGroupName in pairs(Unitlist[_ccname]['ships'][_coalition]) do
+                local myGroup = Group.getByName(_shipGroupName)
+                if myGroup ~= nil then
+                    NP.logInfo('[setRelatedZone] 补给船已存在，不进行生成:'.._shipGroupName.."|")
+                else
+                    mist.respawnGroup(_shipGroupName,true)
+                    NP.logInfo('[setRelatedZone] 生成补给船:'.._shipGroupName.."|")
+                end
+            end
+            for _,_shipGroupName in pairs(Unitlist[_ccname]['ships'][_oppsitecoalition]) do
+                local myGroup = Group.getByName(_shipGroupName)
+                if myGroup ~= nil then
+                    Group.destroy(myGroup)
+                    NP.logInfo('[setRelatedZone] 销毁补给船:'.._shipGroupName.."|")
+                else
+                    NP.logError('[setRelatedZone] 销毁补给船时找不到组:'.._shipGroupName.."|")
+                end
+            end
+        end
+    end, {ccname,coalition,oppsitecoalition} , timer.getTime()+10)
+
+    NP.logInfo('[setRelatedZone] 占领CC的流程完成: '.. ccname..'| 阵营:'..coalition)
 end
 
 
@@ -214,90 +234,21 @@ function NP.closeEnoughFromEnemyLogisticZone(_unitObject)
     return _closeEnough,_logistic
 end
 
-
-function NP.respawnAWACSOnlyFlanker()
-    local timeGoesAWACSBlue = timer.getTime() - NP.timeStartBlueAWACS
-    if timeGoesAWACSBlue > NP.AWACS_TankerRepawnTime then
-        NP.blueAWACS = mist.respawnGroup(NP.blueAWACS, true).name
-        NP.timeStartBlueAWACS = timer.getTime()
-    end
-
-    local timeGoesAWACSRed = timer.getTime() - NP.timeStartRedAWACS
-    if timeGoesAWACSRed > NP.AWACS_TankerRepawnTime then
-        NP.redAWACS = mist.respawnGroup(NP.redAWACS, true).name
-        NP.timeStartRedAWACS = timer.getTime()
-    end
-
-    local timeGoesAWACSBlue = timer.getTime() - NP.timeStartBlueAWACS
-    if timeGoesAWACSBlue > NP.AWACS_TankerRepawnTime then
-        NP.blueAWACS2 = mist.respawnGroup(NP.blueAWACS2, true).name
-        NP.timeStartBlueAWACS = timer.getTime()
-    end
-
-    local timeGoesAWACSRed = timer.getTime() - NP.timeStartRedAWACS
-    if timeGoesAWACSRed > NP.AWACS_TankerRepawnTime then
-        NP.redAWACS2 = mist.respawnGroup(NP.redAWACS2, true).name
-        NP.timeStartRedAWACS = timer.getTime()
-    end
-
-    local AWACSBlueGroup = Group.getByName(NP.blueAWACS, NP.blueAWACS2)
-    if AWACSBlueGroup ~= nil then
-        local AWACSBlue = AWACSBlueGroup:getUnits()
-        if AWACSBlue[1] ~= nil and AWACSBlue[1]:getLife() > 0 and AWACSBlue[1]:getPoint().y < 5000 then
-            timer.scheduleFunction(
-                    function(_args)
-                        local _unit = Unit.getByName(_args[1])
-                        if _unit ~= nil then
-                            _unit:destroy()
-                            NP.timeStartRedAWACS = timer.getTime() - (NP.AWACS_TankerRepawnTime - 600)
-                            trigger.action.outText("蓝方预警机出现故障, 将在10分钟后重新上线", 20)
-                        end
-                    end,
-                    {AWACSBlue[1]:getName()},
-                    timer.getTime() + 60
-            )
+function NP.RespawnAwacs()
+    for _, _plane in pairs(NP.AWACSList) do
+        local AWCAS = Group.getByName(_plane):getUnit(1)
+        if AWCAS ~= nil then
+            if Unit.getFuel(AWCAS) < 0.3 then
+                mist.respawnGroup(_plane, true)
+                NP.logInfo(_plane.."油量低，重生")
+                trigger.action.outText("预警机梯队没油了，后续梯队正在交接！", 10)
+            end
+        else 
+            NP.logError('[RespawnAwacs]检测预警机时找不到该预警机单位'.._plane.."|")
         end
     end
-
-    local AWACSRedGroup = Group.getByName(NP.redAWACS, NP.redAWACS2)
-    if AWACSRedGroup ~= nil then
-        local AWACSRed = AWACSRedGroup:getUnits()
-        if AWACSRed[1] ~= nil and AWACSRed[1]:getLife() > 0 and AWACSRed[1]:getPoint().y < 5000 then
-            timer.scheduleFunction(
-                    function(_args)
-                        local _unit = Unit.getByName(_args[1])
-                        if _unit ~= nil then
-                            _unit:destroy()
-                            NP.timeStartRedAWACS = timer.getTime() - (NP.AWACS_TankerRepawnTime - 600)
-                            trigger.action.outText("红方预警机出现故障, 将在10分钟后重新上线", 20)
-                        end
-                    end,
-                    {AWACSRed[1]:getName()},
-                    timer.getTime() + 60
-            )
-        end
-    end
-end
-function NP.respawnTankerFlanker()
-    local timeGoes, _ = math.fmod((timer.getTime() - NP.timeStartMissionF), NP.AWACS_TankerRepawnTime)
-    if timeGoes < 10 then
-        if NP.needrespawnTanker == false then
-            NP.needrespawnTanker = true
-
-
-            NP.blueAWACS = mist.respawnGroup(NP.blueAWACS, true).name
-            NP.blueAWACS2 = mist.respawnGroup(NP.blueAWACS2, true).name
-
-            NP.redAWACS = mist.respawnGroup(NP.redAWACS, true).name
-            NP.redAWACS2 = mist.respawnGroup(NP.redAWACS2, true).name
-            trigger.action.outText("加油机和预警机梯队没油了，后续梯队正在交接！", 10)
-        end
-    else
-        NP.needrespawnTanker = false
-    end
+    timer.scheduleFunction(NP.RespawnAwacs, {}, timer.getTime() + 900)
 end
 
-mist.scheduleFunction(NP.respawnTankerFlanker, {}, timer.getTime() + 300)
-mist.scheduleFunction(NP.respawnAWACSOnlyFlanker, {}, timer.getTime() + 300)
-
+timer.scheduleFunction(NP.RespawnAwacs, {}, timer.getTime() + 900)
 net.log("LOAD SUCCESS - NP version "..NP.Version ..", script by VL")

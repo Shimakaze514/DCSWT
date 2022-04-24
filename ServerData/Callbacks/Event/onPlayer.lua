@@ -13,7 +13,7 @@ ServerData.callbacks.onPlayerTrySendChat = function(playerID, msg, all)
     if string.find(msg, 'qq ') == 1 then
       local data = net.get_player_info(playerID)
       if data ~= nil then
-        Tools.net.client_send_msg({type = 'ServerData', event = 'updateQQ', data = {qq = msg, ucid = data.ucid}})
+        ServerData.client_send_msg('updateQQ', {qq = msg, ucid = data.ucid})
       -- local cmd, err = UDP.udp:receive()
       -- print("------------接收UDP消息----------------")
       -- print(cmd)

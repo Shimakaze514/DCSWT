@@ -185,8 +185,8 @@ ctld.UnitLimitPlayerInfo= {}
 --END AA SYSTEM CONFIG --
 -- ***************** JTAC CONFIGURATION *****************
 
-ctld.JTAC_LIMIT_RED = 10 -- max number of JTAC Crates for the RED Side
-ctld.JTAC_LIMIT_BLUE = 10 -- max number of JTAC Crates for the BLUE Side
+ctld.JTAC_LIMIT_RED = 9999 -- max number of JTAC Crates for the RED Side
+ctld.JTAC_LIMIT_BLUE = 9999 -- max number of JTAC Crates for the BLUE Side
 
 ctld.JTAC_dropEnabled = true -- allow JTAC Crate spawn from F10 menu
 
@@ -1712,7 +1712,7 @@ ctld.GroupSystemTemplate = {
         count = 1,
 		hasLimit = false,
         parts = {
-            {name = "leopard-2a5", desc = "主战坦克豹2A5" , launcher = true},
+            {name = "Leopard-2A5", desc = "主战坦克豹2A5" , launcher = true},
         },
         --repair = "ZBD04A Group Repair",
     },
@@ -5031,8 +5031,8 @@ function ctld.handlePlayerLimitInfo(_heli, _category)
         if _groupAlive then
             _aliveGroupNum = _aliveGroupNum+1
         else
-            table.remove(ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category],index)
             ctld.logInfo(_heli:getPlayerName()..'没血所以移除了'.._category..'类别的'..ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category][index])
+            table.remove(ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category],index)
         end
     end
 
@@ -6778,7 +6778,8 @@ end
 
 -- 只有地面载具才是Vehicle
 function ctld.isVehicle(_unit)
-    if _unit:getCategory() == 2 then   
+    ctld.logDebug('检查载具类型:'.._unit:getName().."|".._unit:getCategory())
+    if _unit:getCategory() == 1 then
         return true
     else 
         return false

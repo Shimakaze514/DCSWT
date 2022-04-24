@@ -3,7 +3,6 @@ local status, error =
   pcall(
   function()
     ----------------------------------------Common-------------------------------------
-    dofile(lfs.writedir() .. 'Scripts/ServerData/Common/utils.lua')
     dofile(lfs.writedir() .. 'Scripts/ServerData/Common/Config.lua')
     dofile(lfs.writedir() .. 'Scripts/ServerData/Common/common.lua')
     dofile(lfs.writedir() .. 'Scripts/ServerData/Common/Logs.lua')

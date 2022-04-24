@@ -14,10 +14,10 @@ ServerData.SideID2Name = function(id)
     [2] = '蓝方',
     [3] = '中立者' -- TBD check once this is released in DCS
   }
-  if id > 0 and id <= 3 then
+  if _sides[id] then
     return _sides[id]
   else
-    return '"神秘阵营"'
+    return '神秘阵营'
   end
 end
 
@@ -125,7 +125,7 @@ ServerData.LogChat = function(playerID, msg, all)
   _TempData['datetime'] = os.date('%Y-%m-%d %H:%M:%S')
   _TempData['missionhash'] = ServerData.MissionHash
   --TODO 这个网络传送关掉了
-  --ServerData.client_send_msg('LogChat', _TempData, false)
+  ServerData.client_send_msg('LogChat', _TempData, false)
   Logger.AddLog(_TempData, 1)
 end
 
