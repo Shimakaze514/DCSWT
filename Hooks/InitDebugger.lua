@@ -1,3 +1,5 @@
+dofile(lfs.writedir() .. 'Scripts/Debug/Tools/utils.lua')
+
 --[[
 
   1.InitDebugger.lua相比InitNPGame.lua只是多了一个调试器

@@ -35,6 +35,8 @@ ServerData.client_send_msg = function(event, data, displayMsg)
         dcs_current_frame_delay = ((DCS.getRealTime() - ServerData.lastFrameStart) * 1000000)
       }
     }
-    Tools.net.client_send_msg(result, displayMsg)
+    local code = [[Tools.net.tcp_send_msg(]] .. Tools.table2tring(result) .. [[)]]
+    result, status = Tools.dostring_api_env(code)
+    net.log(result, status, code)
   end
 end

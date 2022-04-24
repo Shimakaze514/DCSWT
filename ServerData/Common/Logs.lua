@@ -14,10 +14,10 @@ ServerData.SideID2Name = function(id)
     [2] = '蓝方',
     [3] = '中立者' -- TBD check once this is released in DCS
   }
-  if id > 0 and id <= 3 then
+  if _sides[id] then
     return _sides[id]
   else
-    return '"神秘阵营"'
+    return '神秘阵营'
   end
 end
 
