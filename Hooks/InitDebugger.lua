@@ -1,4 +1,3 @@
-dofile(lfs.writedir() .. 'Scripts/Debug/Tools/utils.lua')
 
 --[[
 
@@ -16,18 +15,20 @@ dofile(lfs.writedir() .. 'Scripts/Debug/Tools/utils.lua')
   3.启用这个文件把InitNPGame.lua中
   dofile(lfs.writedir() .. 'Scripts/Debug/Mission/Init.lua')取消注释
 --]]
---[[
-local status, error =
-  pcall(
-  function()
-    net.log('[Debugger]开始加载Debugger')
-    dofile(lfs.writedir() .. 'Scripts/Debug/Init.lua')
-  end
-)
-if (not status) then
-  net.log(string.format('Hooks 加载出错:%s', error))
-else
-  net.log('Hooks 加载完成')
-end
 
---]]
+
+--local status, error =
+--  pcall(
+--  function()
+--    net.log('[Debugger]开始加载Debugger')
+--    dofile(lfs.writedir() .. 'Scripts/Debug/Tools/utils.lua')
+--    dofile(lfs.writedir() .. 'Scripts/Debug/Init.lua')
+--  end
+--)
+--if (not status) then
+--  net.log(string.format('Hooks 加载出错:%s', error))
+--else
+--  net.log('Hooks 加载完成')
+--end
+
+--

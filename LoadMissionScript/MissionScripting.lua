@@ -1,7 +1,8 @@
 ---Initialization script for the Mission lua Environment (SSE)
 dofile('Scripts/ScriptingSystem.lua')
 
--- dofile(lfs.writedir() .. 'Scripts/Debug/Mission/Init.lua')
+
+--dofile(lfs.writedir() .. 'Scripts/Debug/Mission/Init.lua')
 
 --不要随意切换顺序
 dofile(lfs.writedir() .. 'Scripts/Mission/mist.lua')
