@@ -83,7 +83,7 @@ SourceObj.onBirth = function(_unit)
   timer.scheduleFunction(SourceObj.initMessage, {_groupId, SourceObj.playerSource[_ucid]["point"]}, timer.getTime() + 15)
 end
 SourceObj.initMessage = function(_args)
-  trigger.action.outTextForGroup(_args[1], "指挥官玩家请保持SRS正常通联！！！呼叫无回应者暂时取消权限，无线电正常通联后返还,申请指挥官请联系管理员...", 60, true)
+  trigger.action.outTextForGroup(_args[1], "指挥官玩家请保持SRS正常通联！！！呼叫无回应者暂时取消权限，无线电正常通联后返还！", 60, true)
   --trigger.action.outTextForGroup(_args[1], "指挥官玩家请保持SRS正常通联！！！呼叫无回应者暂时取消权限，无线电正常通联后返还\n由于末敏弹卡服，暂时限制(超贵)，等待ED更新！！！", 60, true)
   local message =
     "*请注意！！！服务器已启用资源系统！请务必详阅以下内容，避免起飞自爆：你当前私有点数:" ..
