@@ -49,7 +49,7 @@ if ctld.Debug == false then
         ["主战坦克(Tank)"] = 5,
         ["步兵战车(IFV)"] =5,
         ["远程火力(Artillery)"] =5,
-        ["近程防空(Short Range AA)"] =5,
+        ["近程防空(Short Range AA)"] =3,
         ["中远程防空(Mid&Long Range AA)"] =10,
     }
     ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
@@ -5013,7 +5013,9 @@ function ctld.handlePlayerLimitInfo(_heli, _category)
     end
 
     local _aliveGroupNum = 0
-    for index, _groupName in pairs(_playerInfo[_category]) do
+    for index=#_playerInfo[_category],1,-1 do
+    --for index, _groupName in pairs(_playerInfo[_category]) do
+        local _groupName=_playerInfo[_category][index]
         local _group = Group.getByName(_groupName)
         local _groupAlive = false
 
