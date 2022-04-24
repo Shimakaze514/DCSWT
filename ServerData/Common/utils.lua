@@ -1,6 +1,6 @@
 Tools = Tools or {}
-Tools.net = {}
-Tools.env = {}
+Tools.net = Tools.net or {}
+Tools.env = Tools.env or {}
 Tools.date = os.date('%Y-%m-%d %H:%M:%S')
 
 ------------------------------------------- Tools.net -------------------------------------------
@@ -34,16 +34,16 @@ Tools.a_do_script = function(code)
 end
 
 Tools.net.sendData = function(response, displayMsg)
-  if TCP and TCP.client == nil then
-    TCP.creat_client()
-  end
-  local ip, port = TCP.client:getsockname()
-  -- local ip, port = TCP.server:getsockname()
-  --net.log('sendDataTo -->' .. tostring(ip) .. ':' .. tostring(port))
-  if displayMsg then
-    net.log('sendData -->' .. response)
-  end
-  TCP.send(response)
+  -- if TCP and TCP.client == nil then
+  --   TCP.creat_client()
+  -- end
+  -- local ip, port = TCP.client:getsockname()
+  -- -- local ip, port = TCP.server:getsockname()
+  -- --net.log('sendDataTo -->' .. tostring(ip) .. ':' .. tostring(port))
+  -- if displayMsg then
+  --   net.log('sendData -->' .. response)
+  -- end
+  -- TCP.send(response)
 end
 Tools.net.sendJSON = function(response, displayMsg)
   if type(response) == 'table' then

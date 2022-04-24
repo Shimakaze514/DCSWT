@@ -65,32 +65,29 @@ end
 
 function LoadLua.callbacks.onPlayerTrySendChat(playerID, msg, all)
   local val = Tools.split_by_space(msg)
-  --[[
   if val[1] == 'debug' then
-  local status, error =
-    pcall(
-    function()
-      -- local path = 'F:\\Office\\GitHub\\DCS_World_Debugger\\test\\test.lua'
-      local path = lfs.writedir() .. 'Scripts/Test/Main.lua'
-      if not val[2] then
-        net.send_chat_to('请输入文件路径,默认执行Scripts/Test/Main.lua', playerID)
-      else
-        path = val[2]
+    local status, error =
+      pcall(
+      function()
+        -- local path = 'F:\\Office\\GitHub\\DCS_World_Debugger\\test\\test.lua'
+        local path = lfs.writedir() .. 'Scripts/Test/Main.lua'
+        if not val[2] then
+          net.send_chat_to('请输入文件路径,默认执行Scripts/Test/Main.lua', playerID)
+        else
+          path = val[2]
+        end
+        dofile(path)
       end
-      dofile(path)
+    )
+    if (not status) then
+      local result = string.format('脚本加载失败: %s', error)
+      net.send_chat_to(result, playerID)
+      Tools.net.log(result)
+    else
+      net.send_chat_to('脚本加载完成', playerID)
+      Tools.net.log('脚本加载完成')
     end
-  )
-  if (not status) then
-    local result = string.format('脚本加载失败: %s', error)
-    net.send_chat_to(result, playerID)
-    Tools.net.log(result)
-  else
-    net.send_chat_to('脚本加载完成', playerID)
-    Tools.net.log('脚本加载完成')
   end
-end
-
-]]
 end
 
 function LoadLua.callbacks.onSimulationStop()

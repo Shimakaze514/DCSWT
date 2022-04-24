@@ -125,7 +125,7 @@ ServerData.LogChat = function(playerID, msg, all)
   _TempData['datetime'] = os.date('%Y-%m-%d %H:%M:%S')
   _TempData['missionhash'] = ServerData.MissionHash
   --TODO 这个网络传送关掉了
-  --ServerData.client_send_msg('LogChat', _TempData, false)
+  ServerData.client_send_msg('LogChat', _TempData, false)
   Logger.AddLog(_TempData, 1)
 end
 
