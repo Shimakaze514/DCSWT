@@ -23,7 +23,7 @@ NP.Debug = true
 -- trace level, specific to this module
 NP.Trace = true
 
-NP.blueAWACS = "blueAWACS"
+--[[NP.blueAWACS = "blueAWACS"
 NP.blueAWACS2 = "blueAWACS2"
 NP.redAWACS = "redAWACS"
 NP.redAWACS2 = "redAWACS2"
@@ -31,7 +31,13 @@ NP.timeStartMissionF = 0
 NP.AWACS_TankerRepawnTime = 7200
 NP.timeStartBlueAWACS = 0
 NP.timeStartRedAWACS = 0
-NP.needrespawnAWACS = false
+NP.needrespawnAWACS = false]]   
+NP.AWACSList = {
+    "blueAWACS",
+    "blueAWACS2",
+    "redAWACS",
+    "redAWACS2"
+}
 
 function NP.logError(message)
     env.info("[NP] Err: "  .. message)
@@ -238,7 +244,7 @@ function NP.closeEnoughFromEnemyLogisticZone(_unitObject)
 end
 
 
-function NP.respawnAWACSOnlyFlanker()
+--[[function NP.respawnAWACSOnlyFlanker()
     local timeGoesAWACSBlue = timer.getTime() - NP.timeStartBlueAWACS
     if timeGoesAWACSBlue > NP.AWACS_TankerRepawnTime then
         NP.blueAWACS = mist.respawnGroup(NP.blueAWACS, true).name
@@ -321,6 +327,17 @@ function NP.respawnTankerFlanker()
 end
 
 mist.scheduleFunction(NP.respawnTankerFlanker, {}, timer.getTime() + 300)
-mist.scheduleFunction(NP.respawnAWACSOnlyFlanker, {}, timer.getTime() + 300)
+mist.scheduleFunction(NP.respawnAWACSOnlyFlanker, {}, timer.getTime() + 300)]]
 
+function NP.RespawnAwacs()
+    for _,_plane in pairs(NP.AWACSList) do
+        if Unit.getFuel(_plane) < 0.3 then
+            mist.respawnGroup(_plane, true)
+            net.log("该预警机油量低".._plane ..", 重生成功")
+        end
+    end
+    timer.scheduleFunction(NP.RespawnAwacs, {}, timer.getTime() + 900)
+end
+
+timer.scheduleFunction(NP.RespawnAwacs, {}, timer.getTime() + 15)
 net.log("LOAD SUCCESS - NP version "..NP.Version ..", script by VL")
