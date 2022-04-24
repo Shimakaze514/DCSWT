@@ -245,6 +245,7 @@ function NP.RespawnAwacs()
             end
         else 
             NP.logError('[RespawnAwacs]检测预警机时找不到该预警机单位'.._plane.."|")
+        end
     end
     timer.scheduleFunction(NP.RespawnAwacs, {}, timer.getTime() + 900)
 end
