@@ -32,7 +32,7 @@ ctld.Id = "CTLD - "
 ctld.Version = "20211113.01"
 
 -- debug level, specific to this module
-ctld.Debug = false
+ctld.Debug = true
 -- trace level, specific to this module
 ctld.Trace = true
 
@@ -1643,7 +1643,7 @@ ctld.RandomTankPool = {
     'Tank RandomGroup Merkava Group',
     'Tank RandomGroup T-80 Group',
     'Tank RandomGroup T-90 Group',
-    'Tank RandomGroup L2A5 Group'
+    --'Tank RandomGroup L2A5 Group' --这个有bug
 }
 
 ctld.GroupSystemTemplate = {
@@ -4072,7 +4072,7 @@ function ctld.unpackFOBCrates(_crates, _heli)
         local _txt = string.format("%s started building FOB using %d FOB crates, it will be finished in %d seconds.\nPosition marked with smoke.", ctld.getPlayerNameOrType(_heli), _totalCrates, ctld.buildTimeFOB)
 
         ctld.processCallback({unit = _heli, position = _centroid, action = "fob"})
-
+        trigger.action.smoke(_centroid, trigger.smokeColor.Green)
         trigger.action.outTextForCoalition(_heli:getCoalition(), _txt, 10)
     else
         local _txt = string.format("Cannot build FOB!\n\nIt requires %d Large FOB crates ( 3 small FOB crates equal 1 large FOB Crate) and there are the equivalent of %d large FOB crates nearby\n\nOr the crates are not within 750m of each other", ctld.cratesRequiredForFOB, _totalCrates)
