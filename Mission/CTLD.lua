@@ -1712,7 +1712,7 @@ ctld.GroupSystemTemplate = {
         count = 1,
 		hasLimit = false,
         parts = {
-            {name = "leopard-2a5", desc = "主战坦克豹2A5" , launcher = true},
+            {name = "Leopard-2A5", desc = "主战坦克豹2A5" , launcher = true},
         },
         --repair = "ZBD04A Group Repair",
     },
