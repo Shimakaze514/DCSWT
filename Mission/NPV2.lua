@@ -237,11 +237,14 @@ end
 function NP.RespawnAwacs()
     for _, _plane in pairs(NP.AWACSList) do
         local AWCAS = Group.getByName(_plane):getUnit(1)
-        if Unit.getFuel(AWCAS) < 0.3 then
-            mist.respawnGroup(_plane, true)
-            NP.logInfo(_plane.."油量低，重生")
-            trigger.action.outText("预警机梯队没油了，后续梯队正在交接！", 10)
-        end
+        if AWCAS ~= nil then
+            if Unit.getFuel(AWCAS) < 0.3 then
+                mist.respawnGroup(_plane, true)
+                NP.logInfo(_plane.."油量低，重生")
+                trigger.action.outText("预警机梯队没油了，后续梯队正在交接！", 10)
+            end
+        else 
+            NP.logError('[RespawnAwacs]检测预警机时找不到该预警机单位'.._plane.."|")
     end
     timer.scheduleFunction(NP.RespawnAwacs, {}, timer.getTime() + 900)
 end
