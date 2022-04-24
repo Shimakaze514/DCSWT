@@ -26,6 +26,7 @@ end
 ---@param data any 消息数据
 ---@param displayMsg any 是否打印
 ServerData.client_send_msg = function(event, data, displayMsg)
+  return
   if data ~= nil then
     local result = {
       type = 'ServerData',
