@@ -5,6 +5,8 @@
  ]]
 --TODO 选边限制
 --TODO fob的击杀更新
+--阵营级大杀器
+--箱子
 
 NP = {}
 
@@ -19,7 +21,7 @@ NP.RefreshTime = 10
 NP.CaptureDistance = 100
 
 -- debug level, specific to this module
-NP.Debug = false
+NP.Debug = true
 -- trace level, specific to this module
 NP.Trace = true
  
