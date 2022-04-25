@@ -150,13 +150,16 @@ function NP.capture(_args)
 end
 
 function NP.setRelatedZone(groupName,coalition)
-    local ccname
+    local originalCCname
     for k,v in pairs(ctld.logisticUnits) do
         if string.find(groupName, v) ~= nil then
-            ccname = v
+            originalCCname = v
             break
         end
     end
+
+    local ccname = string.gsub(originalCCname, "%s+", "")
+    NP.logInfo('[setRelatedZone] 将cc后面的空格去掉，原cc名称: '..originalCCname ..'| 参与翻转的cc名称:'..ccname)
     if ccname == nil then
         NP.logError('[setRelatedZone] 在ctld.logisticUnits数据表中找不到对应的cc: '..groupName ..'| 阵营:'..coalition)
         return
