@@ -21,7 +21,7 @@ NP.RefreshTime = 10
 NP.CaptureDistance = 100
 
 -- debug level, specific to this module
-NP.Debug = false
+NP.Debug = true
 -- trace level, specific to this module
 NP.Trace = true
  

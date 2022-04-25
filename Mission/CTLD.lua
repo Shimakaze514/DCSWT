@@ -32,7 +32,7 @@ ctld.Id = "CTLD - "
 ctld.Version = "20211113.01"
 
 -- debug level, specific to this module
-ctld.Debug = true
+ctld.Debug = false
 -- trace level, specific to this module
 ctld.Trace = true
 
@@ -187,7 +187,7 @@ ctld.hoverTime = 10 -- Time to hold hover above a crate for loading in seconds
 --ctld.AASystemLimitBLUE = 20 -- Blue side limit
 
 ctld.UnitLimitPlayerInfo = {}
-ctld.UnitLimitCoalitionInfo={}
+ctld.UnitLimitCoalitionInfo = {}
 
 --END AA SYSTEM CONFIG --
 -- ***************** JTAC CONFIGURATION *****************
@@ -1712,7 +1712,7 @@ ctld.GroupSystemTemplate = {
         count = 1,
         hasLimit = false,
         parts = {
-            {name = "Leopard-2A5", desc = "主战坦克豹2A5" , launcher = true},
+            { name = "Leopard-2A5", desc = "主战坦克豹2A5", launcher = true },
         },
         --repair = "ZBD04A Group Repair",
     },
@@ -3913,11 +3913,15 @@ function ctld.unpackCrates(_arguments)
 
                     --remove crate
                     --  if ctld.slingLoad == false then
-                    _crate.crateUnit:destroy()
+
                     -- end
 
                     local _spawnedGroups = ctld.spawnCrateGroup(_heli, { _cratePoint }, { _crate.details.unit })
+                    if _spawnedGroups == nil then
+                        return
+                    end
 
+                    _crate.crateUnit:destroy()
                     if _heli:getCoalition() == 1 then
                         ctld.spawnedCratesRED[_crateName] = nil
                     else
@@ -4598,15 +4602,15 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
         if _nearbyCrate.dist < ctld.multiCrateMaxDistance then
             if string.find(_groupSystemTemplate.sysName, _nearbyCrate.details.unit) ~= nil or _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
                 --_crateCnt = _crateCnt + 1
-                table.insert(toBeDestoyedCrates,_nearbyCrate)
+                table.insert(toBeDestoyedCrates, _nearbyCrate)
             end
         end
     end
 
     --ctld.logDebug('_crateCnt' .. _crateCnt)
-    ctld.logDebug('_groupSystemTemplate.cratesRequired:' .. _groupSystemTemplate.cratesRequired..'目前找到的箱子:'..#toBeDestoyedCrates)
+    ctld.logDebug('_groupSystemTemplate.cratesRequired:' .. _groupSystemTemplate.cratesRequired .. '目前找到的箱子:' .. #toBeDestoyedCrates)
     if #toBeDestoyedCrates < _groupSystemTemplate.cratesRequired then
-        local _txtCnt = string.format("该阵地需要 %d 个集装箱，目前有 %d 个", _groupSystemTemplate.cratesRequired, _crateCnt)
+        local _txtCnt = string.format("该阵地需要 %d 个集装箱，目前有 %d 个", _groupSystemTemplate.cratesRequired, #toBeDestoyedCrates)
         ctld.displayMessageToGroup(_heli, "无法部署" .. _groupSystemTemplate.name .. "!\n\n" .. _txtCnt .. "\n或者集装箱之间相距太远（超过" .. ctld.multiCrateMaxDistance .. "m）", 20)
         return
     end
@@ -4665,6 +4669,9 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
 
 
         local _spawnedGroup = ctld.spawnCrateGroup(_heli, _posArray, _typeArray, _groupSystemTemplate)
+        if _spawnedGroup == nil then
+            return
+        end
 
         -- destroy crates
         --for _, _nearbyCrate in pairs(_nearbyCrates) do
@@ -4680,14 +4687,13 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
         --end
 
         local count = 0
-        for index=#toBeDestoyedCrates,1,-1 do
+        for index = #toBeDestoyedCrates, 1, -1 do
             toBeDestoyedCrates[index].crateUnit:destroy()
-            count=count+1
+            count = count + 1
             if count == _groupSystemTemplate.cratesRequired then
                 break
             end
         end
-
 
         ctld.completeGroupSystems[_spawnedGroup:getName()] = ctld.getAASystemDetails(_spawnedGroup, _groupSystemTemplate)
         ctld.processCallback({ unit = _heli, crate = _nearestCrate, spawnedGroup = _spawnedGroup, action = "unpack" })
@@ -4874,6 +4880,9 @@ function ctld.spawnCrateGroup(_heli, _positions, _types, _groupSystemTemplate)
     --TODO 限制参数添加到动态保存中
     ctld.logDebug('ctld.checkPlayerLimit(_heli,_groupSystemTemplate)    ' .. ctld.formatTable(_groupSystemTemplate))
     local _category = ctld.checkPlayerAndCoalitionLimit(_heli, _groupSystemTemplate, _types[1])
+    if _category == nil then
+        return nil
+    end
 
     local _group = {
         --["PlayerName"] = tostring(initName),
@@ -4921,13 +4930,24 @@ function ctld.spawnCrateGroup(_heli, _positions, _types, _groupSystemTemplate)
         ctld.orderGroupToMoveToPoint(_spawnedGroup:getUnit(1), _dest)
     end
 
+    ctld.logDebug('Limit的类别_category:'.._category)
     if _category == '阵营级大杀器' then
         ctld.addUnitInfoToCoalition(_heli, _category, _groupName)
-        else
+    elseif ctld.needCheckPlayerLimit(_category) then
         ctld.addUnitInfoToPlayer(_heli, _category, _groupName)
     end
 
     return _spawnedGroup
+end
+
+function ctld.needCheckPlayerLimit(_category)
+    for _categoryName, _ in pairs(ctld.UnitLimitPerPlayer) do
+        if _categoryName == _category then
+            return true
+        end
+    end
+
+    return false
 end
 
 function ctld.addUnitInfoToCoalition(_heli, _category, _groupName)
@@ -4935,8 +4955,8 @@ function ctld.addUnitInfoToCoalition(_heli, _category, _groupName)
         return
     end
 
-    if ctld.UnitLimitPlayerInfo[_heli:getCoalition()] == nil then
-        ctld.UnitLimitPlayerInfo[_heli:getCoalition()] = {}
+    if ctld.UnitLimitCoalitionInfo[_heli:getCoalition()] == nil then
+        ctld.UnitLimitCoalitionInfo[_heli:getCoalition()] = {}
     end
     local side
     if _heli:getCoalition() == 1 then
@@ -4944,9 +4964,9 @@ function ctld.addUnitInfoToCoalition(_heli, _category, _groupName)
     else
         side = 'blue'
     end
-    table.insert(ctld.UnitLimitPlayerInfo[_heli:getCoalition()], _groupName)
-    local _leftNum = ctld.CoalitionKillerLimit - #ctld.UnitLimitPlayerInfo[_heli:getCoalition()]
-    local _message = string.format("%s成了%s, 你还可以生成%d组大杀器。超过的话不能再部署", side,_groupName, _leftNum)
+    table.insert(ctld.UnitLimitCoalitionInfo[_heli:getCoalition()], _groupName)
+    local _leftNum = ctld.CoalitionKillerLimit - #ctld.UnitLimitCoalitionInfo[_heli:getCoalition()]
+    local _message = string.format("%s成了%s, 阵营还可以生成%d组大杀器。超过的话不能再部署", side, _groupName, _leftNum)
     ctld.displayMessageToGroup(_heli, _message, 10)
     ctld.logInfo(_heli:getPlayerName() .. '新加了' .. _category .. '类别的' .. _groupName)
 end
@@ -4967,7 +4987,7 @@ function ctld.addUnitInfoToPlayer(_heli, _category, _groupName)
     local _leftNum = ctld.UnitLimitPerPlayer[_category] - #ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category]
 
     local _message = string.format("你生成了%s, 你还可以生成%d组 %s 类型的单位。超过的话会按顺序回收", _groupName, _leftNum, _category)
-    trigger.action.outTextForCoalition(_heli:getCoalition(),_message, 10)
+    trigger.action.outTextForCoalition(_heli:getCoalition(), _message, 10)
     ctld.logInfo(_message)
 end
 
@@ -4977,11 +4997,11 @@ function ctld.checkPlayerAndCoalitionLimit(_heli, _groupSystemTemplate, unitName
     for _categoryName, _table in pairs(ctld.spawnableCrates) do
         for _, _crate in pairs(_table) do
 
-            if _groupSystemTemplate~=nil and _groupSystemTemplate.sysName == _crate.unit then
+            if _groupSystemTemplate ~= nil and _groupSystemTemplate.sysName == _crate.unit then
                 _category = _categoryName --找到了对应的分类
                 break
             end
-            if unitName~=nil and unitName == _crate.unit then
+            if unitName ~= nil and unitName == _crate.unit then
                 _category = _categoryName --找到了对应的分类
                 break
             end
@@ -4991,18 +5011,21 @@ function ctld.checkPlayerAndCoalitionLimit(_heli, _groupSystemTemplate, unitName
 
     --坦克 ctld.RandomTankPool
     for _, _tankGroupName in pairs(ctld.RandomTankPool) do
-        if _groupSystemTemplate.sysName == _tankGroupName then
+        if _groupSystemTemplate ~= nil and _groupSystemTemplate.sysName == _tankGroupName then
             _category = "主战坦克(Tank)" --找到了对应的分类
         end
     end
 
-    ctld.logDebug('_category:'.._category)
+    ctld.logDebug('_category:' .. _category)
     if _category == nil then
         ctld.displayMessageToGroup(_heli, '生成单位有问题，请找群管理汇报bug', 10)
         ctld.logError('严重错误，生成单位时找不到对应的类别！')
     elseif _category == "阵营级大杀器" then
-        ctld.handleCoalitionLimitInfo(_heli, _category)
-        return _category
+        if ctld.handleCoalitionLimitInfo(_heli, _category) == nil then
+            return nil
+        else
+            return _category
+        end
     else
         ctld.handlePlayerLimitInfo(_heli, _category)
         return _category
@@ -5025,8 +5048,8 @@ end
 
 function ctld.handleCoalitionLimitInfo(_heli)
     local _sideInfo = ctld.UnitLimitCoalitionInfo[_heli:getCoalition()]
-    if _sideInfo ==nil then
-        return
+    if _sideInfo == nil then
+        return true
     end
     local _aliveGroupNum = 0
     local side
@@ -5040,17 +5063,18 @@ function ctld.handleCoalitionLimitInfo(_heli)
         if ctld.ifGroupHasAliveUnits(_groupName) then
             _aliveGroupNum = _aliveGroupNum + 1
         else
-            ctld.logInfo(side .. '的大杀器'.._groupName..'没血了，进行移除')
+            ctld.logInfo(side .. '的大杀器' .. _groupName .. '没血了，进行移除')
             table.remove(ctld.UnitLimitCoalitionInfo[_heli:getCoalition()], index)
         end
     end
 
     if _aliveGroupNum >= ctld.CoalitionKillerLimit then
-        local _message = string.format("%s存活的大杀器数量已满，不允许再生成",side)
-        trigger.action.outTextForCoalition(_heli:getCoalition(),_message, 10)
+        local _message = string.format("%s存活的大杀器数量已满%d辆，不允许再生成", side,ctld.CoalitionKillerLimit)
+        trigger.action.outTextForCoalition(_heli:getCoalition(), _message, 10)
         ctld.logInfo(_message)
+        return nil
     end
-
+    return true
 end
 
 function ctld.handlePlayerLimitInfo(_heli, _category)
@@ -6261,25 +6285,21 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
         ctld.laseUnit(_enemyUnit, _jtacUnit, _jtacGroupName, _laserCode)
 
         --   ctld.logInfo('Timer timerSparkleLase '..jtacGroupName.." "..laserCode.." "..enemyUnit:getName())
-        timer.scheduleFunction(ctld.timerJTACAutoLase, { _jtacGroupName, _laserCode, _smoke, _lock, _colour, _radio }, timer.getTime() + 30)
+        timer.scheduleFunction(ctld.timerJTACAutoLase, { _jtacGroupName, _laserCode, _smoke, _lock, _colour, _radio }, timer.getTime() + 20)
 
         if _smoke == true then
             local _nextSmokeTime = ctld.jtacSmokeMarks[_enemyUnit:getName()]
-
             --recreate smoke marker after 5 mins
             if _nextSmokeTime ~= nil and _nextSmokeTime < timer.getTime() then
-
                 ctld.createSmokeMarker(_enemyUnit, _colour)
             end
         end
 
     else
         -- ctld.logInfo('LASE: No Enemies Nearby')
-
         -- stop lazing the old spot
         ctld.cancelLase(_jtacGroupName)
         --  ctld.logInfo('Timer Slow timerSparkleLase '..jtacGroupName.." "..laserCode.." "..enemyUnit:getName())
-
         timer.scheduleFunction(ctld.timerJTACAutoLase, { _jtacGroupName, _laserCode, _smoke, _lock, _colour, _radio }, timer.getTime() + 15)
     end
 
@@ -7078,7 +7098,7 @@ function ctld.initialize(force)
     ctld.hoverStatus = {} -- tracks status of a helis hover above a crate
 
     ctld.callbacks = {} -- function callback
--- stored the infomation of groups the player spawned
+    -- stored the infomation of groups the player spawned
 
 
     -- Remove intransit troops when heli / cargo plane dies
