@@ -4591,20 +4591,21 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
     end
 
     -- find all nearest crates and add them to the list if they're part of the AA System
-    local _crateCnt = 0
+    --local _crateCnt = 0
     ctld.logDebug('_nearbyCrates' .. ctld.formatTable(_nearbyCrates))
+    local toBeDestoyedCrates = {}
     for _, _nearbyCrate in pairs(_nearbyCrates) do
         if _nearbyCrate.dist < ctld.multiCrateMaxDistance then
             if string.find(_groupSystemTemplate.sysName, _nearbyCrate.details.unit) ~= nil or _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
-                --if _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
-                _crateCnt = _crateCnt + 1
+                --_crateCnt = _crateCnt + 1
+                table.insert(toBeDestoyedCrates,_nearbyCrate)
             end
         end
     end
-    --TODO
-    ctld.logDebug('_crateCnt' .. _crateCnt)
-    ctld.logDebug('_groupSystemTemplate.cratesRequired' .. _groupSystemTemplate.cratesRequired)
-    if _crateCnt < _groupSystemTemplate.cratesRequired then
+
+    --ctld.logDebug('_crateCnt' .. _crateCnt)
+    ctld.logDebug('_groupSystemTemplate.cratesRequired:' .. _groupSystemTemplate.cratesRequired..'目前找到的箱子:'..#toBeDestoyedCrates)
+    if #toBeDestoyedCrates < _groupSystemTemplate.cratesRequired then
         local _txtCnt = string.format("该阵地需要 %d 个集装箱，目前有 %d 个", _groupSystemTemplate.cratesRequired, _crateCnt)
         ctld.displayMessageToGroup(_heli, "无法部署" .. _groupSystemTemplate.name .. "!\n\n" .. _txtCnt .. "\n或者集装箱之间相距太远（超过" .. ctld.multiCrateMaxDistance .. "m）", 20)
         return
@@ -4666,17 +4667,27 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
         local _spawnedGroup = ctld.spawnCrateGroup(_heli, _posArray, _typeArray, _groupSystemTemplate)
 
         -- destroy crates
-        for _, _nearbyCrate in pairs(_nearbyCrates) do
-            if string.find(_groupSystemTemplate.sysName, _nearbyCrate.details.unit) ~= nil or _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
-                --if _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
-                if _heli:getCoalition() == 1 then
-                    ctld.spawnedCratesRED[_nearbyCrate.crateUnit:getName()] = nil
-                else
-                    ctld.spawnedCratesBLUE[_nearbyCrate.crateUnit:getName()] = nil
-                end
-                _nearbyCrate.crateUnit:destroy()
+        --for _, _nearbyCrate in pairs(_nearbyCrates) do
+        --    if string.find(_groupSystemTemplate.sysName, _nearbyCrate.details.unit) ~= nil or _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
+        --        --if _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
+        --        if _heli:getCoalition() == 1 then
+        --            ctld.spawnedCratesRED[_nearbyCrate.crateUnit:getName()] = nil
+        --        else
+        --            ctld.spawnedCratesBLUE[_nearbyCrate.crateUnit:getName()] = nil
+        --        end
+        --        _nearbyCrate.crateUnit:destroy()
+        --    end
+        --end
+
+        local count = 0
+        for index=#toBeDestoyedCrates,1,-1 do
+            toBeDestoyedCrates[index].crateUnit:destroy()
+            count=count+1
+            if count == _groupSystemTemplate.cratesRequired then
+                break
             end
         end
+
 
         ctld.completeGroupSystems[_spawnedGroup:getName()] = ctld.getAASystemDetails(_spawnedGroup, _groupSystemTemplate)
         ctld.processCallback({ unit = _heli, crate = _nearestCrate, spawnedGroup = _spawnedGroup, action = "unpack" })
@@ -4686,19 +4697,9 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
         --    trigger.action.outTextForCoalition(_heli:getCoalition(), "\n\n最多能部署的集群阵地数量: ".._allowed.."\n已部署的数量: "..(_activeLaunchers+1), 20)
         --end
 
-        if _heli:getPlayerName() ~= nil then
-            ctld.addSpawnedGroupsToPlayer(_heli:getPlayerName(), _spawnedGroup:getName())
-        end
-
     end
 end
 
-function ctld.addSpawnedGroupsToPlayer(playerName, spawnedGroupName)
-    if ctld.playerGroupsInfo[playerName] == nil then
-        ctld.playerGroupsInfo[playerName] = {}
-    end
-    table.insert(ctld.playerGroupsInfo[playerName], spawnedGroupName)
-end
 
 --count the number of captured cities, sets the amount of allowed AA Systems
 --红蓝和数字间的切换
@@ -4746,11 +4747,11 @@ function ctld.countCompleteAASystems(_heli)
                     end
                 end
 
-                -- do we have the correct number of unique pieces and do we have enough points for all the pieces
-                local _totalUnitsNumOfTemplate = ctld.countTableEntries(_aaSystemTemplate.parts) - 1 + _aaSystemTemplate.aaLaunchers --一个组的总数=parts单位数+aa数量-1
-                if _aaSystemTemplate.hasLimit and ctld.countTableEntries(_uniqueTypes) == _totalUnitsNumOfTemplate and #_points >= _totalUnitsNumOfTemplate then
-                    _count = _count + 1
-                end
+                ---- do we have the correct number of unique pieces and do we have enough points for all the pieces
+                --local _totalUnitsNumOfTemplate = ctld.countTableEntries(_aaSystemTemplate.parts) - 1 + _aaSystemTemplate.aaLaunchers --一个组的总数=parts单位数+aa数量-1
+                --if _aaSystemTemplate.hasLimit and ctld.countTableEntries(_uniqueTypes) == _totalUnitsNumOfTemplate and #_points >= _totalUnitsNumOfTemplate then
+                --    _count = _count + 1
+                --end
             end
         end
     end
@@ -4972,17 +4973,22 @@ end
 
 function ctld.checkPlayerAndCoalitionLimit(_heli, _groupSystemTemplate, unitName)
     local _category
-    if _groupSystemTemplate == nil then
-        return
-    end
 
     for _categoryName, _table in pairs(ctld.spawnableCrates) do
-        for index, _crate in pairs(_table) do
-            if _groupSystemTemplate.sysName == _crate.unit then
+        for _, _crate in pairs(_table) do
+
+            if _groupSystemTemplate~=nil and _groupSystemTemplate.sysName == _crate.unit then
                 _category = _categoryName --找到了对应的分类
+                break
             end
+            if unitName~=nil and unitName == _crate.unit then
+                _category = _categoryName --找到了对应的分类
+                break
+            end
+
         end
     end
+
     --坦克 ctld.RandomTankPool
     for _, _tankGroupName in pairs(ctld.RandomTankPool) do
         if _groupSystemTemplate.sysName == _tankGroupName then
@@ -6122,7 +6128,7 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
                         ctld.cleanupJTAC(_jtacGroupName)
 
                         ctld.logInfo(_jtacGroupName .. ' in Transport - Waiting 10 seconds')
-                        timer.scheduleFunction(ctld.timerJTACAutoLase, { _jtacGroupName, _laserCode, _smoke, _lock, _colour, _radio }, timer.getTime() + 10)
+                        timer.scheduleFunction(ctld.timerJTACAutoLase, { _jtacGroupName, _laserCode, _smoke, _lock, _colour, _radio }, timer.getTime() + 20)
                         return
                     end
 
@@ -6131,7 +6137,7 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
                         ctld.cleanupJTAC(_jtacGroupName)
 
                         ctld.logInfo(_jtacGroupName .. ' in Transport - Waiting 10 seconds')
-                        timer.scheduleFunction(ctld.timerJTACAutoLase, { _jtacGroupName, _laserCode, _smoke, _lock, _colour, _radio }, timer.getTime() + 10)
+                        timer.scheduleFunction(ctld.timerJTACAutoLase, { _jtacGroupName, _laserCode, _smoke, _lock, _colour, _radio }, timer.getTime() + 20)
                         return
                     end
                 end
@@ -6182,7 +6188,7 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
         ctld.cleanupJTAC(_jtacGroupName)
 
         ctld.logInfo(_jtacGroupName .. ' Not Active - Waiting 30 seconds')
-        timer.scheduleFunction(ctld.timerJTACAutoLase, { _jtacGroupName, _laserCode, _smoke, _lock, _colour, _radio }, timer.getTime() + 30)
+        timer.scheduleFunction(ctld.timerJTACAutoLase, { _jtacGroupName, _laserCode, _smoke, _lock, _colour, _radio }, timer.getTime() + 50)
 
         return
     end
@@ -6255,7 +6261,7 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
         ctld.laseUnit(_enemyUnit, _jtacUnit, _jtacGroupName, _laserCode)
 
         --   ctld.logInfo('Timer timerSparkleLase '..jtacGroupName.." "..laserCode.." "..enemyUnit:getName())
-        timer.scheduleFunction(ctld.timerJTACAutoLase, { _jtacGroupName, _laserCode, _smoke, _lock, _colour, _radio }, timer.getTime() + 15)
+        timer.scheduleFunction(ctld.timerJTACAutoLase, { _jtacGroupName, _laserCode, _smoke, _lock, _colour, _radio }, timer.getTime() + 30)
 
         if _smoke == true then
             local _nextSmokeTime = ctld.jtacSmokeMarks[_enemyUnit:getName()]
@@ -6274,7 +6280,7 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
         ctld.cancelLase(_jtacGroupName)
         --  ctld.logInfo('Timer Slow timerSparkleLase '..jtacGroupName.." "..laserCode.." "..enemyUnit:getName())
 
-        timer.scheduleFunction(ctld.timerJTACAutoLase, { _jtacGroupName, _laserCode, _smoke, _lock, _colour, _radio }, timer.getTime() + 5)
+        timer.scheduleFunction(ctld.timerJTACAutoLase, { _jtacGroupName, _laserCode, _smoke, _lock, _colour, _radio }, timer.getTime() + 15)
     end
 
     if targetLost then
@@ -7072,8 +7078,7 @@ function ctld.initialize(force)
     ctld.hoverStatus = {} -- tracks status of a helis hover above a crate
 
     ctld.callbacks = {} -- function callback
-
-    ctld.playerGroupsInfo = {} -- stored the infomation of groups the player spawned
+-- stored the infomation of groups the player spawned
 
 
     -- Remove intransit troops when heli / cargo plane dies
