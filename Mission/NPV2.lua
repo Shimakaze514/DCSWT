@@ -164,7 +164,7 @@ function NP.setRelatedZone(groupName,coalition)
     end
 
     local ccname = string.gsub(originalCCname, "%s+", "")
-    NP.logInfo('[setRelatedZone] 将cc后面的空格去掉，原cc名称: '..originalCCname ..'| 参与翻转的cc名称:'..ccname)
+    NP.logInfo('[setRelatedZone] 将cc后面的空格去掉，原cc名称: |'..originalCCname ..'| 参与翻转的cc名称:|'..ccname.."|")
 
     if  Unitlist[ccname] == nil then
         NP.logError('[setRelatedZone] 在Unitlist.list数据表中找不到对应cc的数据: '.. ccname..'| 阵营:'..coalition)
