@@ -53,8 +53,25 @@ function dsave.logTrace(message)
     end
 end
 
+
 function dsave.saveToCache(_inputTable)
     table.insert(dsave.DSaveGroupsCache,_inputTable)
+end
+
+function dsave.NotInVehicleBlackList(_group)
+    local flag= true
+
+    if _group.category == 'static' then
+        flag = false
+    end
+
+    for _, _plane in pairs(NP.AWACSList) do
+        if _plane == _group.groupName then
+            flag = false
+        end
+    end
+
+    return flag
 end
 
 function dsave.recordAllVehiclesElements(inputDB)
@@ -64,7 +81,7 @@ function dsave.recordAllVehiclesElements(inputDB)
 
     for _, _group in pairs(inputDB) do
         local needSave =false
-        if _group.category ~= 'static' then
+        if dsave.NotInVehicleBlackList(_group) then
             for _key , _unitTable in pairs(_group.units) do
                 if _unitTable.unitName ~= nil and _unitTable.type ~= 'iso_container_small'then
                     local _unit=Unit.getByName(_unitTable.unitName)

@@ -26,18 +26,18 @@ end
 ---@param data any 消息数据
 ---@param displayMsg any 是否打印
 ServerData.client_send_msg = function(event, data, displayMsg)
-  return
-  if data ~= nil then
-    local result = {
-      type = 'ServerData',
-      event = event,
-      data = data,
-      executionTime = {
-        dcs_current_frame_delay = ((DCS.getRealTime() - ServerData.lastFrameStart) * 1000000)
-      }
-    }
-    local code = [[Tools.net.tcp_send_msg(]] .. Tools.table2tring(result) .. [[)]]
-    result, status = Tools.dostring_api_env(code)
-    net.log(result, status, code)
-  end
+
+  --if data ~= nil then
+  --  local result = {
+  --    type = 'ServerData',
+  --    event = event,
+  --    data = data,
+  --    executionTime = {
+  --      dcs_current_frame_delay = ((DCS.getRealTime() - ServerData.lastFrameStart) * 1000000)
+  --    }
+  --  }
+  --  local code = [[Tools.net.tcp_send_msg(]] .. Tools.table2tring(result) .. [[)]]
+  --  result, status = Tools.dostring_api_env(code)
+  --  net.log(result, status, code)
+  --end
 end
