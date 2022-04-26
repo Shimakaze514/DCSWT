@@ -5,6 +5,8 @@
  ]]
 --TODO 选边限制
 --TODO fob的击杀更新
+--阵营级大杀器
+--箱子
 
 NP = {}
 
@@ -79,8 +81,8 @@ function NP.capture(_args)
         end
     end
 
-    if _hasCloseEnough == false then
-        NP.logDebug('不够近')
+    if _hasCloseEnough == nil then
+        NP.logInfo('占点不够近')
         trigger.action.outText('操作地面单位的指挥官，在靠近敌方cc后再占领。如果你乱按这个按钮，整个服务器都会被这个消息吵到',10)
         return
     end
@@ -130,28 +132,42 @@ function NP.capture(_args)
     NP.logDebug('_logistic:'..ctld.p(_targetLogistic))
     NP.logDebug('_logisticData:'..ctld.formatTable(_logisticData))
     NP.logDebug('_unit:'..ctld.p(_unit))
+
     _targetLogistic:destroy()--把老一边的cc做掉
+    for index=#ctld.logisticUnits,1,-1 do
+        if ctld.logisticUnits[index] == _targetLogistic:getName() then
+            table.remove(ctld.logisticUnits,index)
+        end
+    end
+
+
     mist.dynAddStatic(_logisticData)--生成另一阵营的新cc，同一位置
-    timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + 10)
+    timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + 20)
     table.insert(ctld.logisticUnits, _logisticData.units[1].unitName)--新的单位加到cc的白名单
+
+
     NP.setRelatedZone(_logisticData.groupName,_logisticData.units[1].coalition)
-    --maybe Done 把离这个最近的zone，所关联的红蓝直升机的flag值设置，让上飞机权限翻转
     NP.logInfo("战区".._logisticData.groupName.."被"..oppsiteCountrySide.."占领。操作者是".._capturedPlayerName)
     trigger.action.outText("战区".._logisticData.groupName.."被"..oppsiteCountrySide.."占领。操作者是".._capturedPlayerName, 20)
 end
 
 function NP.setRelatedZone(groupName,coalition)
-    local ccname
+    local originalCCname
     for k,v in pairs(ctld.logisticUnits) do
         if string.find(groupName, v) ~= nil then
-            ccname = v
+            originalCCname = v
             break
         end
     end
-    if ccname == nil then
+
+    if originalCCname == nil then
         NP.logError('[setRelatedZone] 在ctld.logisticUnits数据表中找不到对应的cc: '..groupName ..'| 阵营:'..coalition)
         return
     end
+
+    local ccname = string.gsub(originalCCname, "%s+", "")
+    NP.logInfo('[setRelatedZone] 将cc后面的空格去掉，原cc名称: |'..originalCCname ..'| 参与翻转的cc名称:|'..ccname.."|")
+
     if  Unitlist[ccname] == nil then
         NP.logError('[setRelatedZone] 在Unitlist.list数据表中找不到对应cc的数据: '.. ccname..'| 阵营:'..coalition)
         return
