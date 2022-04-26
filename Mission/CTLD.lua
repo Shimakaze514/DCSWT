@@ -797,7 +797,7 @@ ctld.spawnableCrates = {
 
 
     },
-    ["JTAC等小型单位集装箱"] = {
+    ["无人机、悍马JTAC、FOB等"] = {
         { weight = 492, desc = "悍马吉普 JTAC(侦察）", unit = "Hummer" },
         { weight = 402, desc = "补给车(Supply Truck)", unit = "M 818" },
         { weight = 591, desc = "陶悍马(TOW HUMVEE) (1箱1车)", unit = "M1045 HMMWV TOW" },
@@ -1975,7 +1975,7 @@ ctld.GroupSystemTemplate = {
         repair = "NASAMS Repair",
     },]]
     {
-        name = "道尔阵地（3箱3车+补给）",
+        name = "道尔阵地（2箱3车+补给）",
         sysName = "SA-15 Buk",
         cratesRequired = 2,
         aaLaunchers = 3,
