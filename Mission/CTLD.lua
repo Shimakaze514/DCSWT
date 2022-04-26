@@ -4968,7 +4968,7 @@ function ctld.addUnitInfoToCoalition(_heli, _category, _groupName)
     table.insert(ctld.UnitLimitCoalitionInfo[_heli:getCoalition()], _groupName)
     local _leftNum = ctld.CoalitionKillerLimit - #ctld.UnitLimitCoalitionInfo[_heli:getCoalition()]
     local _message = string.format("%s成了%s, 阵营还可以生成%d组大杀器。超过的话不能再部署", side, _groupName, _leftNum)
-    ctld.displayMessageToGroup(_heli, _message, 10)
+    trigger.action.outTextForCoalition(_heli:getCoalition(), _message, 10)
     ctld.logInfo(_heli:getPlayerName() .. '新加了' .. _category .. '类别的' .. _groupName)
 end
 
@@ -4988,7 +4988,7 @@ function ctld.addUnitInfoToPlayer(_heli, _category, _groupName)
     local _leftNum = ctld.UnitLimitPerPlayer[_category] - #ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category]
 
     local _message = string.format("你生成了%s, 你还可以生成%d组 %s 类型的单位。超过的话会按顺序回收", _groupName, _leftNum, _category)
-    trigger.action.outTextForCoalition(_heli:getCoalition(), _message, 10)
+    ctld.displayMessageToGroup(_heli, _message, 10)
     ctld.logInfo(_message)
 end
 
