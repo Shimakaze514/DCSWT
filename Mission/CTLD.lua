@@ -138,6 +138,7 @@ else
     --ctld.crateWaitTime = 20 -- time in seconds to wait before you can spawn another crate
     ctld.crateWaitTime = 1
     ctld.forceCrateToBeMoved = false -- a crate must be picked up at least once and moved before it can be unpacked. Helps to reduce crate spam
+	ctld.UseInfraRed = false
 end
 
 ctld.numberOfTroops = 10 -- default number of troops to load on a transport heli or C-130 
