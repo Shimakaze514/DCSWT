@@ -5851,7 +5851,7 @@ function ctld.addF10MenuOptions()
 
                     if ctld.addedTo[tostring(_groupId)] == nil then
 
-                        local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "CTLD")
+                        local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "运输+部署")
 
                         local _unitActions = ctld.getUnitActions(_unit:getTypeName())
                         ctld.logTrace(string.format("_unitActions=%s", ctld.p(_unitActions)))
