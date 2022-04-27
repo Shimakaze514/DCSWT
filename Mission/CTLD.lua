@@ -89,7 +89,7 @@ if ctld.Debug == false then
     ctld.buildTimeFOB = 60 --time in seconds for the FOB to be built
     --ctld.crateWaitTime = 20 -- time in seconds to wait before you can spawn another crate
     ctld.crateWaitTime = 20
-    ctld.forceCrateToBeMoved = true -- a crate must be picked up at least once and moved before it can be unpacked. Helps to reduce crate spam
+    ctld.forceCrateToBeMoved = false -- a crate must be picked up at least once and moved before it can be unpacked. Helps to reduce crate spam
     ctld.UseInfraRed = false
 else
     --测试用的参数
