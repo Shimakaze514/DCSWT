@@ -3797,20 +3797,20 @@ function ctld.getClosestCrate(_heli, _crates, _type)
     return _closetCrate
 end
 
-function ctld.findNearestAASystem(_heli, _aaSystem)
+function ctld.findNearestGroupSystem(_heli, _groupSystem)
 
-    local _closestHawkGroup = nil
+    local _closestGroup = nil
     local _shortestDistance = -1
     local _distance = 0
 
-    for _groupName, _hawkDetails in pairs(ctld.completeGroupSystems) do
+    for _groupName, _groupDetails in pairs(ctld.completeGroupSystems) do
 
-        local _hawkGroup = Group.getByName(_groupName)
+        local _group = Group.getByName(_groupName)
 
         --  ctld.logInfo(_groupName..": "..mist.utils.tableShow(_hawkDetails))
-        if _hawkGroup ~= nil and _hawkGroup:getCoalition() == _heli:getCoalition() and _hawkDetails[1].system.name == _aaSystem.name then
+        if _group ~= nil and _group:getCoalition() == _heli:getCoalition() and _groupDetails[1].system.name == _groupSystem.name then
 
-            local _units = _hawkGroup:getUnits()
+            local _units = _group:getUnits()
 
             for _, _leader in pairs(_units) do
 
@@ -3820,7 +3820,7 @@ function ctld.findNearestAASystem(_heli, _aaSystem)
 
                     if _distance ~= nil and (_shortestDistance == -1 or _distance < _shortestDistance) then
                         _shortestDistance = _distance
-                        _closestHawkGroup = _hawkGroup
+                        _closestGroup = _group
                     end
 
                     break
@@ -3829,9 +3829,8 @@ function ctld.findNearestAASystem(_heli, _aaSystem)
         end
     end
 
-    if _closestHawkGroup ~= nil then
-
-        return { group = _closestHawkGroup, dist = _shortestDistance }
+    if _closestGroup ~= nil then
+        return { group = _closestGroup, dist = _shortestDistance }
     end
     return nil
 end
@@ -4482,7 +4481,7 @@ function ctld.rearmAASystem(_heli, _nearestCrate, _nearbyCrates, _aaSystemTempla
     if ctld.getLauncherUnitFromAATemplate(_aaSystemTemplate) == _nearestCrate.details.unit then
 
         -- find nearest COMPLETE AA system
-        local _nearestSystem = ctld.findNearestAASystem(_heli, _aaSystemTemplate)
+        local _nearestSystem = ctld.findNearestGroupSystem(_heli, _aaSystemTemplate)
 
         if _nearestSystem ~= nil and _nearestSystem.dist < 300 then
 
@@ -4517,7 +4516,7 @@ function ctld.rearmAASystem(_heli, _nearestCrate, _nearbyCrates, _aaSystemTempla
 
                 local _spawnedGroup = ctld.spawnCrateGroup(_heli, _points, _types)
 
-                ctld.completeGroupSystems[_spawnedGroup:getName()] = ctld.getAASystemDetails(_spawnedGroup, _aaSystemTemplate)
+                ctld.completeGroupSystems[_spawnedGroup:getName()] = ctld.getGroupSystemDetails(_spawnedGroup, _aaSystemTemplate)
 
                 ctld.processCallback({ unit = _heli, crate = _nearestCrate, spawnedGroup = _spawnedGroup, action = "rearm" })
 
@@ -4542,7 +4541,7 @@ function ctld.rearmAASystem(_heli, _nearestCrate, _nearbyCrates, _aaSystemTempla
     return false
 end
 
-function ctld.getAASystemDetails(_hawkGroup, _aaSystemTemplate)
+function ctld.getGroupSystemDetails(_hawkGroup, _aaSystemTemplate)
 
     local _units = _hawkGroup:getUnits()
 
@@ -4574,12 +4573,6 @@ function ctld.rollRandomTank(_nearestCrate)
 end
 
 function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSystemTemplate)
-
-    --[[    if ctld.rearmAASystem(_heli, _nearestCrate, _nearbyCrates, _groupSystemTemplate) then
-            -- rearmed hawk
-            return
-        end]]
-
     -- are there all the pieces close enough together
     ctld.logDebug('进去之前    ' .. ctld.formatTable(_groupSystemTemplate))
     local ok, _template = ctld.rollRandomTank(_nearestCrate)
@@ -4655,15 +4648,6 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
         end
     end
 
-    --去掉原来的limit逻辑
-    --local _deployedNum = ctld.countCompleteAASystems(_heli)
-    --local _allowedNum = ctld.getAllowedAASystems(_heli)
-    --ctld.logInfo("Coalition:" .._heli:getCoalition().. "Active: ".. _deployedNum .." Allowed: ".._allowedNum)
-    --if _deployedNum + 1 > _allowedNum then
-    --    trigger.action.outTextForCoalition(_heli:getCoalition(), "Out of parts for AA Systems. Current limit is ".._allowedNum.." \n", 10)
-    --    return
-    --end
-
     if _txt ~= "" then
         ctld.displayMessageToGroup(_heli, "Cannot build " .. _groupSystemTemplate.name .. "\n" .. _txt .. "\n\nOr the crates are not close enough together", 20)
         return
@@ -4675,19 +4659,6 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
             return
         end
 
-        -- destroy crates
-        --for _, _nearbyCrate in pairs(_nearbyCrates) do
-        --    if string.find(_groupSystemTemplate.sysName, _nearbyCrate.details.unit) ~= nil or _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
-        --        --if _groupSystemTemplate.sysName == _nearbyCrate.details.unit then
-        --        if _heli:getCoalition() == 1 then
-        --            ctld.spawnedCratesRED[_nearbyCrate.crateUnit:getName()] = nil
-        --        else
-        --            ctld.spawnedCratesBLUE[_nearbyCrate.crateUnit:getName()] = nil
-        --        end
-        --        _nearbyCrate.crateUnit:destroy()
-        --    end
-        --end
-
         local count = 0
         for index = #toBeDestoyedCrates, 1, -1 do
             toBeDestoyedCrates[index].crateUnit:destroy()
@@ -4697,13 +4668,8 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
             end
         end
 
-        ctld.completeGroupSystems[_spawnedGroup:getName()] = ctld.getAASystemDetails(_spawnedGroup, _groupSystemTemplate)
+        ctld.completeGroupSystems[_spawnedGroup:getName()] = ctld.getGroupSystemDetails(_spawnedGroup, _groupSystemTemplate)
         ctld.processCallback({ unit = _heli, crate = _nearestCrate, spawnedGroup = _spawnedGroup, action = "unpack" })
-        --trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " successfully deployed a full ".. _groupSystemTemplate.name.." to the field. \n\nAA Active System limit is: ".._allowedNum.."\nActive: "..(_deployedNum +1), 10)
-
-        --if _groupSystemTemplate.hasLimit then
-        --    trigger.action.outTextForCoalition(_heli:getCoalition(), "\n\n最多能部署的集群阵地数量: ".._allowed.."\n已部署的数量: "..(_activeLaunchers+1), 20)
-        --end
 
     end
 end
@@ -4767,50 +4733,49 @@ function ctld.countCompleteAASystems(_heli)
     return _count
 end
 
-function ctld.repairGroupSystem(_heli, _nearestCrate, _aaSystem)
-    ctld.logInfo('进入了repairGroupSystem,aa:' .. ctld.formatTable(_aaSystem))
+function ctld.repairGroupSystem(_heli, _nearestCrate, _groupTemplate)
+    ctld.logInfo('进入了repairGroupSystem,aa:' .. ctld.formatTable(_groupTemplate))
     -- find nearest COMPLETE AA system
-    local _nearestHawk = ctld.findNearestAASystem(_heli, _aaSystem)
+    local _nearestGroup = ctld.findNearestGroupSystem(_heli, _groupTemplate)
 
-    if _nearestHawk ~= nil and _nearestHawk.dist < 300 then
+    if _nearestGroup ~= nil and _nearestGroup.dist < 300 then
 
-        local _oldHawk = ctld.completeGroupSystems[_nearestHawk.group:getName()]
+        local _oldGroup = ctld.completeGroupSystems[_nearestGroup.group:getName()]
+        --remove old system
+        ctld.completeGroupSystems[_nearestGroup.group:getName()] = nil
+        _nearestGroup.group:destroy()
 
         --spawn new one
-
         local _types = {}
         local _points = {}
 
-        for _, _part in pairs(_oldHawk) do
+        for _, _part in pairs(_oldGroup) do
             table.insert(_points, _part.point)
             table.insert(_types, _part.unit)
         end
+        ctld.logDebug('维修箱子 准备进入新生阶段')
 
-        --remove old system
-        ctld.completeGroupSystems[_nearestHawk.group:getName()] = nil
-        _nearestHawk.group:destroy()
-
-        local _spawnedGroup = ctld.spawnCrateGroup(_heli, _points, _types)
-
-        ctld.completeGroupSystems[_spawnedGroup:getName()] = ctld.getAASystemDetails(_spawnedGroup, _aaSystem)
-
-        ctld.processCallback({ unit = _heli, crate = _nearestCrate, spawnedGroup = _spawnedGroup, action = "repair" })
-
-        trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " successfully repaired a full " .. _aaSystem.name .. " in the field", 10)
-
-        if _heli:getCoalition() == 1 then
-            ctld.spawnedCratesRED[_nearestCrate.crateUnit:getName()] = nil
-        else
-            ctld.spawnedCratesBLUE[_nearestCrate.crateUnit:getName()] = nil
+        timer.scheduleFunction(function(_args)
+            local _heli=_args[1]
+            local _points=_args[2]
+            local _types=_args[3]
+            local _groupTemplate=_args[4]
+            local _nearestCrate=_args[5]
+            local _spawnedGroup = ctld.spawnCrateGroup(_heli, _points, _types,_groupTemplate)
+            ctld.completeGroupSystems[_spawnedGroup:getName()] = ctld.getGroupSystemDetails(_spawnedGroup, _groupTemplate)
+            ctld.processCallback({ unit = _heli, crate = _nearestCrate, spawnedGroup = _spawnedGroup, action = "repair" })
+            trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " successfully repaired a full " .. _groupTemplate.name .. " in the field", 10)
+            if _heli:getCoalition() == 1 then
+                ctld.spawnedCratesRED[_nearestCrate.crateUnit:getName()] = nil
+            else
+                ctld.spawnedCratesBLUE[_nearestCrate.crateUnit:getName()] = nil
+            end
+            _nearestCrate.crateUnit:destroy()
         end
-
-        -- remove crate
-        -- if ctld.slingLoad == false then
-        _nearestCrate.crateUnit:destroy()
-        -- end
+        , {_heli,_points,_types,_groupTemplate,_nearestCrate } , timer.getTime() + 2)
 
     else
-        ctld.displayMessageToGroup(_heli, "Cannot repair  " .. _aaSystem.name .. ". No damaged " .. _aaSystem.name .. " within 300m", 10)
+        ctld.displayMessageToGroup(_heli, "Cannot repair  " .. _groupTemplate.name .. ". No damaged " .. _groupTemplate.name .. " within 300m", 10)
     end
 end
 
@@ -5018,7 +4983,7 @@ function ctld.checkPlayerAndCoalitionLimit(_heli, _groupSystemTemplate, unitName
         end
     end
 
-    ctld.logDebug('_category:' .. _category)
+
     if _category == nil then
         ctld.displayMessageToGroup(_heli, '生成单位有问题，请找群管理汇报bug', 10)
         ctld.logError('严重错误，生成单位时找不到对应的类别！')
@@ -5040,7 +5005,7 @@ function ctld.ifGroupHasAliveUnits(_groupName)
         local _units = _group:getUnits()
         if _units ~= nil and #_units > 0 then
             for x = 1, #_units do
-                if _units[x]:getLife() > 0 then
+                if _units[x]:getLife() > 1 then
                     return true
                 end
             end
@@ -5085,6 +5050,8 @@ function ctld.handlePlayerLimitInfo(_heli, _category)
         return
     end
 
+    ctld.logDebug('开始计算已有的限制信息'..ctld.formatTable(ctld.UnitLimitPlayerInfo))
+
     local _aliveGroupNum = 0
     for index = #_playerInfo[_category], 1, -1 do
         local _groupName = _playerInfo[_category][index]
@@ -5095,6 +5062,8 @@ function ctld.handlePlayerLimitInfo(_heli, _category)
             table.remove(ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category], index)
         end
     end
+
+    ctld.logDebug('存活组数：'.._aliveGroupNum)
 
     if _aliveGroupNum >= ctld.UnitLimitPerPlayer[_category] then
         local _toDeleteGroupName = table.remove(ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category], 1)
