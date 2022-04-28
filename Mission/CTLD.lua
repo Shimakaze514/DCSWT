@@ -5978,12 +5978,13 @@ function ctld.addF10MenuOptions()
         end
     end
 
+    --local captureCommandAdded = {}
     for _, _groupTable in pairs(mist.DBs.dynGroupsAdded) do
         local _groupID = _groupTable.groupId
-        if ctld.captureCommandAdded[_groupID] == nil then
+        --if captureCommandAdded[_groupID] == nil then
             missionCommands.addCommandForGroup(_groupID, "占领", nil, NP.capture, _groupTable)
-            ctld.captureCommandAdded[_groupID] = true
-        end
+            --captureCommandAdded[_groupID] = true
+        --end
     end
 
     local status, error = pcall(function()
@@ -7053,7 +7054,7 @@ function ctld.initialize(force)
 
     assert(mist ~= nil, "\n\n** HEY MISSION-DESIGNER! **\n\nMiST has not been loaded!\n\nMake sure MiST 3.6 or higher is running\n*before* running this script!\n")
 
-    ctld.captureCommandAdded = {}
+
     ctld.addedTo = {}
     ctld.spawnedCratesRED = {} -- use to store crates that have been spawned
     ctld.spawnedCratesBLUE = {} -- use to store crates that have been spawned
