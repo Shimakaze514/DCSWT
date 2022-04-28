@@ -86,11 +86,9 @@ function dsave.recordAllVehiclesElements(inputDB)
                 if _unitTable.unitName ~= nil and _unitTable.type ~= 'iso_container_small'then
                     local _unit=Unit.getByName(_unitTable.unitName)
                     if _unit~=nil then
-                        if _unit:getLife()>0 then
+                        if _unit:getLife()>1 then
                             needSave =true
                             local _point = _unit:getPoint()
-                            local _pos2 = { x = _point.x, y = _point.z }
-
                             _group.units[_key].point.x=_point.x
                             _group.units[_key].x=_point.x
                             _group.units[_key].point.x=_point.x
