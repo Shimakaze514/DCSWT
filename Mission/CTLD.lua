@@ -5927,23 +5927,23 @@ function ctld.addF10MenuOptions()
 
                         if (ctld.enabledFOBBuilding or ctld.enableCrates) and _unitActions.crates then
 
-                            local _crateCommands = missionCommands.addSubMenuForGroup(_groupId, "CTLD Commands", _rootPath)
+                            local _crateCommands = missionCommands.addSubMenuForGroup(_groupId, "集装箱指令", _rootPath)
                             --[[                            if ctld.hoverPickup == false then
                                                             if  ctld.slingLoad == false then
                                                                 missionCommands.addCommandForGroup(_groupId, "Load Nearby Crate", _crateCommands, ctld.loadNearbyCrate,  _unitName )
                                                             end
                                                         end]]
                             missionCommands.addCommandForGroup(_groupId, "卸下 AND 部署", _crateCommands, ctld.dropAndUnpackCrates, { _unitName })
-                            missionCommands.addCommandForGroup(_groupId, "Unpack Any Crate", _crateCommands, ctld.unpackCrates, { _unitName })
+                            missionCommands.addCommandForGroup(_groupId, "部署", _crateCommands, ctld.unpackCrates, { _unitName })
 
                             if ctld.slingLoad == false then
-                                missionCommands.addCommandForGroup(_groupId, "Drop Crate", _crateCommands, ctld.dropSlingCrate, { _unitName })
+                                missionCommands.addCommandForGroup(_groupId, "卸下货物", _crateCommands, ctld.dropSlingCrate, { _unitName })
                             end
 
-                            missionCommands.addCommandForGroup(_groupId, "List Nearby Crates", _crateCommands, ctld.listNearbyCrates, { _unitName })
-                            missionCommands.addCommandForGroup(_groupId, "Load Nearby Crate", _crateCommands, ctld.loadNearbyCrate, _unitName)
+                            missionCommands.addCommandForGroup(_groupId, "列出附近箱子", _crateCommands, ctld.listNearbyCrates, { _unitName })
+                            missionCommands.addCommandForGroup(_groupId, "装载货物", _crateCommands, ctld.loadNearbyCrate, _unitName)
                             if ctld.enabledFOBBuilding then
-                                missionCommands.addCommandForGroup(_groupId, "List FOBs", _crateCommands, ctld.listFOBS, { _unitName })
+                                missionCommands.addCommandForGroup(_groupId, "列出FOB", _crateCommands, ctld.listFOBS, { _unitName })
                             end
                         end
 
