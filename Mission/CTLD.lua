@@ -5819,6 +5819,14 @@ function ctld.addF10MenuOptions()
 
                 if _groupId then
 
+                    if ctld.addedCSARTo[tostring(_groupId)] == nil then
+                        local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "CSAR飞行员救援")
+                        missionCommands.addCommandForGroup(_groupId, "捞人", _rootPath,  npcsar.loadPilots, { _unitName })
+                        missionCommands.addCommandForGroup(_groupId, "放人", _rootPath,  npcsar.unpackPilots, { _unitName })
+                        missionCommands.addCommandForGroup(_groupId, "机舱信息", _rootPath,  npcsar.loadedPilotInfo, { _unitName })
+                        ctld.addedCSARTo[tostring(_groupId)]=true
+                    end
+
                     if ctld.addedTo[tostring(_groupId)] == nil then
 
                         local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "运输+部署")
@@ -7023,6 +7031,7 @@ function ctld.initialize(force)
     assert(mist ~= nil, "\n\n** HEY MISSION-DESIGNER! **\n\nMiST has not been loaded!\n\nMake sure MiST 3.6 or higher is running\n*before* running this script!\n")
 
     ctld.captureCommandAdded = {}
+    ctld.addedCSARTo= {}
     ctld.addedTo = {}
     ctld.spawnedCratesRED = {} -- use to store crates that have been spawned
     ctld.spawnedCratesBLUE = {} -- use to store crates that have been spawned

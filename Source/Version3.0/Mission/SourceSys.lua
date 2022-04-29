@@ -4,6 +4,7 @@ SourceObj.addedF10Menu = {}
 SourceObj.playerUcidByGroup = {}
 SourceObj.killEnemy = 100
 SourceObj.killFriend = -200
+SourceObj.pilotDead = 150
 SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
   SourceObj.playerSource[_ucid] = SourceObj.playerSource[_ucid] or {}
   if SourceObj.playerSource[_ucid]["point"] == nil then
@@ -11,14 +12,19 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
     SourceObj.SaveSourcePoint()
   end
   if _event == "takeoff" then
-    -- local _unitType = _unit:getTypeName()
     local _groupId = SourceObj.getGroupId(_unit)
     local sourcePointChange, countInfo = SourceObj.getSourceObjChange(_unit)
+
+    if SourceObj.playerSource[_ucid]["deadLastTime"] == true then
+      sourcePointChange=sourcePointChange + SourceObj.pilotDead
+      countInfo=countInfo.."\n因为上一架次你的驾驶员死亡，所以加扣了"..SourceObj.pilotDead..'分。条件允许的话可以跳伞'
+      SourceObj.playerSource[_ucid]["deadLastTime"] = nil
+    end
 
     if SourceObj.playerSource[_ucid]["point"] - sourcePointChange > 0 then
       SourceObj.playerSource[_ucid]["point"] = SourceObj.playerSource[_ucid]["point"] - sourcePointChange
       SourceObj.SaveSourcePoint()
-      local text = string.format("起飞成功,本次消耗私有资源点:%d,个人剩余:%d点.\n详细信息:%s", tostring(sourcePointChange), tostring(SourceObj.playerSource[_ucid]["point"]), tostring(countInfo))
+      local text = string.format("起飞成功,本次总共消耗私有资源点:%d,个人剩余:%d点.\n详细信息:%s", tostring(sourcePointChange), tostring(SourceObj.playerSource[_ucid]["point"]), tostring(countInfo))
       trigger.action.outTextForGroup(_groupId, text, 20, true)
     else
       local text = string.format("你的私有资源点剩余(%d),本次起飞需要:%d,马上就爆炸了~BOOM！请在停机坪等待低保点数发放！", SourceObj.playerSource[_ucid]["point"], sourcePointChange)
@@ -33,6 +39,8 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
     SourceObj.SaveSourcePoint()
     local text = string.format("降落成功,返还私有资源点:%d,个人剩余:%d点.\n详细信息:%s", tostring(sourcePointChange), tostring(SourceObj.playerSource[_ucid]["point"]), tostring(countInfo))
     trigger.action.outTextForGroup(_groupId, text, 10)
+  elseif _event == "pilotDead" then
+    SourceObj.playerSource[_ucid]["deadLastTime"] = true
   elseif _event == "kill" then
     local _groupId = SourceObj.getGroupId(_unit.initiator)
     if _unit.initiator:getCoalition() ~= _unit.target:getCoalition() then
@@ -83,13 +91,8 @@ SourceObj.onBirth = function(_unit)
   timer.scheduleFunction(SourceObj.initMessage, {_groupId, SourceObj.playerSource[_ucid]["point"]}, timer.getTime() + 15)
 end
 SourceObj.initMessage = function(_args)
-  trigger.action.outTextForGroup(_args[1], "指挥官玩家请保持SRS正常通联！！！呼叫无回应者暂时取消权限，无线电正常通联后返还！", 60, true)
-  --trigger.action.outTextForGroup(_args[1], "指挥官玩家请保持SRS正常通联！！！呼叫无回应者暂时取消权限，无线电正常通联后返还\n由于末敏弹卡服，暂时限制(超贵)，等待ED更新！！！", 60, true)
-  local message =
-    "*请注意！！！服务器已启用资源系统！请务必详阅以下内容，避免起飞自爆：你当前私有点数:" ..
-    tostring(_args[2]) .. -- '\n[1]玩家初始拥有' ..
-      -- tostring(_args[2]) ..
-      '\n[1]服务器永久保存每位玩家的剩余资源点数,可通过F10菜单查询;\n[2]飞机、弹药、吊舱等都需消耗部分资源点,起飞后合计扣除.返场降落将根据你的弹药余量返点;\n[3]击杀敌方单位、吊运、救援，值班GCI、ATC、OP都可获取相应点数;\n[4]起飞前请务必检查"余额"及挂载量、合理支配点数，如果资源点不足以支付消耗，强行起飞将会自爆;'
+  trigger.action.outTextForGroup(_args[1], "指挥官玩家请保持SRS正常通联,呼叫无回应者暂时取消权限。", 60, true)
+  local message = "*服务器已启用资源系统，请看下规则，避免起飞自爆：你当前私有点数:" .. tostring(_args[2]) .. '\n[1]服务器永久保存每位玩家的剩余资源点数,可通过F10菜单查询;\n[2]飞机、弹药、吊舱等都消耗资源点,起飞后扣除.返场降落将根据余量返点;\n[3]击杀敌方单位、吊运、救援，值班GCI、ATC、OP都可获取点数;\n[4]起飞前请检查"余额"及挂载量、合理支配点数，如果资源点不足以支付消耗，强行起飞将会自爆;'
   trigger.action.outTextForGroup(_args[1], message, 60)
 end
 SourceObj.addF10SourceMenu = function(groupId)
