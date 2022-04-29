@@ -6,6 +6,12 @@ function sourceMissionEvent.eventHandler:onEvent(event)
     function(event)
       if event == nil or event.initiator == nil then
         return false
+      elseif event.id == world.event.S_EVENT_PILOT_DEAD and event.initiator ~= nil then
+        if event.initiator:getPlayerName() ~= nil then
+          if SourceObj.playerInfo[event.initiator:getPlayerName()] then
+            SourceObj.updateSourcePointsByEvent(event.initiator, SourceObj.playerInfo[event.initiator:getPlayerName()], "pilotDead")
+          end
+        end
       elseif event.id == world.event.S_EVENT_TAKEOFF and event.initiator ~= nil then
         if event.initiator:getPlayerName() ~= nil then
           if SourceObj.playerInfo[event.initiator:getPlayerName()] then
@@ -22,8 +28,6 @@ function sourceMissionEvent.eventHandler:onEvent(event)
         SourceObj.onBirth(event.initiator)
 		SourceObj.onTeamBirth(event.initiator)
       elseif event.id == world.event.S_EVENT_KILL or event.id == 29 and event.initiator ~= nil and event.target ~= nil then
-        --[[local targetship = event.target:getGroup()
-        Group.destroy(targetship) --清除残骸]]
         if event.initiator:getPlayerName() ~= nil then
           if SourceObj.playerInfo[event.initiator:getPlayerName()] then
             SourceObj.updateSourcePointsByEvent(event, SourceObj.playerInfo[event.initiator:getPlayerName()], "kill")
