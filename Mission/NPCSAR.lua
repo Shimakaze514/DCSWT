@@ -5,7 +5,7 @@ npcsar.Version = "20220429"
 
 net.log("LOAD - NP CSAR version "..npcsar.Version ..", script by VL")
 
-npcsar.Debug = true
+npcsar.Debug = false
 npcsar.Trace = true
 
 npcsar.baseNum = 2 --基础奖励数量
@@ -53,8 +53,7 @@ function npcsar.eventHandler:onEvent(_event)
             end
 
             npcsar.HeliRescueInfo[_unit:getName()]=nil
-            npcsar.logInfo(_unit:getName().."的直升机救援信息被重置")
-
+            npcsar.logDebug(_unit:getName().."的直升机救援信息被重置")
         elseif _event.id == 5 then --aircraft  crashes
             local _unit = _event.initiator
             if _unit == nil then
@@ -63,8 +62,7 @@ function npcsar.eventHandler:onEvent(_event)
             end
 
             npcsar.HeliRescueInfo[_unit:getName()]=nil
-            npcsar.logInfo(_unit:getName().."的直升机救援信息被重置")
-
+            npcsar.logDebug(_unit:getName().."的直升机救援信息被重置")
         elseif _event.id == 6 then --ejection
             local _unit = _event.initiator
             if _unit == nil then
