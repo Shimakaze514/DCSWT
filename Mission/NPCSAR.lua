@@ -204,7 +204,7 @@ function npcsar.findNearPilots(_heli)
     for _pilotGroupName,detail in pairs(npcsar.EjectedPilots) do
         if npcsar.getDistance(_heli:getPoint(), detail.point) < npcsar.distance then
             npcsar.logDebug('发现能捞的飞行员:'.._pilotGroupName)
-            local pilot={ pilot = _pilotGroupName, coalition = detail.side, dangerZone = npcsar.isInDangerZone(detail)}
+            local pilot={ pilot = _pilotGroupName, coalition = detail.side, dangerZone = npcsar.isInDangerZone(detail,_heli)}
             table.insert(pilotsDetail,pilot)
         end
     end
@@ -212,7 +212,7 @@ function npcsar.findNearPilots(_heli)
     return pilotsDetail
 end
 
-function npcsar.isInDangerZone(detail)
+function npcsar.isInDangerZone(detail,_heli)
     local friendMinDist = 999999
     local enemyMinDist = 999999
 
@@ -220,7 +220,7 @@ function npcsar.isInDangerZone(detail)
         local _logistic = StaticObject.getByName(_name)
         if _logistic ~= nil then
             local _dist = npcsar.getDistance(detail.point, _logistic:getPoint())
-            if _logistic:getCoalition() == detail.side then
+            if _logistic:getCoalition() == _heli:getCoalition() then
                 friendMinDist=npcsar.getMinNum(friendMinDist,_dist)
             else
                 enemyMinDist=npcsar.getMinNum(enemyMinDist,_dist)
