@@ -263,7 +263,7 @@ function dsave.loadDsaveCCsData()
     for _, _group in pairs(tableData2) do
         mist.dynAddStatic(_group)
         table.insert(ctld.logisticUnits, _group.units[1].unitName)
-        dsave.logInfo('CC:'.._group.groupName ..' generated!'.. '阵营:' .._group.country)
+        dsave.logInfo('CC:|'.._group.groupName ..'|generated!'.. ' 阵营:' .._group.country)
     end
     dsave.logInfo('CC载入完成')
 --[[
