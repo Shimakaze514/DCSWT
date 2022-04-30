@@ -20,6 +20,7 @@ dsave.Version = "20220417"
 net.log("LOAD - DYNAMIC SAVE version "..dsave.Version ..", script by VL")
 
 dsave.CCTypes = { '.Command Center', 'outpost'}
+dsave.blackList = { 'iso_container_small', 'Infantry AK','Soldier M4','LHA_Tarawa'}
 dsave.RefreshTime = 300
 
 -- debug level, specific to this module
@@ -83,7 +84,7 @@ function dsave.recordAllVehiclesElements(inputDB)
         local needSave =false
         if dsave.NotInVehicleBlackList(_group) then
             for _key , _unitTable in pairs(_group.units) do
-                if _unitTable.unitName ~= nil and _unitTable.type ~= 'iso_container_small'then
+                if _unitTable.unitName ~= nil and dsave.typeBelongsToBlackList(_unitTable.type)==false then
                     local _unit=Unit.getByName(_unitTable.unitName)
                     if _unit~=nil then
                         if _unit:getLife()>1 then
@@ -178,6 +179,20 @@ dsave.SaveData = function(FilePath, data)
     else
         dsave.logError(FilePath .. "保存失败")
     end
+end
+
+--TODO
+function dsave.typeBelongsToBlackList(_typename)
+    if _typename ==nil then
+        return false
+    end
+    for _, ccType in pairs(dsave.blackList) do
+        if ccType == _typename then
+            return true
+        end
+    end
+
+    return false
 end
 
 
