@@ -4,7 +4,7 @@ npcsar.Id = "npcsar - "
 npcsar.Version = "20220429"
 
 net.log("LOAD - NP CSAR version "..npcsar.Version ..", script by VL")
---TODO野外跳伞才算
+
 npcsar.Debug = false
 npcsar.Trace = true
 
@@ -13,6 +13,8 @@ npcsar.coalitionBonus = 3 --捞到敌方飞行员的奖励倍率
 npcsar.dangerZoneBonus = 3 --危险区捞人的奖励倍率
 
 npcsar.distance = 100 --捞人的距离
+npcsar.AddDistance = 1000 --距离CC这个距离内不生成跳伞驾驶员
+npcsar.cleanTime = 60*60 --清除驾驶员的时间
 
 npcsar.EjectedPilots={}
 
@@ -70,6 +72,18 @@ function npcsar.eventHandler:onEvent(_event)
                 return
             end
 
+            for _, _name in pairs(ctld.logisticUnits) do
+                local _logistic = StaticObject.getByName(_name)
+                if _logistic ~= nil and _logistic:getCoalition() == _unit:getCoalition() then
+                    local _dist = npcsar.getDistance(_unit:getPoint(), _logistic:getPoint())
+                    if _dist <= npcsar.AddDistance then
+                        ctld.displayMessageToGroup(_unit, "你离cc太近了，就不生成跳伞驾驶员了，自己走回去吧。", 10)
+                        return
+                    end
+                end
+            end
+
+
             npcsar.addCsar(_unit:getCoalition() , _unit:getCountry(), _unit:getPoint(), _unit:getTypeName(),  _unit:getName(), _unit:getPlayerName())
 
         elseif _event.id == 8 then --object  destroyed
@@ -81,9 +95,6 @@ function npcsar.eventHandler:onEvent(_event)
         npcsar.logError(string.format("Error while handling event %s", err))
     end
 end
-world.addEventHandler(npcsar.eventHandler)
-npcsar.logInfo("event handler added")
-
 
 function npcsar.addCsar(_coalition , _country, _point, _unitTypeName,_unitName, _playerName)
     local _spawnedGroup = npcsar.spawnPilotModel( _coalition, _country, _point)
@@ -103,7 +114,7 @@ function npcsar.addCsar(_coalition , _country, _point, _unitTypeName,_unitName, 
         Controller.setOption(_controller, AI.Option.Ground.id.ROE, AI.Option.Ground.val.ROE.WEAPON_HOLD)
         Controller.setCommand(_controller, _setImmortal)
 
-        npcsar.EjectedPilots[_spawnedGroup:getName()] = { side = _spawnedGroup:getCoalition(), type=_unitTypeName, originalUnit = _unitName, desc = _text, player = _playerName, point = _point}
+        npcsar.EjectedPilots[_spawnedGroup:getName()] = { side = _spawnedGroup:getCoalition(), type=_unitTypeName, originalUnit = _unitName, desc = _text, player = _playerName, point = _point, spawnTime=timer.getTime()}
 
         npcsar.logInfo('生成待营救驾驶员:'.._spawnedGroup:getName())
     else
@@ -378,3 +389,25 @@ function npcsar.getDistance(_point1, _point2)
 
     return math.sqrt(xDiff * xDiff + yDiff * yDiff)
 end
+
+
+function npcsar.cleanPilots()
+    npcsar.logInfo('开始清除时间过长的跳伞驾驶员')
+    local hasClean = false
+    for groupName,detail in pairs(npcsar.EjectedPilots) do
+        if timer.getTime()-detail.spawnTime>npcsar.cleanTime then
+            Group.destroy(Group.getByName(groupName))
+            npcsar.EjectedPilots[groupName]=nil
+            hasClean = true
+            npcsar.logInfo('跳伞驾驶员'..groupName..'被清除')
+        end
+    end
+    if hasClean == true then
+        trigger.action.outText('清除了一些好长时间都没人捞的跳伞驾驶员，RIP',10)
+    end
+    timer.scheduleFunction(npcsar.cleanPilots, nil, timer.getTime() + npcsar.cleanTime)
+end
+
+world.addEventHandler(npcsar.eventHandler)
+timer.scheduleFunction(npcsar.cleanPilots, nil, timer.getTime()+5)
+net.log("LOAD SUCCESS - NPCSAR version "..NP.Version ..", script by VL")
