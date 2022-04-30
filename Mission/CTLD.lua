@@ -5957,9 +5957,10 @@ function ctld.addF10MenuOptions()
 
     for _, _groupTable in pairs(mist.DBs.dynGroupsAdded) do
         local _groupID = _groupTable.groupId
-        if ctld.captureCommandAdded[_groupID] == nil then
+        local _groupName = _groupTable.name
+        if ctld.captureCommandAdded[_groupName] == nil then
             missionCommands.addCommandForGroup(_groupID, "占领", nil, NP.capture, _groupTable)
-            ctld.captureCommandAdded[_groupID] = true
+            ctld.captureCommandAdded[_groupName] = true
         end
     end
 
