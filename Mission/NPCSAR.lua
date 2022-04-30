@@ -4,7 +4,7 @@ npcsar.Id = "npcsar - "
 npcsar.Version = "20220429"
 
 net.log("LOAD - NP CSAR version "..npcsar.Version ..", script by VL")
-
+--TODO野外跳伞才算
 npcsar.Debug = false
 npcsar.Trace = true
 
