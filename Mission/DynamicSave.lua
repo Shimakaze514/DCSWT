@@ -91,8 +91,8 @@ function dsave.recordAllVehiclesElements(inputDB)
                             local _point = _unit:getPoint()
                             _group.units[_key].point.x=_point.x
                             _group.units[_key].x=_point.x
-                            _group.units[_key].point.x=_point.x
-                            _group.units[_key].x=_point.x
+                            _group.units[_key].point.y=_point.y
+                            _group.units[_key].y=_point.y
                         else
                             _group.units[_key]=nil
                         end
