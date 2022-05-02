@@ -23,9 +23,9 @@ SRSAuto.SRS_FREQUENCIES = {
 
 ---- SRS NUDGE MESSAGE ----
 SRSAuto.SRS_NUDGE_ENABLED = true -- set to true to enable the message below
-SRSAuto.SRS_NUDGE_TIME = 600 -- SECONDS between messages to non connected SRS users
-SRSAuto.SRS_MESSAGE_TIME = 60 -- SECONDS to show the message for
-SRSAuto.SRS_NUDGE_PATH = "C:\\FlightSim\\DCS-SimpleRadioStandalone\\clients-list.json" -- path to SERVER JSON EXPORT - enable Auto Export List on the server
+SRSAuto.SRS_NUDGE_TIME = 900 -- SECONDS between messages to non connected SRS users
+SRSAuto.SRS_MESSAGE_TIME = 30 -- SECONDS to show the message for
+SRSAuto.SRS_NUDGE_PATH = "C:\FlightSim\DCS-SimpleRadioStandalone\clients-list.json" -- path to SERVER JSON EXPORT - enable Auto Export List on the server
 --- EDIT the message below to change what is said to users - DONT USE QUOTES - either single or double due to the injection into SRS it'll fail
 --- Newlines must be escaped like so: \\\n with 3 backslashes
 SRSAuto.SRS_NUDGE_MESSAGE = "本服需使用无线电进行通讯,请保持SRS在线,并在各自阵营频率待命,有呼叫请积极回应!!! \\\n\\\n（正常通联后本消息不再提示！）"
