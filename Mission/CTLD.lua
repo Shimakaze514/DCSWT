@@ -750,7 +750,7 @@ ctld.spawnableCrates = {
     },
 
     ["步兵战车(IFV)"] = {
-        { weight = 1200, desc = "轮式轻型坦克(M1128)", unit = "M1128 Stryker MGS Group" },
+        --{ weight = 1200, desc = "轮式轻型坦克(M1128)", unit = "M1128 Stryker MGS Group" },
         { weight = 1065, desc = "轻型装甲坦克战车(Type04A)", unit = "ZBD04A Group" },
         { weight = 1119, desc = "反坦克导弹战车(M1134 ATGM)", unit = "M1134 Stryker ATGM Group" },
         --{ weight = 1364, desc = "(BETA)主战坦克M1A2小队", unit = "M-1 Abrams Group", cratesRequired = 1, loadable = true },
