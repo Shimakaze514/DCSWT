@@ -1,9 +1,9 @@
 SourceObj = SourceObj or {}
 SourceObj.playerInfo = {}
 SourceObj.playerSource = {}
-SourceObj.sourceInitPoint = 1000
-SourceObj.sourceMaxPoint = 1000
-SourceObj.recoverPoint = 200
+SourceObj.sourceInitPoint = 1500
+SourceObj.sourceMaxPoint = 1500
+SourceObj.recoverPoint = 300
 SourceObj.realRecoverTime = 600
 SourceObj.autoAddID = {}
 -- SourceObj.landRecoverTime = 60 -- 以秒为单位
