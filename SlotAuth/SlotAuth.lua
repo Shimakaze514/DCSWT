@@ -2,8 +2,9 @@ SLOT = SLOT or {}
 SLOT.callbacks = SLOT.callbacks or {}
 
 SLOT.FilePath = lfs.writedir() .. [[SourceData/]] .. '动态槽位限制.json'
-SLOT.UserDataCache = {}
+SLOT.AuthDataCache = {}
 SLOT.UseNewDynamicSystem = true
+
 
 function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
   local _side = side
@@ -15,14 +16,26 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
     end
 end
 
+function SLOT.callbacks.onPlayerTryConnect(addr,name,ucid,playerId)
+  --net.log('addr'..addr.."ucid"..ucid.."name"..name.."playerId"..playerId)
+  if string.find(name," ")~=nil then
+    return false,"ID不允许带空格"
+  end
+
+  return true
+end
+
+function SLOT.callbacks.onPlayerDisconnect(playerId)
+end
+
 function SLOT.callbacks.onPlayerTrySendChat(id, msg, all)
   if msg == 'refreshadmin' then
     net.log('SLOTAUTH 动态管理员信息加载完成')
     net.send_chat_to('SLOTAUTH 动态管理员信息加载完成', id)
-    SLOT.UserDataCache = SLOT.LoadFile(SLOT.FilePath)
+    SLOT.AuthDataCache = SLOT.LoadFile(SLOT.FilePath)
 
     net.log('SLOTAUTH 管理员信息')
-    for _role, _roleTable in pairs(SLOT.UserDataCache) do
+    for _role, _roleTable in pairs(SLOT.AuthDataCache) do
       net.log('------------载入角色' .. _role .. '-----------------------')
       for _ucid, extra in pairs(_roleTable) do
         net.log('载入ucid:' .. _ucid .. '| 玩家:' .. extra.ID)
@@ -62,13 +75,13 @@ function SLOT.allowEnterSlotDynamic(_playerID, _side, _slotID)
   end
 
   if _unitRole ~= nil and _unitRole == 'instructor' then --游戏管理员
-    return SLOT.findIDInTableDynamic(_playerID, _ucid, SLOT.UserDataCache.admin, 'instructor')
+    return SLOT.findIDInTableDynamic(_playerID, _ucid, SLOT.AuthDataCache.admin, 'instructor')
   end
   if _unitRole ~= nil and _unitRole == 'observer' then --观察员
-    return SLOT.findIDInTableDynamic(_playerID, _ucid, SLOT.UserDataCache.observer, 'observer')
+    return SLOT.findIDInTableDynamic(_playerID, _ucid, SLOT.AuthDataCache.observer, 'observer')
   end
   if _unitRole ~= nil and _unitRole == 'artillery_commander' then --CA
-    return SLOT.findIDInTableDynamic(_playerID, _ucid, SLOT.UserDataCache.commander, 'artillery_commander')
+    return SLOT.findIDInTableDynamic(_playerID, _ucid, SLOT.AuthDataCache.commander, 'artillery_commander')
   end
 
   return true
@@ -145,6 +158,6 @@ end
 --设置用户callbacs,使用上面定义的功能映射DCS事件处理程序
 DCS.setUserCallbacks(SLOT.callbacks)
 net.log('SLOTAUTH 回调设置完成')
-SLOT.UserDataCache = SLOT.LoadFile(SLOT.FilePath)
+SLOT.AuthDataCache = SLOT.LoadFile(SLOT.FilePath)
 net.log('SLOTAUTH 动态槽位限制信息加载完成')
 net.log('SLOTAUTH 权限脚本 加载完成')
