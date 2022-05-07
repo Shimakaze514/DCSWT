@@ -818,9 +818,9 @@ ctld.spawnableCrates = {
         { weight = 963, desc = "后卫(M6)野战红外地空导弹战车", unit = "M6 Linebacker" },
     },
     ["造船厂(SHIP)集装箱"] = {
-        { weight = 1508, desc = "052B驱逐舰（5箱一船,一边最多两船）", unit = "Type_052B", cratesRequired = 5,isShip=true},
-        { weight = 1409, desc = "不惧级护卫舰（4箱一船,一边最多两船）", unit = "NEUSTRASH", cratesRequired = 4,isShip=true},
-        { weight = 1315, desc = "勇士级导弹艇（3箱一船,一边最多两船）", unit = "La_Combattante_II", cratesRequired = 3,isShip=true},
+        { weight = 1508, desc = "052B驱逐舰（3箱一船）", unit = "Type_052B", cratesRequired = 3,isShip=true},
+        { weight = 1409, desc = "不惧级护卫舰（2箱一船）", unit = "NEUSTRASH", cratesRequired = 2,isShip=true},
+        { weight = 1315, desc = "勇士级导弹艇（1箱一船）", unit = "La_Combattante_II", cratesRequired = 1,isShip=true},
     },
 }
 
