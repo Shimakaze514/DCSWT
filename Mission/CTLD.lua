@@ -52,6 +52,7 @@ if ctld.Debug == false then
         ["近程防空(Short Range AA)"] = 3,
         ["中远程防空(Mid&Long Range AA)"] = 10,
     }
+    ctld.logisticUnits = {}
     ctld.CoalitionKillerLimit = 4 --红方的阵营级大杀器
 
     ctld.F10RefreshTime = 60
@@ -100,6 +101,10 @@ else
         ["近程防空(Short Range AA)"] = 2,
         ["中远程防空(Mid&Long Range AA)"] = 2,
     }
+    ctld.logisticUnits = {
+        "造船厂Blue",
+        "造船厂Red",
+    }--动态保存会刷新一次，所以不用手动添加了
     ctld.CoalitionKillerLimit = 2 --红方的阵营级大杀器
     ctld.F10RefreshTime = 5
     ctld.IsCheckfarEnoughFromLogisticZone = false
@@ -635,8 +640,11 @@ ctld.extractableGroups = {
 -- Use any of the predefined names or set your own ones
 -- When a logistic unit is destroyed, you will no longer be able to spawn crates
 
-ctld.logisticUnits = {}--动态保存会刷新一次，所以不用手动添加了
 
+ctld.shipYards={
+    "造船厂Blue",
+    "造船厂Red",
+}
 -- ************** UNITS ABLE TO TRANSPORT VEHICLES ******************
 -- Add the model name of the unit that you want to be able to transport and deploy vehicles
 -- units db has all the names or you can extract a mission.miz file by making it a zip and looking
@@ -809,14 +817,11 @@ ctld.spawnableCrates = {
     ["阵营级大杀器"] = {
         { weight = 963, desc = "后卫(M6)野战红外地空导弹战车", unit = "M6 Linebacker" },
     },
-
-    --["造船厂(SHIP)集装箱"] = {
-    --	--{ weight = 1508, desc = "052B驱逐舰（4箱一船,一边最多两船）", unit = "052 Repair", cratesRequired = 4, loadable = true },
-    --	{ weight = 1409, desc = "不惧级(Neustrashimyy-class frigate)护卫舰（3箱一船,一边最多两船）", unit = "052 Repair", cratesRequired = 3, loadable = true },
-    --	{ weight = 1315, desc = "勇士级导弹艇（2箱一船,一边最多两船）", unit = "yongshi Repair", cratesRequired = 2, loadable = true },
-    --	--{ weight = 523, desc = "箭-10(SA-13)红外地空导弹发射车", unit = "Strela-10M3", cratesRequired = 1, loadable = false },
-    --
-    --},
+    ["造船厂(SHIP)集装箱"] = {
+        { weight = 1508, desc = "052B驱逐舰（5箱一船,一边最多两船）", unit = "Type_052B", cratesRequired = 5,isShip=true},
+        { weight = 1409, desc = "不惧级护卫舰（4箱一船,一边最多两船）", unit = "NEUSTRASH", cratesRequired = 4,isShip=true},
+        { weight = 1315, desc = "勇士级导弹艇（3箱一船,一边最多两船）", unit = "La_Combattante_II", cratesRequired = 3,isShip=true},
+    },
 }
 
 --- 3D model that will be used to represent a loadable crate ; by default, a generator
@@ -3864,19 +3869,18 @@ function ctld.unpackCrates(_arguments)
             local _crates = ctld.getCratesAndDistance(_heli)
             local _crate = ctld.getClosestCrate(_heli, _crates)
 
-
-            --TODO
             if ctld.inLogisticsZone(_heli, ctld.IsCheckfarEnoughFromLogisticZone) == true or ctld.farEnoughFromLogisticZone(_heli, ctld.minimumDeployDistance, ctld.IsCheckfarEnoughFromLogisticZone) == false then
-                --if ctld.farEnoughFromLogisticZone(_heli,ctld.minimumDeployDistance) == false then
                 ctld.displayMessageToGroup(_heli, "You can't unpack that here! Take it to where it's needed!", 20)
                 return
             end
 
             if _crate ~= nil and _crate.dist < 750
                     and (_crate.details.unit == "FOB" or _crate.details.unit == "FOB-SMALL") then
-
                 ctld.unpackFOBCrates(_crates, _heli)
+                return
 
+            elseif _crate ~= nil and _crate.dist < 200 and _crate.details.isShip==true then
+                ctld.unpackSHIPs(_crate,_crates, _heli)
                 return
 
             elseif _crate ~= nil and _crate.dist < 200 then
@@ -3964,9 +3968,8 @@ end
 
 -- builds a fob!
 function ctld.unpackFOBCrates(_crates, _heli)
-    if ctld.inLogisticsZone(_heli) == true or ctld.farEnoughFromLogisticZone(_heli, ctld.minimumDistanceBetweenFobs) == false then
+    if ctld.farEnoughFromLogisticZone(_heli, ctld.minimumDistanceBetweenFobs) == false then
         ctld.displayMessageToGroup(_heli, "野战FOB以及CC之间必须至少间隔" .. ctld.minimumDistanceBetweenFobs, 20)
-        --ctld.displayMessageToGroup(_heli, "You can't unpack that here! Take it to where it's needed!", 20)
         return
     end
 
@@ -4063,6 +4066,87 @@ function ctld.unpackFOBCrates(_crates, _heli)
         ctld.displayMessageToGroup(_heli, _txt, 20)
     end
 end
+
+function ctld.unpackSHIPs(_crate,_crates, _heli)
+    if ctld.isInShipYard(_heli) == false then
+        ctld.displayMessageToGroup(_heli, "你根本就不在造船厂，你搁哪呢（船类单位需要运送箱子到造船厂去部署）" , 20)
+        return
+    end
+
+    local _nearbyMultiCrates = {}
+    local _cratesNum = 0
+
+    for _, _nearbyCrate in pairs(_crates) do
+        if _nearbyCrate.dist < 750 then
+            if _nearbyCrate.details.unit == _crate.details.unit then
+                _cratesNum = _cratesNum + 1
+                table.insert(_nearbyMultiCrates, _nearbyCrate)
+                if _crate.details.cratesRequired== _cratesNum then
+                    break
+                end
+            end
+        end
+    end
+
+    if _cratesNum >= _crate.details.cratesRequired then
+        for _, _crate in pairs(_nearbyMultiCrates) do
+            if _heli:getCoalition() == 1 then
+                ctld.spawnedCratesRED[_crate.crateUnit:getName()] = nil
+            else
+                ctld.spawnedCratesBLUE[_crate.crateUnit:getName()] = nil
+            end
+            _crate.crateUnit:destroy()
+        end
+
+        ctld.spawnShip(_heli,_crate.details.unit)
+        ctld.displayMessageToGroup(_heli, "成功用".._crate.details.cratesRequired.."个箱箱部署了".._crate.details.unit, 20)
+        return
+    end
+
+    ctld.displayMessageToGroup(_heli, "箱子数量不足，部署".._crate.details.unit.."需要".._crate.details.cratesRequired.."个箱箱", 20)
+end
+
+function ctld.isInShipYard(_heli)
+    local _heliPoint = _heli:getPoint()
+    for _, _name in pairs(ctld.shipYards) do
+        local _shipYard = StaticObject.getByName(_name)
+        if _shipYard ~= nil and _shipYard:getCoalition() == _heli:getCoalition() then
+            local _dist = ctld.getDistance(_heliPoint, _shipYard:getPoint())
+            if _dist <= 500 then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+
+function ctld.spawnShip(_heli,unitType)
+    local _id = ctld.getNextGroupId()
+    local _groupName = _heli:getPlayerName() .. " " .. unitType .. " #" .. _id
+
+    local _group = {
+        ["visible"] = false,
+        ["hidden"] = false,
+        ["units"] = {},
+        ["name"] = _groupName,
+        ["task"] = {},
+        ["playerCanDrive"] = true,
+    }
+
+    local _unitId = ctld.getNextUnitId()
+    local _details = { type = unitType, unitId = _unitId, name = string.format("Unpacked %s #%i", unitType, _unitId) }
+    _group.units[1] = ctld.createUnit(_heli:getPoint().x + 500, _heli:getPoint().z + 500, 120, _details)
+
+    _group.country = _heli:getCountry()
+    _group.category = Group.Category.SHIP
+    local _spawnedGroup = Group.getByName(mist.dynAdd(_group).name)
+    local _dest = _spawnedGroup:getUnit(1):getPoint()
+    _dest = { x = _dest.x + 0.5, _y = _dest.y + 0.5, z = _dest.z + 0.5 }
+    ctld.orderGroupToMoveToPoint(_spawnedGroup:getUnit(1), _dest)
+
+end
+
 
 --unloads the sling crate when the helicopter is on the ground or between 4.5 - 10 meters
 function ctld.dropSlingCrate(_args)
@@ -5834,8 +5918,6 @@ function ctld.addF10MenuOptions()
                         local _unitActions = ctld.getUnitActions(_unit:getTypeName())
                         ctld.logTrace(string.format("_unitActions=%s", ctld.p(_unitActions)))
 
-                        missionCommands.addCommandForGroup(_groupId, "Check Cargo", _rootPath, ctld.checkTroopStatus, { _unitName })
-
                         --TODO
                         --if _unitActions.troops then
                         --
@@ -5922,6 +6004,7 @@ function ctld.addF10MenuOptions()
                             if ctld.enabledFOBBuilding then
                                 missionCommands.addCommandForGroup(_groupId, "列出FOB", _crateCommands, ctld.listFOBS, { _unitName })
                             end
+                            missionCommands.addCommandForGroup(_groupId, "Check Cargo", _crateCommands, ctld.checkTroopStatus, { _unitName })
                         end
 
                         if ctld.enableSmokeDrop then
