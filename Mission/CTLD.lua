@@ -3855,7 +3855,21 @@ function ctld.dropAndUnpackCrates(_arguments)
     ctld.dropSlingCrate(_arguments)
     ctld.unpackCrates(_arguments)
 end
+function ctld.crateAddPoint(_heli)
+    local _name = _heli:getPlayerName()           --平常用
+    if _name == nil then
+        return
+    end
+    local _ucid = SourceObj.playerInfo[_name]
+    if _ucid == nil then
+        return
+    end
 
+    SourceObj.playerSource[_ucid]["point"] = SourceObj.playerSource[_ucid]["point"] + SourceObj.addCrate
+    SourceObj.SaveSourcePoint()
+    local text = string.format("吊箱子奖励%d点", SourceObj.addCrate)
+    ctld.displayMessageToGroup(_heli, text, 20)
+end
 function ctld.unpackCrates(_arguments)
 
     local _status, _err = pcall(function(_args)
@@ -3933,6 +3947,7 @@ function ctld.unpackCrates(_arguments)
                         ctld.spawnedCratesBLUE[_crateName] = nil
                     end
 
+                    ctld.crateAddPoint(_heli)
                     ctld.processCallback({ unit = _heli, crate = _crate, spawnedGroup = _spawnedGroups, action = "unpack" })
 
                     if _crate.details.unit == "1L13 EWR" then
@@ -4058,6 +4073,7 @@ function ctld.unpackFOBCrates(_crates, _heli)
 
         local _txt = string.format("%s started building FOB using %d FOB crates, it will be finished in %d seconds.\nPosition marked with smoke.", ctld.getPlayerNameOrType(_heli), _totalCrates, ctld.buildTimeFOB)
 
+        ctld.crateAddPoint(_heli)
         ctld.processCallback({ unit = _heli, position = _centroid, action = "fob" })
         trigger.action.smoke(_centroid, trigger.smokeColor.Green)
         trigger.action.outTextForCoalition(_heli:getCoalition(), _txt, 10)
@@ -4100,6 +4116,7 @@ function ctld.unpackSHIPs(_crate,_crates, _heli)
 
         ctld.spawnShip(_heli,_crate.details.unit)
         ctld.displayMessageToGroup(_heli, "成功用".._crate.details.cratesRequired.."个箱箱部署了".._crate.details.unit, 20)
+        ctld.crateAddPoint(_heli)
         return
     end
 
@@ -4753,6 +4770,7 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
         end
 
         ctld.completeGroupSystems[_spawnedGroup:getName()] = ctld.getGroupSystemDetails(_spawnedGroup, _groupSystemTemplate)
+        ctld.crateAddPoint(_heli)
         ctld.processCallback({ unit = _heli, crate = _nearestCrate, spawnedGroup = _spawnedGroup, action = "unpack" })
 
     end
