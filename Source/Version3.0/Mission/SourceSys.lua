@@ -28,7 +28,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
       local text = string.format("起飞成功,本次总共消耗私有资源点:%d,个人剩余:%d点.\n详细信息:%s", tostring(sourcePointChange), tostring(SourceObj.playerSource[_ucid]["point"]), tostring(countInfo))
       trigger.action.outTextForGroup(_groupId, text, 20, true)
     else
-      local text = string.format("你的私有资源点剩余(%d),本次起飞需要:%d,马上就爆炸了~BOOM！请在停机坪等待低保点数发放！", SourceObj.playerSource[_ucid]["point"], sourcePointChange)
+      local text = string.format("你的私有资源点剩余(%d),本次起飞需要:%d,即将自爆！请挂机等低保或改用低价挂载！", SourceObj.playerSource[_ucid]["point"], sourcePointChange)
       trigger.action.outTextForGroup(_groupId, text, 120, true)
       timer.scheduleFunction(SourceObj.unitExplosion, _unit, timer.getTime() + 10)
     end
