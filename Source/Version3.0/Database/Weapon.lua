@@ -1,6 +1,6 @@
 Weapon = {}
 --------------------------------AA---------------------------------
-Weapon.ATA_One = {"AIM-54C-MK47 空空导弹", "AIM-54A-MK47 空空导弹", "AIM-54A-MK60 空空导弹", "ADM-141A 战术诱饵导弹","SD-10 空空导弹" ,"AIM-120C-5 空空导弹"}
+Weapon.ATA_One = {"AIM-54C-MK47 空空导弹", "AIM-54A-MK47 空空导弹", "AIM-54A-MK60 空空导弹", "ADM-141A 战术诱饵导弹","SD-10 空空导弹","AIM-120C-5 空空导弹"}
 Weapon.ATA_OnePoint = 15
 
 Weapon.ATA_Two = {"AIM-120B 空空导弹", "R-27ET 空空导弹", "R-77 空空导弹"}
@@ -35,8 +35,8 @@ Weapon.ATA_Four = {
 }
 Weapon.ATA_FourPoint = 5
 
---Weapon.ATA_Zero = {"SD-10 空空导弹"}
---Weapon.ATA_ZeroPoint = 50           -----平衡性调整
+Weapon.ATA_Zero = {"SD-10 空空导弹"}
+Weapon.ATA_ZeroPoint = 30           -----平衡性调整
 
 
 -----------------------------------AG----------------------------------
@@ -53,11 +53,10 @@ Weapon.ATG_Zero = {
   "BK90 MJ1",
   "BK90 MJ1-MJ2",
   "BK90 MJ2",
+  "CM-802AKG 空地导弹",
   'BLG-66 "白鲸" 集束炸弹'
 }
-Weapon.ATG_ZeroPoint = 300          --末敏弹解封，但需限制
-
-
+Weapon.ATG_ZeroPoint = 10000          --BUG弹限制
 
 
 
@@ -65,9 +64,11 @@ Weapon.ATG_One = {
   "AGM-154C 联合防区外武器",
   "AGM-84E 防区外对地导弹",
   --"GB-6 防区外布撒器 (末敏弹)",
-  "CM-802AKG 空地导弹",
+  --"CM-802AKG 空地导弹",
   "AGM-84D 反舰导弹",
   "C-802AK 空舰导弹",
+  'AGM-62 "白星眼" 电视制导炸弹',
+  "LD-10 反辐射导弹"
   --"BK90 MJ1",
   --"BK90 MJ1-MJ2",
   --"BK90 MJ2"
@@ -77,7 +78,7 @@ Weapon.ATG_OnePoint = 20
 Weapon.ATG_Two = {
   "AGM-88C 反辐射导弹",
   "AGM-114K",
-  "LD-10 反辐射导弹",
+
   --"CBU-97 炸弹",
   "GBU-54(V)1/B",
   "GBU-31(V)1/B",
@@ -111,7 +112,7 @@ Weapon.ATG_Three = {
   "GBU-10 炸弹",
   "GBU-24 炸弹",
   "GBU-38 炸弹",
-  "AGM-62 电视制导炸弹",
+  --"AGM-62 电视制导炸弹",
   "Kh-29L 激光制导导弹",
   "Kh-25ML 激光制导导弹",
   "S-25L 激光制导火箭弹",

@@ -146,8 +146,8 @@ SourceObj.getSourceObjChange = function(_unit)
         elseif SourceObj.is_include(typeName, Weapon.ATA_Four) then
           sourcePointChange = sourcePointChange + Weapon.ATA_FourPoint * ammo.count
 
-        --elseif SourceObj.is_include(typeName, Weapon.ATA_Zero) then
-          --sourcePointChange = sourcePointChange + Weapon.ATA_ZeroPoint * ammo.count        ----AA弹平衡性调整
+        elseif SourceObj.is_include(typeName, Weapon.ATA_Zero) then
+          sourcePointChange = sourcePointChange + Weapon.ATA_ZeroPoint * ammo.count        ----AA弹平衡性调整
 
         end
         if SourceObj.is_include(typeName, Weapon.ATG_One) then
@@ -164,10 +164,11 @@ SourceObj.getSourceObjChange = function(_unit)
         elseif SourceObj.is_include(typeName, Weapon.mailbox) then
           sourcePointChange = sourcePointChange + Weapon.mailboxPoint * ammo.count
         end
-         --[[if ammo.desc.typeName == "ADM_141A"  then
-           local text = string.format("你携带了ADM-141A空射诱饵（将会导致服务器bug）, 马上就爆炸了~BOOM")
+        -----禁BUG弹--------------------------------------------------------------------------
+         if ammo.desc.typeName == "CM-802AKG 空地导弹"  then
+           local text = string.format("你携带了802AKG导弹,本服禁止使用。即将自爆！下次起飞请检查挂载!")
            SourceObj.AIM_54(_unit, text)
-         end]]
+         end
 
         if SourceObj.is_includeTable(typeName, Weapon) then
           countInfo[i] = {["挂载"] = ammo.desc.displayName, ["数量"] = ammo.count}
