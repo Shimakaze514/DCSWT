@@ -5,10 +5,10 @@ Aircraft.superiorityFighterPoint = 200
 Aircraft.lightFighter = {"Su-27", "MiG-29S", "MiG-29G", "MiG-29A", "M-2000C", "AJS37"}
 Aircraft.lightFighterPoint = 180
 
-Aircraft.attacker = {"A-10A", "A-10C", "Ka-50", "A-10C_2", "AV-8B", "Su-25", "Su-25T", "AH-64D BLK.Ⅱ", "SA342Mistral"}
+Aircraft.attacker = {"A-10A", "A-10C", "Ka-50", "A-10C_2", "AV-8B", "Su-25", "Su-25T","SA342Mistral"}
 Aircraft.attackerPoint = 160
 
-Aircraft.helicopter = {"Mi-8MTV2", "Mi-8MT", "UH-1H", "蚊式FB Mk.Ⅵ", "TF-51D", "SA342M", "SA342L"}
+Aircraft.helicopter = {"Mi-8MTV2", "Mi-8MT", "UH-1H", "MosquitoFBMkVI", "TF-51D","AH-64D_BLK_II","SA342M", "SA342L"}
 Aircraft.helicopterPoint = 120
 
 env.info("飞机信息已添加")
