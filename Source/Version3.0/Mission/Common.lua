@@ -156,8 +156,8 @@ SourceObj.getSourceObjChange = function(_unit)
           sourcePointChange = sourcePointChange + Weapon.ATG_TwoPoint * ammo.count
         elseif SourceObj.is_include(typeName, Weapon.ATG_Three) then
           sourcePointChange = sourcePointChange + Weapon.ATG_ThreePoint * ammo.count
-        elseif SourceObj.is_include(typeName, Weapon.ATG_Zero) then                        ---------临时限制
-          sourcePointChange = sourcePointChange + Weapon.ATG_ZeroPoint * ammo.count
+        -- elseif SourceObj.is_include(typeName, Weapon.ATG_Zero) then                        ---------临时限制
+        --   sourcePointChange = sourcePointChange + Weapon.ATG_ZeroPoint * ammo.count
         end
         if SourceObj.is_include(typeName, Weapon.ATGPod) then
           sourcePointChange = sourcePointChange + Weapon.ATGPodPoint * ammo.count
