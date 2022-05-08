@@ -156,8 +156,8 @@ SourceObj.getSourceObjChange = function(_unit)
           sourcePointChange = sourcePointChange + Weapon.ATG_TwoPoint * ammo.count
         elseif SourceObj.is_include(typeName, Weapon.ATG_Three) then
           sourcePointChange = sourcePointChange + Weapon.ATG_ThreePoint * ammo.count
-        -- elseif SourceObj.is_include(typeName, Weapon.ATG_Zero) then                        ---------临时限制
-        --   sourcePointChange = sourcePointChange + Weapon.ATG_ZeroPoint * ammo.count
+        elseif SourceObj.is_include(typeName, Weapon.ATG_Zero) then                        ---------临时限制
+          sourcePointChange = sourcePointChange + Weapon.ATG_ZeroPoint * ammo.count
         end
         if SourceObj.is_include(typeName, Weapon.ATGPod) then
           sourcePointChange = sourcePointChange + Weapon.ATGPodPoint * ammo.count
@@ -165,10 +165,10 @@ SourceObj.getSourceObjChange = function(_unit)
           sourcePointChange = sourcePointChange + Weapon.mailboxPoint * ammo.count
         end
         -----禁BUG弹--------------------------------------------------------------------------
-         if ammo.desc.typeName == "CM-802AKG 空地导弹"  then
-           local text = string.format("你携带了802AKG导弹,本服禁止使用。即将自爆！下次起飞请检查挂载!")
-           SourceObj.AIM_54(_unit, text)
-         end
+        --  if ammo.desc.typeName == "CM-802AKG 空地导弹"  then
+        --    local text = string.format("你携带了802AKG导弹,本服禁止使用。即将自爆！下次起飞请检查挂载!")
+        --    SourceObj.AIM_54(_unit, text)
+        --  end
 
         if SourceObj.is_includeTable(typeName, Weapon) then
           countInfo[i] = {["挂载"] = ammo.desc.displayName, ["数量"] = ammo.count}
