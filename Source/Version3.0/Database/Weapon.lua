@@ -42,21 +42,21 @@ Weapon.ATA_ZeroPoint = 30           -----平衡性调整
 -----------------------------------AG----------------------------------
 
 
-Weapon.ATG_Zero = {
-  "CBU-97 炸弹",
-  "CBU-105 炸弹",
-  "CBU-103 炸弹",
-  "CBU-87 炸弹",
-  "CBU-99 炸弹",
-  "GB-6 防区外布撒器 (末敏弹)",
-  "AGM-154A 联合防区外武器",
-  "BK90 MJ1",
-  "BK90 MJ1-MJ2",
-  "BK90 MJ2",
-  "CM-802AKG 空地导弹",
-  'BLG-66 "白鲸" 集束炸弹'
-}
-Weapon.ATG_ZeroPoint = 1000000          --BUG弹限制
+-- Weapon.ATG_Zero = {
+--   "CBU-97 炸弹",
+--   "CBU-105 炸弹",
+--   "CBU-103 炸弹",
+--   "CBU-87 炸弹",
+--   "CBU-99 炸弹",
+--   "GB-6 防区外布撒器 (末敏弹)",
+--   "AGM-154A 联合防区外武器",
+--   "BK90 MJ1",
+--   "BK90 MJ1-MJ2",
+--   "BK90 MJ2",
+--   "CM-802AKG 空地导弹",
+--   'BLG-66 "白鲸" 集束炸弹'
+-- }
+-- Weapon.ATG_ZeroPoint = 1000000          --BUG弹限制
 
 
 
@@ -210,6 +210,18 @@ Weapon.ATGPod = {
   "RBK-250 炸弹",
   "HYDRA-70 HE APKWS",
   "HYDRA-70 MPP APKWS", --火箭
+  "M-61 机炮",
+  "GAU-8 机炮",
+
+  "M230 链炮",
+  "2A42机炮",
+  "2A38",
+  "30毫米 穿甲弹",
+  "30毫米 高爆弹",
+  '9A4172M "旋风-M',
+  "M242",
+
+
   "M56A3 20mm HEI" --机炮
 }
 Weapon.ATGPodPoint = 0
