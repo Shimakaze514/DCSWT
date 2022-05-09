@@ -1,36 +1,40 @@
--- Version 1.7.1.4
+-- Version 2.0.3.0
 -- ONLY COPY THIS WHOLE FILE IS YOU ARE GOING TO HOST A SERVER!
 -- The file must be in Saved Games\DCS\Scripts\Hooks or Saved Games\DCS.openalpha\Scripts\Hooks
--- Make sure you enter the correct address into SERVER_SRS_HOST below.
--- You can add an optional Port. e.g. "127.0.0.1:5002"
+-- Make sure you enter the correct address into SERVER_SRS_HOST and SERVER_SRS_PORT (5002 by default) below.
+-- You can optionally enable SERVER_SRS_HOST_AUTO and SRS will attempt to find your public IP address
 -- You can also enable SRS Chat commands to list frequencies and a message to all 
 -- non SRS connected users to encourage them to connect
 
 -- User options --
 local SRSAuto = {}
-SRSAuto.SERVER_SRS_HOST = "srs.foryoufly.net:5002"
+
+SRSAuto.SERVER_SRS_HOST_AUTO = true -- if set to true SRS will set the SERVER_SRS_HOST for you!
+SRSAuto.SERVER_SRS_PORT = "5002" --  SRS Server default is 5002 TCP & UDP
+SRSAuto.SERVER_SRS_HOST = "srs.foryoufly.net" -- overridden if SRS_HOST_AUTO is true -- set to your PUBLIC ipv4 address
 SRSAuto.SERVER_SEND_AUTO_CONNECT = true -- set to false to disable auto connect or just remove this file
 
 ---- SRS CHAT COMMANDS ----
-SRSAuto.CHAT_COMMANDS_ENABLED = false -- if true type -freq, -freqs or -frequencies in ALL chat in multilayer to see the frequencies
+SRSAuto.CHAT_COMMANDS_ENABLED = true -- if true type -freq, -freqs or -frequencies in ALL chat in multilayer to see the frequencies
 
 SRSAuto.SRS_FREQUENCIES = {
-    ["red"]= "ATC = 261.000, GCI = 126.100", -- edit this to the red frequency list
-    ["blue"]= "ATC = 261.000, GCI = 128.100", -- edit this to the blue frequency list
+    ["red"]= "ATC = 261.000, GCI = 124.800", -- edit this to the red frequency list
+    ["blue"]= "ATC = 261.000, GCI = 124.800", -- edit this to the blue frequency list
     ["neutral"]= "ATC = 261.000, 公共频率 = 251.000, 音乐电台 = 50.000FM", -- edit this to the spectator frequency list
 }
 
-
 ---- SRS NUDGE MESSAGE ----
-SRSAuto.SRS_NUDGE_ENABLED = false -- set to true to enable the message below
-SRSAuto.SRS_NUDGE_TIME = 900 -- SECONDS between messages to non connected SRS users
+SRSAuto.SRS_NUDGE_ENABLED = true -- set to true to enable the message below
+SRSAuto.SRS_NUDGE_TIME = 900 -- SECONDS between messages to non connected SRS users 间隔秒数
 SRSAuto.SRS_MESSAGE_TIME = 30 -- SECONDS to show the message for
+--SRSAuto.SRS_NUDGE_PATH = "C:\\Program Files\\DCS-SimpleRadio-Standalone\\clients-list.json" -- path to SERVER JSON EXPORT - enable Auto Export List on the server
 SRSAuto.SRS_NUDGE_PATH = "C:\\FlightSim\\DCS-SimpleRadioStandalone\\clients-list.json" -- path to SERVER JSON EXPORT - enable Auto Export List on the server
 --- EDIT the message below to change what is said to users - DONT USE QUOTES - either single or double due to the injection into SRS it'll fail
 --- Newlines must be escaped like so: \\\n with 3 backslashes
-SRSAuto.SRS_NUDGE_MESSAGE = "本服需使用无线电进行通讯,请保持SRS在线,并在各自阵营频率待命,有呼叫请积极回应!!! \\\n\\\n（正常通联后本消息不再提示！）"
+--SRSAuto.SRS_NUDGE_MESSAGE = "****** DCS IS BETTER WITH COMMS - USE SRS ******\\\n\\\nMake sure to install DCS SimpleRadio Standalone - SRS - free and easy to install. \\\n\\\nSRS gives you VOIP Comms with other players through your aircrafts own radios. This will help you to be more effective, find enemies and wingmen, or call in support \\\n\\\n Google: DCS SimpleRadio Standalone \\\n\\\nGood comms and teamwork will help YOU and your team win! "
+
+SRSAuto.SRS_NUDGE_MESSAGE = "请注意：本服需使用无线电进行通讯,请保持SRS在线,并在各自阵营频率124.8待命,有呼叫请积极回应!!! \\\n群文件有《懒人福音版SRS》最大程度减少学习成本 \\\n\\\n（正常通联后本消息不再提示！）"
 --SRSAuto.SRS_NUDGE_MESSAGE = "******警告！警告！警告！你的SRS无线电未正常通联****** \\\n\\\n请安装最新版 DCS SimpleRadio,该软件免费且易于安装和使用，学习成本低。 \\\n\\\nSRS通过你飞机自己的无线电与其他玩家进行VOIP通信。 \\\n\\\n这将使你可以呼叫支援、沟通战术、减少误伤，且通过收发、监听与ATC的对话，最大程度避免机场交通事故 \\\n\\\n良好的沟通合作将帮助你和你的团队发挥最大战力！ \\\n\\\n \\\n\\\n******请启动SRS并保持通联，此提示消息自动清除******"
---SRSAuto.SRS_NUDGE_MESSAGE = "****** DCS IS BETTER WITH COMMS - USE SRS ******\\\n\\\nMake sure to install DCS SimpleRadio Standalone - SRS - free and easy to install. \\\n\\\nSRS gives you VOIP Comms with other players through your aircrafts own radios. This will help you to be more effective, find enemies and wingmen, or call in support \\\n\\\nGoogle: DCS SimpleRadio Standalone \\\n\\\nGood comms and teamwork will help YOU and your team win!"
 
 
 -- DO NOT EDIT BELOW HERE --
@@ -49,6 +53,7 @@ local JSON = loadfile("Scripts\\JSON.lua")()
 SRSAuto.JSON = JSON
 
 local socket = require("socket")
+local DcsWeb = require('DcsWeb')
 
 SRSAuto.UDPSendSocket = socket.udp()
 SRSAuto.UDPSendSocket:settimeout(0)
@@ -70,7 +75,7 @@ SRSAuto.onPlayerConnect = function(id)
     end
 	if SRSAuto.SERVER_SEND_AUTO_CONNECT and id ~= HOST_PLAYER_ID then
         SRSAuto.log(string.format("Sending auto connect message to player %d on connect ", id))
-		net.send_chat_to(string.format(SRSAuto.MESSAGE_PREFIX .. "%s", SRSAuto.SERVER_SRS_HOST), id)
+		net.send_chat_to(string.format(SRSAuto.MESSAGE_PREFIX .. "%s", SRSAuto.SERVER_SRS_HOST..":"..SRSAuto.SERVER_SRS_PORT), id)
 	end
 end
 
@@ -80,7 +85,7 @@ SRSAuto.onPlayerChangeSlot = function(id)
     end
     if SRSAuto.SERVER_SEND_AUTO_CONNECT and id ~= HOST_PLAYER_ID then
         SRSAuto.log(string.format("Sending auto connect message to player %d on switch ", id))
-        net.send_chat_to(string.format(SRSAuto.MESSAGE_PREFIX .. "%s", SRSAuto.SERVER_SRS_HOST), id)
+        net.send_chat_to(string.format(SRSAuto.MESSAGE_PREFIX .. "%s", SRSAuto.SERVER_SRS_HOST..":"..SRSAuto.SERVER_SRS_PORT), id)
    end
 end
 
@@ -97,12 +102,12 @@ SRSAuto.onChatMessage = function(message, playerID)
 
         local _freq = ""
 
-        if _player.coa == 0 then
-            _freq = SRSAuto.SRS_FREQUENCIES.neutral
-        elseif _player.coa == 1 then
+        if _player.side == 2 then
+            _freq = SRSAuto.SRS_FREQUENCIES.blue
+        elseif _player.side == 1 then
             _freq = SRSAuto.SRS_FREQUENCIES.red
         else
-            _freq = SRSAuto.SRS_FREQUENCIES.blue
+            _freq = SRSAuto.SRS_FREQUENCIES.neutral
         end
 
         local _chatMessage = string.format("*** SRS: %s ***",_freq)
@@ -112,6 +117,16 @@ SRSAuto.onChatMessage = function(message, playerID)
 end
 
 local _lastSent = 0
+
+SRSAuto.onMissionLoadBegin = function()
+
+	if SRSAuto.SERVER_SRS_HOST_AUTO then
+		SRSAuto.SERVER_SRS_HOST = DcsWeb.get_data('dcs:whatsmyip')
+		SRSAuto.log("SET IP automatically to "..SRSAuto.SERVER_SRS_HOST)
+	end
+
+end
+
 
 SRSAuto.onSimulationFrame = function()
 
@@ -213,4 +228,4 @@ SRSAuto.sendMessage = function(msg, showTime, gid)
 end
 
 DCS.setUserCallbacks(SRSAuto)
-net.log("Loaded - DCS-SRS-AutoConnect 1.7.1.4")
+net.log("Loaded - DCS-SRS-AutoConnect 2.0.3.0")
