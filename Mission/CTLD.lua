@@ -6365,10 +6365,10 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
             -- store current target for easy lookup
             ctld.jtacCurrentTargets[_jtacGroupName] = { name = _enemyUnit:getName(), unitType = _enemyUnit:getTypeName(), unitId = _enemyUnit:getID() }
             --local action = ", lasing new target, "
-            local action = ", 激光新靶, "
+            local action = ", 当前新靶, "
             if targetLost then
                 --action = ", target lost " .. action
-                action = ", 目标丢失 " .. action
+                action = ", 上一目标丢失 " .. action
                 targetLost = false
             elseif targetDestroyed then
                 --action = ", target destroyed " .. action
@@ -6378,7 +6378,7 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
 
             local message = _jtacGroupName .. action .. _enemyUnit:getTypeName()
             --local fullMessage = message .. '. CODE: ' .. _laserCode .. ". POSITION: " .. ctld.getPositionString(_enemyUnit)
-            local fullMessage = message .. '. 编码: ' .. _laserCode .. ". 位置: " .. ctld.getPositionString(_enemyUnit)
+            local fullMessage = message .. '. 激光编码: ' .. _laserCode .. ". 位置: " .. ctld.getPositionString(_enemyUnit)
             ctld.notifyCoalition(fullMessage, 10, _jtacUnit:getCoalition(), _radio, message)
 
             -- JTAC Unit stop his route -----------------
@@ -6878,7 +6878,7 @@ function ctld.getJTACStatus(_args)
 
             if _enemyUnit ~= nil and _enemyUnit:getLife() > 0 and _enemyUnit:isActive() == true then
                 --_message = _message .. "" .. _start .. " targeting " .. _enemyUnit:getTypeName() .. " CODE: " .. _laserCode .. ctld.getPositionString(_enemyUnit) .. "\n"
-                _message = _message .. "" .. _start .. " 搜寻目标 " .. _enemyUnit:getTypeName() .. " 编码: " .. _laserCode .. ctld.getPositionString(_enemyUnit) .. "\n"
+                _message = _message .. "" .. _start .. " 标记 " .. _enemyUnit:getTypeName() .. " 激光编码: " .. _laserCode .. ctld.getPositionString(_enemyUnit) .. "\n"
 
                 local _list = ctld.listNearbyEnemies(_jtacUnit)
 
@@ -6902,7 +6902,7 @@ function ctld.getJTACStatus(_args)
     --if _message == "JTAC STATUS: \n\n" then
     if _message == "JTAC 情报: \n\n" then
         --_message = "No Active JTACs"
-        _message = "没有JTAC"
+        _message = "没有JTAC单位，请部署悍马或无人机 用于侦察！"
     end
 
     ctld.notifyCoalition(_message, 10, _side)
