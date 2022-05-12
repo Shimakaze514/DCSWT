@@ -3420,7 +3420,8 @@ function ctld.checkHoverStatus()
                                 ctld.displayMessageToGroup(_transUnit, "Hovering above " .. _crate.details.desc .. " crate. \n\nHold hover for " .. _time .. " seconds! \n\nIf the countdown stops you're too far away!", 10, true)
                             else
                                 ctld.hoverStatus[_transUnit:getName()] = nil
-                                ctld.displayMessageToGroup(_transUnit, "Loaded  " .. _crate.details.desc .. " crate!", 10, true)
+                                --ctld.displayMessageToGroup(_transUnit, "Loaded  " .. _crate.details.desc .. " crate!", 10, true)
+                                ctld.displayMessageToGroup(_transUnit, "装载  " .. _crate.details.desc .. " 箱子", 10, true)
 
                                 --crates been moved once!
                                 ctld.crateMove[_crate.crateUnit:getName()] = nil
@@ -3471,7 +3472,8 @@ function ctld.loadNearbyCrate(_name)
     if _transUnit ~= nil then
 
         if ctld.inAir(_transUnit) then
-            ctld.displayMessageToGroup(_transUnit, "You must land before you can load a crate!", 10, true)
+            --ctld.displayMessageToGroup(_transUnit, "You must land before you can load a crate!", 10, true)
+            ctld.displayMessageToGroup(_transUnit, "你必须先着陆才能装箱子！", 10, true)
             return
         end
 
@@ -3481,7 +3483,8 @@ function ctld.loadNearbyCrate(_name)
             for _, _crate in pairs(_crates) do
 
                 if _crate.dist < 50.0 then
-                    ctld.displayMessageToGroup(_transUnit, "Loaded  " .. _crate.details.desc .. " crate!", 10, true)
+                    --ctld.displayMessageToGroup(_transUnit, "Loaded  " .. _crate.details.desc .. " crate!", 10, true)
+                    ctld.displayMessageToGroup(_transUnit, "装载  " .. _crate.details.desc .. " 箱子", 10, true)
 
                     if _transUnit:getCoalition() == 1 then
                         ctld.spawnedCratesRED[_crate.crateUnit:getName()] = nil
@@ -3501,11 +3504,13 @@ function ctld.loadNearbyCrate(_name)
                 end
             end
 
-            ctld.displayMessageToGroup(_transUnit, "No Crates within 50m to load!", 10, true)
+            --ctld.displayMessageToGroup(_transUnit, "No Crates within 50m to load!", 10, true)
+            ctld.displayMessageToGroup(_transUnit, "无法装载箱子！", 10, true)
 
         else
             -- crate onboard
-            ctld.displayMessageToGroup(_transUnit, "You already have a " .. ctld.inTransitSlingLoadCrates[_name].desc .. " crate onboard!", 10, true)
+            --ctld.displayMessageToGroup(_transUnit, "You already have a " .. ctld.inTransitSlingLoadCrates[_name].desc .. " crate onboard!", 10, true)
+            ctld.displayMessageToGroup(_transUnit, "你已经拥有了一个 " .. ctld.inTransitSlingLoadCrates[_name].desc .. " 箱子", 10, true)
         end
     end
 
@@ -3889,7 +3894,7 @@ function ctld.unpackCrates(_arguments)
 
             if ctld.inLogisticsZone(_heli, ctld.IsCheckfarEnoughFromLogisticZone) == true or ctld.farEnoughFromLogisticZone(_heli, ctld.minimumDeployDistance, ctld.IsCheckfarEnoughFromLogisticZone) == false then
                 --ctld.displayMessageToGroup(_heli, "You can't unpack that here! Take it to where it's needed!", 20)
-                ctld.displayMessageToGroup(_heli, "你不能在这里打开它！把它带到需要的地方！", 20)
+                ctld.displayMessageToGroup(_heli, "你不能在这里部署！把箱子带到更远的地方！", 20)
                 return
             end
 
@@ -3963,7 +3968,7 @@ function ctld.unpackCrates(_arguments)
                     end
 
                     --trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " successfully deployed " .. _crate.details.desc .. " to the field", 10)
-                    trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " 成功部署 " .. _crate.details.desc .. " 到此地 ", 10)
+                    trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " 成功部署 " .. _crate.details.desc .. " 到战区 ", 10)
 
                     if ctld.isJTACUnitType(_crate.details.unit) and ctld.JTAC_dropEnabled then
                         local _code = table.remove(ctld.jtacGeneratedLaserCodes, 1)
@@ -4885,7 +4890,7 @@ function ctld.repairGroupSystem(_heli, _nearestCrate, _groupTemplate)
             ctld.completeGroupSystems[_spawnedGroup:getName()] = ctld.getGroupSystemDetails(_spawnedGroup, _groupTemplate)
             ctld.processCallback({ unit = _heli, crate = _nearestCrate, spawnedGroup = _spawnedGroup, action = "repair" })
             --trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " successfully repaired a full " .. _groupTemplate.name .. " in the field", 10)
-            trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " 成功修复了一个完整的 " .. _groupTemplate.name .. " 在野外", 10)
+            trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " 成功修复了 " .. _groupTemplate.name .. " ", 10)
             if _heli:getCoalition() == 1 then
                 ctld.spawnedCratesRED[_nearestCrate.crateUnit:getName()] = nil
             else
@@ -6272,7 +6277,8 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
         end
 
         if ctld.jtacUnits[_jtacGroupName] ~= nil then
-            ctld.notifyCoalition("JTAC Group " .. _jtacGroupName .. " KIA!", 10, ctld.jtacUnits[_jtacGroupName].side, _radio)
+            --ctld.notifyCoalition("JTAC Group " .. _jtacGroupName .. " KIA!", 10, ctld.jtacUnits[_jtacGroupName].side, _radio)
+            ctld.notifyCoalition("JTAC " .. _jtacGroupName .. " 阵亡!", 10, ctld.jtacUnits[_jtacGroupName].side, _radio)
         end
 
         --remove from list
@@ -6358,17 +6364,21 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
 
             -- store current target for easy lookup
             ctld.jtacCurrentTargets[_jtacGroupName] = { name = _enemyUnit:getName(), unitType = _enemyUnit:getTypeName(), unitId = _enemyUnit:getID() }
-            local action = ", lasing new target, "
+            --local action = ", lasing new target, "
+            local action = ", 激光新靶, "
             if targetLost then
-                action = ", target lost " .. action
+                --action = ", target lost " .. action
+                action = ", 目标丢失 " .. action
                 targetLost = false
             elseif targetDestroyed then
-                action = ", target destroyed " .. action
+                --action = ", target destroyed " .. action
+                action = ", 摧毁目标 " .. action
                 targetDestroyed = false
             end
 
             local message = _jtacGroupName .. action .. _enemyUnit:getTypeName()
-            local fullMessage = message .. '. CODE: ' .. _laserCode .. ". POSITION: " .. ctld.getPositionString(_enemyUnit)
+            --local fullMessage = message .. '. CODE: ' .. _laserCode .. ". POSITION: " .. ctld.getPositionString(_enemyUnit)
+            local fullMessage = message .. '. 编码: ' .. _laserCode .. ". 位置: " .. ctld.getPositionString(_enemyUnit)
             ctld.notifyCoalition(fullMessage, 10, _jtacUnit:getCoalition(), _radio, message)
 
             -- JTAC Unit stop his route -----------------
@@ -6407,9 +6417,11 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
     end
 
     if targetLost then
-        ctld.notifyCoalition(_jtacGroupName .. ", target lost.", 10, _jtacUnit:getCoalition(), _radio)
+        --ctld.notifyCoalition(_jtacGroupName .. ", target lost.", 10, _jtacUnit:getCoalition(), _radio)
+        ctld.notifyCoalition(_jtacGroupName .. ", 目标丢失...", 10, _jtacUnit:getCoalition(), _radio)
     elseif targetDestroyed then
-        ctld.notifyCoalition(_jtacGroupName .. ", target destroyed.", 10, _jtacUnit:getCoalition(), _radio)
+        --ctld.notifyCoalition(_jtacGroupName .. ", target destroyed.", 10, _jtacUnit:getCoalition(), _radio)
+        ctld.notifyCoalition(_jtacGroupName .. ", 摧毁目标.", 10, _jtacUnit:getCoalition(), _radio)
     end
 end
 
@@ -6840,7 +6852,8 @@ function ctld.getJTACStatus(_args)
     local _jtacGroupName = nil
     local _jtacUnit = nil
 
-    local _message = "JTAC STATUS: \n\n"
+    --local _message = "JTAC STATUS: \n\n"
+    local _message = "JTAC 情报: \n\n"
 
     for _jtacGroupName, _jtacDetails in pairs(ctld.jtacUnits) do
 
@@ -6855,7 +6868,8 @@ function ctld.getJTACStatus(_args)
 
             local _start = _jtacGroupName
             if (_jtacDetails.radio) then
-                _start = _start .. ", available on " .. _jtacDetails.radio.freq .. " " .. _jtacDetails.radio.mod .. ","
+                --_start = _start .. ", available on " .. _jtacDetails.radio.freq .. " " .. _jtacDetails.radio.mod .. ","
+                _start = _start .. ", 调频 " .. _jtacDetails.radio.freq .. " " .. _jtacDetails.radio.mod .. ","
             end
 
             if _laserCode == nil then
@@ -6863,12 +6877,14 @@ function ctld.getJTACStatus(_args)
             end
 
             if _enemyUnit ~= nil and _enemyUnit:getLife() > 0 and _enemyUnit:isActive() == true then
-                _message = _message .. "" .. _start .. " targeting " .. _enemyUnit:getTypeName() .. " CODE: " .. _laserCode .. ctld.getPositionString(_enemyUnit) .. "\n"
+                --_message = _message .. "" .. _start .. " targeting " .. _enemyUnit:getTypeName() .. " CODE: " .. _laserCode .. ctld.getPositionString(_enemyUnit) .. "\n"
+                _message = _message .. "" .. _start .. " 搜寻目标 " .. _enemyUnit:getTypeName() .. " 编码: " .. _laserCode .. ctld.getPositionString(_enemyUnit) .. "\n"
 
                 local _list = ctld.listNearbyEnemies(_jtacUnit)
 
                 if _list then
-                    _message = _message .. "Visual On: "
+                    --_message = _message .. "Visual On: "
+                    _message = _message .. "目视: "
 
                     for _, _type in pairs(_list) do
                         _message = _message .. _type .. " "
@@ -6877,13 +6893,16 @@ function ctld.getJTACStatus(_args)
                 end
 
             else
-                _message = _message .. "" .. _start .. " searching for targets" .. ctld.getPositionString(_jtacUnit) .. "\n"
+                --_message = _message .. "" .. _start .. " searching for targets" .. ctld.getPositionString(_jtacUnit) .. "\n"
+                _message = _message .. "" .. _start .. " 搜索目标" .. ctld.getPositionString(_jtacUnit) .. "\n"
             end
         end
     end
 
-    if _message == "JTAC STATUS: \n\n" then
-        _message = "No Active JTACs"
+    --if _message == "JTAC STATUS: \n\n" then
+    if _message == "JTAC 情报: \n\n" then
+        --_message = "No Active JTACs"
+        _message = "没有JTAC"
     end
 
     ctld.notifyCoalition(_message, 10, _side)
