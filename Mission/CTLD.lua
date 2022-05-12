@@ -2427,7 +2427,8 @@ function ctld.spawnCrate(_arguments)
 
             if ctld.inLogisticsZone(_heli) == false then
 
-                ctld.displayMessageToGroup(_heli, "You are not close enough to friendly logistics to get a crate!", 10)
+                --ctld.displayMessageToGroup(_heli, "You are not close enough to friendly logistics to get a crate!", 10)
+                ctld.displayMessageToGroup(_heli, "距离CC或FOB过远，无法拿到一个板条箱！", 10)
 
                 return
             end
@@ -2452,7 +2453,8 @@ function ctld.spawnCrate(_arguments)
                 end
 
                 if _limitHit then
-                    ctld.displayMessageToGroup(_heli, "No more JTAC Crates Left!", 10)
+                    --ctld.displayMessageToGroup(_heli, "No more JTAC Crates Left!", 10)
+                    ctld.displayMessageToGroup(_heli, "JTAC 箱子用完了！", 10)
                     return
                 end
             end
@@ -2462,7 +2464,8 @@ function ctld.spawnCrate(_arguments)
             -- check crate spam
             if _heli:getPlayerName() ~= nil and ctld.crateWait[_heli:getPlayerName()] and ctld.crateWait[_heli:getPlayerName()] > timer.getTime() then
 
-                ctld.displayMessageToGroup(_heli, "Sorry you must wait " .. (ctld.crateWait[_heli:getPlayerName()] - timer.getTime()) .. " seconds before you can get another crate", 20)
+                --ctld.displayMessageToGroup(_heli, "Sorry you must wait " .. (ctld.crateWait[_heli:getPlayerName()] - timer.getTime()) .. " seconds before you can get another crate", 20)
+                ctld.displayMessageToGroup(_heli, "Sorry！你需要等 " .. (ctld.crateWait[_heli:getPlayerName()] - timer.getTime()) .. " 秒后才能叫出箱子", 20)
                 return
             end
 
@@ -2486,7 +2489,8 @@ function ctld.spawnCrate(_arguments)
             -- add to move table
             ctld.crateMove[_name] = _name
 
-            ctld.displayMessageToGroup(_heli, string.format("A %s crate weighing %s kg has been brought out and is at your 12 o'clock ", _crateType.desc, _crateType.weight), 20)
+            --ctld.displayMessageToGroup(_heli, string.format("A %s crate weighing %s kg has been brought out and is at your 12 o'clock ", _crateType.desc, _crateType.weight), 20)
+            ctld.displayMessageToGroup(_heli, string.format("一个 %s 箱子已调出，重量为 %s kg 位于你的12点钟方向 ", _crateType.desc, _crateType.weight), 20)
 
         else
             ctld.logInfo("Couldn't find crate item to spawn")
@@ -3884,7 +3888,8 @@ function ctld.unpackCrates(_arguments)
             local _crate = ctld.getClosestCrate(_heli, _crates)
 
             if ctld.inLogisticsZone(_heli, ctld.IsCheckfarEnoughFromLogisticZone) == true or ctld.farEnoughFromLogisticZone(_heli, ctld.minimumDeployDistance, ctld.IsCheckfarEnoughFromLogisticZone) == false then
-                ctld.displayMessageToGroup(_heli, "You can't unpack that here! Take it to where it's needed!", 20)
+                --ctld.displayMessageToGroup(_heli, "You can't unpack that here! Take it to where it's needed!", 20)
+                ctld.displayMessageToGroup(_heli, "你不能在这里打开它！把它带到需要的地方！", 20)
                 return
             end
 
@@ -3900,7 +3905,8 @@ function ctld.unpackCrates(_arguments)
             elseif _crate ~= nil and _crate.dist < 200 then
 
                 if ctld.forceCrateToBeMoved and ctld.crateMove[_crate.crateUnit:getName()] then
-                    ctld.displayMessageToGroup(_heli, "Sorry you must move this crate before you unpack it!", 20)
+                    --ctld.displayMessageToGroup(_heli, "Sorry you must move this crate before you unpack it!", 20)
+                    ctld.displayMessageToGroup(_heli, "抱歉，你必须在打开箱子之前把它搬走！", 20)
                     return
                 end
 
@@ -3956,7 +3962,8 @@ function ctld.unpackCrates(_arguments)
                         --       ctld.logInfo("Added EWR")
                     end
 
-                    trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " successfully deployed " .. _crate.details.desc .. " to the field", 10)
+                    --trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " successfully deployed " .. _crate.details.desc .. " to the field", 10)
+                    trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " 成功部署 " .. _crate.details.desc .. " 到此地 ", 10)
 
                     if ctld.isJTACUnitType(_crate.details.unit) and ctld.JTAC_dropEnabled then
                         local _code = table.remove(ctld.jtacGeneratedLaserCodes, 1)
@@ -3970,7 +3977,8 @@ function ctld.unpackCrates(_arguments)
 
             else
 
-                ctld.displayMessageToGroup(_heli, "No friendly crates close enough to unpack", 20)
+                --ctld.displayMessageToGroup(_heli, "No friendly crates close enough to unpack", 20)
+                ctld.displayMessageToGroup(_heli, "附近没有箱子可展开！", 20)
             end
         end
     end, _arguments)
@@ -4065,20 +4073,24 @@ function ctld.unpackFOBCrates(_crates, _heli)
 
             if ctld.troopPickupAtFOB == true then
                 table.insert(ctld.builtFOBS, _fob:getName())
-                trigger.action.outTextForCoalition(_args[3], "Finished building FOB! Crates and Troops can now be picked up.", 10)
+                --trigger.action.outTextForCoalition(_args[3], "Finished building FOB! Crates and Troops can now be picked up.", 10)
+                trigger.action.outTextForCoalition(_args[3], "FOB建造完成，可在附近调出箱子.", 10)
             else
-                trigger.action.outTextForCoalition(_args[3], "Finished building FOB! Crates can now be picked up.", 10)
+                --trigger.action.outTextForCoalition(_args[3], "Finished building FOB! Crates can now be picked up.", 10)
+                trigger.action.outTextForCoalition(_args[3], "FOB建造完成.", 10)
             end
         end, { _centroid, _heli:getCountry(), _heli:getCoalition() }, timer.getTime() + ctld.buildTimeFOB)
 
-        local _txt = string.format("%s started building FOB using %d FOB crates, it will be finished in %d seconds.\nPosition marked with smoke.", ctld.getPlayerNameOrType(_heli), _totalCrates, ctld.buildTimeFOB)
+        --local _txt = string.format("%s started building FOB using %d FOB crates, it will be finished in %d seconds.\nPosition marked with smoke.", ctld.getPlayerNameOrType(_heli), _totalCrates, ctld.buildTimeFOB)
+        local _txt = string.format("%s 正在使用 %d 箱子搭建FOB, 将在 %d 秒内完成建造.\n烟雾标记中...", ctld.getPlayerNameOrType(_heli), _totalCrates, ctld.buildTimeFOB)
 
         ctld.crateAddPoint(_heli)
         ctld.processCallback({ unit = _heli, position = _centroid, action = "fob" })
         trigger.action.smoke(_centroid, trigger.smokeColor.Green)
         trigger.action.outTextForCoalition(_heli:getCoalition(), _txt, 10)
     else
-        local _txt = string.format("Cannot build FOB!\n\nIt requires %d Large FOB crates ( 3 small FOB crates equal 1 large FOB Crate) and there are the equivalent of %d large FOB crates nearby\n\nOr the crates are not within 750m of each other", ctld.cratesRequiredForFOB, _totalCrates)
+        --local _txt = string.format("Cannot build FOB!\n\nIt requires %d Large FOB crates ( 3 small FOB crates equal 1 large FOB Crate) and there are the equivalent of %d large FOB crates nearby\n\nOr the crates are not within 750m of each other", ctld.cratesRequiredForFOB, _totalCrates)
+        local _txt = string.format("FOB建造失败！\n\n需要 %d 个FOB箱子，附近有 %d 个箱子\n\n或者是箱子距离过远", ctld.cratesRequiredForFOB, _totalCrates)
         ctld.displayMessageToGroup(_heli, _txt, 20)
     end
 end
@@ -4177,9 +4189,11 @@ function ctld.dropSlingCrate(_args)
 
     if _currentCrate == nil then
         if ctld.hoverPickup then
-            ctld.displayMessageToGroup(_heli, "You are not currently transporting any crates. \n\nTo Pickup a crate, hover for " .. ctld.hoverTime .. " seconds above the crate", 10)
+            --ctld.displayMessageToGroup(_heli, "You are not currently transporting any crates. \n\nTo Pickup a crate, hover for " .. ctld.hoverTime .. " seconds above the crate", 10)
+            ctld.displayMessageToGroup(_heli, "你目前没有运输任何箱子. \n\n要捡起，请在箱子上悬停 " .. ctld.hoverTime .. " 秒", 10)
         else
-            ctld.displayMessageToGroup(_heli, "You are not currently transporting any crates. \n\nTo Pickup a crate - land and use F10 Crate Commands to load one.", 10)
+            --ctld.displayMessageToGroup(_heli, "You are not currently transporting any crates. \n\nTo Pickup a crate - land and use F10 Crate Commands to load one.", 10)
+            ctld.displayMessageToGroup(_heli, "你目前没有运输任何箱子. \n\n拾取箱子-着陆并使用F10集装箱命令装载一个板条箱。", 10)
         end
     else
 
@@ -4196,18 +4210,21 @@ function ctld.dropSlingCrate(_args)
         local _heightDiff = ctld.heightDiff(_heli)
 
         if ctld.inAir(_heli) == false or _heightDiff <= 7.5 then
-            ctld.displayMessageToGroup(_heli, _currentCrate.desc .. " crate has been safely unhooked and is at your 12 o'clock", 10)
+            --ctld.displayMessageToGroup(_heli, _currentCrate.desc .. " crate has been safely unhooked and is at your 12 o'clock", 10)
+            ctld.displayMessageToGroup(_heli, _currentCrate.desc .. " 箱子已放下，在你12点方向", 10)
             _point = ctld.getPointAt12Oclock(_heli, 30)
             --        elseif _heightDiff > 40.0 then
             --            ctld.inTransitSlingLoadCrates[_heli:getName()] = nil
             --            ctld.displayMessageToGroup(_heli, "You were too high! The crate has been destroyed", 10)
             --            return
         elseif _heightDiff > 7.5 and _heightDiff <= 40.0 then
-            ctld.displayMessageToGroup(_heli, _currentCrate.desc .. " crate has been safely dropped below you", 10)
+            --ctld.displayMessageToGroup(_heli, _currentCrate.desc .. " crate has been safely dropped below you", 10)
+            ctld.displayMessageToGroup(_heli, _currentCrate.desc .. " 箱子已经放在你下面了", 10)
         else
             -- _heightDiff > 40.0
             ctld.inTransitSlingLoadCrates[_heli:getName()] = nil
-            ctld.displayMessageToGroup(_heli, "You were too high! The crate has been destroyed", 10)
+            --ctld.displayMessageToGroup(_heli, "You were too high! The crate has been destroyed", 10)
+            ctld.displayMessageToGroup(_heli, "你太高了！箱子已被毁", 10)
             return
         end
 
@@ -4750,7 +4767,8 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
     end
 
     if _txt ~= "" then
-        ctld.displayMessageToGroup(_heli, "Cannot build " .. _groupSystemTemplate.name .. "\n" .. _txt .. "\n\nOr the crates are not close enough together", 20)
+        --ctld.displayMessageToGroup(_heli, "Cannot build " .. _groupSystemTemplate.name .. "\n" .. _txt .. "\n\nOr the crates are not close enough together", 20)
+        ctld.displayMessageToGroup(_heli, "无法部署 " .. _groupSystemTemplate.name .. "\n" .. _txt .. "\n\n箱子间距过大", 20)
         return
     else
 
@@ -4866,7 +4884,8 @@ function ctld.repairGroupSystem(_heli, _nearestCrate, _groupTemplate)
             local _spawnedGroup = ctld.spawnCrateGroup(_heli, _points, _types,_groupTemplate)
             ctld.completeGroupSystems[_spawnedGroup:getName()] = ctld.getGroupSystemDetails(_spawnedGroup, _groupTemplate)
             ctld.processCallback({ unit = _heli, crate = _nearestCrate, spawnedGroup = _spawnedGroup, action = "repair" })
-            trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " successfully repaired a full " .. _groupTemplate.name .. " in the field", 10)
+            --trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " successfully repaired a full " .. _groupTemplate.name .. " in the field", 10)
+            trigger.action.outTextForCoalition(_heli:getCoalition(), ctld.getPlayerNameOrType(_heli) .. " 成功修复了一个完整的 " .. _groupTemplate.name .. " 在野外", 10)
             if _heli:getCoalition() == 1 then
                 ctld.spawnedCratesRED[_nearestCrate.crateUnit:getName()] = nil
             else
@@ -4877,7 +4896,8 @@ function ctld.repairGroupSystem(_heli, _nearestCrate, _groupTemplate)
         , {_heli,_points,_types,_groupTemplate,_nearestCrate } , timer.getTime() + 2)
 
     else
-        ctld.displayMessageToGroup(_heli, "Cannot repair  " .. _groupTemplate.name .. ". No damaged " .. _groupTemplate.name .. " within 300m", 10)
+        --ctld.displayMessageToGroup(_heli, "Cannot repair  " .. _groupTemplate.name .. ". No damaged " .. _groupTemplate.name .. " within 300m", 10)
+        ctld.displayMessageToGroup(_heli, "无法修复  " .. _groupTemplate.name .. ". 没有损坏的 " .. _groupTemplate.name .. " 在300m内", 10)
     end
 end
 
@@ -4929,13 +4949,15 @@ function ctld.unpackMultiCrate(_heli, _nearestCrate, _nearbyCrates)
 
         ctld.processCallback({ unit = _heli, crate = _nearestCrate, spawnedGroup = _spawnedGroup, action = "unpack" })
 
-        local _txt = string.format("%s successfully deployed %s to the field using %d crates", ctld.getPlayerNameOrType(_heli), _nearestCrate.details.desc, #_nearbyMultiCrates)
+        --local _txt = string.format("%s successfully deployed %s to the field using %d crates", ctld.getPlayerNameOrType(_heli), _nearestCrate.details.desc, #_nearbyMultiCrates)
+        local _txt = string.format("%s 成功部署 %s 到战区，使用 %d 箱子", ctld.getPlayerNameOrType(_heli), _nearestCrate.details.desc, #_nearbyMultiCrates)
 
         trigger.action.outTextForCoalition(_heli:getCoalition(), _txt, 10)
 
     else
 
-        local _txt = string.format("Cannot build %s!\n\nIt requires %d crates and there are %d \n\nOr the crates are not within 300m of each other", _nearestCrate.details.desc, _nearestCrate.details.cratesRequired, #_nearbyMultiCrates)
+        --local _txt = string.format("Cannot build %s!\n\nIt requires %d crates and there are %d \n\nOr the crates are not within 300m of each other", _nearestCrate.details.desc, _nearestCrate.details.cratesRequired, #_nearbyMultiCrates)
+        local _txt = string.format("无法生成 %s!\n\n需要 %d 个箱子！现只有 %d \n\n或者箱子之间的距离不在300米以内", _nearestCrate.details.desc, _nearestCrate.details.cratesRequired, #_nearbyMultiCrates)
 
         ctld.displayMessageToGroup(_heli, _txt, 20)
     end
@@ -6022,7 +6044,7 @@ function ctld.addF10MenuOptions()
                             if ctld.enabledFOBBuilding then
                                 missionCommands.addCommandForGroup(_groupId, "列出FOB", _crateCommands, ctld.listFOBS, { _unitName })
                             end
-                            missionCommands.addCommandForGroup(_groupId, "Check Cargo", _crateCommands, ctld.checkTroopStatus, { _unitName })
+                            missionCommands.addCommandForGroup(_groupId, "检查货物", _crateCommands, ctld.checkTroopStatus, { _unitName })
                         end
 
                         if ctld.enableSmokeDrop then
