@@ -50,10 +50,10 @@ if ctld.Debug == false then
         ["步兵战车(IFV)"] = 5,
         ["远程火力(Artillery)"] = 5,
         ["近程防空(Short Range AA)"] = 3,
-        ["中远程防空(Mid&Long Range AA)"] = 10,
+        ["中远程防空(Mid&Long Range AA)"] = 5,
     }
     ctld.logisticUnits = {}
-    ctld.CoalitionKillerLimit = 4 --红方的阵营级大杀器
+    ctld.CoalitionKillerLimit = 6 --红方的阵营级大杀器
 
     ctld.F10RefreshTime = 60
     ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
@@ -4106,6 +4106,11 @@ function ctld.unpackSHIPs(_crate,_crates, _heli)
         return
     end
 
+    local _category = ctld.checkPlayerAndCoalitionLimit(_heli, nil, _crate.details.unit)
+    if _category == nil then
+        return
+    end
+
     local _nearbyMultiCrates = {}
     local _cratesNum = 0
 
@@ -4134,6 +4139,7 @@ function ctld.unpackSHIPs(_crate,_crates, _heli)
         ctld.spawnShip(_heli,_crate.details.unit)
         ctld.displayMessageToGroup(_heli, "成功用".._crate.details.cratesRequired.."个箱箱部署了".._crate.details.unit, 20)
         ctld.crateAddPoint(_heli)
+
         return
     end
 
@@ -4178,7 +4184,7 @@ function ctld.spawnShip(_heli,unitType)
     local _dest = _spawnedGroup:getUnit(1):getPoint()
     _dest = { x = _dest.x + 0.5, _y = _dest.y + 0.5, z = _dest.z + 0.5 }
     ctld.orderGroupToMoveToPoint(_spawnedGroup:getUnit(1), _dest)
-
+    ctld.addUnitInfoToCoalition(_heli,"造船厂(SHIP)集装箱",_groupName)
 end
 
 
@@ -5116,7 +5122,7 @@ function ctld.checkPlayerAndCoalitionLimit(_heli, _groupSystemTemplate, unitName
     if _category == nil then
         ctld.displayMessageToGroup(_heli, '生成单位有问题，请找群管理汇报bug', 10)
         ctld.logError('严重错误，生成单位时找不到对应的类别！')
-    elseif _category == "阵营级大杀器" then
+    elseif _category == "阵营级大杀器" or _category =="造船厂(SHIP)集装箱" then
         if ctld.handleCoalitionLimitInfo(_heli, _category) == nil then
             return nil
         else
