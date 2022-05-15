@@ -59,14 +59,14 @@ Weapon.ATG_One = {
   "GB-6 防区外布撒器 (高爆)",
 
   'AGM-62 "白星眼" 电视制导炸弹',
-  '9A4172M "旋风-M" 反坦克导弹',
+
 }
 Weapon.ATG_OnePoint = 50
 
 Weapon.ATG_Two = {
   "GBU-32(V)2/B",
   "AGM-88C 反辐射导弹",
-  "AGM-114K",
+  '9A4172M "旋风-M" 反坦克导弹',
   --"CBU-97 炸弹",
   "GBU-54(V)1/B",
   "Kh-58U 反辐射导弹",
@@ -89,7 +89,7 @@ Weapon.ATG_Two = {
 Weapon.ATG_TwoPoint = 20
 
 Weapon.ATG_Three = {
-
+  "AGM-114K",
   "M151-HE APKWS",
   "M282-MPP APKWS",
   "AGM-122 反辐射导弹",
