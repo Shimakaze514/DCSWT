@@ -8,6 +8,7 @@ function SourceCall.onPlayerTryConnect(ipaddr, name, ucid, playerID)
     return false, "你被封禁了，加QQ群联系管理员了解详细情况！"
   end
 end
+
 function SourceCall.onPlayerConnect(id)
   SourceCall.clients = SourceCall.clients or {}
   SourceCall.clients[id] = {id = id, ipaddr = net.get_player_info(id, "ipaddr"), name = net.get_player_info(id, "name"), ucid = net.get_player_info(id, "ucid"), ip = net.get_player_info(id, "ipaddr")}
@@ -16,8 +17,7 @@ function SourceCall.onPlayerConnect(id)
   else
     SourceCall.num_clients = SourceCall.num_clients + 1
   end
-end
-function SourceCall.onPlayerStart(id)
+
   local name = net.get_player_info(id, "name")
   local ucid = net.get_player_info(id, "ucid")
   SourceCall.PlayerName[name] = ucid
@@ -41,6 +41,10 @@ function SourceCall.onPlayerStart(id)
   end
 end
 
+function SourceCall.onPlayerStart(id)
+
+end
+
 function SourceCall.onPlayerTrySendChat(id, msg, all)
   local ucid = net.get_player_info(id, "ucid")
   local name = net.get_player_info(id, "name")
@@ -51,18 +55,20 @@ function SourceCall.onPlayerTrySendChat(id, msg, all)
   ChatFile(id, realString, all)
 end
 
-function SourceCall.onPlayerDisconnect(id, err)
-  Utils.get_stat(id)
+function SourceCall.onPlayerDisconnect(id)
+
   SourceCall.clients = SourceCall.clients or {} --should not be necessary.
+  local ucid = SourceCall.clients[id].ucid
   if SourceCall.clients[id] then
     SourceCall.clients[id] = nil
     SourceCall.num_clients = SourceCall.num_clients - 1
   end
-  local ucid = net.get_player_info(id, "ucid")
+
   if DCS.isServer() and DCS.isMultiplayer() and ucid and id ~= net.get_my_player_id() then
     net.dostring_in("mission", 'a_do_script(\'SourceObj.clearAutoAddSourcePoint("' .. ucid .. '")\')')
   end
 end
+
 function SourceCall.onGameEvent(eventName, playerID, ...)
   -- net.log("onGameEvent事件详情: --> " .. eventName .. " : " .. net.lua2json({playerID = playerID, ...}))
   local calls = {}
