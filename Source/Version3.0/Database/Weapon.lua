@@ -66,7 +66,7 @@ Weapon.ATG_OnePoint = 50
 Weapon.ATG_Two = {
   "GBU-32(V)2/B",
   "AGM-88C 反辐射导弹",
-  '9A4172M "旋风-M" 反坦克导弹',
+  "LS-6 500千克 滑翔炸弹",
   --"CBU-97 炸弹",
   "GBU-54(V)1/B",
   "Kh-58U 反辐射导弹",
@@ -120,12 +120,10 @@ Weapon.ATG_Three = {
   "RB-24J空空导弹",
   "ARAK M70B高爆",
   "ARAK M70B穿甲",
-
-  --筷子
+  '9A4172M "旋风-M" 反坦克导弹',--筷子
   --"CBU-87 炸弹",
-  "LS-6 500千克 滑翔炸弹"
 }
-Weapon.ATG_ThreePoint = 15
+Weapon.ATG_ThreePoint = 10
 
 ----------------------吊舱-------------------
 Weapon.ATGPod = {

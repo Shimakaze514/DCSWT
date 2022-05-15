@@ -20,7 +20,7 @@ SourceObj.updatePlayerInfo = function(_name, _ucid)
         SourceObj.SaveSourcePoint()
     end
 
-    if not SourceObj.autoAddID[_ucid] then
+    if SourceObj.autoAddID[_ucid] == nil then
         SourceObj.playerSource[_ucid]["name"] = _name
         SourceObj.autoAddID[_ucid] = timer.scheduleFunction(SourceObj.autoAddSourcePoint, {_ucid,_name}, timer.getTime() + SourceObj.realRecoverTime)
         env.info("增加资源点自动任务，玩家:" .. _name .. ",  函数id:" .. SourceObj.autoAddID[_ucid])
@@ -29,15 +29,14 @@ SourceObj.updatePlayerInfo = function(_name, _ucid)
 end
 SourceObj.clearAutoAddSourcePoint = function(_ucid)
     env.info("取消资源点自动任务，id:"..SourceObj.autoAddID[_ucid])
-    timer.removeFunction(SourceObj.autoAddID[_ucid])
+    timer.removeFunction(tonumber(SourceObj.autoAddID[_ucid]))
+    SourceObj.autoAddID[_ucid]=nil
 end
 SourceObj.autoAddSourcePoint = function(_args, time)
     local _ucid = _args[1]
     local _name = _args[2]
-    --env.info("开始资源点平衡")
+
     local msg = ""
-    --SourceObj.timeHasRun = time + SourceObj.realRecoverTime
-    --env.info("自动增加资源点执行时间: " .. timer.getTime() .. ",具有以下参数:" .. _ucid .. ",已经运行时间:" .. SourceObj.timeHasRun)
     if SourceObj.playerSource[_ucid]["point"] and SourceObj.playerSource[_ucid]["point"] < SourceObj.recoverPoint then
         SourceObj.playerSource[_ucid]["point"] = SourceObj.recoverPoint
         --SourceObj.SaveSourcePoint()
@@ -54,7 +53,6 @@ SourceObj.autoAddSourcePoint = function(_args, time)
     end
     env.info("执行资源点平衡,msg:"..msg..",name:".._name)
     SourceObj.autoAddID[_ucid] = timer.scheduleFunction(SourceObj.autoAddSourcePoint, {_ucid,_name}, timer.getTime() + SourceObj.realRecoverTime)
-    env.info("SourceObj.autoAddID[_ucid]:"..SourceObj.autoAddID[_ucid])
 end
 
 SourceObj.is_include = function(value, tab)
