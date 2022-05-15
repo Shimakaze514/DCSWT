@@ -58,8 +58,9 @@ end
 function SourceCall.onPlayerDisconnect(id)
 
   SourceCall.clients = SourceCall.clients or {} --should not be necessary.
-  local ucid = SourceCall.clients[id].ucid
+  local ucid
   if SourceCall.clients[id] then
+    ucid = SourceCall.clients[id].ucid
     SourceCall.clients[id] = nil
     SourceCall.num_clients = SourceCall.num_clients - 1
   end
