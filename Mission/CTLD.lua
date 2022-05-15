@@ -46,14 +46,15 @@ ctld.staticBugWorkaround = false --  DCS had a bug where destroying statics woul
 
 if ctld.Debug == false then
     ctld.UnitLimitPerPlayer = {
-        ["主战坦克(Tank)"] = 5,
-        ["步兵战车(IFV)"] = 5,
-        ["远程火力(Artillery)"] = 5,
+        ["主战坦克(Tank)"] = 4,
+        ["步兵战车(IFV)"] = 4,
+        ["远程火力(Artillery)"] = 4,
         ["近程防空(Short Range AA)"] = 3,
+        ["无人机、悍马JTAC、FOB等"] = 4,
         ["中远程防空(Mid&Long Range AA)"] = 5,
     }
     ctld.logisticUnits = {}
-    ctld.CoalitionKillerLimit = 6 --红方的阵营级大杀器
+    ctld.CoalitionKillerLimit = 5 --红方的阵营级大杀器
 
     ctld.F10RefreshTime = 60
     ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
@@ -99,6 +100,7 @@ else
         ["步兵战车(IFV)"] = 2,
         ["远程火力(Artillery)"] = 2,
         ["近程防空(Short Range AA)"] = 2,
+        ["无人机、悍马JTAC、FOB等"] = 2,
         ["中远程防空(Mid&Long Range AA)"] = 2,
     }
     ctld.logisticUnits = {
@@ -198,8 +200,8 @@ ctld.UnitLimitCoalitionInfo = {}
 --END AA SYSTEM CONFIG --
 -- ***************** JTAC CONFIGURATION *****************
 
-ctld.JTAC_LIMIT_RED = 9999 -- max number of JTAC Crates for the RED Side
-ctld.JTAC_LIMIT_BLUE = 9999 -- max number of JTAC Crates for the BLUE Side
+--ctld.JTAC_LIMIT_RED = 9999 -- max number of JTAC Crates for the RED Side
+--ctld.JTAC_LIMIT_BLUE = 9999 -- max number of JTAC Crates for the BLUE Side
 
 ctld.JTAC_dropEnabled = true -- allow JTAC Crate spawn from F10 menu
 
@@ -2433,31 +2435,32 @@ function ctld.spawnCrate(_arguments)
                 return
             end
 
-            if ctld.isJTACUnitType(_crateType.unit) then
-
-                local _limitHit = false
-
-                if _heli:getCoalition() == 1 then
-
-                    if ctld.JTAC_LIMIT_RED == 0 then
-                        _limitHit = true
-                    else
-                        ctld.JTAC_LIMIT_RED = ctld.JTAC_LIMIT_RED - 1
-                    end
-                else
-                    if ctld.JTAC_LIMIT_BLUE == 0 then
-                        _limitHit = true
-                    else
-                        ctld.JTAC_LIMIT_BLUE = ctld.JTAC_LIMIT_BLUE - 1
-                    end
-                end
-
-                if _limitHit then
-                    --ctld.displayMessageToGroup(_heli, "No more JTAC Crates Left!", 10)
-                    ctld.displayMessageToGroup(_heli, "JTAC 箱子用完了！", 10)
-                    return
-                end
-            end
+            --取消官方的jtac限制
+            --if ctld.isJTACUnitType(_crateType.unit) then
+            --
+            --    local _limitHit = false
+            --
+            --    if _heli:getCoalition() == 1 then
+            --
+            --        if ctld.JTAC_LIMIT_RED == 0 then
+            --            _limitHit = true
+            --        else
+            --            ctld.JTAC_LIMIT_RED = ctld.JTAC_LIMIT_RED - 1
+            --        end
+            --    else
+            --        if ctld.JTAC_LIMIT_BLUE == 0 then
+            --            _limitHit = true
+            --        else
+            --            ctld.JTAC_LIMIT_BLUE = ctld.JTAC_LIMIT_BLUE - 1
+            --        end
+            --    end
+            --
+            --    if _limitHit then
+            --        --ctld.displayMessageToGroup(_heli, "No more JTAC Crates Left!", 10)
+            --        ctld.displayMessageToGroup(_heli, "JTAC 箱子用完了！", 10)
+            --        return
+            --    end
+            --end
 
             local _position = _heli:getPosition()
 
