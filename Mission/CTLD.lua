@@ -93,6 +93,15 @@ if ctld.Debug == false then
     ctld.crateWaitTime = 20
     ctld.forceCrateToBeMoved = false -- a crate must be picked up at least once and moved before it can be unpacked. Helps to reduce crate spam
     ctld.UseInfraRed = false
+    ctld.unitActions = {
+         --["SA342Mistral"] = {crates=true, troops=true},
+         --["SA342L"] = {crates=true, troops=true},
+         --["SA342M"] = {crates=true, troops=true},
+         ["UH-1H"] = {crates=true, troops=true},
+         ["Mi-8MT"] = {crates=true, troops=true},
+         ["Mi-8MTV2"] = {crates=true, troops=true},
+         ["Mi-24P"] = {crates=true, troops=true},
+    }
 else
     --测试用的参数
     ctld.UnitLimitPerPlayer = {
@@ -146,6 +155,15 @@ else
     ctld.crateWaitTime = 1
     ctld.forceCrateToBeMoved = false -- a crate must be picked up at least once and moved before it can be unpacked. Helps to reduce crate spam
 	ctld.UseInfraRed = false
+    ctld.unitActions = {
+        --["SA342Mistral"] = {crates=true, troops=true},
+        --["SA342L"] = {crates=true, troops=true},
+        --["SA342M"] = {crates=true, troops=true},
+        ["UH-1H"] = {crates=true, troops=true},
+        ["Mi-8MT"] = {crates=true, troops=true},
+        ["Mi-8MTV2"] = {crates=true, troops=true},
+        ["Mi-24P"] = {crates=true, troops=true},
+    }
 end
 
 ctld.numberOfTroops = 10 -- default number of troops to load on a transport heli or C-130 
@@ -690,14 +708,6 @@ ctld.unitLoadLimits = {
 -- ["SA342Mistral"] = {crates=fales, troops=true},
 -- Will allow Mistral Gazelle to only transport crates, not troops
 
-ctld.unitActions = {
-
-    -- Remove the -- below to turn on options
-    -- ["SA342Mistral"] = {crates=true, troops=true},
-    -- ["SA342L"] = {crates=false, troops=true},
-    -- ["SA342M"] = {crates=false, troops=true},
-
-}
 
 -- ************** WEIGHT CALCULATIONS FOR INFANTRY GROUPS ******************
 
@@ -731,12 +741,12 @@ ctld.JTAC_WEIGHT = 15 -- kg
 -- You can also add an optional coalition side to limit the group to one side
 -- for the side - 2 is BLUE and 1 is RED
 ctld.loadableGroups = {
-    { name = "Standard Group", inf = 6, mg = 2, at = 2 }, -- will make a loadable group with 6 infantry, 2 MGs and 2 anti-tank for both coalitions
-    { name = "Anti Air", inf = 2, aa = 3 },
-    { name = "Anti Tank", inf = 2, at = 6 },
+    --{ name = "Standard Group", inf = 6, mg = 2, at = 2 }, -- will make a loadable group with 6 infantry, 2 MGs and 2 anti-tank for both coalitions
+    { name = "Anti Air", mg = 5, aa = 5 },
+    { name = "Anti Tank", mg = 5, at = 5 },
     { name = "Mortar Squad", mortar = 6 },
-    { name = "JTAC Group", inf = 4, jtac = 1 }, -- will make a loadable group with 4 infantry and a JTAC soldier for both coalitions
-    { name = "Single JTAC", jtac = 1 }, -- will make a loadable group witha single JTAC soldier for both coalitions
+    { name = "JTAC Group", mg = 5, jtac = 1 }, -- will make a loadable group with 4 infantry and a JTAC soldier for both coalitions
+    --{ name = "Single JTAC", jtac = 1 }, -- will make a loadable group witha single JTAC soldier for both coalitions
     -- {name = "Mortar Squad Red", inf = 2, mortar = 5, side =1 }, --would make a group loadable by RED only
 }
 
@@ -2848,6 +2858,11 @@ function ctld.unloadExtractTroops(_args)
 
     local _heli = ctld.getTransportUnit(_args[1])
 
+    if ctld.inLogisticsZone(_heli) ==true then
+        ctld.displayMessageToGroup(_heli, "离cc太近，不能放下部队", 10)
+        return
+    end
+
     if _heli == nil then
         return false
     end
@@ -3043,7 +3058,8 @@ function ctld.loadTroopsFromZone(_args)
         return false
     end
 
-    local _zone = ctld.inPickupZone(_heli)
+    local _inZone = ctld.inLogisticsZone(_heli)
+    --local _zone = ctld.inPickupZone(_heli)
 
     if ctld.troopsOnboard(_heli, _troops) then
 
@@ -3079,26 +3095,26 @@ function ctld.loadTroopsFromZone(_args)
     if _extract ~= nil then
         -- search for nearest troops to pickup
         return ctld.extractTroops({ _heli:getName(), _troops })
-    elseif _zone.inZone == true then
-
-        if _zone.limit - 1 >= 0 then
-            -- decrease zone counter by 1
-            ctld.updateZoneCounter(_zone.index, -1)
-
-            ctld.loadTroops(_heli, _troops, _groupTemplate)
-
-            return true
-        else
-            ctld.displayMessageToGroup(_heli, "This area has no more reinforcements available!", 20)
-
-            return false
-        end
+    elseif _inZone == true then
+        ctld.loadTroops(_heli, _troops, _groupTemplate)
+        --if _zone.limit - 1 >= 0 then
+        --    -- decrease zone counter by 1
+        --    ctld.updateZoneCounter(_zone.index, -1)
+        --
+        --    ctld.loadTroops(_heli, _troops, _groupTemplate)
+        --
+        --    return true
+        --else
+        --    ctld.displayMessageToGroup(_heli, "This area has no more reinforcements available!", 20)
+        --
+        --    return false
+        --end
 
     else
         if _allowExtract then
-            ctld.displayMessageToGroup(_heli, "You are not in a pickup zone and no one is nearby to extract", 10)
+            ctld.displayMessageToGroup(_heli, "You are not in a cc and no one is nearby to extract", 10)
         else
-            ctld.displayMessageToGroup(_heli, "You are not in a pickup zone", 10)
+            ctld.displayMessageToGroup(_heli, "You are not in a cc", 10)
         end
 
         return false
@@ -5316,16 +5332,14 @@ function ctld.spawnDroppedGroup(_point, _details, _spawnBehind, _maxSearch)
         _maxSearch = ctld.maximumSearchDistance
     end
 
-    local _wpZone = ctld.inWaypointZone(_point, _spawnedGroup:getCoalition())
-
-    if _wpZone.inZone then
-        ctld.orderGroupToMoveToPoint(_spawnedGroup:getUnit(1), _wpZone.point)
-        ctld.logInfo("Heading to waypoint - In Zone " .. _wpZone.name)
-    else
-        local _enemyPos = ctld.findNearestEnemy(_details.side, _point, _maxSearch)
-
-        ctld.orderGroupToMoveToPoint(_spawnedGroup:getUnit(1), _enemyPos)
-    end
+    --local _wpZone = ctld.inWaypointZone(_point, _spawnedGroup:getCoalition())
+    --if _wpZone.inZone then
+    --    ctld.orderGroupToMoveToPoint(_spawnedGroup:getUnit(1), _wpZone.point)
+    --    ctld.logInfo("Heading to waypoint - In Zone " .. _wpZone.name)
+    --else
+    --    local _enemyPos = ctld.findNearestEnemy(_details.side, _point, _maxSearch)
+    --    ctld.orderGroupToMoveToPoint(_spawnedGroup:getUnit(1), _enemyPos)
+    --end
 
     return _spawnedGroup
 end
@@ -5936,8 +5950,7 @@ function ctld.getUnitActions(_unitType)
         return ctld.unitActions[_unitType]
     end
 
-    return { crates = true, troops = true }
-
+    return { crates = true, troops = false }
 end
 
 
@@ -5973,45 +5986,42 @@ function ctld.addF10MenuOptions()
                         ctld.logTrace(string.format("_unitActions=%s", ctld.p(_unitActions)))
 
                         --TODO
-                        --if _unitActions.troops then
-                        --
-                        --    local _troopCommandsPath = missionCommands.addSubMenuForGroup(_groupId, "Troop Transport", _rootPath)
-                        --
-                        --    missionCommands.addCommandForGroup(_groupId, "Unload / Extract Troops", _troopCommandsPath, ctld.unloadExtractTroops, { _unitName })
-                        --
-                        --
-                        --    -- local _loadPath = missionCommands.addSubMenuForGroup(_groupId, "Load From Zone", _troopCommandsPath)
-                        --    local _transportLimit = ctld.getTransportLimit(_unit:getTypeName())
-                        --    ctld.logTrace(string.format("_transportLimit=%s", ctld.p(_transportLimit)))
-                        --    for _,_loadGroup in pairs(ctld.loadableGroups) do
-                        --        ctld.logTrace(string.format("_loadGroup=%s", ctld.p(_loadGroup)))
-                        --        if not _loadGroup.side or _loadGroup.side == _unit:getCoalition() then
-                        --
-                        --            -- check size & unit
-                        --            if _transportLimit >= _loadGroup.total then
-                        --                missionCommands.addCommandForGroup(_groupId, "Load ".._loadGroup.name, _troopCommandsPath, ctld.loadTroopsFromZone, { _unitName, true,_loadGroup,false })
-                        --            end
-                        --        end
-                        --    end
-                        --
-                        --    if ctld.unitCanCarryVehicles(_unit) then
-                        --
-                        --        local _vehicleCommandsPath = missionCommands.addSubMenuForGroup(_groupId, "Vehicle / FOB Transport", _rootPath)
-                        --
-                        --        missionCommands.addCommandForGroup(_groupId, "Unload Vehicles", _vehicleCommandsPath, ctld.unloadTroops, { _unitName, false })
-                        --        missionCommands.addCommandForGroup(_groupId, "Load / Extract Vehicles", _vehicleCommandsPath, ctld.loadTroopsFromZone, { _unitName, false,"",true })
-                        --
-                        --        if ctld.enabledFOBBuilding and ctld.staticBugWorkaround == false then
-                        --
-                        --            missionCommands.addCommandForGroup(_groupId, "Load / Unload FOB Crate", _vehicleCommandsPath, ctld.loadUnloadFOBCrate, { _unitName, false })
-                        --        end
-                        --        missionCommands.addCommandForGroup(_groupId, "Check Cargo", _vehicleCommandsPath, ctld.checkTroopStatus, { _unitName })
-                        --    end
-                        --
-                        --end
+                        if _unitActions.troops then
+                            local _troopCommandsPath = missionCommands.addSubMenuForGroup(_groupId, "Troop Transport", _rootPath)
+                            missionCommands.addCommandForGroup(_groupId, "Unload / Extract Troops", _troopCommandsPath, ctld.unloadExtractTroops, { _unitName })
+
+                            -- local _loadPath = missionCommands.addSubMenuForGroup(_groupId, "Load From Zone", _troopCommandsPath)
+                            local _transportLimit = ctld.getTransportLimit(_unit:getTypeName())
+                            ctld.logTrace(string.format("_transportLimit=%s", ctld.p(_transportLimit)))
+                            for _,_loadGroup in pairs(ctld.loadableGroups) do
+                                ctld.logTrace(string.format("_loadGroup=%s", ctld.p(_loadGroup)))
+                                if not _loadGroup.side or _loadGroup.side == _unit:getCoalition() then
+                                    -- check size & unit
+                                    if _transportLimit >= _loadGroup.total then
+                                        missionCommands.addCommandForGroup(_groupId, "Load ".._loadGroup.name, _troopCommandsPath, ctld.loadTroopsFromZone, { _unitName, true,_loadGroup,false })
+                                    end
+                                end
+                            end
+
+                            --if ctld.unitCanCarryVehicles(_unit) then
+                            --
+                            --    local _vehicleCommandsPath = missionCommands.addSubMenuForGroup(_groupId, "Vehicle / FOB Transport", _rootPath)
+                            --
+                            --    missionCommands.addCommandForGroup(_groupId, "Unload Vehicles", _vehicleCommandsPath, ctld.unloadTroops, { _unitName, false })
+                            --    missionCommands.addCommandForGroup(_groupId, "Load / Extract Vehicles", _vehicleCommandsPath, ctld.loadTroopsFromZone, { _unitName, false,"",true })
+                            --
+                            --    if ctld.enabledFOBBuilding and ctld.staticBugWorkaround == false then
+                            --
+                            --        missionCommands.addCommandForGroup(_groupId, "Load / Unload FOB Crate", _vehicleCommandsPath, ctld.loadUnloadFOBCrate, { _unitName, false })
+                            --    end
+                            --    missionCommands.addCommandForGroup(_groupId, "Check Cargo", _vehicleCommandsPath, ctld.checkTroopStatus, { _unitName })
+                            --end
+
+                        end
 
 
                         if ctld.enableCrates and _unitActions.crates then
+                            _rootPath = missionCommands.addSubMenuForGroup(_groupId, "集装箱", _rootPath)
                             if ctld.unitCanCarryVehicles(_unit) == false then
                                 -- local _cratePath = missionCommands.addSubMenuForGroup(_groupId, "Spawn Crate", _rootPath)
                                 -- add menu for spawning crates
