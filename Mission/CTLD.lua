@@ -102,6 +102,7 @@ if ctld.Debug == false then
          ["Mi-8MTV2"] = {crates=true, troops=true},
          ["Mi-24P"] = {crates=true, troops=true},
     }
+    ctld.unloadTroopsTime = 10
 else
     --测试用的参数
     ctld.UnitLimitPerPlayer = {
@@ -164,6 +165,7 @@ else
         ["Mi-8MTV2"] = {crates=true, troops=true},
         ["Mi-24P"] = {crates=true, troops=true},
     }
+    ctld.unloadTroopsTime = 10
 end
 
 ctld.numberOfTroops = 10 -- default number of troops to load on a transport heli or C-130 
@@ -2857,7 +2859,6 @@ end
 function ctld.unloadExtractTroops(_args)
 
     local _heli = ctld.getTransportUnit(_args[1])
-
     if ctld.inLogisticsZone(_heli) ==true then
         ctld.displayMessageToGroup(_heli, "离cc太近，不能放下部队", 10)
         return
@@ -2867,23 +2868,32 @@ function ctld.unloadExtractTroops(_args)
         return false
     end
 
-    local _extract = nil
-    if not ctld.inAir(_heli) then
-        if _heli:getCoalition() == 1 then
-            _extract = ctld.findNearestGroup(_heli, ctld.droppedTroopsRED)
-        else
-            _extract = ctld.findNearestGroup(_heli, ctld.droppedTroopsBLUE)
+    timer.scheduleFunction(function(_args)
+        local _heli = _args[1]
+
+        if ctld.inAir(_heli) then
+            ctld.displayMessageToGroup(_heli, "飞机没有停稳，步兵行动失败", 10)
+            return
         end
 
-    end
+        local _extract = nil
+        if not ctld.inAir(_heli) then
+            if _heli:getCoalition() == 1 then
+                _extract = ctld.findNearestGroup(_heli, ctld.droppedTroopsRED)
+            else
+                _extract = ctld.findNearestGroup(_heli, ctld.droppedTroopsBLUE)
+            end
 
-    if _extract ~= nil and not ctld.troopsOnboard(_heli, true) then
-        -- search for nearest troops to pickup
-        return ctld.extractTroops({ _heli:getName(), true })
-    else
-        return ctld.unloadTroops({ _heli:getName(), true, true })
-    end
+        end
 
+        if _extract ~= nil and not ctld.troopsOnboard(_heli, true) then
+            -- search for nearest troops to pickup
+            return ctld.extractTroops({ _heli:getName(), true })
+        else
+            return ctld.unloadTroops({ _heli:getName(), true, true })
+        end
+    end, { _heli }, timer.getTime() + ctld.unloadTroopsTime)
+    ctld.displayMessageToGroup(_heli, "步兵行动中，"..ctld.unloadTroopsTime.."秒后完成", 10)
 
 end
 
