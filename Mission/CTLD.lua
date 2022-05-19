@@ -744,9 +744,9 @@ ctld.JTAC_WEIGHT = 15 -- kg
 -- for the side - 2 is BLUE and 1 is RED
 ctld.loadableGroups = {
     --{ name = "Standard Group", inf = 6, mg = 2, at = 2 }, -- will make a loadable group with 6 infantry, 2 MGs and 2 anti-tank for both coalitions
-    { name = "Anti Air", mg = 5, aa = 5 },
-    { name = "Anti Tank", mg = 5, at = 5 },
-    { name = "Mortar Squad", mortar = 6 },
+    { name = "Anti Air", mg = 5, aa = 2 },
+    { name = "Anti Tank", mg = 5, at = 2 },
+    { name = "Mortar Squad", mortar = 3 },
     { name = "JTAC Group", mg = 5, jtac = 1 }, -- will make a loadable group with 4 infantry and a JTAC soldier for both coalitions
     --{ name = "Single JTAC", jtac = 1 }, -- will make a loadable group witha single JTAC soldier for both coalitions
     -- {name = "Mortar Squad Red", inf = 2, mortar = 5, side =1 }, --would make a group loadable by RED only
