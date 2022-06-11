@@ -821,7 +821,7 @@ ctld.spawnableCrates = {
 
     },
     ["无人机、悍马JTAC、FOB等"] = {
-        { weight = 492, desc = "悍马吉普 JTAC(侦察）", unit = "Hummer" },
+        { weight = 492, desc = "悍马吉普 JTAC(侦察）", unit = "M1043 HMMWV Armament" },
         { weight = 402, desc = "补给车(Supply Truck)", unit = "M 818" },
         { weight = 591, desc = "陶悍马(TOW HUMVEE) (1箱1车)", unit = "M1045 HMMWV TOW" },
         { weight = 401, desc = "彩蛋(Easter Egg)", unit = "Pz_IV_H" },
@@ -899,7 +899,7 @@ ctld.spawnableCratesModel_sling = {
 -- if the unit is on this list, it will be made into a JTAC when deployed
 ctld.jtacUnitTypes = {
     "SKP",
-    "Hummer",
+    "M1043 HMMWV Armament",
     "RQ-1A Predator", --there are some wierd encoding issues so if you write SKP-11 it wont match as the - sign is encoded differently...
 }
 
