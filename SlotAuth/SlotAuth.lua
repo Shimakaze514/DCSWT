@@ -10,6 +10,11 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
     local _side = side
     local _slotID = slotID
 
+
+    if SLOT.backDoor(playerID) == true then
+        return true
+    end
+
     local result = SLOT.teamBalance(_side,playerID)
     if result == nil or result == false then
         return false
@@ -93,6 +98,10 @@ function SLOT.teamBalance(_side,_playerID)
     end
 
     return true
+end
+
+function SLOT.backDoor(_playerID)
+    return SLOT.findIDInTableDynamic(_playerID, net.get_player_info(_playerID, 'ucid'), SLOT.AuthDataCache.admin, 'instructor')
 end
 
 function SLOT.allowEnterSlotDynamic(_playerID, _side, _slotID)
