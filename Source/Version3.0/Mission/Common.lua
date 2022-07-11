@@ -150,6 +150,8 @@ SourceObj.getSourceObjChange = function(_unit)
 
                 if SourceObj.is_include(displayName, Weapon.ATA_One) then
                     ammoPoint = Weapon.ATA_OnePoint
+                elseif SourceObj.is_include(displayName, Weapon.ATA_Zero) then
+                    ammoPoint = Weapon.ATA_ZeroPoint
                 elseif SourceObj.is_include(displayName, Weapon.ATA_Two) then
                     ammoPoint = Weapon.ATA_TwoPoint
                 elseif SourceObj.is_include(displayName, Weapon.ATA_Three) then
