@@ -131,8 +131,6 @@ SourceObj.getSourceObjChange = function(_unit)
         planePoint = Aircraft.superiorityFighterPoint
     elseif SourceObj.is_include(_unitType, Aircraft.lightFighter) then
         planePoint = Aircraft.lightFighterPoint
-    elseif SourceObj.is_include(_unitType, Aircraft.problemFighter) then
-        planePoint = Aircraft.problemFighterPoint
     elseif SourceObj.is_include(_unitType, Aircraft.attacker) then
         planePoint = Aircraft.attackerPoint
     elseif SourceObj.is_include(_unitType, Aircraft.helicopter) then
@@ -149,7 +147,7 @@ SourceObj.getSourceObjChange = function(_unit)
             if ammo.desc and ammo.desc.typeName then
                 local displayName = ammo.desc.displayName
                 local ammoPoint = 0
-                env.info(ammo.desc.displayName)
+
                 if SourceObj.is_include(displayName, Weapon.ATA_One) then
                     ammoPoint = Weapon.ATA_OnePoint
                 elseif SourceObj.is_include(displayName, Weapon.ATA_Two) then
