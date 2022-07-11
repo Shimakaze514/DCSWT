@@ -1,5 +1,12 @@
 Weapon = {}
 --------------------------------AA---------------------------------
+Weapon.ATA_Zero = {
+  "AIM-54A-Mk47 空空导弹",
+  "AIM-54A-Mk60 空空导弹",
+  "AIM-54C-Mk47 空空导弹",
+}
+Weapon.ATA_ZeroPoint = 80
+
 Weapon.ATA_One = {
   "SD-10 空空导弹",
 }
@@ -11,9 +18,6 @@ Weapon.ATA_Two = {
   "AIM-120B 空空导弹",
   "R-27ET 空空导弹",
   "R-77 空空导弹",
-  "AIM-54C-MK47 空空导弹",
-  "AIM-54A-MK47 空空导弹",
-  "AIM-54A-MK60 空空导弹",
   "ADM-141A 战术诱饵导弹",
   "AIM-9X 空空导弹",
   "MBDA Mistral",
