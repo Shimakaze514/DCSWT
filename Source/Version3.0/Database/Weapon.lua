@@ -5,7 +5,7 @@ Weapon.ATA_Zero = {
   "AIM-54A-MK47 空空导弹",
   "AIM-54A-MK60 空空导弹",
 }
-Weapon.ATA_ZeroPoint = 75
+Weapon.ATA_ZeroPoint = 80
 
 Weapon.ATA_One = {
   "SD-10 空空导弹",
