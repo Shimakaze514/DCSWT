@@ -54,6 +54,7 @@ if ctld.Debug == false then
         ["中远程防空(Mid&Long Range AA)"] = 5,
     }
     ctld.logisticUnits = {}
+    ctld.fobLocation = {}
     ctld.CoalitionKillerLimit = 5 --红方的阵营级大杀器
 
     ctld.F10RefreshTime = 60
@@ -4096,6 +4097,10 @@ function ctld.unpackFOBCrates(_crates, _heli)
 
             --make it able to deploy crates
             table.insert(ctld.logisticUnits, _fob:getName())
+            --储存fob位置
+            local _logistic = StaticObject.getByName(_fob:getName())
+            table.insert(ctld.fobLocation, _logistic:getPoint())
+            --
             timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + 20)
             --不需要塔康信标
             --[[
@@ -5721,6 +5726,15 @@ function ctld.farEnoughFromLogisticZone(_heli, distance, needcheck)
             end
         end
     end
+    --检查此处是否有fob
+    if _farEnough == true then
+        for _, _position in pairs(ctld.fobLocation) do
+            local _dist = ctld.getDistance(_heliPoint, _position)
+            if _dist <= distance then
+                _farEnough = false
+            end
+        end
+    end 
     return _farEnough
 end
 
