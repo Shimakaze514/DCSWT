@@ -598,6 +598,7 @@ ctld.transportPilotNames = {
     "transport Red AH64D-22",
     "transport Red AH64D-23",
     "transport Red AH64D-24",
+    "transport Red AH64D-25",
     "transport Blue AH64D-1",
     "transport Blue AH64D-2",
     "transport Blue AH64D-3",
