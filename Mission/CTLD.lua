@@ -46,16 +46,16 @@ ctld.staticBugWorkaround = false --  DCS had a bug where destroying statics woul
 
 if ctld.Debug == false then
     ctld.UnitLimitPerPlayer = {
-        ["主战坦克(Tank)"] = 4,
-        ["步兵战车(IFV)"] = 4,
+        ["主战坦克(Tank)"] = 8,
+        ["步兵战车(IFV)"] = 6,
         ["远程火力(Artillery)"] = 4,
         ["近程防空(Short Range AA)"] = 3,
-        ["无人机、悍马JTAC、FOB等"] = 4,
+        ["无人机、悍马JTAC、FOB等"] = 5,
         ["中远程防空(Mid&Long Range AA)"] = 5,
     }
     ctld.logisticUnits = {}
     ctld.fobLocation = {}
-    ctld.CoalitionKillerLimit = 5 --红方的阵营级大杀器
+    ctld.CoalitionKillerLimit = 4 --红方的阵营级大杀器
 
     ctld.F10RefreshTime = 60
     ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
@@ -807,6 +807,7 @@ ctld.spawnableCrates = {
 		--{ weight = 950, desc = "道尔(SA-15)雷达地空导弹发射车", unit = "Tor 9A331", cratesRequired = 1, loadable = false },
         { weight = 1448, desc = "罗兰(Roland)近程地空导弹(1箱2车)", unit = "Roland Group"},
         { weight = 1451, desc = "HQ-7近程地空导弹(1箱2车)", unit = "HQ-7_Group"},
+        { weight = 1452, desc = "道尔(SA-15)地空导弹单车（1箱1车）", unit = "Tor 9A331" },
         { weight = 1452, desc = "道尔(SA-15)地空导弹阵地(2箱3车+补给)", unit = "SA-15 Buk" },
         --{ weight = 1454, desc = "(小队)NASAMS地空导弹阵地(2箱4车+补给)", unit = "NASAMS Group", cratesRequired = 2, loadable = false },
         { weight = 1449, desc = "(小队)库班河(SA-6)地空导弹阵地(3箱4车+补给)", unit = "SA-6 Buk" },
