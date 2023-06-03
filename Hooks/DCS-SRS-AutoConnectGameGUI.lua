@@ -1,4 +1,4 @@
--- Version 2.0.3.0
+-- Version 2.0.8.5
 -- ONLY COPY THIS WHOLE FILE IS YOU ARE GOING TO HOST A SERVER!
 -- The file must be in Saved Games\DCS\Scripts\Hooks or Saved Games\DCS.openalpha\Scripts\Hooks
 -- Make sure you enter the correct address into SERVER_SRS_HOST and SERVER_SRS_PORT (5002 by default) below.
@@ -9,10 +9,10 @@
 -- User options --
 local SRSAuto = {}
 
-SRSAuto.SERVER_SRS_HOST_AUTO = false -- if set to true SRS will set the SERVER_SRS_HOST for you!
-SRSAuto.SERVER_SRS_PORT = "5002" --  SRS Server default is 5002 TCP & UDP
-SRSAuto.SERVER_SRS_HOST = "srs.foryoufly.net" -- overridden if SRS_HOST_AUTO is true -- set to your PUBLIC ipv4 address
-SRSAuto.SERVER_SEND_AUTO_CONNECT = true -- set to false to disable auto connect or just remove this file
+SRSAuto.SERVER_SRS_HOST_AUTO = true -- if set to true SRS will set the SERVER_SRS_HOST for you!
+SRSAuto.SERVER_SRS_PORT = "10601" --  SRS Server default is 5002 TCP & UDP
+SRSAuto.SERVER_SRS_HOST = "127.0.0.1" -- overridden if SRS_HOST_AUTO is true -- set to your PUBLIC ipv4 address or domain srs.example.com
+SRSAuto.SERVER_SEND_AUTO_CONNECT = true -- set to false to disable auto connect or just remove this file 
 
 ---- SRS CHAT COMMANDS ----
 SRSAuto.CHAT_COMMANDS_ENABLED = true -- if true type -freq, -freqs or -frequencies in ALL chat in multilayer to see the frequencies
@@ -24,18 +24,17 @@ SRSAuto.SRS_FREQUENCIES = {
 }
 
 ---- SRS NUDGE MESSAGE ----
-SRSAuto.SRS_NUDGE_ENABLED = false -- set to true to enable the message below
-SRSAuto.SRS_NUDGE_TIME = 900 -- SECONDS between messages to non connected SRS users 间隔秒数
+SRSAuto.SRS_NUDGE_ENABLED = true -- set to true to enable the message below
+SRSAuto.SRS_NUDGE_TIME =  900 -- SECONDS between messages to non connected SRS users 间隔秒数
 SRSAuto.SRS_MESSAGE_TIME = 30 -- SECONDS to show the message for
 --SRSAuto.SRS_NUDGE_PATH = "C:\\Program Files\\DCS-SimpleRadio-Standalone\\clients-list.json" -- path to SERVER JSON EXPORT - enable Auto Export List on the server
-SRSAuto.SRS_NUDGE_PATH = "C:\\FlightSim\\DCS-SimpleRadioStandalone\\clients-list.json" -- path to SERVER JSON EXPORT - enable Auto Export List on the server
+SRSAuto.SRS_NUDGE_PATH = "C:\\Program Files\\DCS-SimpleRadioStandalone\\clients-list.json" -- path to SERVER JSON EXPORT - enable Auto Export List on the server
 --- EDIT the message below to change what is said to users - DONT USE QUOTES - either single or double due to the injection into SRS it'll fail
 --- Newlines must be escaped like so: \\\n with 3 backslashes
 --SRSAuto.SRS_NUDGE_MESSAGE = "****** DCS IS BETTER WITH COMMS - USE SRS ******\\\n\\\nMake sure to install DCS SimpleRadio Standalone - SRS - free and easy to install. \\\n\\\nSRS gives you VOIP Comms with other players through your aircrafts own radios. This will help you to be more effective, find enemies and wingmen, or call in support \\\n\\\n Google: DCS SimpleRadio Standalone \\\n\\\nGood comms and teamwork will help YOU and your team win! "
 
 SRSAuto.SRS_NUDGE_MESSAGE = "请注意：本服需使用无线电进行通讯,请保持SRS在线,并在各自阵营频率124.8待命,有呼叫请积极回应!!! \\\n群文件有《懒人福音版SRS》最大程度减少学习成本 \\\n\\\n（正常通联后本消息不再提示！）"
 --SRSAuto.SRS_NUDGE_MESSAGE = "******警告！警告！警告！你的SRS无线电未正常通联****** \\\n\\\n请安装最新版 DCS SimpleRadio,该软件免费且易于安装和使用，学习成本低。 \\\n\\\nSRS通过你飞机自己的无线电与其他玩家进行VOIP通信。 \\\n\\\n这将使你可以呼叫支援、沟通战术、减少误伤，且通过收发、监听与ATC的对话，最大程度避免机场交通事故 \\\n\\\n良好的沟通合作将帮助你和你的团队发挥最大战力！ \\\n\\\n \\\n\\\n******请启动SRS并保持通联，此提示消息自动清除******"
-
 
 -- DO NOT EDIT BELOW HERE --
 
@@ -53,7 +52,10 @@ local JSON = loadfile("Scripts\\JSON.lua")()
 SRSAuto.JSON = JSON
 
 local socket = require("socket")
-local DcsWeb = require('DcsWeb')
+-- local DcsWeb = require('DcsWeb')
+
+require("url") -- defines socket.url, which socket.http looks for
+http = require("http") -- socket.http
 
 SRSAuto.UDPSendSocket = socket.udp()
 SRSAuto.UDPSendSocket:settimeout(0)
@@ -119,14 +121,25 @@ end
 local _lastSent = 0
 
 SRSAuto.onMissionLoadBegin = function()
+	local _status, _result = pcall( function()
+		if SRSAuto.SERVER_SRS_HOST_AUTO then
+			local ipLookupUrl = "https://ipv4.icanhazip.com"
+			local T, code, headers, status = socket.http.request(ipLookupUrl)
 
-	if SRSAuto.SERVER_SRS_HOST_AUTO then
-		SRSAuto.SERVER_SRS_HOST = DcsWeb.get_data('dcs:whatsmyip')
-		SRSAuto.log("SET IP automatically to "..SRSAuto.SERVER_SRS_HOST)
+			if T == nil or code == nil or code < 200 or code >= 300 then
+			   if code == nil then code = "??" end
+			   SRSAuto.log("Failed to lookup IP from "..ipLookupUrl..". Http Status: " .. code)
+			else
+				SRSAuto.SERVER_SRS_HOST = T
+				SRSAuto.log("SET IP automatically to "..SRSAuto.SERVER_SRS_HOST)
+			end
+		end
+	end)
+	
+	if not _status then
+		SRSAuto.log('ERROR: ' .. _result)
 	end
-
 end
-
 
 SRSAuto.onSimulationFrame = function()
 
@@ -228,4 +241,4 @@ SRSAuto.sendMessage = function(msg, showTime, gid)
 end
 
 DCS.setUserCallbacks(SRSAuto)
-net.log("Loaded - DCS-SRS-AutoConnect 2.0.3.0")
+net.log("Loaded - DCS-SRS-AutoConnect 2.0.7.1")
