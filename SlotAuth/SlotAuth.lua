@@ -152,7 +152,9 @@ function SLOT.findIDInTableDynamic(_playerID, _inputUcid, table, commander)
     if allowed then
         return true
     else
-        net.send_chat_to('你没有选择这个位置的权限', _playerID)
+        if commander == 'instructor' or commander == 'observer' then
+            net.send_chat_to('你没有选择这个位置的权限', _playerID)
+        end
         if commander == 'artillery_commander' then
             net.send_chat_to('如果对CA和地面指挥感兴趣，可以向群管理提出申请', _playerID)
         end
