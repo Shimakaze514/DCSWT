@@ -26,14 +26,15 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
     end
 end
 
-function SLOT.callbacks.onPlayerTryConnect(addr, name, ucid, playerId)
+--[[ function SLOT.callbacks.onPlayerTryConnect(addr, name, ucid, playerId)
     --net.log('addr'..addr.."ucid"..ucid.."name"..name.."playerId"..playerId)
     if string.find(name, " ") ~= nil or string.find(name, "　") ~= nil then
+    --if string.find(name, "　") ~= nil then
         return false, "ID不允许带空格"
     end
 
     return true
-end
+end ]]
 
 function SLOT.callbacks.onPlayerDisconnect(playerId)
 end

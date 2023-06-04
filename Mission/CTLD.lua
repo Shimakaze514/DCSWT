@@ -808,7 +808,7 @@ ctld.spawnableCrates = {
         { weight = 1448, desc = "罗兰(Roland)近程地空导弹(1箱2车)", unit = "Roland Group"},
         { weight = 1451, desc = "HQ-7近程地空导弹(1箱2车)", unit = "HQ-7_Group"},
         { weight = 1452, desc = "道尔(SA-15)地空导弹单车（1箱1车）", unit = "Tor 9A331" },
-        { weight = 1452, desc = "道尔(SA-15)地空导弹阵地(2箱3车+补给)", unit = "SA-15 Buk" },
+        { weight = 1454, desc = "道尔(SA-15)地空导弹阵地(2箱3车+补给)", unit = "SA-15 Buk" },
         --{ weight = 1454, desc = "(小队)NASAMS地空导弹阵地(2箱4车+补给)", unit = "NASAMS Group", cratesRequired = 2, loadable = false },
         { weight = 1449, desc = "(小队)库班河(SA-6)地空导弹阵地(3箱4车+补给)", unit = "SA-6 Buk" },
         { weight = 1453, desc = "山毛榉(SA-11)地空导弹阵地(3箱5车+补给)", unit = "SA-11 Buk" },
@@ -4212,7 +4212,7 @@ function ctld.spawnShip(_heli,unitType)
 
     local _unitId = ctld.getNextUnitId()
     local _details = { type = unitType, unitId = _unitId, name = string.format("Unpacked %s #%i", unitType, _unitId) }
-    _group.units[1] = ctld.createUnit(_heli:getPoint().x + 500, _heli:getPoint().z + 500, 120, _details)
+    _group.units[1] = ctld.createUnit(_heli:getPoint().x - 0.5, _heli:getPoint().z - 6000, 120, _details)
 
     _group.country = _heli:getCountry()
     _group.category = Group.Category.SHIP
