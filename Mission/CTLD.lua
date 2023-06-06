@@ -806,7 +806,7 @@ ctld.spawnableCrates = {
 
 		--{ weight = 950, desc = "道尔(SA-15)雷达地空导弹发射车", unit = "Tor 9A331", cratesRequired = 1, loadable = false },
         { weight = 1448, desc = "罗兰(Roland)近程地空导弹(1箱2车)", unit = "Roland Group"},
-        { weight = 1451, desc = "HQ-7LNE近程地空导弹(1箱2车)", unit = "HQ-7_Group"},
+        { weight = 1451, desc = "HQ-7近程地空导弹(1箱2车)", unit = "HQ-7_Group"},
         { weight = 1452, desc = "道尔(SA-15)地空导弹单车（1箱1车）", unit = "Tor 9A331" },
         { weight = 1454, desc = "道尔(SA-15)地空导弹阵地(2箱3车+补给)", unit = "SA-15 Buk" },
         --{ weight = 1454, desc = "(小队)NASAMS地空导弹阵地(2箱4车+补给)", unit = "NASAMS Group", cratesRequired = 2, loadable = false },
@@ -1918,7 +1918,7 @@ ctld.GroupSystemTemplate = {
         count = 1,
         hasLimit = true,
         parts = {
-            { name = "HQ-7_LN_EO", desc = "光电红旗-7(HQ-7LNE)近程地空导弹发射车", launcher = true },
+            { name = "HQ-7_LN_SP", desc = "红旗-7(HQ-7)近程地空导弹发射车", launcher = true },
             --{name = "HQ-7_STR_SP", desc = "红旗-7(HQ-7)近程地空导弹雷达车" },
         },
         --repair = "HQ-7_LN_SP Group Repair",
