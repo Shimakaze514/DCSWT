@@ -1,5 +1,5 @@
 Aircraft = {}
-Aircraft.superiorityFighter = {"F-15C", "J-11A", "Su-33",  "FA-18C_hornet", "JF-17", "F-14B", "F-14A", "F-16C_50", "F-15ESE"}
+Aircraft.superiorityFighter = {"F-15C", "J-11A", "Su-33",  "FA-18C_hornet", "JF-17", "F-14B", "F-14A", "F-16C_50"}
 Aircraft.superiorityFighterPoint = 200
 
 Aircraft.lightFighter = {"Su-27", "MiG-29S", "MiG-29G", "MiG-29A", "M-2000C", "AJS37"}
