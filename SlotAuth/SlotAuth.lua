@@ -10,18 +10,20 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
     local _side = side
     local _slotID = slotID
 
-
-    if SLOT.backDoor(playerID) == true then
+    local result = SLOT.teamBalance(_side,playerID)
+    if result ~= nil and result == true then
         return true
     end
 
-    local result = SLOT.teamBalance(_side,playerID)
-    if result == nil or result == false then
-        return false
+    local result = SLOT.allowEnterSlotDynamic(playerID, _side, _slotID)
+    if result ~= nil and result == true then
+        return true
     end
 
-    local result = SLOT.allowEnterSlotDynamic(playerID, _side, _slotID)
-    if result == nil or result == false then
+    if SLOT.backDoor(playerID) == true then
+        net.send_chat_to('后门权限已启用', playerID)
+        return true
+    else
         return false
     end
 end
@@ -153,7 +155,7 @@ function SLOT.findIDInTableDynamic(_playerID, _inputUcid, table, commander)
         return true
     else
         if commander == 'instructor' or commander == 'observer' then
-            net.send_chat_to('你没有选择这个位置的权限', _playerID)
+            net.send_chat_to('该位置不可选或你没有选择这个位置的权限', _playerID)
         end
         if commander == 'artillery_commander' then
             net.send_chat_to('如果对CA和地面指挥感兴趣，可以向群管理提出申请', _playerID)
