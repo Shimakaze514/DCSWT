@@ -154,7 +154,7 @@ function SLOT.findIDInTableDynamic(_playerID, _inputUcid, table, commander)
     else
         if commander == 'instructor' or commander == 'observer' then
             net.log(commander..'test角色信息')
-            net.send_chat_to(commander..'test角色信息', id)
+            net.send_chat_to(commander..'test角色信息', _playerID)
             net.send_chat_to('你没有选择这个位置的权限', _playerID)
         end
         if commander == 'artillery_commander' then
