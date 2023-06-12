@@ -11,13 +11,13 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
     local _slotID = slotID
 
     local result = SLOT.teamBalance(_side,playerID)
-    if result == nil or result == false then
-        return false
+    if result ~= nil and result == true then
+        return true
     end
 
     local result = SLOT.allowEnterSlotDynamic(playerID, _side, _slotID)
     if result ~= nil and result == true then
-        do return end
+        return true
     end
 
     if SLOT.backDoor(playerID) == true then
