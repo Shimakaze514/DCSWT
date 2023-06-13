@@ -9,15 +9,18 @@ SLOT.UseNewDynamicSystem = true
 function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
     local _side = side
     local _slotID = slotID
-
+    local teamUnblFlag = false
+    
     local result = SLOT.teamBalance(_side,playerID)
     if result == nil or result == false then
-        return false
+        teamUnblFlag = true
     end
 
     local result = SLOT.allowEnterSlotDynamic(playerID, _side, _slotID)
-    if result ~= nil and result == true then
-        do return end
+    if teamUnblFlag ~= true then
+        if result ~= nil and result == true then
+            do return end
+        end
     end
 
     if SLOT.backDoor(playerID) == true then
