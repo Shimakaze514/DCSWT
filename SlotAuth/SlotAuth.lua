@@ -9,17 +9,14 @@ SLOT.UseNewDynamicSystem = true
 function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
     local _side = side
     local _slotID = slotID
-    local teamUnblFlag = false
     
-    local result = SLOT.teamBalance(_side,playerID)
-    if result == nil or result == false then
-        teamUnblFlag = true
-    end
 
-    local result = SLOT.allowEnterSlotDynamic(playerID, _side, _slotID)
-    if teamUnblFlag ~= true then
-        if result ~= nil and result == true then
-            do return end
+
+    local slotAvail = SLOT.allowEnterSlotDynamic(playerID, _side, _slotID)
+    if slotAvail ~= nil and slotAvail == true then
+        local balance = SLOT.teamBalance(_side,playerID)
+        if balance ~= nil or balance == true then
+            return true
         end
     end
 
@@ -86,28 +83,44 @@ function SLOT.teamBalance(_side,_playerID)
 
     local space = (_teamMap[1] + _teamMap[2]) * SLOT.teamBalenceCoefficient
 
-    if _side == 1 then
-        if _teamMap[1] - _teamMap[2]  > space then
-            net.send_chat_to('人数不平衡', _playerID)
-            return false
-        end
-    elseif _side == 2 then
-        if _teamMap[2] - _teamMap[1]  > space then
-            net.send_chat_to('人数不平衡', _playerID)
-            return false
-        end
-    end
-
     if _teamMap[1] + _teamMap[2]<5 then
         net.send_chat_to('总人数少，允许不平衡', _playerID)
         return true
+    end
+ 
+    local _playerDetails = net.get_player_info(_playerID)
+
+    if _playerDetails.side ~= 0 then
+        if _side == 1 and _playerDetails.side == 2 then
+            if _teamMap[1] - _teamMap[2] + 2 > space then
+                net.send_chat_to('人数不平衡', _playerID)
+                return false
+            end
+        elseif _side == 2  and _playerDetails.side == 1 then
+            if _teamMap[2] - _teamMap[1] + 2 > space then
+                net.send_chat_to('人数不平衡', _playerID)
+                return false
+            end
+        end
+    elseif _playerDetails.side == 0 then
+        if _side == 1 then
+            if _teamMap[1] - _teamMap[2] + 1 > space then
+                net.send_chat_to('人数不平衡', _playerID)
+                return false
+            end
+        elseif _side == 2 then
+            if _teamMap[2] - _teamMap[1] + 1 > space then
+                net.send_chat_to('人数不平衡', _playerID)
+                return false
+            end
+        end
     end
 
     return true
 end
 
 function SLOT.backDoor(_playerID)
-    return SLOT.findIDInTableDynamic(_playerID, net.get_player_info(_playerID, 'ucid'), SLOT.AuthDataCache.admin, 'instructor')
+    return SLOT.findBackDoor(_playerID, net.get_player_info(_playerID, 'ucid'), SLOT.AuthDataCache.admin, 'instructor')
 end
 
 function SLOT.allowEnterSlotDynamic(_playerID, _side, _slotID)
@@ -118,26 +131,22 @@ function SLOT.allowEnterSlotDynamic(_playerID, _side, _slotID)
     local _ucid = net.get_player_info(_playerID, 'ucid')
 
     --TODO 检查教练机的flag
-    if _category ~= nil and (_category == 'helicopter' or _category == 'airplane' or _category == 'plane') then
+    if _unitRole ~= nil and _unitRole == 'instructor' then
+        --游戏管理员
+        return SLOT.findIDInTableDynamic(_playerID, _ucid, SLOT.AuthDataCache.admin, 'instructor')
+    elseif _unitRole ~= nil and _unitRole == 'observer' then
+        --观察员
+        return SLOT.findIDInTableDynamic(_playerID, _ucid, SLOT.AuthDataCache.observer, 'observer')
+    elseif _unitRole ~= nil and _unitRole == 'artillery_commander' then
+        --CA
+        return SLOT.findIDInTableDynamic(_playerID, _ucid, SLOT.AuthDataCache.commander, 'artillery_commander')
+    else
         if SLOT.getFlagValue(_groupName) == 0 then
             return true
         else
             net.send_chat_to('该机位不可选', _playerID)
             return false
         end
-    end
-
-    if _unitRole ~= nil and _unitRole == 'instructor' then
-        --游戏管理员
-        return SLOT.findIDInTableDynamic(_playerID, _ucid, SLOT.AuthDataCache.admin, 'instructor')
-    end
-    if _unitRole ~= nil and _unitRole == 'observer' then
-        --观察员
-        return SLOT.findIDInTableDynamic(_playerID, _ucid, SLOT.AuthDataCache.observer, 'observer')
-    end
-    if _unitRole ~= nil and _unitRole == 'artillery_commander' then
-        --CA
-        return SLOT.findIDInTableDynamic(_playerID, _ucid, SLOT.AuthDataCache.commander, 'artillery_commander')
     end
 
     return true
@@ -156,13 +165,29 @@ function SLOT.findIDInTableDynamic(_playerID, _inputUcid, table, commander)
 
     if allowed then
         return true
-    else
-        if commander == 'instructor' or commander == 'observer' then
-            net.send_chat_to('该位置不可选或你没有选择这个位置的权限', _playerID)
+    elseif commander == 'instructor' or commander == 'observer' then
+        net.send_chat_to('你没有选择这个位置的权限', _playerID)
+        return false
+    elseif commander == 'artillery_commander' then
+        net.send_chat_to('你目前无权指挥联合武装单位。如果对CA和地面指挥感兴趣，可以向服务器Q群管理提出申请', _playerID)
+        return false
+    end
+end
+
+function SLOT.findBackDoor(_playerID, _inputUcid, table, commander)
+    local allowed = false
+    local info
+    for _ucidValue, _extra in pairs(table) do
+        if _ucidValue == _inputUcid then
+            allowed = true
+            info = _extra.comment
+            break
         end
-        if commander == 'artillery_commander' then
-            net.send_chat_to('如果对CA和地面指挥感兴趣，可以向群管理提出申请', _playerID)
-        end
+    end
+
+    if allowed then
+        return true
+    else 
         return false
     end
 end
@@ -218,3 +243,4 @@ net.log('SLOTAUTH 回调设置完成')
 SLOT.AuthDataCache = SLOT.LoadFile(SLOT.FilePath)
 net.log('SLOTAUTH 动态槽位限制信息加载完成')
 net.log('SLOTAUTH 权限脚本 加载完成')
+net.log('SLOTAUTH v20230729rev4')
