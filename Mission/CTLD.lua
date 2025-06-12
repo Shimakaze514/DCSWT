@@ -6190,7 +6190,7 @@ function AdditionalEventHandler:onEvent(event)
             local availableUnitTypes = {"MosquitoFBMkVI", "TF-51D", "CH-47Fbl1", "Mi-8MT", "Ka-50", "Ka-50_3",
                                         "AH-64D_BLK_II", "Mi-24P", "OH58D", "UH-1H", "SA342M", "SA342L", "SA342Mistral",
                                         "SA342Minigun"}
-            trigger.action.outTextForUnit(event.initiator:getID(), "机型：" .. unitType .. "出生", 20, true) -- 出生时显示机型
+            --trigger.action.outTextForUnit(event.initiator:getID(), "机型：" .. unitType .. "出生", 20, true) -- 出生时显示机型
             for _, typename in ipairs(availableUnitTypes) do
                 if unitType == typename then
                     --ctld.addF10MenuOptionsDynamic(unitName)
