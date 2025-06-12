@@ -1,6 +1,6 @@
 dclean = {}
 
-dclean.Version = "20230526"
+dclean.Version = "20250612"
 
 dclean.RefreshTime = 1200
 
@@ -16,13 +16,14 @@ function dclean.thatsHowTheyClean()
         params = {
             point = {
                 x = -248577,
-                y = 8,
+                y = land.getHeight({x = -248577, y = 607722}),
                 z = 607722
             },
-            radius = 300000}
+            radius = 150000}
         }
 
     world.removeJunk(volS)
+    dclean.logInfo('The World Coordinates of volS are: X: ' .. volS.params.point.x .. ' Y: ' .. volS.params.point.y .. ' Z: ' .. volS.params.point.z)
     dclean.logInfo("已清扫垃圾")
     timer.scheduleFunction(dclean.thatsHowTheyClean, nil, timer.getTime() + dclean.RefreshTime)
     trigger.action.outText('已清理战场残骸',10)
