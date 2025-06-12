@@ -19,7 +19,7 @@ function dclean.thatsHowTheyClean()
                 y = land.getHeight({x = -248577, y = 607722}),
                 z = 607722
             },
-            radius = 150000}
+            radius = 200000}
         }
 
     world.removeJunk(volS)
