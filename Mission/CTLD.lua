@@ -792,29 +792,29 @@ ctld.spawnableCrates = {
     {
         name = "主战坦克(Tank)",
         items = {
-            { weight = 1506, desc = "随机主战坦克(Random MBT)", unit = "Tank RandomGroup" },
+            { weight = 1200, desc = "随机主战坦克(Random MBT)", unit = "Tank RandomGroup" }, --* 重量算法：原载具重量抹零然后除以5
         }
     },
     {
         name = "步兵战车(IFV)",
         items = {
-            { weight = 1065, desc = "轻型装甲坦克战车(Type04A)", unit = "ZBD04A Group" },
-            { weight = 1119, desc = "反坦克导弹战车(M1134 ATGM)", unit = "M1134 Stryker ATGM Group" },
-            { weight = 976, desc = "步兵装甲战车(BTR-82A)", unit = "BTR82 Group" },
-            { weight = 977, desc = "步兵装甲战车(LAV-25)", unit = "LAV-25 Group" },
-            { weight = 978, desc = "步兵装甲战车(M2 Bradley)", unit = "M-2 Bradley Group" },
+            { weight = 400*2, desc = "轻型装甲坦克战车(Type04A)", unit = "ZBD04A Group" },  --? 要不要乘以车辆数呢...感觉太重不好
+            { weight = 330*2, desc = "反坦克导弹战车(M1134 ATGM)", unit = "M1134 Stryker ATGM Group" },
+            { weight = 300*2, desc = "步兵装甲战车(BTR-82A)", unit = "BTR82 Group" },
+            { weight = 256*2, desc = "步兵装甲战车(LAV-25)", unit = "LAV-25 Group" },
+            { weight = 552*2, desc = "步兵装甲战车(M2 Bradley)", unit = "M-2 Bradley Group" },
         }
     },
     {
         name = "远程火力(Artillery)",
         items = {
-            { weight = 1446, desc = "远程火箭炮(BM27)发射阵地(2箱2车+补给)", unit = "BM27 Group" },
-            { weight = 1460, desc = "PLZ05自行火炮(1箱2车)", unit = "PLZ05 Group" },
-            { weight = 1447, desc = "2S19自行火炮(1箱2车)", unit = "SAU Msta Group" },
-            { weight = 1431, desc = "M109自行火炮(1箱2车)", unit = "M109 Group" },
-            { weight = 1435, desc = "T155自行火炮(1箱2车)", unit = "T155 Group" },
-            { weight = 1432, desc = "达纳卡车炮(SpGH_Dana)(1箱2车)", unit = "Dana Group" },
-            { weight = 1581, desc = "飞毛腿导弹(Scud)(2箱1车)", unit = "Scud_B Group" },
+            { weight = 400+50, desc = "远程火箭炮(BM27)发射阵地(2箱2车+补给)", unit = "BM27 Group" },
+            { weight = 800*2, desc = "PLZ05自行火炮(1箱2车)", unit = "PLZ05 Group" },
+            { weight = 840*2, desc = "2S19自行火炮(1箱2车)", unit = "SAU Msta Group" },
+            { weight = 550*2, desc = "M109自行火炮(1箱2车)", unit = "M109 Group" },
+            { weight = 940*2, desc = "T155自行火炮(1箱2车)", unit = "T155 Group" },
+            { weight = 585*2, desc = "达纳卡车炮(SpGH_Dana)(1箱2车)", unit = "Dana Group" },
+            { weight = 466/2, desc = "飞毛腿导弹(Scud)(2箱1车)", unit = "Scud_B Group" },
         }
     },
     {
@@ -6070,6 +6070,7 @@ function ctld.addF10MenuOptionsDynamic(_unitName)
             env.info("[CTLD] group id is " .. _groupId)
 
             if _groupId then
+                ctld.inTransitSlingLoadCrates[_unitName] = {}  --先清除上一个架次装载的箱子
 
                 if ctld.addedCSARTo[tostring(_groupId)] == nil then
                     local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "CSAR飞行员救援")
