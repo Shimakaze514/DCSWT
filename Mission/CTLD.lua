@@ -2385,7 +2385,7 @@ function ctld.spawnCrateStatic(_country, _unitId, _point, _name, _desc, _side)
 
         _crate["y"] = _point.z
         _crate["x"] = _point.x
-        _crate["z"] = land.getHeight({x = _point.x, y = _point.z}) --? 是这个导致箱子不能落在地上的吗
+        --_crate["z"] = land.getHeight({x = _point.x, y = _point.z}) --INOP
         _crate["mass"] = _crateType.weight
         _crate["name"] = _name
         _crate["heading"] = 0
