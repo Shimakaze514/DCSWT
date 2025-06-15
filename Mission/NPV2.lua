@@ -128,7 +128,7 @@ function NP.capture(_args)
     _logisticData.units[1].coalition= oppsiteCountrySide
     _logisticData.units[1].coalitionId= oppsiteSide
 
-    _logisticData.units[1].alt= land.getHeight({x = _logisticData.units[1].x, y = _logisticData.units[1].y}) - 7
+    --_logisticData.units[1].alt= land.getHeight({x = _logisticData.units[1].x, y = _logisticData.units[1].y}) - 7
     NP.logDebug('_logistic:'..ctld.p(_targetLogistic))
     NP.logDebug('_logisticData:'..ctld.formatTable(_logisticData))
     NP.logDebug('_unit:'..ctld.p(_unit))
@@ -141,7 +141,8 @@ function NP.capture(_args)
     end
 
 
-    mist.dynAddStatic(_logisticData)--生成另一阵营的新cc，同一位置
+    --mist.dynAddStatic(_logisticData)--生成另一阵营的新cc，同一位置
+    timer.scheduleFunction(mist.dynAddStatic, _logisticData, timer.getTime() + 5)
     timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + 20)
     table.insert(ctld.logisticUnits, _logisticData.units[1].unitName)--新的单位加到cc的白名单
 
