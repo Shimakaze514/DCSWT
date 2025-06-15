@@ -96,12 +96,12 @@ function NP.capture(_args)
     local oppsiteCountrySide
     --TODO 抽象这里
     if _side==2 then
-        oppsiteCountryID =country.id.AGGRESSORS
+        oppsiteCountryID =country.id.CJTF_RED
         oppsiteCountrySide="red"
         oppsiteSide=1
         oppsiteCountry=country.name[oppsiteCountryID]
     else
-        oppsiteCountryID =country.id.USA
+        oppsiteCountryID =country.id.CJTF_BLUE
         oppsiteCountrySide="blue"
         oppsiteSide=2
         oppsiteCountry=country.name[oppsiteCountryID]
