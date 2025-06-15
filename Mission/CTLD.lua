@@ -2338,6 +2338,14 @@ function ctld.spawnCrateStatic(_country, _unitId, _point, _name, _desc, _side)
     local _crate
     local _spawnedCrate
 
+    local _crateType = ctld.crateLookupTable[_desc]
+
+    if _side == 1 then
+        ctld.spawnedCratesRED[_name] = _crateType
+    else
+        ctld.spawnedCratesBLUE[_name] = _crateType
+    end
+
     if ctld.staticBugWorkaround and ctld.slingLoad == false then
         local _groupId = ctld.getNextGroupId()
         local _groupName = "Crate Group #" .. _groupId
@@ -2377,7 +2385,8 @@ function ctld.spawnCrateStatic(_country, _unitId, _point, _name, _desc, _side)
 
         _crate["y"] = _point.z
         _crate["x"] = _point.x
-        _crate["mass"] = _weight
+        _crate["z"] = land.getHeight({x = _point.x, y = _point.z}) --? 是这个导致箱子不能落在地上的吗
+        _crate["mass"] = _crateType.weight
         _crate["name"] = _name
         _crate["heading"] = 0
         _crate["country"] = _country
@@ -2386,14 +2395,6 @@ function ctld.spawnCrateStatic(_country, _unitId, _point, _name, _desc, _side)
         mist.dynAddStatic(_crate)
 
         _spawnedCrate = StaticObject.getByName(_crate["name"])
-    end
-
-    local _crateType = ctld.crateLookupTable[_desc]
-
-    if _side == 1 then
-        ctld.spawnedCratesRED[_name] = _crateType
-    else
-        ctld.spawnedCratesBLUE[_name] = _crateType
     end
 
     return _spawnedCrate
