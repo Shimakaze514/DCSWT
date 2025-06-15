@@ -128,7 +128,7 @@ function NP.capture(_args)
     _logisticData.units[1].coalition= oppsiteCountrySide
     _logisticData.units[1].coalitionId= oppsiteSide
 
-    --_logisticData.units[1].alt=_logisticData.units[1].alt-5 --TODO cc浮空
+    _logisticData.units[1].alt= land.getHeight({x = _logisticData.units[1].x, y = _logisticData.units[1].y}) --? XY是否正确？
     NP.logDebug('_logistic:'..ctld.p(_targetLogistic))
     NP.logDebug('_logisticData:'..ctld.formatTable(_logisticData))
     NP.logDebug('_unit:'..ctld.p(_unit))
