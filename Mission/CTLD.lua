@@ -878,7 +878,7 @@ ctld.spawnableCrates = {
 
 --- 3D model that will be used to represent a loadable crate ; by default, a generator
 ctld.spawnableCratesModel_load = {
-    ["category"] = "Fortifications",
+    ["category"] = "Cargos",
     ["shape_name"] = "iso_container_small_cargo",
     ["type"] = "iso_container_small"
 }
