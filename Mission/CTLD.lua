@@ -808,12 +808,14 @@ ctld.spawnableCrates = {
     {
         name = "远程火力(Artillery)",
         items = {
-            { weight = 400+50, desc = "远程火箭炮(BM27)发射阵地(2箱2车+补给)", unit = "BM27 Group" },
             { weight = 800*2, desc = "PLZ05自行火炮(1箱2车)", unit = "PLZ05 Group" },
             { weight = 840*2, desc = "2S19自行火炮(1箱2车)", unit = "SAU Msta Group" },
             { weight = 550*2, desc = "M109自行火炮(1箱2车)", unit = "M109 Group" },
             { weight = 940*2, desc = "T155自行火炮(1箱2车)", unit = "T155 Group" },
             { weight = 585*2, desc = "达纳卡车炮(SpGH_Dana)(1箱2车)", unit = "Dana Group" },
+            { weight = 400+50, desc = "BM27远程火箭炮阵地(2箱2车+补给)", unit = "BM27 Group" },
+            { weight = 400+50, desc = "BM30远程火箭炮阵地(3箱2车+补给)", unit = "Smerch_HE Group" },
+            { weight = 400+50, desc = "海马斯远程火箭炮阵地(3箱2车+补给)", unit = "MLRS Group" },
             { weight = 466/2, desc = "飞毛腿导弹(Scud)(2箱1车)", unit = "Scud_B Group" },
         }
     },
@@ -843,7 +845,9 @@ ctld.spawnableCrates = {
         items = {
             { weight = 821, desc = "山毛榉(SA-11 repair)维护箱", unit = "SA-11 BUK Repair" },
             { weight = 823, desc = "道尔(SA-15 repair)维护箱", unit = "SA-15 BUK Repair" },
-            { weight = 824, desc = "火箭炮(BM27 repair)发射阵地维护箱", unit = "BM27 Group Repair" },
+            { weight = 824, desc = "BM27火箭炮阵地维护箱", unit = "BM27 Group Repair" },
+            { weight = 824, desc = "BM30火箭炮阵地维护箱", unit = "Smerch_HE Group Repair" },
+            { weight = 824, desc = "海马斯火箭炮阵地维护箱", unit = "MLRS Group Repair" },
         }
     },
     {
@@ -1968,7 +1972,7 @@ ctld.GroupSystemTemplate = {
         --repair = "HQ-7_LN_SP Group Repair",
     },
     {
-        name = "远程火箭炮(BM27)发射阵地",
+        name = "BM27远程火箭炮阵地",
         sysName = "BM27 Group",
         cratesRequired = 2,
         aaLaunchers = 2,
@@ -1980,6 +1984,34 @@ ctld.GroupSystemTemplate = {
             { name = "ZIL-135", desc = "远程火箭炮(BM27)补弹车2" },
         },
         repair = "BM27 Group Repair",
+    },
+    {
+        name = "BM30远程火箭炮阵地",
+        sysName = "Smerch_HE Group",
+        cratesRequired = 3,
+        aaLaunchers = 2,
+
+        count = 2,
+        hasLimit = false,
+        parts = {
+            { name = "Smerch_HE", desc = "远程火箭炮(BM30)", launcher = true },
+            { name = "ZIL-135", desc = "远程火箭炮(BM30)补弹车2" },
+        },
+        repair = "Smerch_HE Group Repair",
+    },
+    {
+        name = "海马斯远程火箭炮阵地",
+        sysName = "MLRS Group",
+        cratesRequired = 3,
+        aaLaunchers = 2,
+
+        count = 2,
+        hasLimit = false,
+        parts = {
+            { name = "MLRS", desc = "远程火箭炮(海马斯)", launcher = true },
+            { name = "M 818", desc = "远程火箭炮(海马斯)补弹车2" },
+        },
+        repair = "MLRS Group Repair",
     },
     {
         name = "山毛榉(SA-11)地空导弹阵地",
