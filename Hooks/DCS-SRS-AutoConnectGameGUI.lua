@@ -10,7 +10,7 @@
 local SRSAuto = {}
 
 SRSAuto.SERVER_SRS_HOST_AUTO = true -- if set to true SRS will set the SERVER_SRS_HOST for you!
-SRSAuto.SERVER_SRS_PORT = "10601" --  SRS Server default is 5002 TCP & UDP
+SRSAuto.SERVER_SRS_PORT = "5002" --  SRS Server default is 5002 TCP & UDP
 SRSAuto.SERVER_SRS_HOST = "127.0.0.1" -- overridden if SRS_HOST_AUTO is true -- set to your PUBLIC ipv4 address or domain srs.example.com
 SRSAuto.SERVER_SEND_AUTO_CONNECT = true -- set to false to disable auto connect or just remove this file 
 
@@ -20,7 +20,7 @@ SRSAuto.CHAT_COMMANDS_ENABLED = true -- if true type -freq, -freqs or -frequenci
 SRSAuto.SRS_FREQUENCIES = {
     ["red"]= "ATC = 261.000, GCI = 124.800", -- edit this to the red frequency list
     ["blue"]= "ATC = 261.000, GCI = 124.800", -- edit this to the blue frequency list
-    ["neutral"]= "ATC = 261.000, 公共频率 = 251.000, 音乐电台 = 50.000FM", -- edit this to the spectator frequency list
+    ["neutral"]= "ATC = 261.000, 公共频率 = 251.000", -- edit this to the spectator frequency list
 }
 
 ---- SRS NUDGE MESSAGE ----
@@ -28,7 +28,7 @@ SRSAuto.SRS_NUDGE_ENABLED = true -- set to true to enable the message below
 SRSAuto.SRS_NUDGE_TIME =  900 -- SECONDS between messages to non connected SRS users 间隔秒数
 SRSAuto.SRS_MESSAGE_TIME = 30 -- SECONDS to show the message for
 --SRSAuto.SRS_NUDGE_PATH = "C:\\Program Files\\DCS-SimpleRadio-Standalone\\clients-list.json" -- path to SERVER JSON EXPORT - enable Auto Export List on the server
-SRSAuto.SRS_NUDGE_PATH = "C:\\Program Files\\DCS-SimpleRadioStandalone\\clients-list.json" -- path to SERVER JSON EXPORT - enable Auto Export List on the server
+SRSAuto.SRS_NUDGE_PATH = "D:\\DCS-SRS-2.1.1.0\\clients-list.json" -- path to SERVER JSON EXPORT - enable Auto Export List on the server
 --- EDIT the message below to change what is said to users - DONT USE QUOTES - either single or double due to the injection into SRS it'll fail
 --- Newlines must be escaped like so: \\\n with 3 backslashes
 --SRSAuto.SRS_NUDGE_MESSAGE = "****** DCS IS BETTER WITH COMMS - USE SRS ******\\\n\\\nMake sure to install DCS SimpleRadio Standalone - SRS - free and easy to install. \\\n\\\nSRS gives you VOIP Comms with other players through your aircrafts own radios. This will help you to be more effective, find enemies and wingmen, or call in support \\\n\\\n Google: DCS SimpleRadio Standalone \\\n\\\nGood comms and teamwork will help YOU and your team win! "
