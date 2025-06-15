@@ -142,7 +142,7 @@ function NP.capture(_args)
 
 
     --mist.dynAddStatic(_logisticData)--生成另一阵营的新cc，同一位置
-    timer.scheduleFunction(mist.dynAddStatic, _logisticData, timer.getTime() + 5)
+    timer.scheduleFunction(mist.dynAddStatic, _logisticData, timer.getTime() + 1)
     timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + 20)
     table.insert(ctld.logisticUnits, _logisticData.units[1].unitName)--新的单位加到cc的白名单
 
