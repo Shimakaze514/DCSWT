@@ -275,8 +275,9 @@ function dsave.loadDsaveCCsData()
     dsave.logInfo('extract data from json file cc')
     dsave.logInfo(ctld.formatTable(tableData2))
 
-    for _, _group in pairs(tableData2) do
-        mist.dynAddStatic(_group)
+    for i, _group in pairs(tableData2) do
+        --mist.dynAddStatic(_group)
+        timer.scheduleFunction(mist.dynAddStatic, _group, timer.getTime() + 0.2*i) -- 防止CC浮空
         table.insert(ctld.logisticUnits, _group.units[1].unitName)
         dsave.logInfo('CC:|'.._group.groupName ..'|generated!'.. ' 阵营:' .._group.country)
     end
