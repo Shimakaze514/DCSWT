@@ -6059,7 +6059,7 @@ function ctld.addF10MenuOptions()
         local _groupID = _groupTable.groupId
         local _groupName = _groupTable.name
         local _groupCategory = _groupTable.Category
-        env.error(string.format("%s group has category: %s", _groupName, _groupCategory), false)
+        env.error(string.format("%s group has category: %s", tostring(_groupName), tostring(_groupCategory)), true)
         if _groupCategory == 3 and ctld.captureCommandAdded[_groupName] == nil then
             missionCommands.addCommandForGroup(_groupID, "占领", nil, NP.capture, _groupTable)
             ctld.captureCommandAdded[_groupName] = true
