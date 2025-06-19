@@ -81,8 +81,15 @@ function dsave.recordAllVehiclesElements(inputDB)
     end
 
     for _, _group in pairs(inputDB) do
+        local _groupID = _group.groupId
+        local _groupName = _group.name
+        local _, _groupCategory = pcall(function() 
+            local result =  Group.getByName(_groupName):getCategory()
+            --env.info(string.format("%s group has category: %s", tostring(_groupName), tostring(result)), false)
+            return result
+        end)
         local needSave =false
-        if dsave.NotInVehicleBlackList(_group) then
+        if dsave.NotInVehicleBlackList(_group) and (_groupCategory == 2 or _groupCategory == 3) then
             for _key , _unitTable in pairs(_group.units) do
                 if _unitTable.unitName ~= nil and dsave.typeBelongsToBlackList(_unitTable.type)==false then
                     local _unit=Unit.getByName(_unitTable.unitName)
