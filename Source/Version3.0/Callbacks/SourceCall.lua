@@ -20,13 +20,32 @@ function SourceCall.onPlayerConnect(id)
 
   local name = net.get_player_info(id, "name")
   local ucid = net.get_player_info(id, "ucid")
+-- 保持 name → ucid 的映射（兼容旧代码）
   SourceCall.PlayerName[name] = ucid
+
+  -- 同时记录 ucid → names 的历史（新功能）
+  SourceCall.PlayerNameHistory = SourceCall.PlayerNameHistory or {}
+  SourceCall.PlayerNameHistory[ucid] = SourceCall.PlayerNameHistory[ucid] or {}
+  SourceCall.PlayerNameHistory[ucid][name] = true
   if DCS.isServer() and DCS.isMultiplayer() and name and ucid and id ~= net.get_my_player_id() then
     net.dostring_in("mission", 'a_do_script(\'SourceObj.updatePlayerInfo("' .. name .. '", "' .. ucid .. '")\')')
-    --保存玩家详细信息
+    
+    -- Initialize PlayerInfo if not exists
+    SourceCall.PlayerInfo = SourceCall.PlayerInfo or {}
+    
+    -- Save player detailed information
     if SourceCall.PlayerInfo[ucid] == nil then
       SourceCall.PlayerInfo[ucid] = {}
     end
+    
+    -- Initialize names table in PlayerInfo if not exists
+    SourceCall.PlayerInfo[ucid].names = SourceCall.PlayerInfo[ucid].names or {}
+    
+    -- Add current name to the names history if not already present
+    if name and not SourceCall.PlayerInfo[ucid].names[name] then
+      SourceCall.PlayerInfo[ucid].names[name] = true
+    end
+    
     local tempQuitTime = SourceCall.PlayerInfo[ucid]["quitTime"] or 0
     local tempKillFriend = SourceCall.PlayerInfo[ucid]["KillFriend"] or 0
     SourceCall.PlayerInfo[ucid] = net.get_player_info(id)
