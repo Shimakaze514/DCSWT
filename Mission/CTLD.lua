@@ -3461,7 +3461,7 @@ function ctld.getWeightOfCargo(unitName)
     local _crate = ctld.inTransitSlingLoadCrates[unitName]
     if _crate then
         ctld.logTrace(string.format("_crate=%s", ctld.p(_crate)))
-        if _crate.simulatedSlingload then
+        if _crate.simulatedSlingload then --! 手动把_crate.simulatedSlingload设置为true
             ctld.logTrace(string.format("_crate.weight=%s", ctld.p(_crate.weight)))
             _weight = _weight + _crate.weight
             _description = _description .. string.format("1 %s crate onboard (%s kg)\n", _crate.desc, _crate.weight)
@@ -3578,13 +3578,17 @@ function ctld.loadNearbyCrate(_name)
     -- 初始化运输箱数组
     ctld.inTransitSlingLoadCrates[_name] = ctld.inTransitSlingLoadCrates[_name] or {}
     local _crateCount = #ctld.inTransitSlingLoadCrates[_name]
-
-    -- 检查最大箱子数
-    local _maxCrates = ctld.isMultiCrate(_name) and 2 or 1
+    local availableUnitTypes = {"MosquitoFBMkVI", "CH-47Fbl1"}
+    local unitType = _transUnit:getTypeName()
+    local _maxCrates = 1
+    for _, typename in ipairs(availableUnitTypes) do
+                if unitType == typename then
+                    _maxCrates = 2
+                    break -- Exit loop once found to save time
+                end
+            end
     if _crateCount >= _maxCrates then
-        local _msg = ctld.isMultiCrate(_name) and 
-            "你已经拥有两个箱子，装不下更多了" or 
-            "你已经拥有一个箱子，装不下更多了"
+        local _msg = "你已经拥有".._maxCrates.."个箱子，装不下更多了"
         ctld.displayMessageToGroup(_transUnit, _msg, 10, true)
         return
     end
@@ -3598,7 +3602,7 @@ function ctld.loadNearbyCrate(_name)
     local _crates = ctld.getCratesAndDistance(_transUnit)
     for _, _crate in pairs(_crates) do
         if _crate.dist < 50.0 then
-            ctld.displayMessageToGroup(_transUnit, "装载 " .. _crate.details.desc .. " 箱子", 10, true)
+            ctld.displayMessageToGroup(_transUnit, "装载 " .. _crate.details.desc .. " 箱子\n你已增重".._crate.details.weight.."kg", 10, true)
 
             -- 移除场景中的箱子
             if _transUnit:getCoalition() == 1 then
@@ -3609,6 +3613,7 @@ function ctld.loadNearbyCrate(_name)
             _crate.crateUnit:destroy()
 
             -- 添加箱子到运输列表
+            _crate.simulatedSlingload = true
             table.insert(ctld.inTransitSlingLoadCrates[_name], mist.utils.deepCopy(_crate.details))
             ctld.adaptWeightToCargo(_name)
             return
