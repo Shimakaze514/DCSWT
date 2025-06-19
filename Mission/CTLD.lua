@@ -1953,7 +1953,7 @@ ctld.GroupSystemTemplate = {
         count = 1,
         hasLimit = true,
         parts = {
-            { name = "HQ-7_LN_EO", desc = "光电红旗-7(HQ-7LNE)近程地空导弹发射车", launcher = true },
+            { name = "HQ-7_LN_P", desc = "光电红旗-7(HQ-7LNE)近程地空导弹发射车", launcher = true },
             --{name = "HQ-7_STR_SP", desc = "红旗-7(HQ-7)近程地空导弹雷达车" },
         },
         --repair = "HQ-7_LN_SP Group Repair",
