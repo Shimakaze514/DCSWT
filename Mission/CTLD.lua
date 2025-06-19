@@ -5091,6 +5091,9 @@ function ctld.spawnCrateGroup(_heli, _positions, _types, _groupSystemTemplate)
     local _id = ctld.getNextGroupId()
     local _groupName = _heli:getPlayerName() .. " " .. _types[1] .. " #" .. _id
     local _side = _heli:getCoalition()
+    -- angle
+    local anglePos = _heli:getPosition()
+    local _angle = math.atan2(anglePos.x.z, anglePos.x.x)
 
     --TODO 限制参数添加到动态保存中
     ctld.logDebug('ctld.checkPlayerLimit(_heli,_groupSystemTemplate)    ' .. ctld.formatTable(_groupSystemTemplate))
@@ -5115,13 +5118,11 @@ function ctld.spawnCrateGroup(_heli, _positions, _types, _groupSystemTemplate)
     if #_positions == 1 then
         local _unitId = ctld.getNextUnitId()
         local _details = { type = _types[1], unitId = _unitId, name = string.format("Unpacked %s #%i", _types[1], _unitId) }
-        local _angle = math.atan2(_positions[1].x.z, _positions[1].x.x)
         _group.units[1] = ctld.createUnit(_positions[1].x + 5, _positions[1].z + 5, _angle, _details)
     else
         for _i, _pos in ipairs(_positions) do
             local _unitId = ctld.getNextUnitId()
             local _details = { type = _types[_i], unitId = _unitId, name = string.format("Unpacked %s #%i", _types[_i], _unitId) }
-            local _angle = math.atan2(_pos.x.z, _pos.x.x)
             _group.units[_i] = ctld.createUnit(_pos.x + 5, _pos.z + 5, _angle, _details)
         end
     end
