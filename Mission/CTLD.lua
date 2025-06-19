@@ -6060,7 +6060,7 @@ function ctld.addF10MenuOptions()
         local _groupName = _groupTable.name
         local _, _groupCategory = pcall(function() 
             local result =  Group.getByName(_groupName):getCategory()
-            env.error(string.format("%s group has category: %s", tostring(_groupName), tostring(result)), false)
+            --env.info(string.format("%s group has category: %s", tostring(_groupName), tostring(result)), false)
             return result
         end)
         if _groupCategory == 2 and ctld.captureCommandAdded[_groupName] == nil then
