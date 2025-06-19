@@ -4347,9 +4347,10 @@ function ctld.dropSlingCrate(_args)
     -- 投放逻辑
     if ctld.inAir(_heli) == false or _heightDiff <= 7.5 then
         ctld.displayMessageToGroup(_heli, _currentCrate.desc .. " 箱子已放下，在你12点方向", 10)
-        _point = ctld.getPointAt12Oclock(_heli, 30)
+        _point = ctld.getPointAt12Oclock(_heli, 50)
     elseif _heightDiff > 7.5 and _heightDiff <= 40.0 then
         ctld.displayMessageToGroup(_heli, _currentCrate.desc .. " 箱子已经放在你下面了", 10)
+        _point = ctld.getPointAt12Oclock(_heli, 5)
     else
         ctld.displayMessageToGroup(_heli, "你太高了！箱子已被毁", 10)
         return
@@ -4866,8 +4867,8 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
             for _i = 1, _launchers do
                 -- spawn in a circle around the crate
                 local _angle = math.pi * 2 * (_i - 1) / _launchers
-                _xOffset = math.cos(_angle) * 12
-                _yOffset = math.sin(_angle) * 12
+                _xOffset = math.cos(_angle) * 35
+                _yOffset = math.sin(_angle) * 35
                 num = num + 1
                 _point = { x = _point.x + _xOffset, y = _point.y, z = _point.z + _yOffset }
                 --local _point = _systemPart.crate.crateUnit:getPoint()
@@ -4880,8 +4881,8 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
             --table.insert(_posArray, _systemPart.crate.crateUnit:getPoint())
             --table.insert(_typeArray, _name)
             local _angle = math.pi * 2 * (num - 1)
-            _xOffset = math.cos(_angle) * 15
-            _yOffset = math.sin(_angle) * 15
+            _xOffset = math.cos(_angle) * 12
+            _yOffset = math.sin(_angle) * 12
             _point = { x = _point.x + _xOffset, y = _point.y, z = _point.z + _yOffset }
 
             table.insert(_posArray, _point)
