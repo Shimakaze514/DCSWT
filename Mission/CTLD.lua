@@ -4864,39 +4864,59 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
     end
 
     local _txt = ""
-    local _point = _nearestCrate.crateUnit:getPoint()
-    local _xOffset = 0
-    local _yOffset = 0
-    local num = 1
+    local _point = _nearestCrate.crateUnit:getPoint()  -- 中心点
+    local _xOffset, _yOffset = 0, 0
     local _posArray = {}
     local _typeArray = {}
+
+    -- 分别计数发射器和非发射器
+    local _launcherCount = 0
+    local _nonLauncherCount = 0
+
+    -- 第一次遍历：统计数量
     for _name, _systemPart in pairs(_systemParts) do
         local _launcherPart = ctld.getLauncherUnitFromAATemplate(_groupSystemTemplate)
         if _launcherPart == _name and _groupSystemTemplate.aaLaunchers > 1 then
-            --add multiple launcher
+            _launcherCount = _launcherCount + _groupSystemTemplate.aaLaunchers
+        else
+            _nonLauncherCount = _nonLauncherCount + 1
+        end
+    end
+
+    -- 第二次遍历：部署单位
+    local _launcherIndex = 0  -- 发射器计数器
+    local _nonLauncherIndex = 0  -- 非发射器计数器
+
+    for _name, _systemPart in pairs(_systemParts) do
+        local _launcherPart = ctld.getLauncherUnitFromAATemplate(_groupSystemTemplate)
+        if _launcherPart == _name and _groupSystemTemplate.aaLaunchers > 1 then
+            -- 发射器：半径35的圆环
             local _launchers = _groupSystemTemplate.aaLaunchers
             for _i = 1, _launchers do
-                -- spawn in a circle around the crate
-                local _angle = math.pi * 2 * (_i - 1) / _launchers
+                _launcherIndex = _launcherIndex + 1
+                local _angle = math.pi * 2 * (_launcherIndex - 1) / _launcherCount
                 _xOffset = math.cos(_angle) * 35
                 _yOffset = math.sin(_angle) * 35
-                num = num + 1
-                _point = { x = _point.x + _xOffset, y = _point.y, z = _point.z + _yOffset }
-                --local _point = _systemPart.crate.crateUnit:getPoint()
-                --_point = { x = _point.x + _xOffset, y = _point.y, z = _point.z + _yOffset }
-
-                table.insert(_posArray, _point)
+                local _newPoint = {
+                    x = _point.x + _xOffset,
+                    y = _point.y,
+                    z = _point.z + _yOffset
+                }
+                table.insert(_posArray, _newPoint)
                 table.insert(_typeArray, _name)
             end
         else
-            --table.insert(_posArray, _systemPart.crate.crateUnit:getPoint())
-            --table.insert(_typeArray, _name)
-            local _angle = math.pi * 2 * (num - 1)
+            -- 非发射器：半径12的圆环
+            _nonLauncherIndex = _nonLauncherIndex + 1
+            local _angle = math.pi * 2 * (_nonLauncherIndex - 1) / _nonLauncherCount
             _xOffset = math.cos(_angle) * 12
             _yOffset = math.sin(_angle) * 12
-            _point = { x = _point.x + _xOffset, y = _point.y, z = _point.z + _yOffset }
-
-            table.insert(_posArray, _point)
+            local _newPoint = {
+                x = _point.x + _xOffset,
+                y = _point.y,
+                z = _point.z + _yOffset
+            }
+            table.insert(_posArray, _newPoint)
             table.insert(_typeArray, _name)
         end
     end
