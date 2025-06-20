@@ -3461,11 +3461,12 @@ function ctld.getWeightOfCargo(unitName)
     local _crate = ctld.inTransitSlingLoadCrates[unitName]
     if _crate then
         ctld.logTrace(string.format("_crate=%s", ctld.p(_crate)))
-        --if _crate.simulatedSlingload then --! 手动把_crate.simulatedSlingload设置为true
-            ctld.logTrace(string.format("_crate.weight=%s", ctld.p(_crate.weight)))
-            _weight = _weight + _crate.weight
-            _description = _description .. string.format("1 %s crate onboard (%s kg)\n", _crate.desc, _crate.weight)
-        --end
+        for _, crate in pairs(_crate) do
+            local crateWeight = tonumber(crate.weight) or 0
+            ctld.logTrace(string.format("crate.weight=%s", crateWeight))
+            _weight = _weight + crateWeight
+            _description = _description .. string.format("1 %s crate onboard (%s kg)\n", crate.desc or "unknown", crateWeight)
+        end
     end
     ctld.logTrace(string.format("with simulated slingload crates : weight = %s", tostring(_weight)))
     if _description ~= "" then
