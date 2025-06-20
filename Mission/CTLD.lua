@@ -3601,27 +3601,37 @@ function ctld.loadNearbyCrate(_name)
 
     -- 装载箱子
     local _crates = ctld.getCratesAndDistance(_transUnit)
+    local _inRangeCrates = {}
     for _, _crate in pairs(_crates) do
         if _crate.dist < 50.0 then
-            ctld.displayMessageToGroup(_transUnit, "装载 " .. _crate.details.desc .. " 箱子\n你已增重".._crate.details.weight.."kg", 10, true)
-
-            -- 移除场景中的箱子
-            if _transUnit:getCoalition() == 1 then
-                ctld.spawnedCratesRED[_crate.crateUnit:getName()] = nil
-            else
-                ctld.spawnedCratesBLUE[_crate.crateUnit:getName()] = nil
-            end
-            _crate.crateUnit:destroy()
-
-            -- 添加箱子到运输列表
-            _crate.simulatedSlingload = true
-            table.insert(ctld.inTransitSlingLoadCrates[_name], mist.utils.deepCopy(_crate.details))
-            ctld.adaptWeightToCargo(_name)
-            return
+            table.insert(_inRangeCrates, _crate)
         end
     end
 
-    ctld.displayMessageToGroup(_transUnit, "无法装载箱子！", 10, true)
+    if #_inRangeCrates == 0 then
+        ctld.displayMessageToGroup(_transUnit, "50米内未找到可装载的箱子！", 10, true)
+        return
+    end
+    --距离排序
+    table.sort(_inRangeCrates, function(a, b)
+        return a.dist < b.dist
+    end)
+    local _nearestCrate = _inRangeCrates[1]
+
+    ctld.displayMessageToGroup(_transUnit, "装载 " .. _nearestCrate.details.desc .. " 箱子\n你已增重".._nearestCrate.details.weight.."kg", 10, true)
+
+    -- 移除场景中的箱子
+    if _transUnit:getCoalition() == 1 then
+        ctld.spawnedCratesRED[_nearestCrate.crateUnit:getName()] = nil
+    else
+        ctld.spawnedCratesBLUE[_nearestCrate.crateUnit:getName()] = nil
+    end
+    _nearestCrate.crateUnit:destroy()
+
+    -- 添加箱子到运输列表
+    _nearestCrate.simulatedSlingload = true
+    table.insert(ctld.inTransitSlingLoadCrates[_name], mist.utils.deepCopy(_nearestCrate.details))
+    ctld.adaptWeightToCargo(_name)
 end
 
 --recreates beacons to make sure they work!
