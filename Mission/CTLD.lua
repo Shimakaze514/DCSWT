@@ -800,9 +800,10 @@ ctld.spawnableCrates = {
         items = {
             { weight = 400*2, desc = "轻型装甲坦克战车(Type04A)", unit = "ZBD04A Group" },  --? 要不要乘以车辆数呢...感觉太重不好
             { weight = 330*2, desc = "反坦克导弹战车(M1134 ATGM)", unit = "M1134 Stryker ATGM Group" },
-            { weight = 300*2, desc = "步兵装甲战车(BTR-82A)", unit = "BTR82 Group" },
+            --{ weight = 300*2, desc = "步兵装甲战车(BTR-82A)", unit = "BTR82 Group" },
             { weight = 256*2, desc = "步兵装甲战车(LAV-25)", unit = "LAV-25 Group" },
             { weight = 552*2, desc = "步兵装甲战车(M2 Bradley)", unit = "M-2 Bradley Group" },
+            { weight = 552*2, desc = "步兵装甲战车(BMPT)", unit = "BMPT Group" },
         }
     },
     {
@@ -813,20 +814,24 @@ ctld.spawnableCrates = {
             { weight = 550*2, desc = "M109自行火炮(1箱2车)", unit = "M109 Group" },
             { weight = 940*2, desc = "T155自行火炮(1箱2车)", unit = "T155 Group" },
             { weight = 585*2, desc = "达纳卡车炮(SpGH_Dana)(1箱2车)", unit = "Dana Group" },
+            { weight = 400+50, desc = "TOS-1A火箭炮阵地(2箱2车+补给)", unit = "TOS1A Group" },
             { weight = 400+50, desc = "BM27远程火箭炮阵地(2箱2车+补给)", unit = "BM27 Group" },
             { weight = 400+50, desc = "BM30远程火箭炮阵地(3箱2车+补给)", unit = "Smerch_HE Group" },
             { weight = 400+50, desc = "海马斯远程火箭炮阵地(3箱2车+补给)", unit = "MLRS Group" },
-            { weight = 466/2, desc = "飞毛腿导弹(Scud)(2箱1车)", unit = "Scud_B Group" },
+            { weight = 1000, desc = "【导弹】伊斯坎德尔（高爆）(2箱1车)", unit = "9K720HE Group" },
+            { weight = 1000, desc = "【导弹】伊斯坎德尔（集束）(2箱1车)", unit = "9K720CM Group" },
+            { weight = 1000, desc = "【导弹】ATACMS（高爆）(2箱1车)", unit = "ATACMSHE Group" },
+            { weight = 1000, desc = "【导弹】ATACMS（集束）(2箱1车)", unit = "ATACMSCM Group" },
         }
     },
     {
         name = "近程防空(Short Range AA)",
         items = {
-            { weight = 964, desc = "箭-10(SA-13)红外地空导弹发射车", unit = "Strela-10M3" },
             { weight = 966, desc = "C-RAM近防炮", unit = "HEMTT_C-RAM_Phalanx" },
-            { weight = 965, desc = "ZU-23卡车高炮(1箱2车)", unit = "ZU23 Group" },
+            --{ weight = 965, desc = "ZU-23卡车高炮(1箱2车)", unit = "ZU23 Group" },
             { weight = 960, desc = "猎豹(Gepard)双管自行高炮(1箱2车)", unit = "Gepard Group" },
-            { weight = 1206, desc = "通古斯卡(SA-19)防空战车小队(1箱2车)", unit = "2S6 Tunguska Group" },
+            { weight = 964, desc = "箭-10(SA-13)红外地空导弹发射车(1箱2车)", unit = "Strela-10M3 Group" },
+            { weight = 1206, desc = "通古斯卡(SA-19)弹炮一体系统(1箱1车)", unit = "2S6 Tunguska" },
         }
     },
     {
@@ -834,10 +839,12 @@ ctld.spawnableCrates = {
         items = {
             { weight = 1448, desc = "罗兰(Roland)近程地空导弹(1箱2车)", unit = "Roland Group" },
             { weight = 1451, desc = "HQ-7LNE近程地空导弹(1箱2车)", unit = "HQ-7_Group" },
-            { weight = 1452, desc = "道尔(SA-15)地空导弹单车(1箱1车)", unit = "Tor 9A331" },
-            { weight = 1454, desc = "道尔(SA-15)地空导弹阵地(2箱3车+补给)", unit = "SA-15 Buk" },
-            { weight = 1449, desc = "(小队)库班河(SA-6)地空导弹阵地(3箱4车+补给)", unit = "SA-6 Buk" },
-            { weight = 1453, desc = "山毛榉(SA-11)地空导弹阵地(3箱5车+补给)", unit = "SA-11 Buk" },
+            { weight = 1452, desc = "道尔M2地空导弹(1箱1车)", unit = "CHAP_TorM2" },
+            { weight = 1452, desc = "铠甲S1弹炮一体系统(2箱1车)", unit = "CHAP_PantsirS1", cratesRequired = 2},
+            { weight = 1454, desc = "【阵地】道尔(SA-15)地空导弹(2箱3车+补给)", unit = "SA-15 Buk" },
+            --{ weight = 1449, desc = "(小队)库班河(SA-6)地空导弹阵地(3箱4车+补给)", unit = "SA-6 Buk" },
+            { weight = 1453, desc = "【阵地】山毛榉(SA-11)地空导弹(3箱3车+补给)", unit = "SA-11 Buk" },
+            { weight = 1453, desc = "【阵地】IRIS-T地空导弹(3箱2车+补给)", unit = "IRIST" },
         }
     },
     {
@@ -845,6 +852,8 @@ ctld.spawnableCrates = {
         items = {
             { weight = 821, desc = "山毛榉(SA-11 repair)维护箱", unit = "SA-11 BUK Repair" },
             { weight = 823, desc = "道尔(SA-15 repair)维护箱", unit = "SA-15 BUK Repair" },
+            { weight = 823, desc = "IRIS-T维护箱", unit = "IRIST Repair" },
+            { weight = 824, desc = "TOS-1A火箭炮阵地维护箱", unit = "TOS1A Group Repair" },
             { weight = 824, desc = "BM27火箭炮阵地维护箱", unit = "BM27 Group Repair" },
             { weight = 824, desc = "BM30火箭炮阵地维护箱", unit = "Smerch_HE Group Repair" },
             { weight = 824, desc = "海马斯火箭炮阵地维护箱", unit = "MLRS Group Repair" },
@@ -1693,15 +1702,17 @@ end
 
 ctld.RandomTankPool = {
     'Tank RandomGroup L2A6 Group',
-    'Tank RandomGroup L2A4 Group',
+    --'Tank RandomGroup L2A4 Group',
     'Tank RandomGroup M1A2 Group',
     'Tank RandomGroup Lec Group',
     'Tank RandomGroup Challenger2 Group',
     'Tank RandomGroup ZTZ96B Group',
     'Tank RandomGroup Merkava Group',
     'Tank RandomGroup T-80 Group',
-    'Tank RandomGroup T-90 Group',
-    'Tank RandomGroup L2A5 Group'
+    'Tank RandomGroup T-84 Group',
+    'Tank RandomGroup T-90M Group',
+    --'Tank RandomGroup T-90 Group',
+    --'Tank RandomGroup L2A5 Group'
 }
 
 ctld.GroupSystemTemplate = {
@@ -1841,6 +1852,32 @@ ctld.GroupSystemTemplate = {
         --repair = "ZBD04A Group Repair",
     },
     {
+        name = "主战坦克T84小队",
+        sysName = "Tank RandomGroup T-84 Group",
+        cratesRequired = 1,
+        aaLaunchers = 1,
+
+        count = 1,
+        hasLimit = false,
+        parts = {
+            { name = "CHAP_T84OplotM", desc = "主战坦克T-84", launcher = true },
+        },
+        --repair = "ZBD04A Group Repair",
+    },
+    {
+        name = "主战坦克T90M小队",
+        sysName = "Tank RandomGroup T-90M Group",
+        cratesRequired = 1,
+        aaLaunchers = 1,
+
+        count = 1,
+        hasLimit = false,
+        parts = {
+            { name = "CHAP_T90M", desc = "主战坦克T-90M", launcher = true },
+        },
+        --repair = "ZBD04A Group Repair",
+    },
+    {
         name = "主战坦克T-90小队",
         sysName = "Tank RandomGroup T-90 Group",
         cratesRequired = 1,
@@ -1972,6 +2009,20 @@ ctld.GroupSystemTemplate = {
         --repair = "HQ-7_LN_SP Group Repair",
     },
     {
+        name = "TOS1A火箭炮阵地",
+        sysName = "TOS1A Group",
+        cratesRequired = 2,
+        aaLaunchers = 2,
+
+        count = 2,
+        hasLimit = false,
+        parts = {
+            { name = "CHAP_TOS1A", desc = "火箭炮(TOS1A)", launcher = true },
+            { name = "ZIL-135", desc = "远程火箭炮(TOS1A)补弹车" },
+        },
+        repair = "TOS1A Group Repair",
+    },
+    {
         name = "BM27远程火箭炮阵地",
         sysName = "BM27 Group",
         cratesRequired = 2,
@@ -2081,6 +2132,22 @@ ctld.GroupSystemTemplate = {
         repair = "SA-15 BUK Repair",
     },
     {
+        name = "IRIST阵地（3箱2车+补给）",
+        sysName = "IRIST",
+        cratesRequired = 3,
+        aaLaunchers = 2,
+        unitsCnt = 5,
+        count = 3,
+        hasLimit = true,
+        parts = {
+            { name = "ZIL-135", desc = "IRIST补弹车" },
+            { name = "CHAP_IRISTSLM_STR", desc = "IRIST雷达车" },
+            { name = "CHAP_IRISTSLM_CP", desc = "IRIST指挥车" },
+            { name = "CHAP_IRISTSLM_LN", desc = "IRIST发射车", launcher = true },
+        },
+        repair = "IRIST Repair",
+    },
+    {
         name = "补给小队",
         sysName = "Back Group",
         cratesRequired = 1,
@@ -2186,6 +2253,17 @@ ctld.GroupSystemTemplate = {
             { name = "M-2 Bradley", desc = "M-2 Bradley步战", launcher = true },
         }, },
     {
+        name = "BMPT小队",
+        sysName = "BMPT Group",
+        cratesRequired = 1,
+        aaLaunchers = 2,
+
+        count = 1,
+        hasLimit = false,
+        parts = {
+            { name = "CHAP_BMPT", desc = "BMPT步战", launcher = true },
+        }, },
+    {
         name = "M1134 Stryker ATGM小队",
         sysName = "M1134 Stryker ATGM Group",
         cratesRequired = 1,
@@ -2199,27 +2277,63 @@ ctld.GroupSystemTemplate = {
 
 
     {
-        name = "通古斯卡小队",
-        sysName = "2S6 Tunguska Group",
+        name = "箭10小队",
+        sysName = "Strela-10M3 Group",
         cratesRequired = 1,
         aaLaunchers = 2,
 
         count = 1,
         hasLimit = false,
         parts = {
-            { name = "2S6 Tunguska", desc = "通古斯卡", launcher = true },
+            { name = "Strela-10M3", desc = "箭10", launcher = true },
         }, },
 
     {
-        name = "飞毛腿导弹",
-        sysName = "Scud_B Group",
+        name = "伊斯坎德尔（高爆）",
+        sysName = "9K720HE Group",
         cratesRequired = 2,
         aaLaunchers = 1,
 
         count = 1,
         hasLimit = false,
         parts = {
-            { name = "Scud_B", desc = "飞毛腿导弹", launcher = true },
+            { name = "CHAP_9K720_HE", desc = "伊斯坎德尔（高爆）", launcher = true },
+        }, },
+
+    {
+        name = "伊斯坎德尔（集束）",
+        sysName = "9K720CM Group",
+        cratesRequired = 2,
+        aaLaunchers = 1,
+
+        count = 1,
+        hasLimit = false,
+        parts = {
+            { name = "CHAP_9K720_Cluster", desc = "伊斯坎德尔（集束）", launcher = true },
+        }, },
+
+    {
+        name = "ATACMS（高爆）",
+        sysName = "ATACMSHE Group",
+        cratesRequired = 2,
+        aaLaunchers = 1,
+
+        count = 1,
+        hasLimit = false,
+        parts = {
+            { name = "CHAP_M142_ATACMS_M39A1", desc = "ATACMS（高爆）", launcher = true },
+        }, },
+
+    {
+        name = "ATACMS（集束）",
+        sysName = "ATACMSCM Group",
+        cratesRequired = 2,
+        aaLaunchers = 1,
+
+        count = 1,
+        hasLimit = false,
+        parts = {
+            { name = "CHAP_M142_ATACMS_M39A1", desc = "ATACMS（集束）", launcher = true },
         }, },
 }
 
