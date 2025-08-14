@@ -840,7 +840,7 @@ ctld.spawnableCrates = {
             { weight = 680, desc = "罗兰(Roland)近程地空导弹(1箱2车)", unit = "Roland Group" },
             { weight = 296, desc = "HQ-7LNE近程地空导弹(1箱2车)", unit = "HQ-7_Group" },
             { weight = 640, desc = "道尔M2地空导弹(1箱1车)", unit = "CHAP_TorM2" },
-            { weight = 680, desc = "铠甲S1弹炮一体系统(2箱1车)", unit = "CHAP_PantsirS1", cratesRequired = 2},
+            { weight = 680, desc = "铠甲S1弹炮一体系统(1箱1车)", unit = "CHAP_PantsirS1"},
             { weight = 1480, desc = "【阵地】道尔M1地空导弹(2箱3车+补给)", unit = "SA-15 Buk" },
             --{ weight = 1449, desc = "(小队)库班河(SA-6)地空导弹阵地(3箱4车+补给)", unit = "SA-6 Buk" },
             { weight = 1880, desc = "【阵地】山毛榉地空导弹(3箱3车+补给)", unit = "SA-11 Buk" },
