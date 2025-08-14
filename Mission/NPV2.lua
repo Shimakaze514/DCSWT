@@ -27,9 +27,9 @@ NP.Trace = true
  
 NP.AWACSList = {
     "blueAWACS",
-    "blueAWACS2",
+    --"blueAWACS2",
     "redAWACS",
-    "redAWACS2"
+    --"redAWACS2"
 }
 
 function NP.logError(message)

@@ -91,7 +91,7 @@ if ctld.Debug == false then
     ctld.troopPickupAtFOB = true -- if true, troops can also be picked up at a created FOB
     ctld.buildTimeFOB = 60 --time in seconds for the FOB to be built
     --ctld.crateWaitTime = 20 -- time in seconds to wait before you can spawn another crate
-    ctld.crateWaitTime = 20
+    ctld.crateWaitTime = 1
     ctld.forceCrateToBeMoved = false -- a crate must be picked up at least once and moved before it can be unpacked. Helps to reduce crate spam
     ctld.UseInfraRed = false
     ctld.unitActions = {
@@ -798,20 +798,20 @@ ctld.spawnableCrates = {
     {
         name = "步兵战车(IFV)",
         items = {
-            { weight = 400*2, desc = "轻型装甲坦克战车(Type04A)", unit = "ZBD04A Group" },  --? 要不要乘以车辆数呢...感觉太重不好
-            { weight = 330*2, desc = "反坦克导弹战车(M1134 ATGM)", unit = "M1134 Stryker ATGM Group" },
+            { weight = 400*2, desc = "04A式履带步战车(1箱1车)", unit = "ZBD04A" },  --? 要不要乘以车辆数呢...感觉太重不好
+            { weight = 330*2, desc = "M1134反坦克导弹车(1箱2车)", unit = "M1134 Stryker ATGM Group" },
             --{ weight = 300*2, desc = "步兵装甲战车(BTR-82A)", unit = "BTR82 Group" },
-            { weight = 256*2, desc = "步兵装甲战车(LAV-25)", unit = "LAV-25 Group" },
-            { weight = 552*2, desc = "步兵装甲战车(M2 Bradley)", unit = "M-2 Bradley Group" },
-            { weight = 552*2, desc = "步兵装甲战车(BMPT)", unit = "BMPT Group" },
+            { weight = 256*2, desc = "LAV-25步战车(1箱2车)", unit = "LAV-25 Group" },
+            { weight = 552*2, desc = "M2布莱德利步战车(1箱2车)", unit = "M-2 Bradley Group" },
+            { weight = 552*2, desc = "BMPT坦克支援战车(1箱2车)", unit = "BMPT Group" },
         }
     },
     {
         name = "远程火力(Artillery)",
         items = {
             { weight = 800*2, desc = "PLZ05自行火炮(1箱2车)", unit = "PLZ05 Group" },
-            { weight = 840*2, desc = "2S19自行火炮(1箱2车)", unit = "SAU Msta Group" },
-            { weight = 550*2, desc = "M109自行火炮(1箱2车)", unit = "M109 Group" },
+            --{ weight = 840*2, desc = "2S19自行火炮(1箱2车)", unit = "SAU Msta Group" },
+            --{ weight = 550*2, desc = "M109自行火炮(1箱2车)", unit = "M109 Group" },
             { weight = 940*2, desc = "T155自行火炮(1箱2车)", unit = "T155 Group" },
             { weight = 585*2, desc = "达纳卡车炮(SpGH_Dana)(1箱2车)", unit = "Dana Group" },
             { weight = 400+50, desc = "TOS-1A火箭炮阵地(2箱2车+补给)", unit = "TOS1A Group" },
@@ -819,15 +819,15 @@ ctld.spawnableCrates = {
             { weight = 400+50, desc = "BM30远程火箭炮阵地(3箱2车+补给)", unit = "Smerch_HE Group" },
             { weight = 400+50, desc = "海马斯远程火箭炮阵地(3箱2车+补给)", unit = "MLRS Group" },
             { weight = 1000, desc = "【导弹】伊斯坎德尔（高爆）(2箱1车)", unit = "9K720HE Group" },
-            { weight = 1000, desc = "【导弹】伊斯坎德尔（集束）(2箱1车)", unit = "9K720CM Group" },
-            { weight = 1000, desc = "【导弹】ATACMS（高爆）(2箱1车)", unit = "ATACMSHE Group" },
+            --{ weight = 1000, desc = "【导弹】伊斯坎德尔（集束）(2箱1车)", unit = "9K720CM Group" },
+            --{ weight = 1000, desc = "【导弹】ATACMS（高爆）(2箱1车)", unit = "ATACMSHE Group" },
             { weight = 1000, desc = "【导弹】ATACMS（集束）(2箱1车)", unit = "ATACMSCM Group" },
         }
     },
     {
         name = "近程防空(Short Range AA)",
         items = {
-            { weight = 966, desc = "C-RAM近防炮", unit = "HEMTT_C-RAM_Phalanx" },
+            { weight = 966, desc = "C-RAM近防炮(1箱1车)", unit = "HEMTT_C-RAM_Phalanx" },
             --{ weight = 965, desc = "ZU-23卡车高炮(1箱2车)", unit = "ZU23 Group" },
             { weight = 960, desc = "猎豹(Gepard)双管自行高炮(1箱2车)", unit = "Gepard Group" },
             { weight = 964, desc = "箭-10(SA-13)红外地空导弹发射车(1箱2车)", unit = "Strela-10M3 Group" },
@@ -837,14 +837,14 @@ ctld.spawnableCrates = {
     {
         name = "中远程防空(Mid&Long Range AA)",
         items = {
-            { weight = 1448, desc = "罗兰(Roland)近程地空导弹(1箱2车)", unit = "Roland Group" },
-            { weight = 1451, desc = "HQ-7LNE近程地空导弹(1箱2车)", unit = "HQ-7_Group" },
-            { weight = 1452, desc = "道尔M2地空导弹(1箱1车)", unit = "CHAP_TorM2" },
-            { weight = 1452, desc = "铠甲S1弹炮一体系统(2箱1车)", unit = "CHAP_PantsirS1", cratesRequired = 2},
-            { weight = 1454, desc = "【阵地】道尔(SA-15)地空导弹(2箱3车+补给)", unit = "SA-15 Buk" },
+            { weight = 680, desc = "罗兰(Roland)近程地空导弹(1箱2车)", unit = "Roland Group" },
+            { weight = 296, desc = "HQ-7LNE近程地空导弹(1箱2车)", unit = "HQ-7_Group" },
+            { weight = 640, desc = "道尔M2地空导弹(1箱1车)", unit = "CHAP_TorM2" },
+            { weight = 680, desc = "铠甲S1弹炮一体系统(2箱1车)", unit = "CHAP_PantsirS1", cratesRequired = 2},
+            { weight = 1480, desc = "【阵地】道尔(SA-15)地空导弹(2箱3车+补给)", unit = "SA-15 Buk" },
             --{ weight = 1449, desc = "(小队)库班河(SA-6)地空导弹阵地(3箱4车+补给)", unit = "SA-6 Buk" },
-            { weight = 1453, desc = "【阵地】山毛榉(SA-11)地空导弹(3箱3车+补给)", unit = "SA-11 Buk" },
-            { weight = 1453, desc = "【阵地】IRIS-T地空导弹(3箱2车+补给)", unit = "IRIST" },
+            { weight = 2100, desc = "【阵地】山毛榉(SA-11)地空导弹(3箱3车+补给)", unit = "SA-11 Buk" },
+            { weight = 560, desc = "【阵地】IRIS-T地空导弹(3箱2车+补给)", unit = "IRIST" },
         }
     },
     {
@@ -864,7 +864,7 @@ ctld.spawnableCrates = {
         items = {
             { weight = 492, desc = "悍马吉普 JTAC(侦察）", unit = "M1043 HMMWV Armament" },
             { weight = 402, desc = "补给车(Supply Truck)", unit = "M 818" },
-            { weight = 591, desc = "陶悍马(TOW HUMVEE) (1箱1车)", unit = "M1045 HMMWV TOW" },
+            { weight = 591, desc = "陶悍马(TOW HUMVEE)", unit = "M1045 HMMWV TOW" },
             { weight = 401, desc = "彩蛋(Easter Egg)", unit = "Pz_IV_H" },
             { weight = 325, desc = "捕食者无人机 JTAC", unit = "RQ-1A Predator" },
             { weight = 800, desc = "FOB Crate", unit = "FOB" },
@@ -879,8 +879,8 @@ ctld.spawnableCrates = {
     {
         name = "造船厂(SHIP)集装箱",
         items = {
-            { weight = 1409, desc = "不惧级护卫舰(2箱一船)", unit = "NEUSTRASH", cratesRequired = 2, isShip = true },
-            { weight = 1315, desc = "勇士级导弹艇(1箱一船)", unit = "La_Combattante_II", cratesRequired = 1, isShip = true },
+            { weight = 1409, desc = "不惧级护卫舰(2箱1船)", unit = "NEUSTRASH", cratesRequired = 2, isShip = true },
+            { weight = 1315, desc = "勇士级导弹艇(1箱1船)", unit = "La_Combattante_II", cratesRequired = 1, isShip = true },
         }
     },
 }
@@ -6311,9 +6311,9 @@ function ctld.addF10MenuOptionsDynamic(_unitName)
                                         local _crateRadioMsg = _crate.desc
 
                                         --add in the number of crates required to build something
-                                        if _crate.cratesRequired ~= nil and _crate.cratesRequired > 1 then
-                                            _crateRadioMsg = _crateRadioMsg .. " (" .. _crate.cratesRequired .. ")"
-                                        end
+                                        -- if _crate.cratesRequired ~= nil and _crate.cratesRequired > 1 then
+                                        --     _crateRadioMsg = _crateRadioMsg .. " (" .. _crate.cratesRequired .. ")"
+                                        -- end
 
                                         missionCommands.addCommandForGroup(_groupId, _crateRadioMsg, _cratePath, ctld.spawnCrate, { _unitName, _crate.desc })
                                     end
