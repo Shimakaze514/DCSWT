@@ -112,7 +112,7 @@ function npcsar.addCsar(_coalition , _country, _point, _unitTypeName,_unitName, 
         local _controller = _spawnedGroup:getController();
         Controller.setOption(_controller, AI.Option.Ground.id.ALARM_STATE, AI.Option.Ground.val.ALARM_STATE.GREEN)
         Controller.setOption(_controller, AI.Option.Ground.id.ROE, AI.Option.Ground.val.ROE.WEAPON_HOLD)
-        Controller.setCommand(_controller, _setImmortal)
+        --Controller.setCommand(_controller, _setImmortal)
 
         npcsar.EjectedPilots[_spawnedGroup:getName()] = { side = _spawnedGroup:getCoalition(), type=_unitTypeName, originalUnit = _unitName, desc = _text, player = _playerName, point = _point, spawnTime=timer.getTime()}
 
