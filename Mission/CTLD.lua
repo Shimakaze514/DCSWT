@@ -2327,7 +2327,7 @@ ctld.GroupSystemTemplate = {
     {
         name = "ATACMS（集束）",
         sysName = "ATACMSCM Group",
-        cratesRequired = 2,
+        cratesRequired = 1,
         aaLaunchers = 1,
 
         count = 1,
