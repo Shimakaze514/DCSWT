@@ -819,7 +819,7 @@ ctld.spawnableCrates = {
             { weight = 400+50, desc = "BM30远程火箭炮阵地(3箱2车+补给)", unit = "Smerch_HE Group" },
             { weight = 400+50, desc = "海马斯远程火箭炮阵地(3箱2车+补给)", unit = "MLRS Group" },
             { weight = 1000, desc = "【导弹】伊斯坎德尔(高爆)(2箱1车)", unit = "9K720HE Group" },
-            --{ weight = 1000, desc = "【导弹】伊斯坎德尔（集束）(2箱1车)", unit = "9K720CM Group" },
+            { weight = 1000, desc = "【导弹】伊斯坎德尔（集束）(2箱1车)", unit = "9K720CM Group" },
             --{ weight = 1000, desc = "【导弹】ATACMS（高爆）(2箱1车)", unit = "ATACMSHE Group" },
             { weight = 1000, desc = "【导弹】ATACMS(集束)(2箱1车)", unit = "ATACMSCM Group" },
         }
@@ -839,8 +839,8 @@ ctld.spawnableCrates = {
         items = {
             { weight = 680, desc = "罗兰(Roland)近程地空导弹(1箱2车)", unit = "Roland Group" },
             { weight = 296, desc = "HQ-7LNE近程地空导弹(1箱2车)", unit = "HQ-7_Group" },
-            { weight = 640, desc = "道尔M2地空导弹(1箱1车)", unit = "CHAP_TorM2" },
-            { weight = 680, desc = "铠甲S1弹炮一体系统(1箱1车)", unit = "CHAP_PantsirS1"},
+            { weight = 640, desc = "道尔M2地空导弹(2箱1车)", unit = "CHAP_TorM2" , cratesRequired = 2},
+            { weight = 680, desc = "铠甲S1弹炮一体系统(2箱1车)", unit = "CHAP_PantsirS1", cratesRequired = 2},
             { weight = 1480, desc = "【阵地】道尔M1地空导弹(2箱3车+补给)", unit = "SA-15 Buk" },
             --{ weight = 1449, desc = "(小队)库班河(SA-6)地空导弹阵地(3箱4车+补给)", unit = "SA-6 Buk" },
             { weight = 1880, desc = "【阵地】山毛榉地空导弹(3箱3车+补给)", unit = "SA-11 Buk" },
@@ -884,7 +884,7 @@ ctld.spawnableCrates = {
         }
     },
 }
-
+ctld.lastRepairTimes = {}
 --- 3D model that will be used to represent a loadable crate ; by default, a generator
 ctld.spawnableCratesModel_load = {
     ["category"] = "Fortifications",
@@ -5126,8 +5126,11 @@ function ctld.repairGroupSystem(_heli, _nearestCrate, _groupTemplate)
     ctld.logInfo('进入了repairGroupSystem,aa:' .. ctld.formatTable(_groupTemplate))
     -- find nearest COMPLETE AA system
     local _nearestGroup = ctld.findNearestGroupSystem(_heli, _groupTemplate)
+    local lastRepairTime = ctld.lastRepairTimes[_nearestGroup.group:getName()]
 
-    if _nearestGroup ~= nil and _nearestGroup.dist < 300 then
+    if lastRepairTime ~= nil and timer.getTime() - lastRepairTime < 600 then
+        ctld.displayMessageToGroup(_heli, "无法修复  " .. _groupTemplate.name .. ". 距离你上次维修" .. _groupTemplate.name .. " 没有超过10分钟！工兵太忙了！", 10)
+    elseif _nearestGroup ~= nil and _nearestGroup.dist < 300 then
 
         local _oldGroup = ctld.completeGroupSystems[_nearestGroup.group:getName()]
         --remove old system
@@ -5161,6 +5164,7 @@ function ctld.repairGroupSystem(_heli, _nearestCrate, _groupTemplate)
                 ctld.spawnedCratesBLUE[_nearestCrate.crateUnit:getName()] = nil
             end
             _nearestCrate.crateUnit:destroy()
+            ctld.lastRepairTimes[_spawnedGroup:getName()] = timer.getTime()
         end
         , {_heli,_points,_types,_groupTemplate,_nearestCrate } , timer.getTime() + 2)
 
