@@ -114,15 +114,8 @@ Unitlist = {
     };
     ['切尔克斯克中场CC'] = {
         ['ships']={
-            ['red']={
-                '切尔克斯克Command R',
-                '切尔克斯克Fuel R',
-                '切尔克斯克Ammo R',
-            },
-            ['blue']={
-                '切尔克斯克Command B',
-                '切尔克斯克Fuel B',
-                '切尔克斯克Ammo B',},
+            ['red']={'切尔克斯克LHA R'},
+            ['blue']={'切尔克斯克LHA B'},
         };
         ['blue'] = {
         },
@@ -132,15 +125,8 @@ Unitlist = {
     ----------
     ['古布斯卡娅中场CC'] = {
         ['ships']={
-            ['red']={
-                '古布斯卡娅Command R',
-                '古布斯卡娅Fuel R',
-                '古布斯卡娅Ammo R',
-            },
-            ['blue']={
-                '古布斯卡娅Command B',
-                '古布斯卡娅Fuel B',
-                '古布斯卡娅Ammo B',},
+            ['red']={'古布斯卡娅LHA R'},
+            ['blue']={'古布斯卡娅LHA B'},
         };
         ['blue'] = {
         },
