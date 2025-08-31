@@ -163,9 +163,12 @@ function Bomber.addTask(_coalition, _unitName, _point, planeType)
     local currentPoints = SourceObj.playerSource[_ucid]["point"]
     local playerSource = SourceObj.playerSource[_ucid]
     if not playerSource or not playerSource["point"] then
-        Bomber.logError("CallAttack: 玩家 " .. _playerName .. " 的资源点未初始化")
+        Bomber.logError("CallAttack: 玩家 " .. _name .. " 的资源点未初始化")
         return
     end
+    Bomber.logInfo("CallAttack: 玩家 " .. _name .. " 的UCID是".._ucid.." ,剩余点数"..playerSource["point"].." !")
+    Bomber.logInfo("CallAttack: 呼叫的飞机类型是"..planeType.."!")
+    Bomber.logInfo("CallAttack: 需要的点数是"..cost.."!")
     if currentPoints < cost then
         trigger.action.outTextForGroup(_groupId,
             string.format("你的私有资源点不足 (%d)，无法呼叫 %s（需要 %d 点）！",
