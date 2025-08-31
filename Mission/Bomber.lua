@@ -116,7 +116,7 @@ function Bomber.CallAttack(_unitNameTable, _planeType)
 
     trigger.action.outTextForUnit(_unit:getID(),
         "呼叫空中支援！请在F10地图创建标记，并输入代码 [" .. code .. "]，然后删除标记以确认。",
-        15)
+        120)
 
     Bomber.logInfo("生成攻击代码 ["..code.."] 给玩家 ".._playerName)
 end
@@ -154,11 +154,15 @@ function Bomber.addTask(_coalition, _unitName, _point, planeType)
     end
 
     -- 确认点数消耗
-    local cost = Bomber.CostTable[planeType] or Bomber.AttackCost
+    local cost = Bomber.CostTable[planeType]
     local _ucid = req.ucid
     local _groupId = req.groupId
     local currentPoints = SourceObj.playerSource[_ucid]["point"]
-
+    local playerSource = SourceObj.playerSource[_ucid]
+    if not playerSource or not playerSource["point"] then
+        Bomber.logError("CallAttack: 玩家 " .. _playerName .. " 的资源点未初始化")
+        return
+    end
     if currentPoints < cost then
         trigger.action.outTextForGroup(_groupId,
             string.format("你的私有资源点不足 (%d)，无法呼叫 %s（需要 %d 点）！",
