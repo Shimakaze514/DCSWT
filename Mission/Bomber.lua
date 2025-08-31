@@ -130,7 +130,7 @@ function Bomber.CallStealthBomber(_unitName)
 end
 
 
-function Bomber.addTask(_coalition, _unitName, _point, planeType)
+function Bomber.addTask(_coalition, _unitName, _point)
     local templateTable = {
         ["Attack"] = "AttackTemplate",
         ["Bomber"] = "BomberTemplate",
@@ -160,6 +160,7 @@ function Bomber.addTask(_coalition, _unitName, _point, planeType)
     local _name = _unit:getPlayerName()
     local _ucid = SourceObj.playerInfo[_name]
     local _groupId = req.groupId
+    local planeType = req.planeType
     local currentPoints = SourceObj.playerSource[_ucid]["point"]
     local playerSource = SourceObj.playerSource[_ucid]
     if not playerSource or not playerSource["point"] then
