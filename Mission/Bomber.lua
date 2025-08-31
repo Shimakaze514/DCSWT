@@ -148,6 +148,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
         env.error("Bomber.addTask: 找不到对应的请求")
         return
     end
+    Bomber.logInfo("Active request for " .. _unitName .. ": " .. tostring(req))
     local planeType = req.planeType
 
     local bomberTemplate = templateTable[planeType] or "BomberTemplate"
