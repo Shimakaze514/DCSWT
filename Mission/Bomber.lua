@@ -225,7 +225,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
     }
     local controller = spawnGroup:getController()
     if controller then
-        Controller.setTask(_controller, AttackMapObject)
+        Controller.setTask(controller, AttackMapObject)
         trigger.action.outTextForCoalition(_coalition,
             string.format("%s 已起飞，攻击坐标 (%.0f, %.0f)",
                 planeType, _point.x, _point.z),
