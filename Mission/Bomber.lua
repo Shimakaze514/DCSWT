@@ -28,6 +28,42 @@ function Bomber.logTrace(message)
     end
 end
 
+function Bomber.p(o, level)
+    local MAX_LEVEL = 20
+    if level == nil then
+        level = 0
+    end
+    if level > MAX_LEVEL then
+        Bomber.logError("max depth reached in ctld.p : " .. tostring(MAX_LEVEL))
+        return ""
+    end
+    local text = ""
+    if (type(o) == "table") then
+        text = "\n"
+        for key, value in pairs(o) do
+            for i = 0, level do
+                text = text .. " "
+            end
+            text = text .. "." .. key .. "=" .. Bomber.p(value, level + 1) .. "\n"
+        end
+    elseif (type(o) == "function") then
+        text = "[function]"
+    elseif (type(o) == "boolean") then
+        if o == true then
+            text = "[true]"
+        else
+            text = "[false]"
+        end
+    else
+        if o == nil then
+            text = "[nil]"
+        else
+            text = tostring(o)
+        end
+    end
+    return text
+end
+
 Bomber.eventHandler = {}
 function Bomber.eventHandler:onEvent(_event)
     local status, err = pcall(function(_event)
@@ -148,7 +184,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
         env.error("Bomber.addTask: 找不到对应的请求")
         return
     end
-    Bomber.logInfo("Active request for " .. _unitName .. ": " .. tostring(req))
+    Bomber.logInfo("Active request for " .. _unitName .. ": " .. Bomber.p(req))
     local planeType = req.planeType
 
     local bomberTemplate = templateTable[planeType] or "BomberTemplate"
