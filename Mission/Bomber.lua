@@ -266,7 +266,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
         Controller.setTask(controller, AttackMapObject)
         trigger.action.outTextForCoalition(_coalition,
             string.format("%s 已起飞，攻击坐标 (%.0f, %.0f)",
-                planeType, _point.x, _point.z),
+                planeType, _point.x, _point.y),
             15)
     else
         env.error("Bomber.addTask: 无法获取控制器")
