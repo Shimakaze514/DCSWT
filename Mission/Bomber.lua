@@ -251,8 +251,8 @@ function Bomber.addTask(_coalition, _unitName, _point)
         params = {
             direction = 0,
             attackQtyLimit = false,
-            attackQty = 999,
-            expend = "All",
+            attackQty = 1,
+            expend = "Auto",
             point = _point,
             directionEnabled = false,
             groupAttack = false,
@@ -263,7 +263,8 @@ function Bomber.addTask(_coalition, _unitName, _point)
     }
     local controller = spawnGroup:getController()
     if controller then
-        Controller.setTask(controller, AttackMapObject)
+        Controller.pushTask(controller, AttackMapObject)
+        timer.scheduleFunction(Controller.pushTask(),{controller, AttackMapObject},timer.getTime() + 5)
         trigger.action.outTextForCoalition(_coalition,
             string.format("%s 已起飞，攻击坐标 (%.0f, %.0f)",
                 planeType, _point.x, _point.y),
