@@ -71,7 +71,8 @@ local function generateRandomCode()
     return code
 end
 
-function Bomber.CallAttack(_unitName, _planeType)
+function Bomber.CallAttack(_unitNameTable, _planeType)
+    local _unitName = _unitNameTable[1]
     Bomber.logInfo("CallAttack: _unitName是" .. tostring(_unitName))
     local _unit = ctld.getTransportUnit(_unitName)
     if not _unit then
