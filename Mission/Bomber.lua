@@ -7,6 +7,7 @@ Bomber.CostTable = {
     ["Bomber"] = 300,
     ["StealthBomber"] = 300
 }
+SourceObj = SourceObj or {}
 function Bomber.logError(message)
     env.info("[BOMBER] Err: "  .. message)
 end
@@ -155,7 +156,9 @@ function Bomber.addTask(_coalition, _unitName, _point, planeType)
 
     -- 确认点数消耗
     local cost = Bomber.CostTable[planeType]
-    local _ucid = req.ucid
+    local _unit = ctld.getTransportUnit(_unitName)
+    local _name = _unit:getPlayerName()
+    local _ucid = SourceObj.playerInfo[_name]
     local _groupId = req.groupId
     local currentPoints = SourceObj.playerSource[_ucid]["point"]
     local playerSource = SourceObj.playerSource[_ucid]
