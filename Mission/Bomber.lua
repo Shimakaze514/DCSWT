@@ -136,11 +136,6 @@ function Bomber.addTask(_coalition, _unitName, _point)
         ["Bomber"] = "BomberTemplate",
         ["StealthBomber"] = "StealthBomberTemplate"
     }
-
-    local bomberTemplate = templateTable[planeType] or "BomberTemplate"
-    if _coalition == 1 then
-        bomberTemplate = bomberTemplate .. "Red"
-    end
     -- 找到玩家请求
     local req
     for pname, r in pairs(Bomber.ActiveRequests) do
@@ -153,6 +148,12 @@ function Bomber.addTask(_coalition, _unitName, _point)
         env.error("Bomber.addTask: 找不到对应的请求")
         return
     end
+    local planeType = req.planeType
+
+    local bomberTemplate = templateTable[planeType] or "BomberTemplate"
+    if _coalition == 1 then
+        bomberTemplate = bomberTemplate .. "Red"
+    end
 
     -- 确认点数消耗
     local cost = Bomber.CostTable[planeType]
@@ -160,7 +161,6 @@ function Bomber.addTask(_coalition, _unitName, _point)
     local _name = _unit:getPlayerName()
     local _ucid = SourceObj.playerInfo[_name]
     local _groupId = req.groupId
-    local planeType = req.planeType
     local currentPoints = SourceObj.playerSource[_ucid]["point"]
     local playerSource = SourceObj.playerSource[_ucid]
     if not playerSource or not playerSource["point"] then
