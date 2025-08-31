@@ -818,10 +818,10 @@ ctld.spawnableCrates = {
             { weight = 400+50, desc = "BM27远程火箭炮阵地(2箱2车+补给)", unit = "BM27 Group" },
             { weight = 400+50, desc = "BM30远程火箭炮阵地(3箱2车+补给)", unit = "Smerch_HE Group" },
             { weight = 400+50, desc = "海马斯远程火箭炮阵地(3箱2车+补给)", unit = "MLRS Group" },
+            { weight = 1000, desc = "【导弹】ATACMS(集束)(1箱1车)", unit = "ATACMSCM Group" },
             { weight = 1000, desc = "【导弹】伊斯坎德尔(高爆)(2箱1车)", unit = "9K720HE Group" },
             { weight = 1000, desc = "【导弹】伊斯坎德尔（集束）(2箱1车)", unit = "9K720CM Group" },
             --{ weight = 1000, desc = "【导弹】ATACMS（高爆）(2箱1车)", unit = "ATACMSHE Group" },
-            { weight = 1000, desc = "【导弹】ATACMS(集束)(2箱1车)", unit = "ATACMSCM Group" },
         }
     },
     {
@@ -6375,6 +6375,30 @@ function ctld.addF10MenuOptionsDynamic(_unitName)
     end
 end
 
+
+function ctld.addF10MenuOptionsBomber(_unitName)
+    local status, error = pcall(function()
+
+        ctld.logTrace(string.format("_unitName=%s",_unitName))
+        local _unit = ctld.getTransportUnit(_unitName)
+        if _unit ~= nil then
+
+            local _groupId = ctld.getGroupId(_unit)
+            env.info("[CTLD] group id is " .. _groupId)
+
+            if _groupId then
+                if ctld.addedBomberTo[tostring(_groupId)] == nil then
+                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "轰炸机支援")
+                    missionCommands.addCommandForGroup(_groupId, "呼叫攻击机", _rootPath,  Bomber.CallAttack, { _unitName , "Attack"})
+                    missionCommands.addCommandForGroup(_groupId, "呼叫远程轰炸机", _rootPath,  Bomber.CallAttack, { _unitName , "Bomber"})
+                    missionCommands.addCommandForGroup(_groupId, "呼叫隐身轰炸机", _rootPath,  Bomber.CallAttack, { _unitName , "StealthBomber"})
+                    ctld.addedBomberTo[tostring(_groupId)]=true
+                end
+            end
+        end
+    end)
+end
+
 AdditionalEventHandler = {}
 function AdditionalEventHandler:onEvent(event)
     if (event.id == 15) then
@@ -6388,6 +6412,7 @@ function AdditionalEventHandler:onEvent(event)
                                         "AH-64D_BLK_II", "Mi-24P", "OH58D", "UH-1H", "SA342M", "SA342L", "SA342Mistral",
                                         "SA342Minigun"}
             --trigger.action.outTextForUnit(event.initiator:getID(), "机型：" .. unitType .. "出生", 20, true) -- 出生时显示机型
+            timer.scheduleFunction(ctld.addF10MenuOptionsBomber, unitName, timer.getTime() + 1)
             for _, typename in ipairs(availableUnitTypes) do
                 if unitType == typename then
                     --ctld.addF10MenuOptionsDynamic(unitName)
@@ -7474,6 +7499,7 @@ function ctld.initialize(force)
 
     ctld.captureCommandAdded = {}
     ctld.addedCSARTo= {}
+    ctld.addedBomberTo= {}
     ctld.addedTo = {}
     ctld.spawnedCratesRED = {} -- use to store crates that have been spawned
     ctld.spawnedCratesBLUE = {} -- use to store crates that have been spawned
