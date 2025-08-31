@@ -116,6 +116,7 @@ local function sendMessagePeriodically(unitID, code, duration, interval, playerN
     local function sendMessage()
         -- If the player's request is already completed, stop sending
         if Bomber.ActiveRequests[playerName] == nil then
+            Bomber.logError("活动请求为空，玩家："..playerName)
             timer.removeFunction(messageTimers[playerName])  -- Stop the specific timer for the player
             messageTimers[playerName] = nil  -- Remove the timer from the list
             return
@@ -123,11 +124,12 @@ local function sendMessagePeriodically(unitID, code, duration, interval, playerN
         
         trigger.action.outTextForUnit(unitID,
             "呼叫空中支援！请在F10地图创建标记，并输入代码 [" .. code .. "]，然后删除标记以确认。",
-            interval)  -- The message will be shown for 10 seconds each time
+            5)  -- The message will be shown for 10 seconds each time
         timeElapsed = timeElapsed + interval
 
         -- Stop sending messages after the specified duration
         if timeElapsed >= duration then
+            Bomber.logError("2分钟提示时长已到达，玩家："..playerName)
             timer.removeFunction(messageTimers[playerName])  -- Stop the specific timer for the player
             messageTimers[playerName] = nil  -- Remove the timer from the list
         end
@@ -135,6 +137,7 @@ local function sendMessagePeriodically(unitID, code, duration, interval, playerN
 
     -- Schedule the timer for this specific player
     messageTimers[playerName] = timer.scheduleFunction(sendMessage, nil, timer.getTime() + interval)
+    Bomber.logInfo("成功设置提示计时器，玩家："..playerName)
 end
 
 function Bomber.CallAttack(_args)
