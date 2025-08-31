@@ -261,10 +261,24 @@ function Bomber.addTask(_coalition, _unitName, _point)
             weaponType = 4030478
         }
     }
+
+    local Bombing = { 
+        id = 'Bombing', 
+        params = { 
+          point = _point,
+          weaponType = 4030478, 
+          expend = AI.Task.WeaponExpend.ALL,
+          attackQty = 1, 
+          attackQtyLimit = false,
+          groupAttack = false, 
+          altitude = 2000,
+          altitudeEnabled = false
+        } 
+    }
     local controller = spawnGroup:getController()
     if controller then
-        Controller.pushTask(controller, AttackMapObject)
-        timer.scheduleFunction(Controller.pushTask(),{controller, AttackMapObject},timer.getTime() + 5)
+        Controller.pushTask(controller, Bombing)
+        timer.scheduleFunction(Controller.pushTask(),{controller, Bombing},timer.getTime() + 5)
         trigger.action.outTextForCoalition(_coalition,
             string.format("%s 已起飞，攻击坐标 (%.0f, %.0f)",
                 planeType, _point.x, _point.y),
