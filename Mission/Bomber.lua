@@ -135,7 +135,9 @@ function Bomber.addTask(_coalition, _unitName, _point, planeType)
     }
 
     local bomberTemplate = templateTable[planeType] or "BomberTemplate"
-
+    if _coalition == 1 then
+        bomberTemplate = bomberTemplate .. "Red"
+    end
     -- 找到玩家请求
     local req
     for pname, r in pairs(Bomber.ActiveRequests) do
