@@ -109,35 +109,38 @@ local function generateRandomCode()
 end
 
 local messageTimers = {}  -- To track the timers for each player
-local function sendMessagePeriodically(unitID, code, duration, interval, playerName)
-    local timeElapsed = 0
-
-    -- Function to send the message
-    local function sendMessage(unitID, code, duration, interval, playerName)
-        -- If the player's request is already completed, stop sending
-        if Bomber.ActiveRequests[playerName] == nil then
-            Bomber.logError("活动请求为空，玩家："..playerName)
-            timer.removeFunction(messageTimers[playerName])  -- Stop the specific timer for the player
-            messageTimers[playerName] = nil  -- Remove the timer from the list
-            return
-        end
-        
-        trigger.action.outTextForUnit(unitID,
-            "呼叫空中支援！请在F10地图创建标记，并输入代码 [" .. code .. "]，然后删除标记以确认。",
-            5)  -- The message will be shown for 10 seconds each time
-        timeElapsed = timeElapsed + interval
-
-        -- Stop sending messages after the specified duration
-        if timeElapsed >= duration then
-            Bomber.logError("2分钟提示时长已到达，玩家："..playerName)
-            timer.removeFunction(messageTimers[playerName])  -- Stop the specific timer for the player
-            messageTimers[playerName] = nil  -- Remove the timer from the list
-        end
+local function sendMessage(unitID, code, duration, interval, playerName, timeElapsed)
+    -- 如果玩家的请求已经完成，停止发送消息
+    if Bomber.ActiveRequests[playerName] == nil then
+        Bomber.logError("活动请求为空")
+        timer.removeFunction(messageTimers[playerName])  -- 停止该玩家的定时器
+        messageTimers[playerName] = nil  -- 从列表中移除定时器
+        return
     end
 
-    -- Schedule the timer for this specific player
-    messageTimers[playerName] = timer.scheduleFunction(sendMessage, {unitID, code, duration, interval, playerName}, timer.getTime() + interval)
-    Bomber.logInfo("成功设置提示计时器，玩家："..playerName)
+    trigger.action.outTextForUnit(unitID,
+        "呼叫空中支援！请在F10地图创建标记，并输入代码 [" .. code .. "]，然后删除标记以确认。",
+        5)  -- 每次显示5秒
+
+    -- 更新已用时间
+    timeElapsed = timeElapsed + interval
+
+    -- 如果达到指定时间，停止发送
+    if timeElapsed >= duration then
+        Bomber.logError("2分钟提示时长已到达，玩家：" .. playerName)
+        timer.removeFunction(messageTimers[playerName])  -- 停止该玩家的定时器
+        messageTimers[playerName] = nil  -- 从列表中移除定时器
+    else
+        -- 如果还没达到时长，继续调度
+        messageTimers[playerName] = timer.scheduleFunction(sendMessage, {unitID, code, duration, interval, playerName, timeElapsed}, timer.getTime() + interval)
+    end
+end
+
+-- 周期性发送消息的函数
+local function sendMessagePeriodically(unitID, code, duration, interval, playerName)
+    local timeElapsed = 0  -- 初始化时间
+    sendMessage(unitID, code, duration, interval, playerName, timeElapsed)  -- 立即执行第一次发送
+    Bomber.logInfo("成功设置提示计时器，玩家：" .. playerName)
 end
 
 function Bomber.CallAttack(_args)
