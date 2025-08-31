@@ -113,7 +113,7 @@ local function sendMessagePeriodically(unitID, code, duration, interval, playerN
     local timeElapsed = 0
 
     -- Function to send the message
-    local function sendMessage()
+    local function sendMessage(unitID, code, duration, interval, playerName)
         -- If the player's request is already completed, stop sending
         if Bomber.ActiveRequests[playerName] == nil then
             Bomber.logError("活动请求为空，玩家："..playerName)
@@ -136,7 +136,7 @@ local function sendMessagePeriodically(unitID, code, duration, interval, playerN
     end
 
     -- Schedule the timer for this specific player
-    messageTimers[playerName] = timer.scheduleFunction(sendMessage, nil, timer.getTime() + interval)
+    messageTimers[playerName] = timer.scheduleFunction(sendMessage, {unitID, code, duration, interval, playerName}, timer.getTime() + interval)
     Bomber.logInfo("成功设置提示计时器，玩家："..playerName)
 end
 
@@ -184,9 +184,9 @@ function Bomber.CallAttack(_args)
         planeType = _planeType
     }
 
-    -- trigger.action.outTextForUnit(_unit:getID(),
-    --     "呼叫空中支援！请在F10地图创建标记，并输入代码 [" .. code .. "]，然后删除标记以确认。",
-    --     120)
+    trigger.action.outTextForUnit(_unit:getID(),
+        "呼叫空中支援！请在F10地图创建标记，并输入代码 [" .. code .. "]，然后删除标记以确认。",
+        120)
     sendMessagePeriodically(_unit:getID(), code, 120, 5,_playerName)
     Bomber.logInfo("生成攻击代码 ["..code.."] 给玩家 ".._playerName)
 end
@@ -536,6 +536,31 @@ function Bomber.addTask(_coalition, _unitName, _point)
         } -- end of ["route"]
     }
     local newGroupData = mist.dynAdd(vars)
+
+    -- local newGroup = mist.getGroupData('BLF VGrp90 Stinger Team')
+    -- local newCoords = {
+    --         [1] = 
+    --         {
+    --             x = -175000,
+    --             y = 575000,
+    --         },
+    --         [2] =
+    --         {
+    --             x = -175002,
+    --             y = 575002,
+    --         },
+    --         [3] =
+    --         {
+    --             x = -175004,
+    --             y = 575004,
+    --         }
+    --     }
+    -- for i = 1, #newGroup.units do
+    -- newGroup.units[i].x = newCoords[i].x
+    -- newGroup.units[i].y = newCoords[i].y
+    -- end
+    -- newGroup.clone = true
+    -- mist.dynAdd(newGroup)
     
     if not newGroupData then
         env.error("Bomber.addTask: 克隆模板失败 " .. bomberTemplate)
