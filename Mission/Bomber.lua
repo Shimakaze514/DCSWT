@@ -108,6 +108,35 @@ local function generateRandomCode()
     return code
 end
 
+local messageTimers = {}  -- To track the timers for each player
+local function sendMessagePeriodically(unitID, code, duration, interval, playerName)
+    local timeElapsed = 0
+
+    -- Function to send the message
+    local function sendMessage()
+        -- If the player's request is already completed, stop sending
+        if Bomber.ActiveRequests[playerName] == nil then
+            timer.removeFunction(messageTimers[playerName])  -- Stop the specific timer for the player
+            messageTimers[playerName] = nil  -- Remove the timer from the list
+            return
+        end
+        
+        trigger.action.outTextForUnit(unitID,
+            "呼叫空中支援！请在F10地图创建标记，并输入代码 [" .. code .. "]，然后删除标记以确认。",
+            interval)  -- The message will be shown for 10 seconds each time
+        timeElapsed = timeElapsed + interval
+
+        -- Stop sending messages after the specified duration
+        if timeElapsed >= duration then
+            timer.removeFunction(messageTimers[playerName])  -- Stop the specific timer for the player
+            messageTimers[playerName] = nil  -- Remove the timer from the list
+        end
+    end
+
+    -- Schedule the timer for this specific player
+    messageTimers[playerName] = timer.scheduleFunction(sendMessage, nil, timer.getTime() + interval)
+end
+
 function Bomber.CallAttack(_args)
     local _unitName = _args[1]
     local _planeType = _args[2]
@@ -152,10 +181,10 @@ function Bomber.CallAttack(_args)
         planeType = _planeType
     }
 
-    trigger.action.outTextForUnit(_unit:getID(),
-        "呼叫空中支援！请在F10地图创建标记，并输入代码 [" .. code .. "]，然后删除标记以确认。",
-        120)
-
+    -- trigger.action.outTextForUnit(_unit:getID(),
+    --     "呼叫空中支援！请在F10地图创建标记，并输入代码 [" .. code .. "]，然后删除标记以确认。",
+    --     120)
+    sendMessagePeriodically(_unit:getID(), code, 120, 5,_playerName)
     Bomber.logInfo("生成攻击代码 ["..code.."] 给玩家 ".._playerName)
 end
 
@@ -218,7 +247,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
     end
 
     -- 克隆飞机模板
-    local newGroupData = mist.cloneGroup(bomberTemplate)
+    local newGroupData = mist.cloneGroup(bomberTemplate,false)
     if not newGroupData then
         env.error("Bomber.addTask: 克隆模板失败 " .. bomberTemplate)
         trigger.action.outTextForGroup(_groupId,
