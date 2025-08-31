@@ -8,22 +8,22 @@ Bomber.CostTable = {
     ["StealthBomber"] = 300
 }
 function Bomber.logError(message)
-    env.info("[NPCSAR] Err: "  .. message)
+    env.info("[BOMBER] Err: "  .. message)
 end
 
 function Bomber.logInfo(message)
-    env.info("[NPCSAR] Info: "  .. message)
+    env.info("[BOMBER] Info: "  .. message)
 end
 
 function Bomber.logDebug(message)
     if message and Bomber.Debug then
-        env.info("[NPCSAR] Dbg: "  .. message)
+        env.info("[BOMBER] Dbg: "  .. message)
     end
 end
 
 function Bomber.logTrace(message)
     if message and Bomber.Trace then
-        env.info("[NPCSAR] Trace: "  .. message)
+        env.info("[BOMBER] Trace: "  .. message)
     end
 end
 
@@ -72,7 +72,8 @@ local function generateRandomCode()
 end
 
 function Bomber.CallAttack(_unitName, _planeType)
-    local _unit = Unit.getByName(_unitName)
+    Bomber.logInfo("CallAttack: _unitName是" .. tostring(_unitName))
+    local _unit = ctld.getTransportUnit(_unitName)
     if not _unit then
         Bomber.logError("CallAttack: 找不到unit " .. tostring(_unitName))
         return
