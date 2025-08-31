@@ -218,7 +218,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
     end
 
     -- 克隆飞机模板
-    local newGroupData = mist.cloneGroup(bomberTemplate, true, 1000)
+    local newGroupData = mist.cloneGroup(bomberTemplate)
     if not newGroupData then
         env.error("Bomber.addTask: 克隆模板失败 " .. bomberTemplate)
         trigger.action.outTextForGroup(_groupId,
@@ -275,10 +275,44 @@ function Bomber.addTask(_coalition, _unitName, _point)
           altitudeEnabled = false
         } 
     }
+
+
+    local _ComboTask= 
+    {
+        ["id"] = "ComboTask",
+        ["params"] = 
+        {
+            ["tasks"] = 
+            {
+                [1] = 
+                {
+                    ["enabled"] = true,
+                    ["auto"] = false,
+                    ["id"] = "Bombing",
+                    ["number"] = 1,
+                    ["params"] = 
+                    {
+                        ["direction"] = 0,
+                        ["attackQtyLimit"] = false,
+                        ["attackQty"] = 1,
+                        ["expend"] = "All",
+                        ["y"] = _point.y,
+                        ["directionEnabled"] = false,
+                        ["groupAttack"] = false,
+                        ["altitude"] = 3370,
+                        ["altitudeEnabled"] = false,
+                        ["weaponType"] = 2097152,
+                        ["x"] = _point.x
+                    }, -- end of ["params"]
+                }, -- end of [1]
+            }, -- end of ["tasks"]
+        }, -- end of ["params"]
+    } -- end of ["task"]
+
     local controller = spawnGroup:getController()
     if controller then
-        Controller.pushTask(controller, Bombing)
-        timer.scheduleFunction(Controller.pushTask(),{controller, Bombing},timer.getTime() + 5)
+        Controller.pushTask(controller, _ComboTask)
+        --timer.scheduleFunction(Controller.pushTask(),{controller, _ComboTask},timer.getTime() + 5)
         trigger.action.outTextForCoalition(_coalition,
             string.format("%s 已起飞，攻击坐标 (%.0f, %.0f)",
                 planeType, _point.x, _point.y),
