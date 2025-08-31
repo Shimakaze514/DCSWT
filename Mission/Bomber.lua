@@ -287,7 +287,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
                 [1] = 
                 {
                     ["enabled"] = true,
-                    ["auto"] = false,
+                    ["auto"] = true, --false
                     ["id"] = "Bombing",
                     ["number"] = 1,
                     ["params"] = 
@@ -311,8 +311,8 @@ function Bomber.addTask(_coalition, _unitName, _point)
 
     local controller = spawnGroup:getController()
     if controller then
-        Controller.pushTask(controller, _ComboTask)
-        --timer.scheduleFunction(Controller.pushTask(),{controller, _ComboTask},timer.getTime() + 5)
+        --Controller.pushTask(controller, _ComboTask)
+        timer.scheduleFunction(Controller.pushTask(),{controller, _ComboTask},timer.getTime() + 3)
         trigger.action.outTextForCoalition(_coalition,
             string.format("%s 已起飞，攻击坐标 (%.0f, %.0f)",
                 planeType, _point.x, _point.y),
