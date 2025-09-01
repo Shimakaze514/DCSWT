@@ -569,10 +569,10 @@ function Bomber.addTask(_coalition, _unitName, _point)
     --     end
     -- end
     -- newGroup.clone = true
+    -- Bomber.logInfo("群组已更改，route的内容是："..Bomber.p(newGroup.route))
+    -- local newGroupData = mist.dynAdd(newGroup)
 
-    --Bomber.logInfo("群组已更改，route的内容是："..Bomber.p(newGroup.route))
-    
-    local newGroupData = mist.dynAdd(newGroup)
+
     Bomber.logInfo("MIST生成群组，内容是："..Bomber.p(newGroupData))
     if not newGroupData then
         env.error("Bomber.addTask: 克隆模板失败 " .. bomberTemplate)
