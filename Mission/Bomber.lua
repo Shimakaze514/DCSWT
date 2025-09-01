@@ -625,7 +625,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
           x                = _point.x,
           y                = _point.y,
           groupAttack      = false,
-          expend           = "Auto",
+          expend           = "All",
           attackQtyLimit   = false,
           attackQty        = 1,
           directionEnabled = false,
