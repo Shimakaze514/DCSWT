@@ -9,7 +9,7 @@ Bomber.CostTable = {
     ["StealthBomber"] = 200
 }
 Bomber.RangeTable = {
-    ["Attack"] = 30 * 1852,  --记得在CTLD里更改描述（搜CallAttack
+    ["Attack"] = 28 * 1852,
     ["Bomber"] = 51 * 1852,
     ["StealthBomber"] = 20 * 1852
 }
