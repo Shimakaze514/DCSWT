@@ -555,6 +555,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
     -- local newGroupData = mist.dynAdd(vars)
 
     local newGroup = mist.getGroupData(bomberTemplate,true)
+    Bomber.logInfo("群组已获取，内容是："..Bomber.p(newGroup))
     newGroup["route"]["points"][1]["task"]["params"]["tasks"][1]["params"]["x"] = _point.x
     newGroup["route"]["points"][1]["task"]["params"]["tasks"][1]["params"]["y"] = _point.y
     --newGroup.clone = true
