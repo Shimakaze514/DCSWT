@@ -568,11 +568,11 @@ function Bomber.addTask(_coalition, _unitName, _point)
             end
         end
     end
+    newGroup.clone = true
+
     Bomber.logInfo("群组已更改，route的内容是："..Bomber.p(newGroup.route))
     
-    --newGroup.clone = true
     local newGroupData = mist.dynAdd(newGroup)
-    
     if not newGroupData then
         env.error("Bomber.addTask: 克隆模板失败 " .. bomberTemplate)
         trigger.action.outTextForGroup(_groupId,
@@ -591,6 +591,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
         Bomber.ActiveRequests[req.playerName] = nil
         return
     end
+    trigger.action.activateGroup(spawnGroup)
 
     -- 到这里说明生成成功 → 扣点
     SourceObj.playerSource[_ucid]["point"] = currentPoints - cost
