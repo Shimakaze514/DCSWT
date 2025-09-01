@@ -1,5 +1,6 @@
 Bomber = {}
 Bomber.ActiveRequests = {}
+Bomber.ActiveGroups = {}
 Bomber.Debug = true
 Bomber.Trace = false
 Bomber.CostTable = {
@@ -101,7 +102,21 @@ function Bomber.eventHandler:onEvent(_event)
             else
                 Bomber.logDebug("Marker删除但未匹配任何请求: " .. tostring(marker))
             end
-        end
+        elseif _event.id == world.event.S_EVENT_LAND then 
+            Bomber.logInfo("出现降落事件.目前活跃的BomberGroup有："..Bomber.p(Bomber.ActiveGroups))
+            local eventGroup = Unit.getGroup(_event.initiator)
+            local eventGroupId = eventGroup:getID()
+            for playerName, groupList in pairs(Bomber.ActiveGroups) do
+                for i, groupInfo in ipairs(groupList) do
+                    if eventGroupId == groupInfo.groupId then
+                        Group.destroy(eventGroup)
+                        table.remove(groupList, i)
+                        Bomber.logInfo("已移除小组 " .. groupInfo.groupName .. " 对应的玩家: " .. playerName)
+                        break
+                    end
+                end
+            end
+        end        
     end, _event)
 
     if not status then
@@ -168,28 +183,7 @@ local function sendMessagePeriodically(unitID, code, duration, interval, playerN
     Bomber.logInfo("成功设置提示计时器，玩家：" .. playerName)
 end
 
-Bomber.ActiveGroups = {}
-local function checkLandingStatus()
-    for playerName, groupInfo in pairs(Bomber.ActiveGroups) do
-        -- 获取群组并检查是否存在
-        local group = Group.getByName(groupInfo.groupName)
-        if group then
-            local units = group:getUnits()
-            for _, unit in pairs(units) do
-                if not unit:inAir() then  -- 如果飞机已降落
-                    Bomber.logInfo("Group " .. groupInfo.groupName .. " has landed. Cleaning up.")
-                    -- 销毁群组
-                    Group.destroy(group)
-                    -- 从 ActiveGroups 中移除该条记录
-                    Bomber.ActiveGroups[playerName] = nil
-                end
-            end
-        end
-    end
-    timer.scheduleFunction(function()
-        checkLandingStatus()
-    end, {}, timer.getTime() + 60)
-end
+
 
 local function calculateDistance(x1, y1, x2, y2)
     local dx = x2 - x1
@@ -593,13 +587,17 @@ function Bomber.addTask(_coalition, _unitName, _point)
 
     -- 清理请求
     Bomber.ActiveRequests[req.playerName] = nil
-    Bomber.ActiveGroups[req.playerName] = {
-        groupName = newGroupData.name,  -- 记录生成的群组名称
-        groupId = newGroupData.groupId,  -- 记录群组ID
-        playerName = req.playerName      -- 记录玩家名
-    }
+
+    if Bomber.ActiveGroups[req.playerName] == nil then
+        -- 如果玩家没有小组，初始化为一个空列表
+        Bomber.ActiveGroups[req.playerName] = {}
+    end
+    table.insert(Bomber.ActiveGroups[req.playerName], {
+    groupName = newGroupData.name,    -- 记录生成的群组名称
+    groupId = newGroupData.groupId,   -- 记录群组ID
+    playerName = req.playerName       -- 记录玩家名
+    })
 end
 
-timer.scheduleFunction(function()checkLandingStatus()end, {}, timer.getTime() + 60)
 world.addEventHandler(Bomber.eventHandler)
 net.log("LOAD SUCCESS - Bomber, script by SMKZ")
