@@ -3,10 +3,12 @@ Bomber.ActiveRequests = {}
 Bomber.Debug = true
 Bomber.Trace = false
 Bomber.CostTable = {
-    ["Attack"] = 200,
+    ["Attack"] = 250,
     ["Bomber"] = 800,
-    ["StealthBomber"] = 250
+    ["StealthBomber"] = 200
 }
+Bomber.R = 40  -- 距离100海里
+Bomber.SearchRadius = 1000
 SourceObj = SourceObj or {}
 function Bomber.logError(message)
     env.info("[BOMBER] Err: "  .. message)
@@ -156,6 +158,212 @@ local function sendMessagePeriodically(unitID, code, duration, interval, playerN
     Bomber.logInfo("成功设置提示计时器，玩家：" .. playerName)
 end
 
+Bomber.ActiveGroups = {}
+local function checkLandingStatus()
+    for playerName, groupInfo in pairs(Bomber.ActiveGroups) do
+        -- 获取群组并检查是否存在
+        local group = Group.getByName(groupInfo.groupName)
+        if group then
+            local units = group:getUnits()
+            for _, unit in pairs(units) do
+                if not unit:inAir() then  -- 如果飞机已降落
+                    Bomber.logInfo("Group " .. groupInfo.groupName .. " has landed. Cleaning up.")
+                    -- 销毁群组
+                    Group.destroy(group)
+                    -- 从 ActiveGroups 中移除该条记录
+                    Bomber.ActiveGroups[playerName] = nil
+                end
+            end
+        end
+    end
+    timer.scheduleFunction(function()
+        checkLandingStatus()
+    end, {}, timer.getTime() + 60)
+end
+
+local function calculateDistance(x1, y1, x2, y2)
+    local dx = x2 - x1
+    local dy = y2 - y1
+    return math.sqrt(dx * dx + dy * dy)
+end
+function Bomber.searchGroundUnitsInRange(centerPos, SearchRadius)
+    -- 用于存储所有符合条件的地面单位坐标
+    local groundUnitPositions = {}
+
+    -- 获取所有单位
+    local allUnits = world.getUnits()
+
+    -- 遍历所有单位
+    for _, unit in pairs(allUnits) do
+        -- 确保单位是地面单位，并且已经初始化
+        if unit:isExist() and unit:getType():getCategory() == Unit.Category.GROUND then
+            -- 获取该单位的位置
+            local unitPos = unit:getPoint()
+            
+            -- 计算单位和目标点之间的距离
+            local distance = calculateDistance(centerPos.x, centerPos.y, unitPos.x, unitPos.y)
+
+            -- 如果距离在指定半径内，添加到返回表格中
+            if distance <= SearchRadius then
+                table.insert(groundUnitPositions, {x = unitPos.x, y = unitPos.y})
+            end
+        end
+    end
+
+    -- 返回符合条件的地面单位坐标
+    return groundUnitPositions
+end
+local function calculateExpend(perTargetMissiles, missileCount)
+    local expend = "All"  -- 默认是 "All"
+    
+    if perTargetMissiles == 1 then
+        expend = "One"
+    elseif perTargetMissiles == 2 then
+        expend = "Two"
+    elseif perTargetMissiles == 3 then
+        expend = "Three"
+    elseif perTargetMissiles == 4 then
+        expend = "Four"
+    elseif perTargetMissiles > 4 and perTargetMissiles <= missileCount / 2 then
+        expend = "Half"
+    end
+    
+    return expend
+end
+function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
+    local DCStasks = {}  -- 用于存储所有的任务
+
+    -- 默认的导弹数量
+    local missileCount = missileCount or 20
+
+    -- 目标数量
+    local targetCount = #groundUnitPositions
+
+    -- 如果目标数量为0
+    if targetCount == 0 then
+        local BombingTask = {
+            id = 'Bombing',
+            params = {
+                point            = _point,  -- 使用地面单位的位置
+                x                = _point.x,
+                y                = _point.y,
+                groupAttack      = false,
+                expend           = "All",  -- 设置为每个目标的导弹数量
+                attackQtyLimit   = false,
+                attackQty        = 1,
+                directionEnabled = false,
+                direction        = 0,
+                altitudeEnabled  = false,
+                altitude         = 2000,
+                weaponType       = 1073741822,
+                attackType       = nil,
+            }
+        }   
+        table.insert(DCStasks, BombingTask)
+        return DCStasks
+    end
+
+    -- 计算每个目标的导弹数量，向下取整
+    local perTargetMissiles = math.floor(missileCount / targetCount)
+    local expend = calculateExpend(perTargetMissiles, missileCount)
+    -- 遍历所有地面单位坐标并生成 BombingTask
+    for _, pos in ipairs(groundUnitPositions) do
+        -- 初始化 BombingTask
+        local BombingTask = {
+            id = 'Bombing',
+            params = {
+                point            = pos,  -- 使用地面单位的位置
+                x                = pos.x,
+                y                = pos.y,
+                groupAttack      = false,
+                expend           = expend,  -- 设置为每个目标的导弹数量
+                attackQtyLimit   = false,
+                attackQty        = 1,
+                directionEnabled = false,
+                direction        = 0,
+                altitudeEnabled  = false,
+                altitude         = 2000,
+                weaponType       = 1073741822,
+                attackType       = nil,
+            }
+        }
+
+        -- 将任务插入到任务表中
+        table.insert(DCStasks, BombingTask)
+
+        -- 输出任务信息，调试用
+        Bomber.logInfo("生成 BombingTask: " .. Bomber.p(BombingTask))
+    end
+
+    -- 返回任务列表
+    return DCStasks
+end
+local function updateRoutePoints(newGroupData, _point, R)
+    -- 获取原有的route.points
+    local points = newGroupData.route.points
+
+    -- 只处理最后一个点
+    local lastPoint = points[#points]  -- 获取最后一个点
+    if lastPoint then
+        -- 复制整个点的表
+        local newPoint = {}
+        for k, v in pairs(lastPoint) do
+            newPoint[k] = v
+        end
+
+        local x1, y1 = lastPoint.x, lastPoint.y
+        local x2, y2 = _point.x, _point.y
+        
+        -- 计算两点之间的直线距离
+        local distance = calculateDistance(x1, y1, x2, y2)
+
+        -- 如果距离大于0，计算比例
+        if distance > 0 then
+            local ratio = R / distance  -- 比例因子，确定在这条线上的新位置
+            local newX = x1
+            local newY = y1
+            if ratio < 0.85 then
+                newX = x1 + (x2 - x1) * ratio
+                newY = y1 + (y2 - y1) * ratio
+            end
+
+            -- 更新新点的坐标
+            newPoint.x = newX
+            newPoint.y = newY
+
+            -- 将新的点添加到points中
+            local unitsInRange = Bomber.searchGroundUnitsInRange(_point, Bomber.SearchRadius)
+            local DCStasks = Bomber.createBombingTasks(_point,unitsInRange, 20)
+            for _, task in ipairs(DCStasks) do
+                Bomber.logInfo("任务 ID: " .. task.id .. ", expend: " .. task.params.expend)
+            end
+            Bomber:SetTaskWaypoint(newPoint, DCStasks)
+            table.insert(points, newPoint)
+            Bomber.logInfo("更新后的路点是"..Bomber.p(points))
+        end
+    end
+end
+function Bomber:SetTaskWaypoint(Waypoint, Task)
+    -- 使用 TaskCombo 方法组合任务
+    Waypoint.task = Bomber:TaskCombo({Task})
+
+    -- 可选：调试输出，查看 waypoint 的任务内容
+    Bomber.logInfo("Waypoint任务已设置: " .. Bomber.p(Waypoint.task))
+
+    -- 返回设置后的任务
+    return Waypoint.task
+end
+function Bomber:TaskCombo(DCSTasks)
+    local DCSTaskCombo = {
+        id = 'ComboTask',
+        params = {
+            tasks = DCSTasks
+        }
+    }
+    return DCSTaskCombo
+end
+
+
 function Bomber.CallAttack(_args)
     local _unitName = _args[1]
     local _planeType = _args[2]
@@ -206,14 +414,6 @@ function Bomber.CallAttack(_args)
     sendMessagePeriodically(_unit:getID(), code, 120, 5,_playerName)
     Bomber.logInfo("生成攻击代码 ["..code.."] 给玩家 ".._playerName)
 end
-
-
-function Bomber.callBomber(_unit, _point)
-end
-
-function Bomber.CallStealthBomber(_unitName)
-end
-
 
 function Bomber.addTask(_coalition, _unitName, _point)
     local templateTable = {
@@ -268,309 +468,18 @@ function Bomber.addTask(_coalition, _unitName, _point)
     end
 
     -- 克隆飞机模板
-    local newGroupData = mist.cloneGroup(bomberTemplate,true)
+    --local newGroupData = mist.cloneGroup(bomberTemplate,true)
 
-    -- local vars = {
-    --     ["units"] = 
-    --     {
-    --         [1] = 
-    --         {
-    --             ["alt"] = 9144,
-    --             ["alt_type"] = "BARO",
-    --             ["livery_id"] = "usaf standard",
-    --             ["skill"] = "Excellent",
-    --             ["speed"] = 256.94444444444,
-    --             ["AddPropAircraft"] = 
-    --             {
-    --                 ["VoiceCallsignLabel"] = "ED",
-    --                 ["VoiceCallsignNumber"] = "11",
-    --                 ["STN_L16"] = "00745",
-    --             }, -- end of ["AddPropAircraft"]
-    --             ["type"] = "B-52H",
-    --             ["unitId"] = 357,
-    --             ["psi"] = 1.6376182976719,
-    --             ["onboard_num"] = "012",
-    --             ["y"] = 774611.72852356,
-    --             ["x"] = -124393.81190788,
-    --             ["name"] = "Aerial-1-1",
-    --             ["payload"] = 
-    --             {
-    --                 ["pylons"] = 
-    --                 {
-    --                     [1] = 
-    --                     {
-    --                         ["CLSID"] = "{45447F82-01B5-4029-A572-9AAD28AF0275}",
-    --                     }, -- end of [1]
-    --                     [2] = 
-    --                     {
-    --                         ["CLSID"] = "{8DCAF3A3-7FCF-41B8-BB88-58DEDA878EDE}",
-    --                     }, -- end of [2]
-    --                     [3] = 
-    --                     {
-    --                         ["CLSID"] = "{45447F82-01B5-4029-A572-9AAD28AF0275}",
-    --                     }, -- end of [3]
-    --                 }, -- end of ["pylons"]
-    --                 ["fuel"] = 70568,
-    --                 ["flare"] = 192,
-    --                 ["chaff"] = 1125,
-    --                 ["gun"] = 100,
-    --             }, -- end of ["payload"]
-    --             ["heading"] = -1.6376182976719,
-    --             ["callsign"] = 
-    --             {
-    --                 [1] = 1,
-    --                 [2] = 1,
-    --                 ["name"] = "Enfield11",
-    --                 [3] = 1,
-    --             }, -- end of ["callsign"]
-    --         }, -- end of [1]
-    --     }, -- end of ["units"]
-    --     country = _country,
-    --     category = 0,
-    --     ["route"] = 
-    --     {
-    --         ["routeRelativeTOT"] = true,
-    --         ["points"] = 
-    --         {
-    --             [1] = 
-    --             {
-    --                 ["alt"] = 9144,
-    --                 ["action"] = "Turning Point",
-    --                 ["alt_type"] = "BARO",
-    --                 ["properties"] = 
-    --                 {
-    --                     ["addopt"] = {},
-    --                 }, -- end of ["properties"]
-    --                 ["speed"] = 256.94444444444,
-    --                 ["task"] = 
-    --                 {
-    --                     ["id"] = "ComboTask",
-    --                     ["params"] = 
-    --                     {
-    --                         ["tasks"] = 
-    --                         {
-    --                         --     [1] = 
-    --                         --     {
-    --                         --         ["number"] = 1,
-    --                         --         ["auto"] = true,
-    --                         --         ["id"] = "WrappedAction",
-    --                         --         ["enabled"] = true,
-    --                         --         ["params"] = 
-    --                         --         {
-    --                         --             ["action"] = 
-    --                         --             {
-    --                         --                 ["id"] = "Option",
-    --                         --                 ["params"] = 
-    --                         --                 {
-    --                         --                     ["value"] = 1,
-    --                         --                     ["name"] = 1,
-    --                         --                 }, -- end of ["params"]
-    --                         --             }, -- end of ["action"]
-    --                         --         }, -- end of ["params"]
-    --                         --     }, -- end of [1]
-    --                         --     [2] = 
-    --                         --     {
-    --                         --         ["number"] = 2,
-    --                         --         ["auto"] = true,
-    --                         --         ["id"] = "WrappedAction",
-    --                         --         ["enabled"] = true,
-    --                         --         ["params"] = 
-    --                         --         {
-    --                         --             ["action"] = 
-    --                         --             {
-    --                         --                 ["id"] = "Option",
-    --                         --                 ["params"] = 
-    --                         --                 {
-    --                         --                     ["value"] = 1,
-    --                         --                     ["name"] = 3,
-    --                         --                 }, -- end of ["params"]
-    --                         --             }, -- end of ["action"]
-    --                         --         }, -- end of ["params"]
-    --                         --     }, -- end of [2]
-    --                         --     [3] = 
-    --                         --     {
-    --                         --         ["number"] = 3,
-    --                         --         ["auto"] = true,
-    --                         --         ["id"] = "WrappedAction",
-    --                         --         ["enabled"] = true,
-    --                         --         ["params"] = 
-    --                         --         {
-    --                         --             ["action"] = 
-    --                         --             {
-    --                         --                 ["id"] = "Option",
-    --                         --                 ["params"] = 
-    --                         --                 {
-    --                         --                     ["variantIndex"] = 2,
-    --                         --                     ["name"] = 5,
-    --                         --                     ["formationIndex"] = 2,
-    --                         --                     ["value"] = 131074,
-    --                         --                 }, -- end of ["params"]
-    --                         --             }, -- end of ["action"]
-    --                         --         }, -- end of ["params"]
-    --                         --     }, -- end of [3]
-    --                         --     [4] = 
-    --                         --     {
-    --                         --         ["number"] = 4,
-    --                         --         ["auto"] = true,
-    --                         --         ["id"] = "WrappedAction",
-    --                         --         ["enabled"] = true,
-    --                         --         ["params"] = 
-    --                         --         {
-    --                         --             ["action"] = 
-    --                         --             {
-    --                         --                 ["id"] = "Option",
-    --                         --                 ["params"] = 
-    --                         --                 {
-    --                         --                     ["value"] = true,
-    --                         --                     ["name"] = 15,
-    --                         --                 }, -- end of ["params"]
-    --                         --             }, -- end of ["action"]
-    --                         --         }, -- end of ["params"]
-    --                         --     }, -- end of [4]
-    --                         --     [5] = 
-    --                         --     {
-    --                         --         ["number"] = 5,
-    --                         --         ["auto"] = true,
-    --                         --         ["id"] = "WrappedAction",
-    --                         --         ["enabled"] = true,
-    --                         --         ["params"] = 
-    --                         --         {
-    --                         --             ["action"] = 
-    --                         --             {
-    --                         --                 ["id"] = "Option",
-    --                         --                 ["params"] = 
-    --                         --                 {
-    --                         --                     ["targetTypes"] = {},
-    --                         --                     ["name"] = 21,
-    --                         --                     ["value"] = "none;",
-    --                         --                     ["noTargetTypes"] = 
-    --                         --                     {
-    --                         --                         [1] = "Fighters",
-    --                         --                         [2] = "Multirole fighters",
-    --                         --                         [3] = "Bombers",
-    --                         --                         [4] = "Helicopters",
-    --                         --                         [5] = "UAVs",
-    --                         --                         [6] = "Infantry",
-    --                         --                         [7] = "Fortifications",
-    --                         --                         [8] = "Tanks",
-    --                         --                         [9] = "IFV",
-    --                         --                         [10] = "APC",
-    --                         --                         [11] = "Artillery",
-    --                         --                         [12] = "Unarmed vehicles",
-    --                         --                         [13] = "AAA",
-    --                         --                         [14] = "SR SAM",
-    --                         --                         [15] = "MR SAM",
-    --                         --                         [16] = "LR SAM",
-    --                         --                         [17] = "Aircraft Carriers",
-    --                         --                         [18] = "Cruisers",
-    --                         --                         [19] = "Destroyers",
-    --                         --                         [20] = "Frigates",
-    --                         --                         [21] = "Corvettes",
-    --                         --                         [22] = "Light armed ships",
-    --                         --                         [23] = "Unarmed ships",
-    --                         --                         [24] = "Submarines",
-    --                         --                         [25] = "Cruise missiles",
-    --                         --                         [26] = "Antiship Missiles",
-    --                         --                         [27] = "AA Missiles",
-    --                         --                         [28] = "AG Missiles",
-    --                         --                         [29] = "SA Missiles",
-    --                         --                     }, -- end of ["noTargetTypes"]
-    --                         --                 }, -- end of ["params"]
-    --                         --             }, -- end of ["action"]
-    --                         --         }, -- end of ["params"]
-    --                         --     }, -- end of [5]
-    --                         --     [6] = 
-    --                         --     {
-    --                         --         ["number"] = 6,
-    --                         --         ["auto"] = true,
-    --                         --         ["id"] = "WrappedAction",
-    --                         --         ["enabled"] = true,
-    --                         --         ["params"] = 
-    --                         --         {
-    --                         --             ["action"] = 
-    --                         --             {
-    --                         --                 ["id"] = "EPLRS",
-    --                         --                 ["params"] = 
-    --                         --                 {
-    --                         --                     ["value"] = true,
-    --                         --                     ["groupId"] = 6,
-    --                         --                 }, -- end of ["params"]
-    --                         --             }, -- end of ["action"]
-    --                         --         }, -- end of ["params"]
-    --                         --     }, -- end of [6]
-    --                         --     [7] = 
-    --                         --     {
-    --                         --         ["number"] = 7,
-    --                         --         ["auto"] = true,
-    --                         --         ["id"] = "WrappedAction",
-    --                         --         ["enabled"] = true,
-    --                         --         ["params"] = 
-    --                         --         {
-    --                         --             ["action"] = 
-    --                         --             {
-    --                         --                 ["id"] = "Option",
-    --                         --                 ["params"] = 
-    --                         --                 {
-    --                         --                     ["value"] = true,
-    --                         --                     ["name"] = 35,
-    --                         --                 }, -- end of ["params"]
-    --                         --             }, -- end of ["action"]
-    --                         --         }, -- end of ["params"]
-    --                         --     }, -- end of [7]
-    --                             [1] = 
-    --                             {
-    --                                 ["enabled"] = true,
-    --                                 ["auto"] = false,
-    --                                 ["id"] = "Bombing",
-    --                                 ["number"] = 1,
-    --                                 ["params"] = 
-    --                                 {
-    --                                     ["direction"] = 0,
-    --                                     ["attackQtyLimit"] = false,
-    --                                     ["attackQty"] = 1,
-    --                                     ["expend"] = "All",
-    --                                     ["y"] = _point.y,
-    --                                     ["directionEnabled"] = false,
-    --                                     ["groupAttack"] = false,
-    --                                     ["altitude"] = 3370,
-    --                                     ["altitudeEnabled"] = false,
-    --                                     ["weaponType"] = 2097152,
-    --                                     ["x"] = _point.x,
-    --                                 }, -- end of ["params"]
-    --                             }, -- end of [8]
-    --                         }, -- end of ["tasks"]
-    --                     }, -- end of ["params"]
-    --                 }, -- end of ["task"]
-    --                 ["type"] = "Turning Point",
-    --                 ["ETA"] = 0,
-    --                 ["ETA_locked"] = true,
-    --                 ["y"] = 774611.72852356,
-    --                 ["x"] = -124393.81190788,
-    --                 ["speed_locked"] = true,
-    --                 ["formation_template"] = "",
-    --             }, -- end of [1]
-    --         }, -- end of ["points"]
-    --     } -- end of ["route"]
-    -- }
-    -- local newGroupData = mist.dynAdd(vars)
-
-    -- local newGroup = mist.getGroupData(bomberTemplate,true)
-    -- --Bomber.logInfo("群组已获取，内容是："..Bomber.p(newGroup))
-    -- if newGroup and newGroup.route then
-    --     for i, point in pairs(newGroup.route) do
-    --         if point.task and point.task.params and point.task.params.tasks then
-    --             for _, task in pairs(point.task.params.tasks) do
-    --                 if task.id == "Bombing" and task.params then
-    --                     task.params.x = _point.x  -- 更新 x 坐标
-    --                     task.params.y = _point.y  -- 更新 y 坐标
-    --                 end
-    --             end
-    --         end
-    --     end
-    -- end
-    -- newGroup.clone = true
-    -- Bomber.logInfo("群组已更改，route的内容是："..Bomber.p(newGroup.route))
-    -- local newGroupData = mist.dynAdd(newGroup)
+    local newGroup = mist.getGroupData(bomberTemplate,true)
+    --Bomber.logInfo("群组已获取，内容是："..Bomber.p(newGroup))
+    if newGroup and newGroup.route and newGroup.route.points then
+        updateRoutePoints(newGroup, _point, Bomber.R)
+    else
+        Bomber.logError("未找到有效的route.points数据")
+    end
+    newGroup.clone = true
+    Bomber.logInfo("群组已更改，route的内容是："..Bomber.p(newGroup.route))
+    local newGroupData = mist.dynAdd(newGroup)
 
 
     Bomber.logInfo("MIST生成群组，内容是："..Bomber.p(newGroupData))
@@ -602,96 +511,52 @@ function Bomber.addTask(_coalition, _unitName, _point)
             planeType, cost, SourceObj.playerSource[_ucid]["point"]),
         15)
 
-    local AttackMapObject = {
-        id = 'AttackMapObject',
-        params = {
-            direction = 0,
-            attackQtyLimit = false,
-            attackQty = 1,
-            expend = "Auto",
-            point = _point,
-            directionEnabled = false,
-            groupAttack = false,
-            altitude = 2000,
-            altitudeEnabled = false,
-            weaponType = 4030478
-        }
-    }
-
-    local BombingTask = {
-        id = 'Bombing',
-        params = {
-          point            = _point,
-          x                = _point.x,
-          y                = _point.y,
-          groupAttack      = false,
-          expend           = "All",
-          attackQtyLimit   = false,
-          attackQty        = 1,
-          directionEnabled = false,
-          direction        = 0,
-          altitudeEnabled  = false,
-          altitude         = 2000,
-          weaponType       = 1073741822,
-          attackType       = nil,
-          },
-      }
-
-    local _ComboTask= 
-    {
-        ["id"] = "ComboTask",
-        ["params"] = 
-        {
-            ["tasks"] = 
-            {
-                [1] = 
-                {
-                    ["enabled"] = true,
-                    ["auto"] = true, --false
-                    ["id"] = "Bombing",
-                    ["number"] = 1,
-                    ["params"] = 
-                    {
-                        ["direction"] = 0,
-                        ["attackQtyLimit"] = false,
-                        ["attackQty"] = 1,
-                        ["expend"] = "All",
-                        ["y"] = _point.y,
-                        ["directionEnabled"] = false,
-                        ["groupAttack"] = false,
-                        ["altitude"] = 3370,
-                        ["altitudeEnabled"] = false,
-                        ["weaponType"] = 2097152,
-                        ["x"] = _point.x
-                    }, -- end of ["params"]
-                }, -- end of [1]
-            }, -- end of ["tasks"]
-        }, -- end of ["params"]
-    } -- end of ["task"]
-
-    local controller = spawnGroup:getController()
-    if controller then
-        controller:pushTask(BombingTask)
-        timer.scheduleFunction(function() 
-            controller:pushTask(BombingTask)  -- Schedule the task for the controller
-        end, {}, timer.getTime() + 3)  -- Delay the execution by 3 seconds
-        trigger.action.outTextForCoalition(_coalition,
-            string.format("%s 已起飞，攻击坐标 (%.0f, %.0f)",
-                planeType, _point.x, _point.y),
-            15)
-    else
-        env.error("Bomber.addTask: 无法获取控制器")
-        trigger.action.outTextForGroup(_groupId,
-            string.format("%s 呼叫失败，未扣除点数。", planeType),
-            15)
-        Bomber.ActiveRequests[req.playerName] = nil
-        return
-    end
+    -- local BombingTask = {
+    --     id = 'Bombing',
+    --     params = {
+    --       point            = _point,
+    --       x                = _point.x,
+    --       y                = _point.y,
+    --       groupAttack      = false,
+    --       expend           = "All",
+    --       attackQtyLimit   = false,
+    --       attackQty        = 1,
+    --       directionEnabled = false,
+    --       direction        = 0,
+    --       altitudeEnabled  = false,
+    --       altitude         = 2000,
+    --       weaponType       = 1073741822,
+    --       attackType       = nil,
+    --       },
+    --   }
+    -- local controller = spawnGroup:getController()
+    -- if controller then
+    --     controller:pushTask(BombingTask)
+    --     timer.scheduleFunction(function() 
+    --         controller:pushTask(BombingTask)  -- Schedule the task for the controller
+    --     end, {}, timer.getTime() + 3)  -- Delay the execution by 3 seconds
+    --     trigger.action.outTextForCoalition(_coalition,
+    --         string.format("%s 已起飞，攻击坐标 (%.0f, %.0f)",
+    --             planeType, _point.x, _point.y),
+    --         15)
+    -- else
+    --     env.error("Bomber.addTask: 无法获取控制器")
+    --     trigger.action.outTextForGroup(_groupId,
+    --         string.format("%s 呼叫失败，未扣除点数。", planeType),
+    --         15)
+    --     Bomber.ActiveRequests[req.playerName] = nil
+    --     return
+    -- end
 
     -- 清理请求
     Bomber.ActiveRequests[req.playerName] = nil
+    Bomber.ActiveGroups[req.playerName] = {
+        groupName = newGroupData.name,  -- 记录生成的群组名称
+        groupId = newGroupData.groupId,  -- 记录群组ID
+        playerName = req.playerName      -- 记录玩家名
+    }
 end
 
-
+timer.scheduleFunction(function()checkLandingStatus()end, {}, timer.getTime() + 60)
 world.addEventHandler(Bomber.eventHandler)
 net.log("LOAD SUCCESS - Bomber, script by SMKZ")
