@@ -3,12 +3,12 @@ Bomber.ActiveRequests = {}
 Bomber.Debug = true
 Bomber.Trace = false
 Bomber.CostTable = {
-    ["Attack"] = 250,
+    ["Attack"] = 200,  --记得在CTLD里更改描述（搜CallAttack
     ["Bomber"] = 800,
     ["StealthBomber"] = 200
 }
-Bomber.R = 40  -- 距离100海里
-Bomber.SearchRadius = 1000
+Bomber.R = 40 * 1852  -- 距离,海里
+Bomber.SearchRadius = 5000
 SourceObj = SourceObj or {}
 function Bomber.logError(message)
     env.info("[BOMBER] Err: "  .. message)
@@ -186,31 +186,56 @@ local function calculateDistance(x1, y1, x2, y2)
     local dy = y2 - y1
     return math.sqrt(dx * dx + dy * dy)
 end
-function Bomber.searchGroundUnitsInRange(centerPos, SearchRadius)
+function Bomber.searchGroundUnitsInRange(centerPos, SearchRadius,_coalitionId)
     -- 用于存储所有符合条件的地面单位坐标
     local groundUnitPositions = {}
-
+    local allUnits = {}
     -- 获取所有单位
-    local allUnits = world.getUnits()
+    --local allUnits = world.getUnits()
 
+    -- local volS = {
+    --   id = world.VolumeType.SPHERE,
+    --   params = {
+    --     point = centerPos,
+    --     radius = SearchRadius
+    --   }
+    -- }
+    -- local ifFound = function(foundItem, val)
+    --     allUnits[#allUnits + 1] = foundItem
+    --    return true
+    -- end
+    -- world.searchObjects(Object.Category.UNIT, volS, ifFound)
+
+    local Groups = coalition.getGroups(_coalitionId, Group.Category.GROUND)
+    for _, group in pairs(Groups) do
+        -- 获取当前小组的所有单位
+        local units = group:getUnits()
+    
+        -- 将每个单位加入到allUnits表中
+        for _, unit in pairs(units) do
+            table.insert(allUnits, unit)
+        end
+    end
     -- 遍历所有单位
     for _, unit in pairs(allUnits) do
         -- 确保单位是地面单位，并且已经初始化
-        if unit:isExist() and unit:getType():getCategory() == Unit.Category.GROUND then
+        if unit:isExist() then
             -- 获取该单位的位置
             local unitPos = unit:getPoint()
-            
             -- 计算单位和目标点之间的距离
-            local distance = calculateDistance(centerPos.x, centerPos.y, unitPos.x, unitPos.y)
+            local distance = calculateDistance(centerPos.x, centerPos.y, unitPos.x, unitPos.z)
+            Bomber.logInfo("获取"..Bomber.p(unit:getName()).."的位置："..Bomber.p(unitPos).."，距离为"..distance)
 
             -- 如果距离在指定半径内，添加到返回表格中
             if distance <= SearchRadius then
-                table.insert(groundUnitPositions, {x = unitPos.x, y = unitPos.y})
+                table.insert(groundUnitPositions, {x = unitPos.x, y = unitPos.z})
             end
         end
     end
 
     -- 返回符合条件的地面单位坐标
+
+    Bomber.logInfo("找到的地面单位："..Bomber.p(groundUnitPositions))
     return groundUnitPositions
 end
 local function calculateExpend(perTargetMissiles, missileCount)
@@ -241,6 +266,7 @@ function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
 
     -- 如果目标数量为0
     if targetCount == 0 then
+        Bomber.logInfo("目标数量为0，向F10点发射所有导弹")
         local BombingTask = {
             id = 'Bombing',
             params = {
@@ -262,12 +288,15 @@ function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
         table.insert(DCStasks, BombingTask)
         return DCStasks
     end
-
+    if targetCount > missileCount then
+        groundUnitPositions = { unpack(groundUnitPositions, 1, missileCount) }
+        targetCount = missileCount  -- 更新目标数量为missileCount
+    end
     -- 计算每个目标的导弹数量，向下取整
     local perTargetMissiles = math.floor(missileCount / targetCount)
     local expend = calculateExpend(perTargetMissiles, missileCount)
     -- 遍历所有地面单位坐标并生成 BombingTask
-    for _, pos in ipairs(groundUnitPositions) do
+    for _, pos in pairs(groundUnitPositions) do
         -- 初始化 BombingTask
         local BombingTask = {
             id = 'Bombing',
@@ -300,10 +329,13 @@ function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
 end
 local function updateRoutePoints(newGroupData, _point, R)
     -- 获取原有的route.points
-    local points = newGroupData.route.points
+    local route = newGroupData.route
+    local _coalitionId = newGroupData.coalitionId
+    local targetCoalitionId = 0
+    if _coalitionId == 1 then targetCoalitionId = 2 elseif _coalitionId == 2 then targetCoalitionId = 1 end
 
     -- 只处理最后一个点
-    local lastPoint = points[#points]  -- 获取最后一个点
+    local lastPoint = route[#route]  -- 获取最后一个点
     if lastPoint then
         -- 复制整个点的表
         local newPoint = {}
@@ -323,8 +355,8 @@ local function updateRoutePoints(newGroupData, _point, R)
             local newX = x1
             local newY = y1
             if ratio < 0.85 then
-                newX = x1 + (x2 - x1) * ratio
-                newY = y1 + (y2 - y1) * ratio
+                newX = x2 + (x1 - x2) * ratio
+                newY = y2 + (y1 - y2) * ratio
             end
 
             -- 更新新点的坐标
@@ -332,27 +364,27 @@ local function updateRoutePoints(newGroupData, _point, R)
             newPoint.y = newY
 
             -- 将新的点添加到points中
-            local unitsInRange = Bomber.searchGroundUnitsInRange(_point, Bomber.SearchRadius)
+            local unitsInRange = Bomber.searchGroundUnitsInRange(_point, Bomber.SearchRadius, targetCoalitionId)
             local DCStasks = Bomber.createBombingTasks(_point,unitsInRange, 20)
+            newPoint.task = Bomber:TaskCombo(DCStasks)
             for _, task in ipairs(DCStasks) do
                 Bomber.logInfo("任务 ID: " .. task.id .. ", expend: " .. task.params.expend)
             end
-            Bomber:SetTaskWaypoint(newPoint, DCStasks)
-            table.insert(points, newPoint)
-            Bomber.logInfo("更新后的路点是"..Bomber.p(points))
+            table.insert(route, newPoint)
+            Bomber.logInfo("更新后的route是"..Bomber.p(route))
         end
     end
 end
-function Bomber:SetTaskWaypoint(Waypoint, Task)
-    -- 使用 TaskCombo 方法组合任务
-    Waypoint.task = Bomber:TaskCombo({Task})
+-- function Bomber:SetTaskWaypoint(Waypoint, Task)
+--     -- 使用 TaskCombo 方法组合任务
+--     Waypoint.task = Bomber:TaskCombo({Task})
 
-    -- 可选：调试输出，查看 waypoint 的任务内容
-    Bomber.logInfo("Waypoint任务已设置: " .. Bomber.p(Waypoint.task))
+--     -- 可选：调试输出，查看 waypoint 的任务内容
+--     Bomber.logInfo("Waypoint任务已设置: " .. Bomber.p(Waypoint.task))
 
-    -- 返回设置后的任务
-    return Waypoint.task
-end
+--     -- 返回设置后的任务
+--     return Waypoint.task
+-- end
 function Bomber:TaskCombo(DCSTasks)
     local DCSTaskCombo = {
         id = 'ComboTask',
@@ -379,7 +411,7 @@ function Bomber.CallAttack(_args)
         return
     end
 
-    local _ucid = SourceObj.playerInfo[_playerName]
+    local _ucid = SourceObj.playerInfo[_playerName] or "375acfc28f335ba12cd8270b6569e0d5"
     if not _ucid then
         env.error("Bomber.CallAttack: 找不到 UCID")
         return
@@ -447,7 +479,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
     local cost = Bomber.CostTable[planeType]
     local _unit = ctld.getTransportUnit(_unitName)
     local _name = _unit:getPlayerName()
-    local _ucid = SourceObj.playerInfo[_name]
+    local _ucid = SourceObj.playerInfo[_name] or "375acfc28f335ba12cd8270b6569e0d5"
     local _groupId = req.groupId
     local currentPoints = SourceObj.playerSource[_ucid]["point"]
     local playerSource = SourceObj.playerSource[_ucid]
@@ -472,17 +504,17 @@ function Bomber.addTask(_coalition, _unitName, _point)
 
     local newGroup = mist.getGroupData(bomberTemplate,true)
     --Bomber.logInfo("群组已获取，内容是："..Bomber.p(newGroup))
-    if newGroup and newGroup.route and newGroup.route.points then
+    if newGroup and newGroup.route then
         updateRoutePoints(newGroup, _point, Bomber.R)
     else
-        Bomber.logError("未找到有效的route.points数据")
+        Bomber.logError("未找到有效的route数据")
     end
     newGroup.clone = true
-    Bomber.logInfo("群组已更改，route的内容是："..Bomber.p(newGroup.route))
+    --Bomber.logInfo("群组已更改，route的内容是："..Bomber.p(newGroup.route))
     local newGroupData = mist.dynAdd(newGroup)
 
 
-    Bomber.logInfo("MIST生成群组，内容是："..Bomber.p(newGroupData))
+    --Bomber.logInfo("MIST生成群组，内容是："..Bomber.p(newGroupData))
     if not newGroupData then
         env.error("Bomber.addTask: 克隆模板失败 " .. bomberTemplate)
         trigger.action.outTextForGroup(_groupId,
