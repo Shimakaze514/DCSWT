@@ -5,7 +5,7 @@ Bomber.Debug = true
 Bomber.Trace = false
 Bomber.CostTable = {
     ["Attack"] = 200,  --记得在CTLD里更改描述（搜CallAttack
-    ["Bomber"] = 900,
+    ["Bomber"] = 800,
     ["StealthBomber"] = 200
 }
 Bomber.RangeTable = {
