@@ -268,7 +268,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
     end
 
     -- 克隆飞机模板
-    --local newGroupData = mist.cloneGroup(bomberTemplate,false) --!!! 不可用
+    local newGroupData = mist.cloneGroup(bomberTemplate,true)
 
     -- local vars = {
     --     ["units"] = 
@@ -554,21 +554,21 @@ function Bomber.addTask(_coalition, _unitName, _point)
     -- }
     -- local newGroupData = mist.dynAdd(vars)
 
-    local newGroup = mist.getGroupData(bomberTemplate,true)
-    --Bomber.logInfo("群组已获取，内容是："..Bomber.p(newGroup))
-    if newGroup and newGroup.route then
-        for i, point in pairs(newGroup.route) do
-            if point.task and point.task.params and point.task.params.tasks then
-                for _, task in pairs(point.task.params.tasks) do
-                    if task.id == "Bombing" and task.params then
-                        task.params.x = _point.x  -- 更新 x 坐标
-                        task.params.y = _point.y  -- 更新 y 坐标
-                    end
-                end
-            end
-        end
-    end
-    newGroup.clone = true
+    -- local newGroup = mist.getGroupData(bomberTemplate,true)
+    -- --Bomber.logInfo("群组已获取，内容是："..Bomber.p(newGroup))
+    -- if newGroup and newGroup.route then
+    --     for i, point in pairs(newGroup.route) do
+    --         if point.task and point.task.params and point.task.params.tasks then
+    --             for _, task in pairs(point.task.params.tasks) do
+    --                 if task.id == "Bombing" and task.params then
+    --                     task.params.x = _point.x  -- 更新 x 坐标
+    --                     task.params.y = _point.y  -- 更新 y 坐标
+    --                 end
+    --             end
+    --         end
+    --     end
+    -- end
+    -- newGroup.clone = true
 
     --Bomber.logInfo("群组已更改，route的内容是："..Bomber.p(newGroup.route))
     
