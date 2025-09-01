@@ -256,314 +256,296 @@ function Bomber.addTask(_coalition, _unitName, _point)
 
     -- 克隆飞机模板
     --local newGroupData = mist.cloneGroup(bomberTemplate,false) --!!! 不可用
-    local vars = {
-        ["units"] = 
-        {
-            [1] = 
-            {
-                ["alt"] = 9144,
-                ["alt_type"] = "BARO",
-                ["livery_id"] = "usaf standard",
-                ["skill"] = "Excellent",
-                ["speed"] = 256.94444444444,
-                ["AddPropAircraft"] = 
-                {
-                    ["VoiceCallsignLabel"] = "ED",
-                    ["VoiceCallsignNumber"] = "11",
-                    ["STN_L16"] = "00745",
-                }, -- end of ["AddPropAircraft"]
-                ["type"] = "B-52H",
-                ["unitId"] = 357,
-                ["psi"] = 1.6376182976719,
-                ["onboard_num"] = "012",
-                ["y"] = 774611.72852356,
-                ["x"] = -124393.81190788,
-                ["name"] = "Aerial-1-1",
-                ["payload"] = 
-                {
-                    ["pylons"] = 
-                    {
-                        [1] = 
-                        {
-                            ["CLSID"] = "{45447F82-01B5-4029-A572-9AAD28AF0275}",
-                        }, -- end of [1]
-                        [2] = 
-                        {
-                            ["CLSID"] = "{8DCAF3A3-7FCF-41B8-BB88-58DEDA878EDE}",
-                        }, -- end of [2]
-                        [3] = 
-                        {
-                            ["CLSID"] = "{45447F82-01B5-4029-A572-9AAD28AF0275}",
-                        }, -- end of [3]
-                    }, -- end of ["pylons"]
-                    ["fuel"] = 70568,
-                    ["flare"] = 192,
-                    ["chaff"] = 1125,
-                    ["gun"] = 100,
-                }, -- end of ["payload"]
-                ["heading"] = -1.6376182976719,
-                ["callsign"] = 
-                {
-                    [1] = 1,
-                    [2] = 1,
-                    ["name"] = "Enfield11",
-                    [3] = 1,
-                }, -- end of ["callsign"]
-            }, -- end of [1]
-        }, -- end of ["units"]
-        country = _country,
-        category = 0,
-        ["route"] = 
-        {
-            ["routeRelativeTOT"] = true,
-            ["points"] = 
-            {
-                [1] = 
-                {
-                    ["alt"] = 9144,
-                    ["action"] = "Turning Point",
-                    ["alt_type"] = "BARO",
-                    ["properties"] = 
-                    {
-                        ["addopt"] = {},
-                    }, -- end of ["properties"]
-                    ["speed"] = 256.94444444444,
-                    ["task"] = 
-                    {
-                        ["id"] = "ComboTask",
-                        ["params"] = 
-                        {
-                            ["tasks"] = 
-                            {
-                            --     [1] = 
-                            --     {
-                            --         ["number"] = 1,
-                            --         ["auto"] = true,
-                            --         ["id"] = "WrappedAction",
-                            --         ["enabled"] = true,
-                            --         ["params"] = 
-                            --         {
-                            --             ["action"] = 
-                            --             {
-                            --                 ["id"] = "Option",
-                            --                 ["params"] = 
-                            --                 {
-                            --                     ["value"] = 1,
-                            --                     ["name"] = 1,
-                            --                 }, -- end of ["params"]
-                            --             }, -- end of ["action"]
-                            --         }, -- end of ["params"]
-                            --     }, -- end of [1]
-                            --     [2] = 
-                            --     {
-                            --         ["number"] = 2,
-                            --         ["auto"] = true,
-                            --         ["id"] = "WrappedAction",
-                            --         ["enabled"] = true,
-                            --         ["params"] = 
-                            --         {
-                            --             ["action"] = 
-                            --             {
-                            --                 ["id"] = "Option",
-                            --                 ["params"] = 
-                            --                 {
-                            --                     ["value"] = 1,
-                            --                     ["name"] = 3,
-                            --                 }, -- end of ["params"]
-                            --             }, -- end of ["action"]
-                            --         }, -- end of ["params"]
-                            --     }, -- end of [2]
-                            --     [3] = 
-                            --     {
-                            --         ["number"] = 3,
-                            --         ["auto"] = true,
-                            --         ["id"] = "WrappedAction",
-                            --         ["enabled"] = true,
-                            --         ["params"] = 
-                            --         {
-                            --             ["action"] = 
-                            --             {
-                            --                 ["id"] = "Option",
-                            --                 ["params"] = 
-                            --                 {
-                            --                     ["variantIndex"] = 2,
-                            --                     ["name"] = 5,
-                            --                     ["formationIndex"] = 2,
-                            --                     ["value"] = 131074,
-                            --                 }, -- end of ["params"]
-                            --             }, -- end of ["action"]
-                            --         }, -- end of ["params"]
-                            --     }, -- end of [3]
-                            --     [4] = 
-                            --     {
-                            --         ["number"] = 4,
-                            --         ["auto"] = true,
-                            --         ["id"] = "WrappedAction",
-                            --         ["enabled"] = true,
-                            --         ["params"] = 
-                            --         {
-                            --             ["action"] = 
-                            --             {
-                            --                 ["id"] = "Option",
-                            --                 ["params"] = 
-                            --                 {
-                            --                     ["value"] = true,
-                            --                     ["name"] = 15,
-                            --                 }, -- end of ["params"]
-                            --             }, -- end of ["action"]
-                            --         }, -- end of ["params"]
-                            --     }, -- end of [4]
-                            --     [5] = 
-                            --     {
-                            --         ["number"] = 5,
-                            --         ["auto"] = true,
-                            --         ["id"] = "WrappedAction",
-                            --         ["enabled"] = true,
-                            --         ["params"] = 
-                            --         {
-                            --             ["action"] = 
-                            --             {
-                            --                 ["id"] = "Option",
-                            --                 ["params"] = 
-                            --                 {
-                            --                     ["targetTypes"] = {},
-                            --                     ["name"] = 21,
-                            --                     ["value"] = "none;",
-                            --                     ["noTargetTypes"] = 
-                            --                     {
-                            --                         [1] = "Fighters",
-                            --                         [2] = "Multirole fighters",
-                            --                         [3] = "Bombers",
-                            --                         [4] = "Helicopters",
-                            --                         [5] = "UAVs",
-                            --                         [6] = "Infantry",
-                            --                         [7] = "Fortifications",
-                            --                         [8] = "Tanks",
-                            --                         [9] = "IFV",
-                            --                         [10] = "APC",
-                            --                         [11] = "Artillery",
-                            --                         [12] = "Unarmed vehicles",
-                            --                         [13] = "AAA",
-                            --                         [14] = "SR SAM",
-                            --                         [15] = "MR SAM",
-                            --                         [16] = "LR SAM",
-                            --                         [17] = "Aircraft Carriers",
-                            --                         [18] = "Cruisers",
-                            --                         [19] = "Destroyers",
-                            --                         [20] = "Frigates",
-                            --                         [21] = "Corvettes",
-                            --                         [22] = "Light armed ships",
-                            --                         [23] = "Unarmed ships",
-                            --                         [24] = "Submarines",
-                            --                         [25] = "Cruise missiles",
-                            --                         [26] = "Antiship Missiles",
-                            --                         [27] = "AA Missiles",
-                            --                         [28] = "AG Missiles",
-                            --                         [29] = "SA Missiles",
-                            --                     }, -- end of ["noTargetTypes"]
-                            --                 }, -- end of ["params"]
-                            --             }, -- end of ["action"]
-                            --         }, -- end of ["params"]
-                            --     }, -- end of [5]
-                            --     [6] = 
-                            --     {
-                            --         ["number"] = 6,
-                            --         ["auto"] = true,
-                            --         ["id"] = "WrappedAction",
-                            --         ["enabled"] = true,
-                            --         ["params"] = 
-                            --         {
-                            --             ["action"] = 
-                            --             {
-                            --                 ["id"] = "EPLRS",
-                            --                 ["params"] = 
-                            --                 {
-                            --                     ["value"] = true,
-                            --                     ["groupId"] = 6,
-                            --                 }, -- end of ["params"]
-                            --             }, -- end of ["action"]
-                            --         }, -- end of ["params"]
-                            --     }, -- end of [6]
-                            --     [7] = 
-                            --     {
-                            --         ["number"] = 7,
-                            --         ["auto"] = true,
-                            --         ["id"] = "WrappedAction",
-                            --         ["enabled"] = true,
-                            --         ["params"] = 
-                            --         {
-                            --             ["action"] = 
-                            --             {
-                            --                 ["id"] = "Option",
-                            --                 ["params"] = 
-                            --                 {
-                            --                     ["value"] = true,
-                            --                     ["name"] = 35,
-                            --                 }, -- end of ["params"]
-                            --             }, -- end of ["action"]
-                            --         }, -- end of ["params"]
-                            --     }, -- end of [7]
-                                [1] = 
-                                {
-                                    ["enabled"] = true,
-                                    ["auto"] = false,
-                                    ["id"] = "Bombing",
-                                    ["number"] = 1,
-                                    ["params"] = 
-                                    {
-                                        ["direction"] = 0,
-                                        ["attackQtyLimit"] = false,
-                                        ["attackQty"] = 1,
-                                        ["expend"] = "All",
-                                        ["y"] = _point.y,
-                                        ["directionEnabled"] = false,
-                                        ["groupAttack"] = false,
-                                        ["altitude"] = 3370,
-                                        ["altitudeEnabled"] = false,
-                                        ["weaponType"] = 2097152,
-                                        ["x"] = _point.x,
-                                    }, -- end of ["params"]
-                                }, -- end of [8]
-                            }, -- end of ["tasks"]
-                        }, -- end of ["params"]
-                    }, -- end of ["task"]
-                    ["type"] = "Turning Point",
-                    ["ETA"] = 0,
-                    ["ETA_locked"] = true,
-                    ["y"] = 774611.72852356,
-                    ["x"] = -124393.81190788,
-                    ["speed_locked"] = true,
-                    ["formation_template"] = "",
-                }, -- end of [1]
-            }, -- end of ["points"]
-        } -- end of ["route"]
-    }
-    local newGroupData = mist.dynAdd(vars)
-
-    -- local newGroup = mist.getGroupData('BLF VGrp90 Stinger Team')
-    -- local newCoords = {
+    
+    -- local vars = {
+    --     ["units"] = 
+    --     {
     --         [1] = 
     --         {
-    --             x = -175000,
-    --             y = 575000,
-    --         },
-    --         [2] =
+    --             ["alt"] = 9144,
+    --             ["alt_type"] = "BARO",
+    --             ["livery_id"] = "usaf standard",
+    --             ["skill"] = "Excellent",
+    --             ["speed"] = 256.94444444444,
+    --             ["AddPropAircraft"] = 
+    --             {
+    --                 ["VoiceCallsignLabel"] = "ED",
+    --                 ["VoiceCallsignNumber"] = "11",
+    --                 ["STN_L16"] = "00745",
+    --             }, -- end of ["AddPropAircraft"]
+    --             ["type"] = "B-52H",
+    --             ["unitId"] = 357,
+    --             ["psi"] = 1.6376182976719,
+    --             ["onboard_num"] = "012",
+    --             ["y"] = 774611.72852356,
+    --             ["x"] = -124393.81190788,
+    --             ["name"] = "Aerial-1-1",
+    --             ["payload"] = 
+    --             {
+    --                 ["pylons"] = 
+    --                 {
+    --                     [1] = 
+    --                     {
+    --                         ["CLSID"] = "{45447F82-01B5-4029-A572-9AAD28AF0275}",
+    --                     }, -- end of [1]
+    --                     [2] = 
+    --                     {
+    --                         ["CLSID"] = "{8DCAF3A3-7FCF-41B8-BB88-58DEDA878EDE}",
+    --                     }, -- end of [2]
+    --                     [3] = 
+    --                     {
+    --                         ["CLSID"] = "{45447F82-01B5-4029-A572-9AAD28AF0275}",
+    --                     }, -- end of [3]
+    --                 }, -- end of ["pylons"]
+    --                 ["fuel"] = 70568,
+    --                 ["flare"] = 192,
+    --                 ["chaff"] = 1125,
+    --                 ["gun"] = 100,
+    --             }, -- end of ["payload"]
+    --             ["heading"] = -1.6376182976719,
+    --             ["callsign"] = 
+    --             {
+    --                 [1] = 1,
+    --                 [2] = 1,
+    --                 ["name"] = "Enfield11",
+    --                 [3] = 1,
+    --             }, -- end of ["callsign"]
+    --         }, -- end of [1]
+    --     }, -- end of ["units"]
+    --     country = _country,
+    --     category = 0,
+    --     ["route"] = 
+    --     {
+    --         ["routeRelativeTOT"] = true,
+    --         ["points"] = 
     --         {
-    --             x = -175002,
-    --             y = 575002,
-    --         },
-    --         [3] =
-    --         {
-    --             x = -175004,
-    --             y = 575004,
-    --         }
-    --     }
-    -- for i = 1, #newGroup.units do
-    -- newGroup.units[i].x = newCoords[i].x
-    -- newGroup.units[i].y = newCoords[i].y
-    -- end
-    -- newGroup.clone = true
-    -- mist.dynAdd(newGroup)
+    --             [1] = 
+    --             {
+    --                 ["alt"] = 9144,
+    --                 ["action"] = "Turning Point",
+    --                 ["alt_type"] = "BARO",
+    --                 ["properties"] = 
+    --                 {
+    --                     ["addopt"] = {},
+    --                 }, -- end of ["properties"]
+    --                 ["speed"] = 256.94444444444,
+    --                 ["task"] = 
+    --                 {
+    --                     ["id"] = "ComboTask",
+    --                     ["params"] = 
+    --                     {
+    --                         ["tasks"] = 
+    --                         {
+    --                         --     [1] = 
+    --                         --     {
+    --                         --         ["number"] = 1,
+    --                         --         ["auto"] = true,
+    --                         --         ["id"] = "WrappedAction",
+    --                         --         ["enabled"] = true,
+    --                         --         ["params"] = 
+    --                         --         {
+    --                         --             ["action"] = 
+    --                         --             {
+    --                         --                 ["id"] = "Option",
+    --                         --                 ["params"] = 
+    --                         --                 {
+    --                         --                     ["value"] = 1,
+    --                         --                     ["name"] = 1,
+    --                         --                 }, -- end of ["params"]
+    --                         --             }, -- end of ["action"]
+    --                         --         }, -- end of ["params"]
+    --                         --     }, -- end of [1]
+    --                         --     [2] = 
+    --                         --     {
+    --                         --         ["number"] = 2,
+    --                         --         ["auto"] = true,
+    --                         --         ["id"] = "WrappedAction",
+    --                         --         ["enabled"] = true,
+    --                         --         ["params"] = 
+    --                         --         {
+    --                         --             ["action"] = 
+    --                         --             {
+    --                         --                 ["id"] = "Option",
+    --                         --                 ["params"] = 
+    --                         --                 {
+    --                         --                     ["value"] = 1,
+    --                         --                     ["name"] = 3,
+    --                         --                 }, -- end of ["params"]
+    --                         --             }, -- end of ["action"]
+    --                         --         }, -- end of ["params"]
+    --                         --     }, -- end of [2]
+    --                         --     [3] = 
+    --                         --     {
+    --                         --         ["number"] = 3,
+    --                         --         ["auto"] = true,
+    --                         --         ["id"] = "WrappedAction",
+    --                         --         ["enabled"] = true,
+    --                         --         ["params"] = 
+    --                         --         {
+    --                         --             ["action"] = 
+    --                         --             {
+    --                         --                 ["id"] = "Option",
+    --                         --                 ["params"] = 
+    --                         --                 {
+    --                         --                     ["variantIndex"] = 2,
+    --                         --                     ["name"] = 5,
+    --                         --                     ["formationIndex"] = 2,
+    --                         --                     ["value"] = 131074,
+    --                         --                 }, -- end of ["params"]
+    --                         --             }, -- end of ["action"]
+    --                         --         }, -- end of ["params"]
+    --                         --     }, -- end of [3]
+    --                         --     [4] = 
+    --                         --     {
+    --                         --         ["number"] = 4,
+    --                         --         ["auto"] = true,
+    --                         --         ["id"] = "WrappedAction",
+    --                         --         ["enabled"] = true,
+    --                         --         ["params"] = 
+    --                         --         {
+    --                         --             ["action"] = 
+    --                         --             {
+    --                         --                 ["id"] = "Option",
+    --                         --                 ["params"] = 
+    --                         --                 {
+    --                         --                     ["value"] = true,
+    --                         --                     ["name"] = 15,
+    --                         --                 }, -- end of ["params"]
+    --                         --             }, -- end of ["action"]
+    --                         --         }, -- end of ["params"]
+    --                         --     }, -- end of [4]
+    --                         --     [5] = 
+    --                         --     {
+    --                         --         ["number"] = 5,
+    --                         --         ["auto"] = true,
+    --                         --         ["id"] = "WrappedAction",
+    --                         --         ["enabled"] = true,
+    --                         --         ["params"] = 
+    --                         --         {
+    --                         --             ["action"] = 
+    --                         --             {
+    --                         --                 ["id"] = "Option",
+    --                         --                 ["params"] = 
+    --                         --                 {
+    --                         --                     ["targetTypes"] = {},
+    --                         --                     ["name"] = 21,
+    --                         --                     ["value"] = "none;",
+    --                         --                     ["noTargetTypes"] = 
+    --                         --                     {
+    --                         --                         [1] = "Fighters",
+    --                         --                         [2] = "Multirole fighters",
+    --                         --                         [3] = "Bombers",
+    --                         --                         [4] = "Helicopters",
+    --                         --                         [5] = "UAVs",
+    --                         --                         [6] = "Infantry",
+    --                         --                         [7] = "Fortifications",
+    --                         --                         [8] = "Tanks",
+    --                         --                         [9] = "IFV",
+    --                         --                         [10] = "APC",
+    --                         --                         [11] = "Artillery",
+    --                         --                         [12] = "Unarmed vehicles",
+    --                         --                         [13] = "AAA",
+    --                         --                         [14] = "SR SAM",
+    --                         --                         [15] = "MR SAM",
+    --                         --                         [16] = "LR SAM",
+    --                         --                         [17] = "Aircraft Carriers",
+    --                         --                         [18] = "Cruisers",
+    --                         --                         [19] = "Destroyers",
+    --                         --                         [20] = "Frigates",
+    --                         --                         [21] = "Corvettes",
+    --                         --                         [22] = "Light armed ships",
+    --                         --                         [23] = "Unarmed ships",
+    --                         --                         [24] = "Submarines",
+    --                         --                         [25] = "Cruise missiles",
+    --                         --                         [26] = "Antiship Missiles",
+    --                         --                         [27] = "AA Missiles",
+    --                         --                         [28] = "AG Missiles",
+    --                         --                         [29] = "SA Missiles",
+    --                         --                     }, -- end of ["noTargetTypes"]
+    --                         --                 }, -- end of ["params"]
+    --                         --             }, -- end of ["action"]
+    --                         --         }, -- end of ["params"]
+    --                         --     }, -- end of [5]
+    --                         --     [6] = 
+    --                         --     {
+    --                         --         ["number"] = 6,
+    --                         --         ["auto"] = true,
+    --                         --         ["id"] = "WrappedAction",
+    --                         --         ["enabled"] = true,
+    --                         --         ["params"] = 
+    --                         --         {
+    --                         --             ["action"] = 
+    --                         --             {
+    --                         --                 ["id"] = "EPLRS",
+    --                         --                 ["params"] = 
+    --                         --                 {
+    --                         --                     ["value"] = true,
+    --                         --                     ["groupId"] = 6,
+    --                         --                 }, -- end of ["params"]
+    --                         --             }, -- end of ["action"]
+    --                         --         }, -- end of ["params"]
+    --                         --     }, -- end of [6]
+    --                         --     [7] = 
+    --                         --     {
+    --                         --         ["number"] = 7,
+    --                         --         ["auto"] = true,
+    --                         --         ["id"] = "WrappedAction",
+    --                         --         ["enabled"] = true,
+    --                         --         ["params"] = 
+    --                         --         {
+    --                         --             ["action"] = 
+    --                         --             {
+    --                         --                 ["id"] = "Option",
+    --                         --                 ["params"] = 
+    --                         --                 {
+    --                         --                     ["value"] = true,
+    --                         --                     ["name"] = 35,
+    --                         --                 }, -- end of ["params"]
+    --                         --             }, -- end of ["action"]
+    --                         --         }, -- end of ["params"]
+    --                         --     }, -- end of [7]
+    --                             [1] = 
+    --                             {
+    --                                 ["enabled"] = true,
+    --                                 ["auto"] = false,
+    --                                 ["id"] = "Bombing",
+    --                                 ["number"] = 1,
+    --                                 ["params"] = 
+    --                                 {
+    --                                     ["direction"] = 0,
+    --                                     ["attackQtyLimit"] = false,
+    --                                     ["attackQty"] = 1,
+    --                                     ["expend"] = "All",
+    --                                     ["y"] = _point.y,
+    --                                     ["directionEnabled"] = false,
+    --                                     ["groupAttack"] = false,
+    --                                     ["altitude"] = 3370,
+    --                                     ["altitudeEnabled"] = false,
+    --                                     ["weaponType"] = 2097152,
+    --                                     ["x"] = _point.x,
+    --                                 }, -- end of ["params"]
+    --                             }, -- end of [8]
+    --                         }, -- end of ["tasks"]
+    --                     }, -- end of ["params"]
+    --                 }, -- end of ["task"]
+    --                 ["type"] = "Turning Point",
+    --                 ["ETA"] = 0,
+    --                 ["ETA_locked"] = true,
+    --                 ["y"] = 774611.72852356,
+    --                 ["x"] = -124393.81190788,
+    --                 ["speed_locked"] = true,
+    --                 ["formation_template"] = "",
+    --             }, -- end of [1]
+    --         }, -- end of ["points"]
+    --     } -- end of ["route"]
+    -- }
+    -- local newGroupData = mist.dynAdd(vars)
+
+    local newGroup = mist.getGroupData(bomberTemplate)
+    newGroup["route"]["points"][1]["task"]["params"]["tasks"][1]["params"]["x"] = _point.x
+    newGroup["route"]["points"][1]["task"]["params"]["tasks"][1]["params"]["y"] = _point.y
+    --newGroup.clone = true
+    mist.dynAdd(newGroup)
     
     if not newGroupData then
         env.error("Bomber.addTask: 克隆模板失败 " .. bomberTemplate)
