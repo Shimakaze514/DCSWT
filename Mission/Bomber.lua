@@ -139,7 +139,7 @@ local function sendMessage(unitID, code, duration, interval, playerName, timeEla
             function() sendMessage(unpack({unitID, code, duration, interval, playerName, timeElapsed})) end,
             {},
             timer.getTime() + interval
-        )
+        )--! 不能直接以赋值的方式运行！
         if timerHandle then
             Bomber.logInfo("Timer scheduled successfully for player: " .. playerName)
             messageTimers[playerName] = timerHandle  -- Store the handle
@@ -200,9 +200,9 @@ function Bomber.CallAttack(_args)
         planeType = _planeType
     }
 
-    trigger.action.outTextForUnit(_unit:getID(),
-        "呼叫空中支援！请在F10地图创建标记，并输入代码 [" .. code .. "]，然后删除标记以确认。",
-        120)
+    -- trigger.action.outTextForUnit(_unit:getID(),
+    --     "呼叫空中支援！请在F10地图创建标记，并输入代码 [" .. code .. "]，然后删除标记以确认。",
+    --     120)
     sendMessagePeriodically(_unit:getID(), code, 120, 5,_playerName)
     Bomber.logInfo("生成攻击代码 ["..code.."] 给玩家 ".._playerName)
 end
@@ -571,7 +571,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
     Bomber.logInfo("群组已更改，route的内容是："..Bomber.p(newGroup.route))
     
     --newGroup.clone = true
-    mist.dynAdd(newGroup)
+    local newGroupData = mist.dynAdd(newGroup)
     
     if not newGroupData then
         env.error("Bomber.addTask: 克隆模板失败 " .. bomberTemplate)
