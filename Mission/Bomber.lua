@@ -113,8 +113,10 @@ local function sendMessage(unitID, code, duration, interval, playerName, timeEla
     -- 如果玩家的请求已经完成，停止发送消息
     if Bomber.ActiveRequests[playerName] == nil then
         Bomber.logError("活动请求为空")
-        timer.removeFunction(messageTimers[playerName])  -- 停止该玩家的定时器
-        messageTimers[playerName] = nil  -- 从列表中移除定时器
+        if messageTimers[playerName] then
+            timer.removeFunction(messageTimers[playerName])  -- 停止该玩家的定时器
+            messageTimers[playerName] = nil  -- 从列表中移除定时器
+        end
         return
     end
 
@@ -128,11 +130,22 @@ local function sendMessage(unitID, code, duration, interval, playerName, timeEla
     -- 如果达到指定时间，停止发送
     if timeElapsed >= duration then
         Bomber.logError("2分钟提示时长已到达，玩家：" .. playerName)
-        timer.removeFunction(messageTimers[playerName])  -- 停止该玩家的定时器
-        messageTimers[playerName] = nil  -- 从列表中移除定时器
+        if messageTimers[playerName] then
+            timer.removeFunction(messageTimers[playerName])  -- 停止该玩家的定时器
+            messageTimers[playerName] = nil  -- 从列表中移除定时器
+        end
     else
-        -- 如果还没达到时长，继续调度
-        messageTimers[playerName] = timer.scheduleFunction(sendMessage, {unitID, code, duration, interval, playerName, timeElapsed}, timer.getTime() + interval)
+        local timerHandle = timer.scheduleFunction(
+            function() sendMessage(unpack({unitID, code, duration, interval, playerName, timeElapsed})) end,
+            {},
+            timer.getTime() + interval
+        )
+        if timerHandle then
+            Bomber.logInfo("Timer scheduled successfully for player: " .. playerName)
+            messageTimers[playerName] = timerHandle  -- Store the handle
+        else
+            Bomber.logError("Failed to schedule timer for player: " .. playerName)
+        end
     end
 end
 
@@ -256,7 +269,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
 
     -- 克隆飞机模板
     --local newGroupData = mist.cloneGroup(bomberTemplate,false) --!!! 不可用
-    
+
     -- local vars = {
     --     ["units"] = 
     --     {
@@ -541,7 +554,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
     -- }
     -- local newGroupData = mist.dynAdd(vars)
 
-    local newGroup = mist.getGroupData(bomberTemplate)
+    local newGroup = mist.getGroupData(bomberTemplate,true)
     newGroup["route"]["points"][1]["task"]["params"]["tasks"][1]["params"]["x"] = _point.x
     newGroup["route"]["points"][1]["task"]["params"]["tasks"][1]["params"]["y"] = _point.y
     --newGroup.clone = true
