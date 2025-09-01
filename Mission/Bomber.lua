@@ -8,7 +8,7 @@ Bomber.CostTable = {
     ["StealthBomber"] = 200
 }
 Bomber.R = 40 * 1852  -- 距离,海里
-Bomber.SearchRadius = 5000
+Bomber.SearchRadius = 1000
 SourceObj = SourceObj or {}
 function Bomber.logError(message)
     env.info("[BOMBER] Err: "  .. message)
