@@ -1,11 +1,22 @@
 Bomber = {}
 Bomber.ActiveRequests = {}
+Bomber.ActiveGroups = {}
 Bomber.Debug = true
 Bomber.Trace = false
 Bomber.CostTable = {
     ["Attack"] = 200,  --记得在CTLD里更改描述（搜CallAttack
     ["Bomber"] = 800,
     ["StealthBomber"] = 200
+}
+Bomber.RangeTable = {
+    ["Attack"] = 30 * 1852,  --记得在CTLD里更改描述（搜CallAttack
+    ["Bomber"] = 60 * 1852,
+    ["StealthBomber"] = 20 * 1852
+}
+Bomber.MissileTable = {
+    ["Attack"] = 6,  --记得在CTLD里更改描述（搜CallAttack
+    ["Bomber"] = 20,
+    ["StealthBomber"] = 2
 }
 Bomber.R = 40 * 1852  -- 距离,海里
 Bomber.SearchRadius = 1000
@@ -91,7 +102,21 @@ function Bomber.eventHandler:onEvent(_event)
             else
                 Bomber.logDebug("Marker删除但未匹配任何请求: " .. tostring(marker))
             end
-        end
+        elseif _event.id == world.event.S_EVENT_LAND then 
+            Bomber.logInfo("出现降落事件.目前活跃的BomberGroup有："..Bomber.p(Bomber.ActiveGroups))
+            local eventGroup = Unit.getGroup(_event.initiator)
+            local eventGroupId = eventGroup:getID()
+            for playerName, groupList in pairs(Bomber.ActiveGroups) do
+                for i, groupInfo in ipairs(groupList) do
+                    if eventGroupId == groupInfo.groupId then
+                        Group.destroy(eventGroup)
+                        table.remove(groupList, i)
+                        Bomber.logInfo("已移除小组 " .. groupInfo.groupName .. " 对应的玩家: " .. playerName)
+                        break
+                    end
+                end
+            end
+        end        
     end, _event)
 
     if not status then
@@ -158,28 +183,7 @@ local function sendMessagePeriodically(unitID, code, duration, interval, playerN
     Bomber.logInfo("成功设置提示计时器，玩家：" .. playerName)
 end
 
-Bomber.ActiveGroups = {}
-local function checkLandingStatus()
-    for playerName, groupInfo in pairs(Bomber.ActiveGroups) do
-        -- 获取群组并检查是否存在
-        local group = Group.getByName(groupInfo.groupName)
-        if group then
-            local units = group:getUnits()
-            for _, unit in pairs(units) do
-                if not unit:inAir() then  -- 如果飞机已降落
-                    Bomber.logInfo("Group " .. groupInfo.groupName .. " has landed. Cleaning up.")
-                    -- 销毁群组
-                    Group.destroy(group)
-                    -- 从 ActiveGroups 中移除该条记录
-                    Bomber.ActiveGroups[playerName] = nil
-                end
-            end
-        end
-    end
-    timer.scheduleFunction(function()
-        checkLandingStatus()
-    end, {}, timer.getTime() + 60)
-end
+
 
 local function calculateDistance(x1, y1, x2, y2)
     local dx = x2 - x1
@@ -246,7 +250,7 @@ local function calculateExpend(perTargetMissiles, missileCount)
     elseif perTargetMissiles == 2 then
         expend = "Two"
     elseif perTargetMissiles == 3 then
-        expend = "Three"
+        expend = "Two"
     elseif perTargetMissiles == 4 then
         expend = "Four"
     elseif perTargetMissiles > 4 and perTargetMissiles <= missileCount / 2 then
@@ -327,13 +331,15 @@ function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
     -- 返回任务列表
     return DCStasks
 end
-local function updateRoutePoints(newGroupData, _point, R)
+local function updateRoutePoints(newGroupData, _point, planeType)
     -- 获取原有的route.points
     local route = newGroupData.route
     local _coalitionId = newGroupData.coalitionId
     local targetCoalitionId = 0
     if _coalitionId == 1 then targetCoalitionId = 2 elseif _coalitionId == 2 then targetCoalitionId = 1 end
 
+    local R = Bomber.RangeTable[planeType]
+    local missileCount = Bomber.MissileTable[planeType]
     -- 只处理最后一个点
     local lastPoint = route[#route]  -- 获取最后一个点
     if lastPoint then
@@ -349,7 +355,6 @@ local function updateRoutePoints(newGroupData, _point, R)
         -- 计算两点之间的直线距离
         local distance = calculateDistance(x1, y1, x2, y2)
 
-        -- 如果距离大于0，计算比例
         if distance > 0 then
             local ratio = R / distance  -- 比例因子，确定在这条线上的新位置
             local newX = x1
@@ -365,7 +370,7 @@ local function updateRoutePoints(newGroupData, _point, R)
 
             -- 将新的点添加到points中
             local unitsInRange = Bomber.searchGroundUnitsInRange(_point, Bomber.SearchRadius, targetCoalitionId)
-            local DCStasks = Bomber.createBombingTasks(_point,unitsInRange, 20)
+            local DCStasks = Bomber.createBombingTasks(_point,unitsInRange, missileCount)
             newPoint.task = Bomber:TaskCombo(DCStasks)
             for _, task in ipairs(DCStasks) do
                 Bomber.logInfo("任务 ID: " .. task.id .. ", expend: " .. task.params.expend)
@@ -505,7 +510,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
     local newGroup = mist.getGroupData(bomberTemplate,true)
     --Bomber.logInfo("群组已获取，内容是："..Bomber.p(newGroup))
     if newGroup and newGroup.route then
-        updateRoutePoints(newGroup, _point, Bomber.R)
+        updateRoutePoints(newGroup, _point, planeType)
     else
         Bomber.logError("未找到有效的route数据")
     end
@@ -582,13 +587,17 @@ function Bomber.addTask(_coalition, _unitName, _point)
 
     -- 清理请求
     Bomber.ActiveRequests[req.playerName] = nil
-    Bomber.ActiveGroups[req.playerName] = {
-        groupName = newGroupData.name,  -- 记录生成的群组名称
-        groupId = newGroupData.groupId,  -- 记录群组ID
-        playerName = req.playerName      -- 记录玩家名
-    }
+
+    if Bomber.ActiveGroups[req.playerName] == nil then
+        -- 如果玩家没有小组，初始化为一个空列表
+        Bomber.ActiveGroups[req.playerName] = {}
+    end
+    table.insert(Bomber.ActiveGroups[req.playerName], {
+    groupName = newGroupData.name,    -- 记录生成的群组名称
+    groupId = newGroupData.groupId,   -- 记录群组ID
+    playerName = req.playerName       -- 记录玩家名
+    })
 end
 
-timer.scheduleFunction(function()checkLandingStatus()end, {}, timer.getTime() + 60)
 world.addEventHandler(Bomber.eventHandler)
 net.log("LOAD SUCCESS - Bomber, script by SMKZ")
