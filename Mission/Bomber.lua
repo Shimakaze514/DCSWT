@@ -4,8 +4,8 @@ Bomber.Debug = true
 Bomber.Trace = false
 Bomber.CostTable = {
     ["Attack"] = 200,
-    ["Bomber"] = 300,
-    ["StealthBomber"] = 300
+    ["Bomber"] = 800,
+    ["StealthBomber"] = 200
 }
 SourceObj = SourceObj or {}
 function Bomber.logError(message)
