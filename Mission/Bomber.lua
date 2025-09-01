@@ -10,7 +10,7 @@ Bomber.CostTable = {
 }
 Bomber.RangeTable = {
     ["Attack"] = 30 * 1852,  --记得在CTLD里更改描述（搜CallAttack
-    ["Bomber"] = 60 * 1852,
+    ["Bomber"] = 51 * 1852,
     ["StealthBomber"] = 20 * 1852
 }
 Bomber.MissileTable = {
@@ -18,7 +18,6 @@ Bomber.MissileTable = {
     ["Bomber"] = 20,
     ["StealthBomber"] = 2
 }
-Bomber.R = 40 * 1852  -- 距离,海里
 Bomber.SearchRadius = 1000
 SourceObj = SourceObj or {}
 function Bomber.logError(message)
