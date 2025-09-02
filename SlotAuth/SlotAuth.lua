@@ -19,7 +19,7 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
 
     if sideAvail == true and balance == true and slotAvail == true then
         if _playerInfo ~= nil and _playerInfo.side ~= side then
-            SLOT.LastSideSwitch[playerID] = timer.getTime()
+            SLOT.LastSideSwitch[playerID] = os.time()
         end
         net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 成功切换至阵营 ' .. tostring(_side))
         return true
@@ -138,7 +138,7 @@ function SLOT.allowSideSwitch(side, playerID)
     end
 
     local lastSwitch = SLOT.LastSideSwitch[playerID]
-    local now = timer.getTime()
+    local now = os.time()
 
     -- 如果没有历史切换记录、或当前是观战、或并不是真正切换阵营（去同一阵营），则允许
     if lastSwitch == nil or _playerInfo.side == 0 or _playerInfo.side == side then
