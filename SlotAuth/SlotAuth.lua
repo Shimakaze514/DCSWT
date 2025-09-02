@@ -11,15 +11,20 @@ SLOT.SideSwitchCooldown = 600
 function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
     local _side = side
     local _playerInfo = net.get_player_info(playerID)
-
+    local _ucid = net.get_player_info(playerID , 'ucid')
     local sideAvail = SLOT.allowSideSwitch(side, playerID)
     local balance = SLOT.teamBalance(_side, playerID)
     local _slotID = slotID
     local slotAvail = SLOT.allowEnterSlotDynamic(playerID, _side, _slotID)
 
+    SLOT.LastSideSwitch[_ucid] = SLOT.LastSideSwitch[_ucid] or {}
+
     if sideAvail == true and balance == true and slotAvail == true then
         if _playerInfo ~= nil and _playerInfo.side ~= side then
-            SLOT.LastSideSwitch[playerID] = os.time()
+            if _side ~= 0 and SLOT.LastSideSwitch[_ucid].side ~= _side then
+                SLOT.LastSideSwitch[_ucid].time = os.time()
+                SLOT.LastSideSwitch[_ucid].side = _side
+            end
         end
         net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 成功切换至阵营 ' .. tostring(_side))
         return true
@@ -33,25 +38,40 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
     net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 切换阵营被拒绝，sideAvail=' .. tostring(sideAvail) .. ', balance=' .. tostring(balance) .. ', slotAvail=' .. tostring(slotAvail))
     
     local sideNames = { [1] = "红方", [2] = "蓝方" }
-    local sideName = sideNames[_playerInfo and _playerInfo.side] or "中立"
+    local lastSwitchEntry = SLOT.LastSideSwitch[_ucid]
+    local sideName = sideNames[(lastSwitchEntry and lastSwitchEntry.side) or _playerInfo.side] or "中立"
     local oppositeSideName = sideNames[ (_playerInfo and (_playerInfo.side == 1 and 2 or 1)) ] or "中立"
     local kickMsg
+    local ChatMsg
     if sideAvail ~= true then
-        local lastSwitch = SLOT.LastSideSwitch[playerID]
+        local lastSwitch = lastSwitchEntry.time
         local allowedAt = lastSwitch + (SLOT.SideSwitchCooldown or 600)
         local at = os.date("*t", allowedAt)
         kickMsg = string.format(
             "你因在冷却期内频繁切换阵营而被踢出。你可以重新进入服务器并加入 %s 。若要切换至 %s ，请等待至 %d月%d日 %02d时%02d分%02d秒 之后再尝试。",
             sideName, oppositeSideName,
             at.month, at.day, at.hour, at.min, at.sec
-        )        
+        )              
+        ChatMsg = string.format(
+            "禁止在10分钟内频繁切换阵营！你可以重新加入 %s 。若要切换至 %s ，请等待至 %d月%d日 %02d时%02d分%02d秒 之后再尝试。",
+            sideName, oppositeSideName,
+            at.month, at.day, at.hour, at.min, at.sec
+        )   
+        net.send_chat_to(ChatMsg, playerID)
         net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 被踢，信息是 ' .. kickMsg)
-        net.kick(playerID , kickMsg)
+        
+        --net.kick(playerID , kickMsg)
     elseif balance ~= true and _playerInfo.side ~= side then
+        if side == 1 then 
+            side = 2
+        end
+        sideName = sideNames[side]
         kickMsg = "由于人数不平衡，你需要加入 "..sideName.." 以获得最好的游戏体验。现在你可以重新加入服务器！你的跳边冷却已清空"
-        SLOT.LastSideSwitch[playerID] = nil
+        SLOT.LastSideSwitch[_ucid] = nil
+        ChatMsg = "由于人数不平衡，你需要加入 "..sideName.." 以获得最好的游戏体验。你的跳边冷却已清空"
+        net.send_chat_to(ChatMsg, playerID)
         net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 被踢，信息是 ' .. kickMsg)
-        net.kick(playerID , kickMsg)
+        --net.kick(playerID , kickMsg)
     end
     
     net.force_player_slot(playerID, 0, '')
@@ -70,13 +90,15 @@ end
 end ]]
 
 function SLOT.callbacks.onPlayerDisconnect(playerId)
-    if SLOT.LastSideSwitch and SLOT.LastSideSwitch[playerId] then
-        local ts = SLOT.LastSideSwitch[playerId]
+    local ucid = net.get_player_info(playerId, 'ucid')
+    local entry = SLOT.LastSideSwitch[ucid]
+    if entry and entry.time then
+        local ts = entry.time
         local now = os.time()
         local ttl = SLOT.SideSwitchCooldown + 1
         if now - ts > ttl then
-            SLOT.LastSideSwitch[playerId] = nil
-            net.log('[SLOTAUTH] 清理过期 LastSideSwitch 条目 for player ' .. tostring(playerId))
+            SLOT.LastSideSwitch[net.get_player_info(playerId ,'ucid')] = nil
+            net.log('[SLOTAUTH] 清理过期 LastSideSwitch 条目 for player ' .. net.get_player_info(playerId ,'ucid'))
         end
     end
 end
@@ -162,15 +184,18 @@ end
 function SLOT.allowSideSwitch(side, playerID)
     local _playerInfo = net.get_player_info(playerID)
     if not _playerInfo then
-        net.log('[SLOTAUTH] _playerInfo为空，检查SideSwitchCooldown失败 for player ' .. playerID)
+        net.log('[SLOTAUTH] _playerInfo为空，检查SideSwitchCooldown失败 for player ' .. net.get_player_info(playerID ,'ucid'))
         return false
     end
 
-    local lastSwitch = SLOT.LastSideSwitch[playerID]
+    local ucid = net.get_player_info(playerID, 'ucid')
+    local lastSwitchEntry = SLOT.LastSideSwitch[ucid]
+    local lastSwitch = lastSwitchEntry and lastSwitchEntry.time or nil
+    local lastSide   = lastSwitchEntry and lastSwitchEntry.side or nil
     local now = os.time()
 
     -- 如果没有历史切换记录、或当前是观战、或并不是真正切换阵营（去同一阵营），则允许
-    if lastSwitch == nil or _playerInfo.side == 0 or _playerInfo.side == side or side == 0 then
+    if lastSwitch == nil or lastSide == nil or side == 0 or _playerInfo.side == side or lastSide == side then
         return true
     end
 
