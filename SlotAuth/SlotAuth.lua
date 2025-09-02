@@ -31,6 +31,28 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
         return true
     end
     net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 切换阵营被拒绝，sideAvail=' .. tostring(sideAvail) .. ', balance=' .. tostring(balance) .. ', slotAvail=' .. tostring(slotAvail))
+    
+    local sideNames = { [1] = "红方", [2] = "蓝方" }
+    local sideName = sideNames[_playerInfo and _playerInfo.side] or "中立"
+    local oppositeSideName = sideNames[ (_playerInfo and (_playerInfo.side == 1 and 2 or 1)) ] or "中立"
+    local kickMsg
+    if sideAvail ~= true then
+        local lastSwitch = SLOT.LastSideSwitch[playerID]
+        local allowedAt = lastSwitch + (SLOT.SideSwitchCooldown or 600)
+        local at = os.date("*t", allowedAt)
+        kickMsg = string.format(
+            "你因在冷却期内频繁切换阵营而被踢出。你可以重新进入服务器并加入  %s。若要切换至 %s ，请等待至 %02d日%02d时%02d分%02d秒 之后再尝试。",
+            sideName, oppositeSideName, at.day, at.hour, at.min, at.sec
+        )
+        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 被踢，信息是 ' .. kickMsg)
+        net.kick(playerID , kickMsg)
+    elseif balance ~= true and _playerInfo.side ~= side then
+        kickMsg = "由于人数不平衡，你需要加入 "..sideName.." 以获得最好的游戏体验。现在你可以重新加入服务器！你的跳边冷却已清空"
+        SLOT.LastSideSwitch[playerID] = nil
+        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 被踢，信息是 ' .. kickMsg)
+        net.kick(playerID , kickMsg)
+    end
+    
     net.force_player_slot(playerID, 0, '')
     return false
 end
@@ -47,8 +69,14 @@ end
 end ]]
 
 function SLOT.callbacks.onPlayerDisconnect(playerId)
-    if SLOT.LastSideSwitch then
-        SLOT.LastSideSwitch[playerId] = nil
+    if SLOT.LastSideSwitch and SLOT.LastSideSwitch[playerId] then
+        local ts = SLOT.LastSideSwitch[playerId]
+        local now = os.time()
+        local ttl = SLOT.SideSwitchCooldown + 1
+        if now - ts > ttl then
+            SLOT.LastSideSwitch[playerId] = nil
+            net.log('[SLOTAUTH] 清理过期 LastSideSwitch 条目 for player ' .. tostring(playerId))
+        end
     end
 end
 
@@ -262,15 +290,22 @@ function SLOT.LoadFile(FilePath)
                     return net.json2lua(FileText)
                 end
         )
-        if status then
+        if status and type(retval) == "table" then
             net.log(FilePath .. '加载成功')
+            -- 确保基础字段存在
+            retval.admin = retval.admin or {}
+            retval.observer = retval.observer or {}
+            retval.commander = retval.commander or {}
             return retval
         else
-            net.log('数据格式错误,文件内容不是JSON格式')
+            net.log('数据格式错误,文件内容不是JSON格式，使用默认空权限表')
+            -- 返回一个默认结构，避免上层 nil 问题
+            return { admin = {}, observer = {}, commander = {} }
         end
     else
-        net.log(FilePath .. '未找到,正在创建...')
+        net.log(FilePath .. '未找到,正在创建并返回默认权限表...')
         SLOT.CreatFile(FilePath) -- creates the file.
+        return { admin = {}, observer = {}, commander = {} }
     end
 end
 
