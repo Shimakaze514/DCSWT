@@ -6,7 +6,7 @@ SLOT.AuthDataCache = {}
 SLOT.teamBalenceCoefficient = 0.25
 SLOT.UseNewDynamicSystem = true
 SLOT.LastSideSwitch = {}
-SLOT.SideSwitchCooldown = 600
+SLOT.SideSwitchCooldown = 180
 
 function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
     local _side = side
@@ -53,8 +53,8 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
             at.month, at.day, at.hour, at.min, at.sec
         )              
         ChatMsg = string.format(
-            "禁止在10分钟内频繁切换阵营！你可以重新加入 %s 。若要切换至 %s ，请等待至 %d月%d日 %02d时%02d分%02d秒 之后再尝试。",
-            sideName, oppositeSideName,
+            "禁止在%d秒内频繁切换阵营！你可以重新加入 %s 。若要切换至 %s ，请等待至 %d月%d日 %02d时%02d分%02d秒 之后再尝试。",
+            SLOT.SideSwitchCooldown,sideName, oppositeSideName,
             at.month, at.day, at.hour, at.min, at.sec
         )   
         net.send_chat_to(ChatMsg, playerID)
@@ -155,24 +155,20 @@ function SLOT.teamBalance(_side,_playerID)
     if _playerDetails.side ~= 0 then
         if _side == 1 and _playerDetails.side == 2 then
             if _teamMap[1] - _teamMap[2] + 2 > space then
-                net.send_chat_to('人数不平衡', _playerID)
                 return false
             end
         elseif _side == 2  and _playerDetails.side == 1 then
             if _teamMap[2] - _teamMap[1] + 2 > space then
-                net.send_chat_to('人数不平衡', _playerID)
                 return false
             end
         end
     elseif _playerDetails.side == 0 then
         if _side == 1 then
             if _teamMap[1] - _teamMap[2] + 1 > space then
-                net.send_chat_to('人数不平衡', _playerID)
                 return false
             end
         elseif _side == 2 then
             if _teamMap[2] - _teamMap[1] + 1 > space then
-                net.send_chat_to('人数不平衡', _playerID)
                 return false
             end
         end

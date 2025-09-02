@@ -32,7 +32,8 @@ ctld.Id = "CTLD - "
 ctld.Version = "20250610"
 
 -- debug level, specific to this module
-ctld.Debug = false
+ctld.Debug = true
+ctld.DebugConfig = false
 -- trace level, specific to this module
 ctld.Trace = true
 
@@ -44,7 +45,7 @@ ctld.alreadyInitialized = false -- if true, ctld.initialize() will not run
 ctld.staticBugWorkaround = false --  DCS had a bug where destroying statics would cause a crash. If this happens again, set this to TRUE
 
 
-if ctld.Debug == false then
+if ctld.DebugConfig == false then
     ctld.UnitLimitPerPlayer = {
         ["主战坦克(Tank)"] = 4,
         ["步兵战车(IFV)"] = 3,
