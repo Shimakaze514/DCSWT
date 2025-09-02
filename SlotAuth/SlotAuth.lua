@@ -41,9 +41,10 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
         local allowedAt = lastSwitch + (SLOT.SideSwitchCooldown or 600)
         local at = os.date("*t", allowedAt)
         kickMsg = string.format(
-            "你因在冷却期内频繁切换阵营而被踢出。你可以重新进入服务器并加入  %s。若要切换至 %s ，请等待至 %02d日%02d时%02d分%02d秒 之后再尝试。",
-            sideName, oppositeSideName, at.day, at.hour, at.min, at.sec
-        )
+            "你因在冷却期内频繁切换阵营而被踢出。你可以重新进入服务器并加入 %s 。若要切换至 %s ，请等待至 %d月%d日 %02d时%02d分%02d秒 之后再尝试。",
+            sideName, oppositeSideName,
+            at.month, at.day, at.hour, at.min, at.sec
+        )        
         net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 被踢，信息是 ' .. kickMsg)
         net.kick(playerID , kickMsg)
     elseif balance ~= true and _playerInfo.side ~= side then
@@ -169,7 +170,7 @@ function SLOT.allowSideSwitch(side, playerID)
     local now = os.time()
 
     -- 如果没有历史切换记录、或当前是观战、或并不是真正切换阵营（去同一阵营），则允许
-    if lastSwitch == nil or _playerInfo.side == 0 or _playerInfo.side == side then
+    if lastSwitch == nil or _playerInfo.side == 0 or _playerInfo.side == side or side == 0 then
         return true
     end
 
