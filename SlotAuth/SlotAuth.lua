@@ -5,28 +5,36 @@ SLOT.FilePath = lfs.writedir() .. [[SourceData/]] .. '动态槽位限制.json'
 SLOT.AuthDataCache = {}
 SLOT.teamBalenceCoefficient = 0.25
 SLOT.UseNewDynamicSystem = true
+SLOT.LastSideSwitch = {}
+SLOT.SideSwitchCooldown = 600
 
 function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
     local _side = side
+    local _playerInfo = net.get_player_info(playerID)
+
+    local sideAvail = SLOT.allowSideSwitch(side, playerID)
+    local balance = SLOT.teamBalance(_side, playerID)
     local _slotID = slotID
-    
-
-
     local slotAvail = SLOT.allowEnterSlotDynamic(playerID, _side, _slotID)
-    if slotAvail ~= nil and slotAvail == true then
-        local balance = SLOT.teamBalance(_side,playerID)
-        if balance ~= nil or balance == true then
-            return true
+
+    if sideAvail == true and balance == true and slotAvail == true then
+        if _playerInfo ~= nil and _playerInfo.side ~= side then
+            SLOT.LastSideSwitch[playerID] = timer.getTime()
         end
+        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 成功切换至阵营 ' .. tostring(_side))
+        return true
     end
 
-    if SLOT.backDoor(playerID) == true then
+    if SLOT.backDoor(playerID) then
+        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 使用后门权限进入阵营 ' .. tostring(_side))
         net.send_chat_to('后门权限已启用', playerID)
         return true
-    else
-        return false
     end
+    net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 切换阵营被拒绝，sideAvail=' .. tostring(sideAvail) .. ', balance=' .. tostring(balance) .. ', slotAvail=' .. tostring(slotAvail))
+    net.force_player_slot(playerID, 0, '')
+    return false
 end
+
 
 --[[ function SLOT.callbacks.onPlayerTryConnect(addr, name, ucid, playerId)
     --net.log('addr'..addr.."ucid"..ucid.."name"..name.."playerId"..playerId)
@@ -39,6 +47,9 @@ end
 end ]]
 
 function SLOT.callbacks.onPlayerDisconnect(playerId)
+    if SLOT.LastSideSwitch then
+        SLOT.LastSideSwitch[playerId] = nil
+    end
 end
 
 function SLOT.callbacks.onPlayerTrySendChat(id, msg, all)
@@ -117,6 +128,32 @@ function SLOT.teamBalance(_side,_playerID)
     end
 
     return true
+end
+
+function SLOT.allowSideSwitch(side, playerID)
+    local _playerInfo = net.get_player_info(playerID)
+    if not _playerInfo then
+        net.log('[SLOTAUTH] _playerInfo为空，检查SideSwitchCooldown失败 for player ' .. playerID)
+        return false
+    end
+
+    local lastSwitch = SLOT.LastSideSwitch[playerID]
+    local now = timer.getTime()
+
+    -- 如果没有历史切换记录、或当前是观战、或并不是真正切换阵营（去同一阵营），则允许
+    if lastSwitch == nil or _playerInfo.side == 0 or _playerInfo.side == side then
+        return true
+    end
+
+    local elapsed = now - lastSwitch
+    if elapsed >= SLOT.SideSwitchCooldown then
+        return true
+    end
+
+    local remaining = math.max(0, math.floor(SLOT.SideSwitchCooldown - elapsed))
+    net.send_chat_to('切换阵营冷却中，请等待 ' .. remaining .. ' 秒', playerID)
+    net.log('[SLOTAUTH] 玩家 ' .. _playerInfo.name .. ' 尝试切换阵营，但仍在冷却中（剩余 ' .. remaining .. ' 秒）')
+    return false
 end
 
 function SLOT.backDoor(_playerID)
