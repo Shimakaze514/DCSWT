@@ -32,7 +32,8 @@ ctld.Id = "CTLD - "
 ctld.Version = "20250610"
 
 -- debug level, specific to this module
-ctld.Debug = false
+ctld.Debug = true
+ctld.DebugConfig = true
 -- trace level, specific to this module
 ctld.Trace = true
 
@@ -115,11 +116,13 @@ else
         ["中远程防空(Mid&Long Range AA)"] = 2,
     }
     ctld.logisticUnits = {
-        "造船厂Blue",
-        "造船厂Red",
+        -- "造船厂Blue",
+        -- "造船厂Red",
     }--动态保存会刷新一次，所以不用手动添加了
+    ctld.fobLocation = {}
+    ctld.FOBLimit = 2
     ctld.CoalitionKillerLimit = 2 --红方的阵营级大杀器
-    ctld.F10RefreshTime = 5
+    ctld.F10RefreshTime = 60
     ctld.IsCheckfarEnoughFromLogisticZone = false
     ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
 
@@ -135,12 +138,12 @@ else
 
     ctld.maxExtractDistance = 125 -- max distance from vehicle to troops to allow a group extraction
     ctld.multiCrateMaxDistance = 100 --生成一个组需要的箱子之间的最大距离
-    ctld.maximumDistanceLogistic = 200 -- max distance from vehicle to logistics to allow a loading or spawning operation
+    ctld.maximumDistanceLogistic = 1000 -- max distance from vehicle to logistics to allow a loading or spawning operation
     ctld.maximumSearchDistance = 4000 -- max distance for troops to search for enemy
     ctld.maximumMoveDistance = 2000 -- max distance for troops to move from drop point if no enemy is nearby
 
     ctld.minimumDeployDistance = 1 -- minimum distance from a friendly pickup zone where you can deploy a crate
-    ctld.minimumDistanceBetweenFobs = 100
+    ctld.minimumDistanceBetweenFobs = 1
     ctld.spawnRPGWithCoalition = true --spawns a friendly RPG unit with Coalition forces
     ctld.spawnStinger = false -- spawns a stinger / igla soldier with a group of 6 or more soldiers!
 
@@ -4330,10 +4333,43 @@ function ctld.unpackFOBCrates(_crates, _heli)
                 --trigger.action.outTextForCoalition(_args[3], "Finished building FOB! Crates can now be picked up.", 10)
                 trigger.action.outTextForCoalition(_args[3], "FOB建造完成.", 10)
             end
-        end, { _centroid, _heli:getCountry(), _heli:getCoalition() }, timer.getTime() + ctld.buildTimeFOB)
+
+            local _heli = _args[4]
+            local _playerName = _heli:getPlayerName()
+            if ctld.UnitLimitPlayerInfo[_playerName] == nil then
+                ctld.UnitLimitPlayerInfo[_playerName] = {}
+            end
+            if ctld.UnitLimitPlayerInfo[_playerName]["FOB"] == nil then
+                ctld.UnitLimitPlayerInfo[_playerName]["FOB"] = {}
+            end
+            local _aliveFOBs = 0
+            for i = #ctld.UnitLimitPlayerInfo[_playerName]["FOB"], 1, -1 do
+                local _fobName = ctld.UnitLimitPlayerInfo[_playerName]["FOB"][i]
+                if ctld.ifGroupHasAliveUnits(_fobName) then
+                    _aliveFOBs = _aliveFOBs + 1
+                else
+                    table.remove(ctld.UnitLimitPlayerInfo[_playerName]["FOB"], i)
+                end
+            end
+            if _aliveFOBs >= ctld.FOBLimit then
+                -- 销毁最早的FOB
+                local _toDeleteName = table.remove(ctld.UnitLimitPlayerInfo[_playerName]["FOB"], 1)
+                local _toDeleteGroup = Group.getByName(_toDeleteName)
+                if _toDeleteGroup then
+                    _toDeleteGroup:destroy()
+                else
+                    local _toDeleteStatic = StaticObject.getByName(_toDeleteName)
+                    if _toDeleteStatic then _toDeleteStatic:destroy() end
+                end
+                ctld.displayMessageToGroup(_heli, "你已经超过 FOB 限制，最早的 FOB 被销毁: " .. _toDeleteName, 10)
+            end
+            table.insert(ctld.UnitLimitPlayerInfo[_playerName]["FOB"], _name)
+
+
+        end, { _centroid, _heli:getCountry(), _heli:getCoalition(), _heli }, timer.getTime() + ctld.buildTimeFOB)
 
         --local _txt = string.format("%s started building FOB using %d FOB crates, it will be finished in %d seconds.\nPosition marked with smoke.", ctld.getPlayerNameOrType(_heli), _totalCrates, ctld.buildTimeFOB)
-        local _txt = string.format("%s 正在使用 %d 箱子搭建FOB, 将在 %d 秒内完成建造.\n烟雾标记中...", ctld.getPlayerNameOrType(_heli), _totalCrates, ctld.buildTimeFOB)
+        local _txt = string.format("%s 正在使用 %d 箱子搭建FOB, 将在 %d 秒内完成建造.\n烟雾标记中...", ctld.getPlayerNameOrType(_heli), _totalCrates, ctld.buildTimeFOB).."地面高度".._centroid
 
         ctld.crateAddPoint(_heli,ctld.cratesRequiredForFOB)
         ctld.processCallback({ unit = _heli, position = _centroid, action = "fob" })
