@@ -193,22 +193,6 @@ function Bomber.searchGroundUnitsInRange(centerPos, SearchRadius,_coalitionId)
     -- 用于存储所有符合条件的地面单位坐标
     local groundUnitPositions = {}
     local allUnits = {}
-    -- 获取所有单位
-    --local allUnits = world.getUnits()
-
-    -- local volS = {
-    --   id = world.VolumeType.SPHERE,
-    --   params = {
-    --     point = centerPos,
-    --     radius = SearchRadius
-    --   }
-    -- }
-    -- local ifFound = function(foundItem, val)
-    --     allUnits[#allUnits + 1] = foundItem
-    --    return true
-    -- end
-    -- world.searchObjects(Object.Category.UNIT, volS, ifFound)
-
     local Groups = coalition.getGroups(_coalitionId, Group.Category.GROUND)
     for _, group in pairs(Groups) do
         -- 获取当前小组的所有单位
@@ -236,8 +220,10 @@ function Bomber.searchGroundUnitsInRange(centerPos, SearchRadius,_coalitionId)
         end
     end
 
-    -- 返回符合条件的地面单位坐标
-
+    
+    table.sort(groundUnitPositions, function(a, b)
+        return a.distance < b.distance
+    end)
     Bomber.logInfo("找到的地面单位："..Bomber.p(groundUnitPositions))
     return groundUnitPositions
 end
@@ -295,20 +281,24 @@ function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
         groundUnitPositions = { unpack(groundUnitPositions, 1, missileCount) }
         targetCount = missileCount  -- 更新目标数量为missileCount
     end
+    Bomber.logInfo("找到的地面单位（已按距离排序）：")
+    for i, target in ipairs(groundUnitPositions) do
+        Bomber.logInfo(string.format("目标 %d: 坐标 (x=%.2f, y=%.2f), 距离 = %.2f",
+            i, target.x, target.y, target.distance))
+    end
     -- 计算每个目标的导弹数量，向下取整
     local perTargetMissiles = math.floor(missileCount / targetCount)
     local expend = calculateExpend(perTargetMissiles, missileCount)
     -- 遍历所有地面单位坐标并生成 BombingTask
-    for _, pos in pairs(groundUnitPositions) do
-        -- 初始化 BombingTask
+    for _, pos in ipairs(groundUnitPositions) do
         local BombingTask = {
             id = 'Bombing',
             params = {
-                point            = pos,  -- 使用地面单位的位置
+                point            = {x = pos.x, y = pos.y},
                 x                = pos.x,
                 y                = pos.y,
                 groupAttack      = false,
-                expend           = expend,  -- 设置为每个目标的导弹数量
+                expend           = expend,
                 attackQtyLimit   = false,
                 attackQty        = 1,
                 directionEnabled = false,
@@ -319,11 +309,7 @@ function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
                 attackType       = nil,
             }
         }
-
-        -- 将任务插入到任务表中
         table.insert(DCStasks, BombingTask)
-
-        -- 输出任务信息，调试用
         Bomber.logInfo("生成 BombingTask: " .. Bomber.p(BombingTask))
     end
 
