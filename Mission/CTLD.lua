@@ -79,7 +79,7 @@ if ctld.DebugConfig == false then
     ctld.maximumMoveDistance = 2000 -- max distance for troops to move from drop point if no enemy is nearby
 
     ctld.minimumDeployDistance = 1000 -- minimum distance from a friendly pickup zone where you can deploy a crate
-    ctld.minimumDistanceBetweenFobs = 2000
+    ctld.minimumDistanceBetweenFobs = 1000
     ctld.spawnRPGWithCoalition = true --spawns a friendly RPG unit with Coalition forces
     ctld.spawnStinger = false -- spawns a stinger / igla soldier with a group of 6 or more soldiers!
 
