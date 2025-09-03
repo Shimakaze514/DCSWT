@@ -1,7 +1,7 @@
 Bomber = {}
 Bomber.ActiveRequests = {}
 Bomber.ActiveGroups = {}
-Bomber.Debug = true
+Bomber.Debug = false
 Bomber.Trace = false
 Bomber.CostTable = {
     ["Attack"] = 200,  --记得在CTLD里更改描述（搜CallAttack
