@@ -1,7 +1,7 @@
 Bomber = {}
 Bomber.ActiveRequests = {}
 Bomber.ActiveGroups = {}
-Bomber.Debug = true
+Bomber.Debug = false
 Bomber.Trace = false
 Bomber.CostTable = {
     ["Attack"] = 200,  --记得在CTLD里更改描述（搜CallAttack
@@ -102,7 +102,7 @@ function Bomber.eventHandler:onEvent(_event)
                 Bomber.logDebug("Marker删除但未匹配任何请求: " .. tostring(marker))
             end
         elseif _event.id == world.event.S_EVENT_LAND then 
-            Bomber.logInfo("出现降落事件.目前活跃的BomberGroup有："..Bomber.p(Bomber.ActiveGroups))
+            Bomber.logDebug("出现降落事件.目前活跃的BomberGroup有："..Bomber.p(Bomber.ActiveGroups))
             local eventGroup = Unit.getGroup(_event.initiator)
             local eventGroupId = eventGroup:getID()
             for playerName, groupList in pairs(Bomber.ActiveGroups) do
@@ -110,7 +110,7 @@ function Bomber.eventHandler:onEvent(_event)
                     if eventGroupId == groupInfo.groupId then
                         Group.destroy(eventGroup)
                         table.remove(groupList, i)
-                        Bomber.logInfo("已移除小组 " .. groupInfo.groupName .. " 对应的玩家: " .. playerName)
+                        Bomber.logDebug("已移除小组 " .. groupInfo.groupName .. " 对应的玩家: " .. playerName)
                         break
                     end
                 end
@@ -167,7 +167,7 @@ local function sendMessage(unitID, code, duration, interval, playerName, timeEla
             timer.getTime() + interval
         )--! 不能直接以赋值的方式运行！
         if timerHandle then
-            Bomber.logInfo("Timer scheduled successfully for player: " .. playerName)
+            Bomber.logDebug("Timer scheduled successfully for player: " .. playerName)
             messageTimers[playerName] = timerHandle  -- Store the handle
         else
             Bomber.logError("Failed to schedule timer for player: " .. playerName)
@@ -179,7 +179,7 @@ end
 local function sendMessagePeriodically(unitID, code, duration, interval, playerName)
     local timeElapsed = 0  -- 初始化时间
     sendMessage(unitID, code, duration, interval, playerName, timeElapsed)  -- 立即执行第一次发送
-    Bomber.logInfo("成功设置提示计时器，玩家：" .. playerName)
+    Bomber.logDebug("成功设置提示计时器，玩家：" .. playerName)
 end
 
 
@@ -193,22 +193,6 @@ function Bomber.searchGroundUnitsInRange(centerPos, SearchRadius,_coalitionId)
     -- 用于存储所有符合条件的地面单位坐标
     local groundUnitPositions = {}
     local allUnits = {}
-    -- 获取所有单位
-    --local allUnits = world.getUnits()
-
-    -- local volS = {
-    --   id = world.VolumeType.SPHERE,
-    --   params = {
-    --     point = centerPos,
-    --     radius = SearchRadius
-    --   }
-    -- }
-    -- local ifFound = function(foundItem, val)
-    --     allUnits[#allUnits + 1] = foundItem
-    --    return true
-    -- end
-    -- world.searchObjects(Object.Category.UNIT, volS, ifFound)
-
     local Groups = coalition.getGroups(_coalitionId, Group.Category.GROUND)
     for _, group in pairs(Groups) do
         -- 获取当前小组的所有单位
@@ -227,18 +211,19 @@ function Bomber.searchGroundUnitsInRange(centerPos, SearchRadius,_coalitionId)
             local unitPos = unit:getPoint()
             -- 计算单位和目标点之间的距离
             local distance = calculateDistance(centerPos.x, centerPos.y, unitPos.x, unitPos.z)
-            Bomber.logInfo("获取"..Bomber.p(unit:getName()).."的位置："..Bomber.p(unitPos).."，距离为"..distance)
+            Bomber.logDebug("获取"..Bomber.p(unit:getName()).."的位置："..Bomber.p(unitPos).."，距离为"..distance)
 
             -- 如果距离在指定半径内，添加到返回表格中
             if distance <= SearchRadius then
-                table.insert(groundUnitPositions, {x = unitPos.x, y = unitPos.z})
+                table.insert(groundUnitPositions, {x = unitPos.x, y = unitPos.z, distance = distance})
             end
         end
     end
 
-    -- 返回符合条件的地面单位坐标
-
-    Bomber.logInfo("找到的地面单位："..Bomber.p(groundUnitPositions))
+    table.sort(groundUnitPositions, function(a, b)
+        return a.distance < b.distance
+    end)
+    Bomber.logDebug("找到的地面单位："..Bomber.p(groundUnitPositions))
     return groundUnitPositions
 end
 local function calculateExpend(perTargetMissiles, missileCount)
@@ -269,7 +254,7 @@ function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
 
     -- 如果目标数量为0
     if targetCount == 0 then
-        Bomber.logInfo("目标数量为0，向F10点发射所有导弹")
+        Bomber.logDebug("目标数量为0，向F10点发射所有导弹")
         local BombingTask = {
             id = 'Bombing',
             params = {
@@ -295,20 +280,24 @@ function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
         groundUnitPositions = { unpack(groundUnitPositions, 1, missileCount) }
         targetCount = missileCount  -- 更新目标数量为missileCount
     end
+    Bomber.logInfo("找到的地面单位（已按距离排序）：")
+    for i, target in ipairs(groundUnitPositions) do
+        Bomber.logInfo(string.format("目标 %d: 坐标 (x=%.2f, y=%.2f), 距离 = %.2f",
+            i, target.x, target.y, target.distance))
+    end
     -- 计算每个目标的导弹数量，向下取整
     local perTargetMissiles = math.floor(missileCount / targetCount)
     local expend = calculateExpend(perTargetMissiles, missileCount)
     -- 遍历所有地面单位坐标并生成 BombingTask
-    for _, pos in pairs(groundUnitPositions) do
-        -- 初始化 BombingTask
+    for _, pos in ipairs(groundUnitPositions) do
         local BombingTask = {
             id = 'Bombing',
             params = {
-                point            = pos,  -- 使用地面单位的位置
+                point            = {x = pos.x, y = pos.y},
                 x                = pos.x,
                 y                = pos.y,
                 groupAttack      = false,
-                expend           = expend,  -- 设置为每个目标的导弹数量
+                expend           = expend,
                 attackQtyLimit   = false,
                 attackQty        = 1,
                 directionEnabled = false,
@@ -319,12 +308,8 @@ function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
                 attackType       = nil,
             }
         }
-
-        -- 将任务插入到任务表中
         table.insert(DCStasks, BombingTask)
-
-        -- 输出任务信息，调试用
-        Bomber.logInfo("生成 BombingTask: " .. Bomber.p(BombingTask))
+        Bomber.logDebug("生成 BombingTask: " .. Bomber.p(BombingTask))
     end
 
     -- 返回任务列表
@@ -372,10 +357,10 @@ local function updateRoutePoints(newGroupData, _point, planeType)
             local DCStasks = Bomber.createBombingTasks(_point,unitsInRange, missileCount)
             newPoint.task = Bomber:TaskCombo(DCStasks)
             for _, task in ipairs(DCStasks) do
-                Bomber.logInfo("任务 ID: " .. task.id .. ", expend: " .. task.params.expend)
+                Bomber.logDebug("任务 ID: " .. task.id .. ", expend: " .. task.params.expend)
             end
             table.insert(route, newPoint)
-            Bomber.logInfo("更新后的route是"..Bomber.p(route))
+            Bomber.logDebug("更新后的route是"..Bomber.p(route))
         end
     end
 end
@@ -469,7 +454,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
         env.error("Bomber.addTask: 找不到对应的请求")
         return
     end
-    Bomber.logInfo("Active request for " .. _unitName .. ": " .. Bomber.p(req))
+    Bomber.logDebug("Active request for " .. _unitName .. ": " .. Bomber.p(req))
     local planeType = req.planeType
 
     local bomberTemplate = templateTable[planeType] or "BomberTemplate"
