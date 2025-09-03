@@ -14,7 +14,7 @@ Bomber.RangeTable = {
     ["StealthBomber"] = 10 * 1852
 }
 Bomber.MissileTable = {
-    ["Attack"] = 8,  -- Tu22
+    ["Attack"] = 5,  -- Tu22
     ["Bomber"] = 24, --20
     ["StealthBomber"] = 2
 }
