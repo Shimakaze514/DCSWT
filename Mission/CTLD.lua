@@ -32,8 +32,7 @@ ctld.Id = "CTLD - "
 ctld.Version = "20250610"
 
 -- debug level, specific to this module
-ctld.Debug = true
-ctld.DebugConfig = true
+ctld.Debug = false
 -- trace level, specific to this module
 ctld.Trace = true
 
@@ -56,6 +55,7 @@ if ctld.Debug == false then
     }
     ctld.logisticUnits = {}
     ctld.fobLocation = {}
+    ctld.FOBLimit = 1
     ctld.CoalitionKillerLimit = 4 --红方的阵营级大杀器
 
     ctld.F10RefreshTime = 60
@@ -120,7 +120,7 @@ else
         -- "造船厂Red",
     }--动态保存会刷新一次，所以不用手动添加了
     ctld.fobLocation = {}
-    ctld.FOBLimit = 2
+    ctld.FOBLimit = 1
     ctld.CoalitionKillerLimit = 2 --红方的阵营级大杀器
     ctld.F10RefreshTime = 60
     ctld.IsCheckfarEnoughFromLogisticZone = false
@@ -2579,8 +2579,8 @@ function ctld.spawnFOB(_country, _unitId, _point, _name)
         ["category"] = "Fortifications",
         ["type"] = "outpost",
         --  ["unitId"] = _unitId,
-        ["y"] = _point.z + 100,
-        ["x"] = _point.x + 100,
+        ["y"] = _point.z + 60,
+        ["x"] = _point.x + 60,
         ["name"] = _name,
         ["canCargo"] = false,
         ["heading"] = 0,
@@ -4343,24 +4343,20 @@ function ctld.unpackFOBCrates(_crates, _heli)
                 ctld.UnitLimitPlayerInfo[_playerName]["FOB"] = {}
             end
             local _aliveFOBs = 0
+            ctld.logDebug("生成新FOB前，玩家FOB列表"..ctld.formatTable(ctld.UnitLimitPlayerInfo[_playerName]["FOB"]))
             for i = #ctld.UnitLimitPlayerInfo[_playerName]["FOB"], 1, -1 do
                 local _fobName = ctld.UnitLimitPlayerInfo[_playerName]["FOB"][i]
-                if ctld.ifGroupHasAliveUnits(_fobName) then
+                if _fobName then
                     _aliveFOBs = _aliveFOBs + 1
                 else
                     table.remove(ctld.UnitLimitPlayerInfo[_playerName]["FOB"], i)
                 end
             end
+            ctld.logDebug("当前_aliveFOBs:".._aliveFOBs)
             if _aliveFOBs >= ctld.FOBLimit then
-                -- 销毁最早的FOB
                 local _toDeleteName = table.remove(ctld.UnitLimitPlayerInfo[_playerName]["FOB"], 1)
-                local _toDeleteGroup = Group.getByName(_toDeleteName)
-                if _toDeleteGroup then
-                    _toDeleteGroup:destroy()
-                else
-                    local _toDeleteStatic = StaticObject.getByName(_toDeleteName)
-                    if _toDeleteStatic then _toDeleteStatic:destroy() end
-                end
+                local _toDeleteStatic = StaticObject.getByName(_toDeleteName)
+                if _toDeleteStatic then _toDeleteStatic:destroy() end
                 ctld.displayMessageToGroup(_heli, "你已经超过 FOB 限制，最早的 FOB 被销毁: " .. _toDeleteName, 10)
             end
             table.insert(ctld.UnitLimitPlayerInfo[_playerName]["FOB"], _name)
@@ -4369,11 +4365,11 @@ function ctld.unpackFOBCrates(_crates, _heli)
         end, { _centroid, _heli:getCountry(), _heli:getCoalition(), _heli }, timer.getTime() + ctld.buildTimeFOB)
 
         --local _txt = string.format("%s started building FOB using %d FOB crates, it will be finished in %d seconds.\nPosition marked with smoke.", ctld.getPlayerNameOrType(_heli), _totalCrates, ctld.buildTimeFOB)
-        local _txt = string.format("%s 正在使用 %d 箱子搭建FOB, 将在 %d 秒内完成建造.\n烟雾标记中...", ctld.getPlayerNameOrType(_heli), _totalCrates, ctld.buildTimeFOB).."地面高度".._centroid
+        local _txt = string.format("%s 正在使用 %d 箱子搭建FOB, 将在 %d 秒内完成建造.\n烟雾标记中...", ctld.getPlayerNameOrType(_heli), _totalCrates, ctld.buildTimeFOB)
 
         ctld.crateAddPoint(_heli,ctld.cratesRequiredForFOB)
         ctld.processCallback({ unit = _heli, position = _centroid, action = "fob" })
-        trigger.action.smoke(_centroid, trigger.smokeColor.Green)
+        trigger.action.smoke({x=_centroid.x+60,y=_centroid.y,z=_centroid.z+60}, trigger.smokeColor.Green)
         trigger.action.outTextForCoalition(_heli:getCoalition(), _txt, 10)
     else
         --local _txt = string.format("Cannot build FOB!\n\nIt requires %d Large FOB crates ( 3 small FOB crates equal 1 large FOB Crate) and there are the equivalent of %d large FOB crates nearby\n\nOr the crates are not within 750m of each other", ctld.cratesRequiredForFOB, _totalCrates)
@@ -4838,7 +4834,7 @@ function ctld.getCentroid(_points)
 
     local _point = { x = _tx / _npoints, z = _ty / _npoints }
 
-    _point.y = land.getHeight({ _point.x, _point.z })
+    _point.y = land.getHeight({x = _point.x, y = _point.z})
 
     return _point
 end
