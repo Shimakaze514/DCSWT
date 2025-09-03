@@ -14,7 +14,7 @@ Bomber.RangeTable = {
     ["StealthBomber"] = 20 * 1852
 }
 Bomber.MissileTable = {
-    ["Attack"] = 6,  --记得在CTLD里更改描述（搜CallAttack
+    ["Attack"] = 5,  -- Tu22
     ["Bomber"] = 24, --20
     ["StealthBomber"] = 2
 }
