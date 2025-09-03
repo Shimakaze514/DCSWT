@@ -6,7 +6,7 @@ SLOT.AuthDataCache = {}
 SLOT.teamBalenceCoefficient = 0.25
 SLOT.UseNewDynamicSystem = true
 SLOT.LastSideSwitch = {}
-SLOT.SideSwitchCooldown = 180
+SLOT.SideSwitchCooldown = 300
 
 function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
     local _side = side
