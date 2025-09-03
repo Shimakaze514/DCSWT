@@ -9,7 +9,7 @@ Bomber.CostTable = {
     ["StealthBomber"] = 200
 }
 Bomber.RangeTable = {
-    ["Attack"] = 28 * 1852,
+    ["Attack"] = 25 * 1852,
     ["Bomber"] = 51 * 1852,
     ["StealthBomber"] = 20 * 1852
 }
