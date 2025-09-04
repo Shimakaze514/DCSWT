@@ -5,20 +5,30 @@ Bomber.Debug = false
 Bomber.Trace = false
 Bomber.CostTable = {
     ["Attack"] = 100,  --记得在CTLD里更改描述（搜CallAttack
-    ["Bomber"] = 500,
-    ["StealthBomber"] = 100
+    ["Bomber"] = 300,
+    ["StealthBomber"] = 100,
+    ["Nuke"] = 2500,
 }
 Bomber.RangeTable = {
     ["Attack"] = 25 * 1852,
     ["Bomber"] = 51 * 1852,
-    ["StealthBomber"] = 10 * 1852
+    ["StealthBomber"] = 10 * 1852,
+    ["Nuke"] = 10 * 1852,
 }
 Bomber.MissileTable = {
     ["Attack"] = 5,  -- Tu22
     ["Bomber"] = 24, --20
-    ["StealthBomber"] = 2
+    ["StealthBomber"] = 2,
+    ["Nuke"] = -1,
+}
+Bomber.TemplateTable = {
+    ["Attack"] = "AttackTemplate",
+    ["Bomber"] = "BomberTemplate",
+    ["StealthBomber"] = "StealthBomberTemplate",
+    ["Nuke"] = "NukeTemplate",
 }
 Bomber.SearchRadius = 1000
+Bomber.MinimumNukePlayers = 1 -- Debug
 SourceObj = SourceObj or {}
 function Bomber.logError(message)
     env.info("[BOMBER] Err: "  .. message)
@@ -247,11 +257,21 @@ function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
     local DCStasks = {}  -- 用于存储所有的任务
 
     -- 默认的导弹数量
-    local missileCount = missileCount or 20
+    local missileCount = missileCount or 1
 
     -- 目标数量
     local targetCount = #groundUnitPositions
+    
+    if targetCount > missileCount then
+        groundUnitPositions = { unpack(groundUnitPositions, 1, missileCount) }
+        targetCount = missileCount  -- 更新目标数量为missileCount
+    end
 
+    Bomber.logInfo("找到的地面单位（已按距离排序）：")
+    for i, target in ipairs(groundUnitPositions) do
+        Bomber.logInfo(string.format("目标 %d: 坐标 (x=%.2f, y=%.2f), 距离 = %.2f",
+            i, target.x, target.y, target.distance))
+    end
     -- 如果目标数量为0
     if targetCount == 0 then
         Bomber.logDebug("目标数量为0，向F10点发射所有导弹")
@@ -275,15 +295,6 @@ function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
         }   
         table.insert(DCStasks, BombingTask)
         return DCStasks
-    end
-    if targetCount > missileCount then
-        groundUnitPositions = { unpack(groundUnitPositions, 1, missileCount) }
-        targetCount = missileCount  -- 更新目标数量为missileCount
-    end
-    Bomber.logInfo("找到的地面单位（已按距离排序）：")
-    for i, target in ipairs(groundUnitPositions) do
-        Bomber.logInfo(string.format("目标 %d: 坐标 (x=%.2f, y=%.2f), 距离 = %.2f",
-            i, target.x, target.y, target.distance))
     end
     -- 计算每个目标的导弹数量，向下取整
     local perTargetMissiles = math.floor(missileCount / targetCount)
@@ -402,15 +413,34 @@ function Bomber.CallAttack(_args)
 
     local _ucid = SourceObj.playerInfo[_playerName] or "375acfc28f335ba12cd8270b6569e0d5"
     if not _ucid then
-        env.error("Bomber.CallAttack: 找不到 UCID")
+        Bomber.logError("Bomber.CallAttack: 找不到 UCID")
         return
     end
     if not SourceObj.playerSource[_ucid] then
-        env.error("Bomber.CallAttack: 玩家 UCID 没有初始化资源点")
+        Bomber.logError("Bomber.CallAttack: 玩家 UCID 没有初始化资源点")
         return
     end
     local _groupId = SourceObj.getGroupId(_unit)
 
+    
+    if _planeType == "Nuke" then
+        local Players = net.get_player_list()
+        local totalPlayers = 0
+        for PlayerIDIndex, playerID in pairs(Players) do
+            -- is player still in a valid slot
+            local _playerDetails = net.get_player_info(playerID)
+            if _playerDetails ~= nil and _playerDetails.side ~= 0 and _playerDetails.slot ~= "" and _playerDetails.slot ~= nil then
+                totalPlayers = totalPlayers + 1
+            end
+        end
+        if totalPlayers <= Bomber.MinimumNukePlayers then
+            Bomber.logInfo("CallAttack: 禁止核弹机生成，总人数为" .. tostring(totalPlayers))
+            trigger.action.outTextForGroup(_groupId,
+            "当前服务器内红蓝双方玩家合计不超过"..Bomber.MinimumNukePlayers.."人，为避免玩家偷偷趁服务器没人疯狂吊运然后种蘑菇把整个服务器炸平，暂时禁止核弹机生成！",
+            15)
+        end
+    end
+    
     -- 如果该玩家已有激活请求，先清掉
     if Bomber.ActiveRequests[_playerName] then
         Bomber.logInfo("玩家 " .. _playerName .. " 已有激活请求，覆盖旧的。")
@@ -429,6 +459,28 @@ function Bomber.CallAttack(_args)
         planeType = _planeType
     }
 
+    -- 处理资源点
+    local cost = Bomber.CostTable[_planeType]
+    local _unit = ctld.getTransportUnit(_unitName)
+    local _name = _unit:getPlayerName()
+    local currentPoints = SourceObj.playerSource[_ucid]["point"]
+    local playerSource = SourceObj.playerSource[_ucid]
+    if not playerSource or not playerSource["point"] then
+        Bomber.logError("CallAttack: 玩家 " .. _name .. " 的资源点未初始化")
+        return
+    end
+    Bomber.logInfo("CallAttack: 玩家 " .. _name .. " 的UCID是".._ucid.." ,剩余点数"..playerSource["point"].." !")
+    Bomber.logInfo("CallAttack: 呼叫的飞机类型是".._planeType.."!")
+    Bomber.logInfo("CallAttack: 需要的点数是"..cost.."!")
+    if currentPoints < cost then
+        trigger.action.outTextForGroup(_groupId,
+            string.format("你的私有资源点不足 (%d)，无法呼叫 %s（需要 %d 点）！",
+                currentPoints, _planeType, cost),
+            15)
+        Bomber.ActiveRequests[_playerName] = nil
+        return
+    end
+
     -- trigger.action.outTextForUnit(_unit:getID(),
     --     "呼叫空中支援！请在F10地图创建标记，并输入代码 [" .. code .. "]，然后删除标记以确认。",
     --     120)
@@ -437,11 +489,6 @@ function Bomber.CallAttack(_args)
 end
 
 function Bomber.addTask(_coalition, _unitName, _point)
-    local templateTable = {
-        ["Attack"] = "AttackTemplate",
-        ["Bomber"] = "BomberTemplate",
-        ["StealthBomber"] = "StealthBomberTemplate"
-    }
     -- 找到玩家请求
     local req
     for pname, r in pairs(Bomber.ActiveRequests) do
@@ -451,13 +498,13 @@ function Bomber.addTask(_coalition, _unitName, _point)
         end
     end
     if not req then
-        env.error("Bomber.addTask: 找不到对应的请求")
+        Bomber.logError("Bomber.addTask: 找不到对应的请求")
         return
     end
     Bomber.logDebug("Active request for " .. _unitName .. ": " .. Bomber.p(req))
     local planeType = req.planeType
 
-    local bomberTemplate = templateTable[planeType] or "BomberTemplate"
+    local bomberTemplate = Bomber.TemplateTable[planeType] or "BomberTemplate"
     local _country = "CJTF Blue"
     if _coalition == 1 then
         bomberTemplate = bomberTemplate .. "Red"
@@ -465,28 +512,28 @@ function Bomber.addTask(_coalition, _unitName, _point)
     end
 
     -- 确认点数消耗
-    local cost = Bomber.CostTable[planeType]
-    local _unit = ctld.getTransportUnit(_unitName)
-    local _name = _unit:getPlayerName()
-    local _ucid = SourceObj.playerInfo[_name] or "375acfc28f335ba12cd8270b6569e0d5"
-    local _groupId = req.groupId
-    local currentPoints = SourceObj.playerSource[_ucid]["point"]
-    local playerSource = SourceObj.playerSource[_ucid]
-    if not playerSource or not playerSource["point"] then
-        Bomber.logError("CallAttack: 玩家 " .. _name .. " 的资源点未初始化")
-        return
-    end
-    Bomber.logInfo("CallAttack: 玩家 " .. _name .. " 的UCID是".._ucid.." ,剩余点数"..playerSource["point"].." !")
-    Bomber.logInfo("CallAttack: 呼叫的飞机类型是"..planeType.."!")
-    Bomber.logInfo("CallAttack: 需要的点数是"..cost.."!")
-    if currentPoints < cost then
-        trigger.action.outTextForGroup(_groupId,
-            string.format("你的私有资源点不足 (%d)，无法呼叫 %s（需要 %d 点）！",
-                currentPoints, planeType, cost),
-            15)
-        Bomber.ActiveRequests[req.playerName] = nil
-        return
-    end
+    -- local cost = Bomber.CostTable[planeType]
+    -- local _unit = ctld.getTransportUnit(_unitName)
+    -- local _name = _unit:getPlayerName()
+    -- local _ucid = SourceObj.playerInfo[_name] or "375acfc28f335ba12cd8270b6569e0d5"
+    -- local _groupId = req.groupId
+    -- local currentPoints = SourceObj.playerSource[_ucid]["point"]
+    -- local playerSource = SourceObj.playerSource[_ucid]
+    -- if not playerSource or not playerSource["point"] then
+    --     Bomber.logError("CallAttack: 玩家 " .. _name .. " 的资源点未初始化")
+    --     return
+    -- end
+    -- Bomber.logInfo("CallAttack: 玩家 " .. _name .. " 的UCID是".._ucid.." ,剩余点数"..playerSource["point"].." !")
+    -- Bomber.logInfo("CallAttack: 呼叫的飞机类型是"..planeType.."!")
+    -- Bomber.logInfo("CallAttack: 需要的点数是"..cost.."!")
+    -- if currentPoints < cost then
+    --     trigger.action.outTextForGroup(_groupId,
+    --         string.format("你的私有资源点不足 (%d)，无法呼叫 %s（需要 %d 点）！",
+    --             currentPoints, planeType, cost),
+    --         15)
+    --     Bomber.ActiveRequests[req.playerName] = nil
+    --     return
+    -- end
 
     -- 克隆飞机模板
     --local newGroupData = mist.cloneGroup(bomberTemplate,true)
@@ -505,7 +552,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
 
     --Bomber.logInfo("MIST生成群组，内容是："..Bomber.p(newGroupData))
     if not newGroupData then
-        env.error("Bomber.addTask: 克隆模板失败 " .. bomberTemplate)
+        Bomber.logError("Bomber.addTask: 克隆模板失败 " .. bomberTemplate)
         trigger.action.outTextForGroup(_groupId,
             string.format("%s 模板不存在，呼叫失败，未扣除点数。", planeType),
             15)
@@ -515,7 +562,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
 
     local spawnGroup = Group.getByName(newGroupData.name)
     if not spawnGroup then
-        env.error("Bomber.addTask: 生成群组失败")
+        Bomber.logError("Bomber.addTask: 生成群组失败")
         trigger.action.outTextForGroup(_groupId,
             string.format("%s 生成失败，未扣除点数。", planeType),
             15)
@@ -561,7 +608,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
     --             planeType, _point.x, _point.y),
     --         15)
     -- else
-    --     env.error("Bomber.addTask: 无法获取控制器")
+    --     Bomber.logError("Bomber.addTask: 无法获取控制器")
     --     trigger.action.outTextForGroup(_groupId,
     --         string.format("%s 呼叫失败，未扣除点数。", planeType),
     --         15)

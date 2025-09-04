@@ -6423,8 +6423,9 @@ function ctld.addF10MenuOptionsBomber(_unitName)
                 if ctld.addedBomberTo[tostring(_groupId)] == nil then
                     local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "轰炸机支援")
                     missionCommands.addCommandForGroup(_groupId, "呼叫攻击机(100分)", _rootPath,  Bomber.CallAttack, { _unitName , "Attack"})
-                    missionCommands.addCommandForGroup(_groupId, "呼叫远程轰炸机(500分)", _rootPath,  Bomber.CallAttack, { _unitName , "Bomber"})
                     missionCommands.addCommandForGroup(_groupId, "呼叫隐身轰炸机(100分)", _rootPath,  Bomber.CallAttack, { _unitName , "StealthBomber"})
+                    missionCommands.addCommandForGroup(_groupId, "呼叫远程轰炸机(300分)", _rootPath,  Bomber.CallAttack, { _unitName , "Bomber"})
+                    missionCommands.addCommandForGroup(_groupId, "呼叫核弹机！(2500分)", _rootPath,  Bomber.CallAttack, { _unitName , "Nuke"})
                     ctld.addedBomberTo[tostring(_groupId)]=true
                 end
             end
