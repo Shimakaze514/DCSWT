@@ -346,7 +346,7 @@ local function updateRoutePoints(newGroupData, _point, planeType)
 
         local x1, y1 = lastPoint.x, lastPoint.y
         local x2, y2 = _point.x, _point.y
-        
+
         -- 计算两点之间的直线距离
         local distance = calculateDistance(x1, y1, x2, y2)
 
@@ -362,6 +362,15 @@ local function updateRoutePoints(newGroupData, _point, planeType)
             -- 更新新点的坐标
             newPoint.x = newX
             newPoint.y = newY
+
+            if planeType == "Nuke" then
+                local dx, dy = x2 - x1, y2 - y1
+                local len = math.sqrt(dx*dx + dy*dy)
+                local ratio = (len + 1000) / len  -- 延长1000米
+                _point.x = x1 + dx * ratio
+                _point.y = y1 + dy * ratio
+                newPoint.alt = 6705.6
+            end
 
             -- 将新的点添加到points中
             local unitsInRange = Bomber.searchGroundUnitsInRange(_point, Bomber.SearchRadius, targetCoalitionId)
