@@ -1,19 +1,19 @@
 Bomber = {}
 Bomber.ActiveRequests = {}
 Bomber.ActiveGroups = {}
-Bomber.Debug = false
+Bomber.Debug = true
 Bomber.Trace = false
 Bomber.CostTable = {
     ["Attack"] = 100,  --记得在CTLD里更改描述（搜CallAttack
     ["Bomber"] = 300,
     ["StealthBomber"] = 100,
-    ["Nuke"] = 2500,
+    ["Nuke"] = 1000,
 }
 Bomber.RangeTable = {
     ["Attack"] = 25 * 1852,
     ["Bomber"] = 51 * 1852,
     ["StealthBomber"] = 10 * 1852,
-    ["Nuke"] = 10 * 1852,
+    ["Nuke"] = 12 * 1852,
 }
 Bomber.MissileTable = {
     ["Attack"] = 5,  -- Tu22
@@ -28,7 +28,7 @@ Bomber.TemplateTable = {
     ["Nuke"] = "NukeTemplate",
 }
 Bomber.SearchRadius = 1000
-Bomber.MinimumNukePlayers = 1 -- Debug
+Bomber.MinimumNukePlayers = 0 -- Debug
 SourceObj = SourceObj or {}
 function Bomber.logError(message)
     env.info("[BOMBER] Err: "  .. message)
@@ -221,7 +221,7 @@ function Bomber.searchGroundUnitsInRange(centerPos, SearchRadius,_coalitionId)
             local unitPos = unit:getPoint()
             -- 计算单位和目标点之间的距离
             local distance = calculateDistance(centerPos.x, centerPos.y, unitPos.x, unitPos.z)
-            Bomber.logDebug("获取"..Bomber.p(unit:getName()).."的位置："..Bomber.p(unitPos).."，距离为"..distance)
+            --Bomber.logDebug("获取"..Bomber.p(unit:getName()).."的位置："..Bomber.p(unitPos).."，距离为"..distance)
 
             -- 如果距离在指定半径内，添加到返回表格中
             if distance <= SearchRadius then
@@ -233,7 +233,7 @@ function Bomber.searchGroundUnitsInRange(centerPos, SearchRadius,_coalitionId)
     table.sort(groundUnitPositions, function(a, b)
         return a.distance < b.distance
     end)
-    Bomber.logDebug("找到的地面单位："..Bomber.p(groundUnitPositions))
+    --Bomber.logDebug("找到的地面单位："..Bomber.p(groundUnitPositions))
     return groundUnitPositions
 end
 local function calculateExpend(perTargetMissiles, missileCount)
@@ -273,7 +273,7 @@ function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
             i, target.x, target.y, target.distance))
     end
     -- 如果目标数量为0
-    if targetCount == 0 then
+    if targetCount == 0 or targetCount == -1 then
         Bomber.logDebug("目标数量为0，向F10点发射所有导弹")
         local BombingTask = {
             id = 'Bombing',
@@ -447,6 +447,7 @@ function Bomber.CallAttack(_args)
             trigger.action.outTextForGroup(_groupId,
             "当前服务器内红蓝双方玩家合计不超过"..Bomber.MinimumNukePlayers.."人，为避免玩家偷偷趁服务器没人疯狂吊运然后种蘑菇把整个服务器炸平，暂时禁止核弹机生成！",
             15)
+            return
         end
     end
     
@@ -521,17 +522,17 @@ function Bomber.addTask(_coalition, _unitName, _point)
     end
 
     -- 确认点数消耗
-    -- local cost = Bomber.CostTable[planeType]
-    -- local _unit = ctld.getTransportUnit(_unitName)
-    -- local _name = _unit:getPlayerName()
-    -- local _ucid = SourceObj.playerInfo[_name] or "375acfc28f335ba12cd8270b6569e0d5"
-    -- local _groupId = req.groupId
-    -- local currentPoints = SourceObj.playerSource[_ucid]["point"]
-    -- local playerSource = SourceObj.playerSource[_ucid]
-    -- if not playerSource or not playerSource["point"] then
-    --     Bomber.logError("CallAttack: 玩家 " .. _name .. " 的资源点未初始化")
-    --     return
-    -- end
+    local cost = Bomber.CostTable[planeType]
+    local _unit = ctld.getTransportUnit(_unitName)
+    local _name = _unit:getPlayerName()
+    local _ucid = SourceObj.playerInfo[_name] or "375acfc28f335ba12cd8270b6569e0d5"
+    local _groupId = req.groupId
+    local currentPoints = SourceObj.playerSource[_ucid]["point"]
+    local playerSource = SourceObj.playerSource[_ucid]
+    if not playerSource or not playerSource["point"] then
+        Bomber.logError("CallAttack: 玩家 " .. _name .. " 的资源点未初始化")
+        return
+    end
     -- Bomber.logInfo("CallAttack: 玩家 " .. _name .. " 的UCID是".._ucid.." ,剩余点数"..playerSource["point"].." !")
     -- Bomber.logInfo("CallAttack: 呼叫的飞机类型是"..planeType.."!")
     -- Bomber.logInfo("CallAttack: 需要的点数是"..cost.."!")
