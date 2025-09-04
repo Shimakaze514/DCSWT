@@ -1,7 +1,7 @@
 Bomber = {}
 Bomber.ActiveRequests = {}
 Bomber.ActiveGroups = {}
-Bomber.Debug = true
+Bomber.Debug = false
 Bomber.Trace = false
 Bomber.CostTable = {
     ["Attack"] = 100,  --记得在CTLD里更改描述（搜CallAttack
@@ -28,7 +28,7 @@ Bomber.TemplateTable = {
     ["Nuke"] = "NukeTemplate",
 }
 Bomber.SearchRadius = 1000
-Bomber.MinimumNukePlayers = 0 -- Debug
+Bomber.MinimumNukePlayers = 4
 SourceObj = SourceObj or {}
 function Bomber.logError(message)
     env.info("[BOMBER] Err: "  .. message)
