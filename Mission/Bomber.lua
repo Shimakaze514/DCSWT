@@ -27,7 +27,12 @@ Bomber.TemplateTable = {
     ["StealthBomber"] = "StealthBomberTemplate",
     ["Nuke"] = "NukeTemplate",
 }
-Bomber.SearchRadius = 1000
+Bomber.SearchRadius = {
+    ["Attack"] = 1000,
+    ["Bomber"] = 1000,
+    ["StealthBomber"] = 2500,
+    ["Nuke"] = 1000,
+}
 Bomber.MinimumNukePlayers = 4
 SourceObj = SourceObj or {}
 function Bomber.logError(message)
@@ -373,7 +378,7 @@ local function updateRoutePoints(newGroupData, _point, planeType)
             end
 
             -- 将新的点添加到points中
-            local unitsInRange = Bomber.searchGroundUnitsInRange(_point, Bomber.SearchRadius, targetCoalitionId)
+            local unitsInRange = Bomber.searchGroundUnitsInRange(_point, Bomber.SearchRadius[planeType], targetCoalitionId)
             local DCStasks = Bomber.createBombingTasks(_point,unitsInRange, missileCount)
             newPoint.task = Bomber:TaskCombo(DCStasks)
             for _, task in ipairs(DCStasks) do
