@@ -1,7 +1,7 @@
 Bomber = {}
 Bomber.ActiveRequests = {}
 Bomber.ActiveGroups = {}
-Bomber.Debug = false
+Bomber.Debug = true
 Bomber.Trace = false
 Bomber.CostTable = {
     ["Attack"] = 100,  --记得在CTLD里更改描述（搜CallAttack
@@ -29,8 +29,8 @@ Bomber.TemplateTable = {
 }
 Bomber.SearchRadius = {
     ["Attack"] = 1000,
-    ["Bomber"] = 1000,
-    ["StealthBomber"] = 2500,
+    ["Bomber"] = 2500,
+    ["StealthBomber"] = 1000,
     ["Nuke"] = 1000,
 }
 Bomber.MinimumNukePlayers = 4
