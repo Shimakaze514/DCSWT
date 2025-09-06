@@ -2135,9 +2135,9 @@ ctld.GroupSystemTemplate = {
         repair = "SA-15 BUK Repair",
     },
     {
-        name = "IRIST阵地（3箱2车+补给）",
+        name = "IRIST阵地（2箱2车+补给）",
         sysName = "IRIST",
-        cratesRequired = 3,
+        cratesRequired = 2,
         aaLaunchers = 2,
         unitsCnt = 6,
         count = 3,
