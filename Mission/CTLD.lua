@@ -32,7 +32,7 @@ ctld.Id = "CTLD - "
 ctld.Version = "20250610"
 
 -- debug level, specific to this module
-ctld.Debug = true
+ctld.Debug = false
 -- trace level, specific to this module
 ctld.Trace = true
 
