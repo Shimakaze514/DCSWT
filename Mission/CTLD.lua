@@ -1712,9 +1712,9 @@ ctld.RandomTankPool = {
     'Tank RandomGroup ZTZ96B Group',
     'Tank RandomGroup Merkava Group',
     'Tank RandomGroup T-80 Group',
-    'Tank RandomGroup T-84 Group',
-    'Tank RandomGroup T-90M Group',
-    --'Tank RandomGroup T-90 Group',
+    --'Tank RandomGroup T-84 Group',
+    --'Tank RandomGroup T-90M Group',
+    'Tank RandomGroup T-90 Group',
     --'Tank RandomGroup L2A5 Group'
 }
 
@@ -4314,7 +4314,7 @@ function ctld.unpackFOBCrates(_crates, _heli)
             table.insert(ctld.logisticUnits, _fob:getName())
             --储存fob位置
             local _logistic = StaticObject.getByName(_fob:getName())
-            table.insert(ctld.fobLocation, _logistic:getPoint())
+            table.insert(ctld.fobLocation, { point = _logistic:getPoint(), name = _fob })
             --
             timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + 20)
             --不需要塔康信标
@@ -5959,15 +5959,13 @@ function ctld.inLogisticsZone(_heli, needcheck)
 
     local _heliPoint = _heli:getPoint()
 
-    for _, _name in pairs(ctld.logisticUnits) do
-
+    for i = #ctld.logisticUnits, 1, -1 do
+        local _name = ctld.logisticUnits[i]
         local _logistic = StaticObject.getByName(_name)
-
-        if _logistic ~= nil and _logistic:getCoalition() == _heli:getCoalition() then
-
-            --get distance
+        if _logistic == nil or _logistic:getLife() <= 0 then
+            table.remove(ctld.logisticUnits, i)  -- 移除死亡/不存在单位
+        elseif _logistic:getCoalition() == _heli:getCoalition() then
             local _dist = ctld.getDistance(_heliPoint, _logistic:getPoint())
-
             if _dist <= ctld.maximumDistanceLogistic then
                 return true
             end
@@ -5988,9 +5986,13 @@ function ctld.farEnoughFromLogisticZone(_heli, distance, needcheck)
     end
     local _heliPoint = _heli:getPoint()
     local _farEnough = true
-    for _, _name in pairs(ctld.logisticUnits) do
+
+    for i = #ctld.logisticUnits, 1, -1 do
+        local _name = ctld.logisticUnits[i]
         local _logistic = StaticObject.getByName(_name)
-        if _logistic ~= nil and _logistic:getCoalition() == _heli:getCoalition() then
+        if _logistic == nil or _logistic:getLife() <= 0 then
+            table.remove(ctld.logisticUnits, i)  -- 移除死亡单位
+        elseif _logistic:getCoalition() == _heli:getCoalition() then
             local _dist = ctld.getDistance(_heliPoint, _logistic:getPoint())
             if _dist <= distance then
                 _farEnough = false
@@ -5998,14 +6000,19 @@ function ctld.farEnoughFromLogisticZone(_heli, distance, needcheck)
         end
     end
     --检查此处是否有fob
-    if _farEnough == true then
-        for _, _position in pairs(ctld.fobLocation) do
-            local _dist = ctld.getDistance(_heliPoint, _position)
+    for i = #ctld.fobLocation, 1, -1 do
+        local fob = ctld.fobLocation[i]
+        local fobObj = StaticObject.getByName(fob.name)
+        if fobObj == nil or fobObj:getLife() <= 0 then
+            table.remove(ctld.fobLocation, i)  -- 移除死亡 FOB
+        else
+            local _dist = ctld.getDistance(_heliPoint, fob.point)
             if _dist <= distance then
                 _farEnough = false
             end
         end
-    end 
+    end
+    
     return _farEnough
 end
 
