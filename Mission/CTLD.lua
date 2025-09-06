@@ -33,7 +33,6 @@ ctld.Version = "20250610"
 
 -- debug level, specific to this module
 ctld.Debug = true
-ctld.DebugConfig = false
 -- trace level, specific to this module
 ctld.Trace = true
 
@@ -45,7 +44,7 @@ ctld.alreadyInitialized = false -- if true, ctld.initialize() will not run
 ctld.staticBugWorkaround = false --  DCS had a bug where destroying statics would cause a crash. If this happens again, set this to TRUE
 
 
-if ctld.DebugConfig == false then
+if ctld.Debug == false then
     ctld.UnitLimitPerPlayer = {
         ["主战坦克(Tank)"] = 4,
         ["步兵战车(IFV)"] = 3,
@@ -2140,14 +2139,14 @@ ctld.GroupSystemTemplate = {
         sysName = "IRIST",
         cratesRequired = 3,
         aaLaunchers = 2,
-        unitsCnt = 5,
+        unitsCnt = 6,
         count = 3,
         hasLimit = true,
         parts = {
             { name = "ZIL-135", desc = "IRIST补弹车" },
-            { name = "CHAP_IRISTSLM_STR", desc = "IRIST雷达车" },
             { name = "CHAP_IRISTSLM_CP", desc = "IRIST指挥车" },
             { name = "CHAP_IRISTSLM_LN", desc = "IRIST发射车", launcher = true },
+            { name = "CHAP_IRISTSLM_STR", desc = "IRIST雷达车", launcher = true},
         },
         repair = "IRIST Repair",
     },
@@ -4864,21 +4863,22 @@ function ctld.getGroupTemplate(_unitName)
 end
 
 function ctld.getLauncherUnitFromAATemplate(_aaTemplate)
+    local launchers = {}
     for _, _part in pairs(_aaTemplate.parts) do
-
         if _part.launcher then
-            return _part.name
+            table.insert(launchers, _part.name)
         end
     end
-
-    return nil
+    return launchers
 end
 
 function ctld.rearmAASystem(_heli, _nearestCrate, _nearbyCrates, _aaSystemTemplate)
 
     -- are we adding to existing aa system?
     -- check to see if the crate is a launcher
-    if ctld.getLauncherUnitFromAATemplate(_aaSystemTemplate) == _nearestCrate.details.unit then
+    local _launcherParts = ctld.getLauncherUnitFromAATemplate(_aaSystemTemplate)
+
+    if ctld.tableContains(_launcherParts, _nearestCrate.details.unit) then
 
         -- find nearest COMPLETE AA system
         local _nearestSystem = ctld.findNearestGroupSystem(_heli, _aaSystemTemplate)
@@ -4972,6 +4972,13 @@ function ctld.rollRandomTank(_nearestCrate)
     return false, nil
 end
 
+function ctld.tableContains(tbl, val)
+    for _, v in ipairs(tbl) do
+        if v == val then return true end
+    end
+    return false
+end
+
 function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSystemTemplate)
     -- are there all the pieces close enough together
     ctld.logDebug('进去之前    ' .. ctld.formatTable(_groupSystemTemplate))
@@ -5020,10 +5027,10 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
     local _launcherCount = 0
     local _nonLauncherCount = 0
 
+    local _launcherParts = ctld.getLauncherUnitFromAATemplate(_groupSystemTemplate)
     -- 第一次遍历：统计数量
     for _name, _systemPart in pairs(_systemParts) do
-        local _launcherPart = ctld.getLauncherUnitFromAATemplate(_groupSystemTemplate)
-        if _launcherPart == _name and _groupSystemTemplate.aaLaunchers > 1 then
+        if ctld.tableContains(_launcherParts, _name) then
             _launcherCount = _launcherCount + _groupSystemTemplate.aaLaunchers
         else
             _nonLauncherCount = _nonLauncherCount + 1
@@ -5035,8 +5042,7 @@ function ctld.unpackGroupSystem(_heli, _nearestCrate, _nearbyCrates, _groupSyste
     local _nonLauncherIndex = 0  -- 非发射器计数器
 
     for _name, _systemPart in pairs(_systemParts) do
-        local _launcherPart = ctld.getLauncherUnitFromAATemplate(_groupSystemTemplate)
-        if _launcherPart == _name and _groupSystemTemplate.aaLaunchers > 1 then
+        if ctld.tableContains(_launcherParts, _name) then
             -- 发射器：半径35的圆环
             local _launchers = _groupSystemTemplate.aaLaunchers
             for _i = 1, _launchers do
