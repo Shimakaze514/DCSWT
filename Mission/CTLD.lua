@@ -77,8 +77,8 @@ if ctld.Debug == false then
     ctld.maximumSearchDistance = 4000 -- max distance for troops to search for enemy
     ctld.maximumMoveDistance = 2000 -- max distance for troops to move from drop point if no enemy is nearby
 
-    ctld.minimumDeployDistance = 1000 -- minimum distance from a friendly pickup zone where you can deploy a crate
-    ctld.minimumDistanceBetweenFobs = 1000
+    ctld.minimumDeployDistance = 900 -- minimum distance from a friendly pickup zone where you can deploy a crate
+    ctld.minimumDistanceBetweenFobs = 1
     ctld.spawnRPGWithCoalition = true --spawns a friendly RPG unit with Coalition forces
     ctld.spawnStinger = false -- spawns a stinger / igla soldier with a group of 6 or more soldiers!
 
@@ -3696,7 +3696,7 @@ function ctld.loadNearbyCrate(_name)
     -- 初始化运输箱数组
     ctld.inTransitSlingLoadCrates[_name] = ctld.inTransitSlingLoadCrates[_name] or {}
     local _crateCount = #ctld.inTransitSlingLoadCrates[_name]
-    local availableUnitTypes = {"MosquitoFBMkVI", "CH-47Fbl1"}
+    local availableUnitTypes = {"MosquitoFBMkVI"} --, "CH-47Fbl1"
     local unitType = _transUnit:getTypeName()
     local _maxCrates = 1
     for _, typename in ipairs(availableUnitTypes) do
