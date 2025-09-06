@@ -371,7 +371,7 @@ local function updateRoutePoints(newGroupData, _point, planeType)
             if planeType == "Nuke" then
                 local dx, dy = x2 - x1, y2 - y1
                 local len = math.sqrt(dx*dx + dy*dy)
-                local ratio = (len + 1000) / len  -- 延长1000米
+                local ratio = (len + 2000) / len  -- 延长1000米
                 _point.x = x1 + dx * ratio
                 _point.y = y1 + dy * ratio
                 newPoint.alt = 6705.6

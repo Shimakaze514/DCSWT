@@ -4311,7 +4311,7 @@ function ctld.unpackFOBCrates(_crates, _heli)
             local _fob = ctld.spawnFOB(_args[2], _unitId, _args[1], _name)
 
             --make it able to deploy crates
-            table.insert(ctld.logisticUnits, _fob:getName())
+            --table.insert(ctld.logisticUnits, _fob:getName())
             --储存fob位置
             local _logistic = StaticObject.getByName(_fob:getName())
             table.insert(ctld.fobLocation, { point = _logistic:getPoint(), name = _fob })
@@ -5963,9 +5963,22 @@ function ctld.inLogisticsZone(_heli, needcheck)
         local _name = ctld.logisticUnits[i]
         local _logistic = StaticObject.getByName(_name)
         if _logistic == nil or _logistic:getLife() <= 0 then
-            table.remove(ctld.logisticUnits, i)  -- 移除死亡/不存在单位
+            --table.remove(ctld.logisticUnits, i)  -- 移除就占领不回来了
         elseif _logistic:getCoalition() == _heli:getCoalition() then
             local _dist = ctld.getDistance(_heliPoint, _logistic:getPoint())
+            if _dist <= ctld.maximumDistanceLogistic then
+                return true
+            end
+        end
+    end
+
+    for i = #ctld.fobLocation, 1, -1 do
+        local fob = ctld.fobLocation[i]
+        local fobObj = StaticObject.getByName(fob.name)
+        if fobObj == nil or fobObj:getLife() <= 0 then
+            table.remove(ctld.fobLocation, i)  -- 移除死亡 FOB
+        elseif fobObj:getCoalition() == _heli:getCoalition() then
+            local _dist = ctld.getDistance(_heliPoint, fob.point)
             if _dist <= ctld.maximumDistanceLogistic then
                 return true
             end
@@ -5991,7 +6004,7 @@ function ctld.farEnoughFromLogisticZone(_heli, distance, needcheck)
         local _name = ctld.logisticUnits[i]
         local _logistic = StaticObject.getByName(_name)
         if _logistic == nil or _logistic:getLife() <= 0 then
-            table.remove(ctld.logisticUnits, i)  -- 移除死亡单位
+            -- table.remove(ctld.logisticUnits, i)  -- 移除就占领不回来了
         elseif _logistic:getCoalition() == _heli:getCoalition() then
             local _dist = ctld.getDistance(_heliPoint, _logistic:getPoint())
             if _dist <= distance then
