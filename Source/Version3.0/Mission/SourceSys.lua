@@ -48,7 +48,16 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
     local text = string.format("降落成功,结算添加资源点:%d,个人剩余:%d点.\n详细信息:%s", tostring(totalReturn), tostring(SourceObj.playerSource[_ucid]["point"]), tostring(countInfo))
     trigger.action.outTextForGroup(_groupId, text, 10)
   elseif _event == "pilotDead" then
-    SourceObj.pendingKillPoint[_ucid] = nil
+    local _groupId = SourceObj.getGroupId(_unit)
+    local halfPoint = 0
+    if SourceObj.pendingKillPoint[_ucid] then
+      halfPoint = math.floor(SourceObj.pendingKillPoint[_ucid] / 2)
+      SourceObj.pendingKillPoint[_ucid] = nil
+    end
+    SourceObj.playerSource[_ucid]["point"] = SourceObj.playerSource[_ucid]["point"] + halfPoint
+    SourceObj.SaveSourcePoint()
+    local text = string.format("您已阵亡，获得资源点减半！\n结算添加资源点:%d，个人剩余:%d点", tostring(halfPoint), tostring(SourceObj.playerSource[_ucid]["point"]))
+    trigger.action.outTextForGroup(_groupId, text, 10)
     --SourceObj.playerSource[_ucid]["deadLastTime"] = true
   elseif _event == "kill" then
     local _groupId = SourceObj.getGroupId(_unit.initiator)
