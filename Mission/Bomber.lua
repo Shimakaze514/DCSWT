@@ -6,35 +6,47 @@ Bomber.Trace = false
 Bomber.CostTable = {
     ["Attack"] = 100,  --记得在CTLD里更改描述（搜CallAttack
     ["Bomber"] = 600,
+    ["LowBomber"] = 200,
     ["StealthBomber"] = 100,
     ["Nuke"] = 1000,
 }
 Bomber.RangeTable = {
     ["Attack"] = 25 * 1852,
-    ["Bomber"] = 60 * 1852,
+    ["Bomber"] = 55 * 1852,
+    ["LowBomber"] = 20 * 1852,
     ["StealthBomber"] = 10 * 1852,
     ["Nuke"] = 12 * 1852,
 }
 Bomber.MissileTable = {
     ["Attack"] = 5,  -- Tu22
-    ["Bomber"] = 24, --20
+    ["Bomber"] = 20,
+    ["LowBomber"] = 12,
     ["StealthBomber"] = 2,
     ["Nuke"] = -1,
 }
 Bomber.TemplateTable = {
     ["Attack"] = "AttackTemplate",
     ["Bomber"] = "BomberTemplate",
+    ["LowBomber"] = "LowBomberTemplate",
     ["StealthBomber"] = "StealthBomberTemplate",
     ["Nuke"] = "NukeTemplate",
 }
 Bomber.SearchRadius = {
     ["Attack"] = 1000,
     ["Bomber"] = 2000,
+    ["LowBomber"] = 1500,
     ["StealthBomber"] = 1000,
     ["Nuke"] = 1000,
 }
 Bomber.MinimumNukePlayers = 4
-Bomber.MaxBomber = 3
+Bomber.MaxCount = {
+    ["Attack"] = 4,
+    ["Bomber"] = 3,
+    ["LowBomber"] = 3,
+    ["StealthBomber"] = 5,
+    ["Nuke"] = 5,
+
+}
 SourceObj = SourceObj or {}
 function Bomber.logError(message)
     env.info("[BOMBER] Err: "  .. message)
@@ -461,21 +473,19 @@ function Bomber.CallAttack(_args)
         end
     end
 
-    if _planeType == "Bomber" then
-        local bomberCount = 0
-        for _, request in pairs(Bomber.ActiveRequests) do
-            if request.coalition == _unit:getCoalition() and request.planeType == "Bomber" then
-                bomberCount = bomberCount + 1
-            end
+    local bomberCount = 0
+    for _, request in pairs(Bomber.ActiveRequests) do
+        if request.coalition == _unit:getCoalition() and request.planeType == _planeType then
+            bomberCount = bomberCount + 1
         end
-        if bomberCount >= Bomber.MaxBomber then
-            Bomber.logInfo("CallAttack: 同一阵营的轰炸机数量已超过 4 个，无法再呼叫！")
-            trigger.action.outTextForGroup(_groupId,
-            "当前本阵营的轰炸机数量已达到"..Bomber.MaxBomber.."架，为避免生成54188发AGM86使服务器崩溃，暂时禁止轰炸机生成！",
-            15)
-            return
-        end
-    end    
+    end
+    if bomberCount >= Bomber.MaxCount[_planeType] then
+        Bomber.logInfo("CallAttack: 同一阵营的轰炸机数量已达到"..Bomber.MaxCount[_planeType].."架，无法再呼叫！")
+        trigger.action.outTextForGroup(_groupId,
+        "当前本阵营的轰炸机数量已达到"..Bomber.MaxCount[_planeType].."架，为避免生成54188发导弹使服务器崩溃，暂时禁止轰炸机生成！",
+        15)
+        return
+    end
     
     -- 如果该玩家已有激活请求，先清掉
     if Bomber.ActiveRequests[_playerName] then
@@ -545,6 +555,11 @@ function Bomber.addTask(_coalition, _unitName, _point)
     if _coalition == 1 then
         bomberTemplate = bomberTemplate .. "Red"
         _country = "CJTF Red"
+    end
+
+    if _point.x >= -135000 then
+        Bomber.logDebug("Target point LAT: " .. _point.x .. ". Using north spawn")
+        bomberTemplate = bomberTemplate .. "North"
     end
 
     -- 确认点数消耗

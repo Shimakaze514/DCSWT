@@ -6448,10 +6448,11 @@ function ctld.addF10MenuOptionsBomber(_unitName)
             if _groupId then
                 if ctld.addedBomberTo[tostring(_groupId)] == nil then
                     local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "轰炸机支援")
-                    missionCommands.addCommandForGroup(_groupId, "呼叫攻击机("..Bomber.CostTable["Attack"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "Attack"})
+                    missionCommands.addCommandForGroup(_groupId, "呼叫超音速轰炸机("..Bomber.CostTable["Attack"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "Attack"})
+                    missionCommands.addCommandForGroup(_groupId, "呼叫低空轰炸机("..Bomber.CostTable["LowBomber"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "LowBomber"})
                     missionCommands.addCommandForGroup(_groupId, "呼叫隐身轰炸机("..Bomber.CostTable["StealthBomber"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "StealthBomber"})
                     missionCommands.addCommandForGroup(_groupId, "呼叫远程轰炸机("..Bomber.CostTable["Bomber"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "Bomber"})
-                    missionCommands.addCommandForGroup(_groupId, "呼叫核弹机！("..Bomber.CostTable["Nuke"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "Nuke"})
+                    missionCommands.addCommandForGroup(_groupId, "!!呼叫核弹机!!("..Bomber.CostTable["Nuke"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "Nuke"})
                     ctld.addedBomberTo[tostring(_groupId)]=true
                 end
             end

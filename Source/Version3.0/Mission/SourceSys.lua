@@ -5,7 +5,7 @@ SourceObj.addedF10Menu = {}
 SourceObj.killEnemy = 100
 SourceObj.killFriend = -250
 SourceObj.pilotDead = 150
-SourceObj.addCrate = 100
+SourceObj.addCrate = 50
 SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
   SourceObj.playerSource[_ucid] = SourceObj.playerSource[_ucid] or {}
   if SourceObj.playerSource[_ucid]["point"] == nil then
