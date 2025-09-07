@@ -22,7 +22,7 @@ Bomber.MissileTable = {
     ["Bomber"] = 20,
     ["LowBomber"] = 9,
     ["StealthBomber"] = 2,
-    ["Nuke"] = -1,
+    ["Nuke"] = 1,
 }
 Bomber.TemplateTable = {
     ["Attack"] = "AttackTemplate",
