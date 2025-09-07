@@ -127,7 +127,11 @@ SourceObj.getPointByGroupID = function(groupId)
   if groupId ~= nil then
     local _ucid = SourceObj.playerUcidByGroup[groupId]
     if _ucid then
-      trigger.action.outTextForGroup(groupId, string.format("你的私有资源点剩余:%s", tostring(SourceObj.playerSource[_ucid]["point"])), 30)
+      local currentPoint = tostring(SourceObj.playerSource[_ucid]["point"])
+      local pending = tostring(SourceObj.pendingKillPoint[_ucid] or 0)
+      local text = string.format("你的私有资源点剩余:%s\n未结算的击杀奖励:%s\n你需要成功降落才能获得未结算奖励！", currentPoint, pending)
+      trigger.action.outTextForGroup(groupId, text, 30)
+      --trigger.action.outTextForGroup(groupId, string.format("你的私有资源点剩余:%s", tostring(SourceObj.playerSource[_ucid]["point"])), 30)
     end
   end
 end
