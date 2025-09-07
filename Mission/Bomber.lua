@@ -1,7 +1,7 @@
 Bomber = {}
 Bomber.ActiveRequests = {}
 Bomber.ActiveGroups = {}
-Bomber.Debug = true
+Bomber.Debug = false
 Bomber.Trace = false
 Bomber.CostTable = {
     ["Attack"] = 100,  --记得在CTLD里更改描述（搜CallAttack
@@ -256,20 +256,25 @@ function Bomber.searchGroundUnitsInRange(centerPos, SearchRadius,_coalitionId)
 end
 local function calculateExpend(perTargetMissiles, missileCount)
     local expend = "All"  -- 默认是 "All"
-    
+    local num = missileCount
     if perTargetMissiles == 1 then
         expend = "One"
+        num = 1
     elseif perTargetMissiles == 2 then
         expend = "Two"
+        num = 2
     elseif perTargetMissiles == 3 then
         expend = "Two"
+        num = 2
     elseif perTargetMissiles == 4 then
         expend = "Four"
+        num = 4
     elseif perTargetMissiles > 4 and perTargetMissiles <= missileCount / 2 then
         expend = "Half"
+        num = math.floor(missileCount / 2)
     end
     
-    return expend
+    return expend,num
 end
 function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
     local DCStasks = {}  -- 用于存储所有的任务
@@ -315,14 +320,11 @@ function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
         return DCStasks
     end
     -- 计算每个目标的导弹数量，向下取整
-    --local perTargetMissiles = math.floor(missileCount / targetCount)
-    --local expend = calculateExpend(perTargetMissiles, missileCount)
+    local perTargetMissiles = math.floor(missileCount / targetCount)
+    local expend,num = calculateExpend(perTargetMissiles, missileCount)
     -- 遍历所有地面单位坐标并生成 BombingTask
-    for i = 1, missileCount do
-        -- 计算当前目标的索引（循环遍历目标）
-        local targetIndex = (i - 1) % targetCount + 1
-        local pos = groundUnitPositions[targetIndex]
-
+    local usedMissile = 0
+    for _, pos in ipairs(groundUnitPositions) do
         local BombingTask = {
             id = 'Bombing',
             params = {
@@ -330,7 +332,7 @@ function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
                 x                = pos.x,
                 y                = pos.y,
                 groupAttack      = false,
-                expend           = "One",
+                expend           = expend,
                 attackQtyLimit   = false,
                 attackQty        = 1,
                 directionEnabled = false,
@@ -341,8 +343,37 @@ function Bomber.createBombingTasks(_point,groundUnitPositions, missileCount)
                 attackType       = nil,
             }
         }
+        usedMissile = usedMissile + num
         table.insert(DCStasks, BombingTask)
-        Bomber.logDebug("生成 BombingTask: " .. Bomber.p(BombingTask))
+        Bomber.logDebug("生成 连发导弹 BombingTask: " .. Bomber.p(BombingTask))
+    end
+
+    -- 再分配剩余导弹
+    local remaining = missileCount - usedMissile
+    if remaining > 0 then
+        for i = 1, remaining do
+            local pos = groundUnitPositions[(i - 1) % targetCount + 1]
+            local BombingTask = {
+                id = 'Bombing',
+                params = {
+                    point            = {x = pos.x, y = pos.y},
+                    x                = pos.x,
+                    y                = pos.y,
+                    groupAttack      = false,
+                    expend           = "One",  -- 剩余的单发分配
+                    attackQtyLimit   = false,
+                    attackQty        = 1,
+                    directionEnabled = false,
+                    direction        = 0,
+                    altitudeEnabled  = false,
+                    altitude         = 2000,
+                    weaponType       = 1073741822,
+                    attackType       = nil,
+                }
+            }
+            table.insert(DCStasks, BombingTask)
+            Bomber.logDebug("生成 剩余导弹 BombingTask: " .. Bomber.p(BombingTask))
+        end
     end
 
     -- 返回任务列表
