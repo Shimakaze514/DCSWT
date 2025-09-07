@@ -2,6 +2,7 @@ SourceObj = SourceObj or {}
 SourceObj.playerGroup = {}
 SourceObj.playerUcidByGroup = {}
 SourceObj.addedF10Menu = {}
+SourceObj.pendingKillPoint = {}
 SourceObj.killEnemy = 100
 SourceObj.killFriend = -250
 SourceObj.pilotDead = 150
@@ -16,11 +17,11 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
     local _groupId = SourceObj.getGroupId(_unit)
     local sourcePointChange, countInfo = SourceObj.getSourceObjChange(_unit)
 
-    if SourceObj.playerSource[_ucid]["deadLastTime"] == true then
-      sourcePointChange=sourcePointChange + SourceObj.pilotDead
-      countInfo=countInfo.."\n因为上一架次你的驾驶员死亡，所以加扣了"..SourceObj.pilotDead..'分。条件允许的话可以跳伞'
-      SourceObj.playerSource[_ucid]["deadLastTime"] = nil
-    end
+    -- if SourceObj.playerSource[_ucid]["deadLastTime"] == true then
+    --   sourcePointChange=sourcePointChange + SourceObj.pilotDead
+    --   countInfo=countInfo.."\n因为上一架次你的驾驶员死亡，所以加扣了"..SourceObj.pilotDead..'分。条件允许的话可以跳伞'
+    --   SourceObj.playerSource[_ucid]["deadLastTime"] = nil
+    -- end
 
     if SourceObj.playerSource[_ucid]["point"] - sourcePointChange > 0 then
       SourceObj.playerSource[_ucid]["point"] = SourceObj.playerSource[_ucid]["point"] - sourcePointChange
@@ -36,16 +37,25 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
     -- SourceObj.eventAddPoint('降落成功', 30, _ucid, _groupId)
     local _groupId = SourceObj.getGroupId(_unit)
     local sourcePointChange, countInfo = SourceObj.getSourceObjChange(_unit)
-    SourceObj.playerSource[_ucid]["point"] = SourceObj.playerSource[_ucid]["point"] + sourcePointChange
+    local totalReturn = sourcePointChange
+    if SourceObj.pendingKillPoint[_ucid] then
+      totalReturn = totalReturn + SourceObj.pendingKillPoint[_ucid]
+      countInfo = countInfo .. string.format("\n击杀奖励结算:+%d", SourceObj.pendingKillPoint[_ucid])
+      SourceObj.pendingKillPoint[_ucid] = nil
+    end
+    SourceObj.playerSource[_ucid]["point"] = SourceObj.playerSource[_ucid]["point"] + totalReturn
     SourceObj.SaveSourcePoint()
-    local text = string.format("降落成功,返还私有资源点:%d,个人剩余:%d点.\n详细信息:%s", tostring(sourcePointChange), tostring(SourceObj.playerSource[_ucid]["point"]), tostring(countInfo))
+    local text = string.format("降落成功,结算添加资源点:%d,个人剩余:%d点.\n详细信息:%s", tostring(totalReturn), tostring(SourceObj.playerSource[_ucid]["point"]), tostring(countInfo))
     trigger.action.outTextForGroup(_groupId, text, 10)
   elseif _event == "pilotDead" then
-    SourceObj.playerSource[_ucid]["deadLastTime"] = true
+    SourceObj.pendingKillPoint[_ucid] = nil
+    --SourceObj.playerSource[_ucid]["deadLastTime"] = true
   elseif _event == "kill" then
     local _groupId = SourceObj.getGroupId(_unit.initiator)
     if _unit.initiator:getCoalition() ~= _unit.target:getCoalition() then
-      SourceObj.eventAddPoint("击杀敌军", SourceObj.getSourceKillChange(_unit.target), _ucid, _groupId)
+      local killPoint = SourceObj.getSourceKillChange(_unit.target)
+      SourceObj.pendingKillPoint[_ucid] = (SourceObj.pendingKillPoint[_ucid] or 0) + killPoint
+      trigger.action.outTextForGroup(_groupId, string.format("击杀敌军，奖励已记录，将在降落后结算(+%d点)", killPoint), 10)
     else
       SourceObj.eventAddPoint("击杀友军:", -SourceObj.getSourceKillChange(_unit.target), _ucid, _groupId)
     end
