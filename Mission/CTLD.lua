@@ -4314,7 +4314,7 @@ function ctld.unpackFOBCrates(_crates, _heli)
             --table.insert(ctld.logisticUnits, _fob:getName())
             --储存fob位置
             local _logistic = StaticObject.getByName(_fob:getName())
-            table.insert(ctld.fobLocation, { point = _logistic:getPoint(), name = _fob })
+            table.insert(ctld.fobLocation, { point = _logistic:getPoint(), obj = _fob })
             --
             timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + 20)
             --不需要塔康信标
@@ -5974,7 +5974,7 @@ function ctld.inLogisticsZone(_heli, needcheck)
 
     for i = #ctld.fobLocation, 1, -1 do
         local fob = ctld.fobLocation[i]
-        local fobObj = StaticObject.getByName(fob.name)
+        local fobObj = fob.obj
         if fobObj == nil or fobObj:getLife() <= 0 then
             table.remove(ctld.fobLocation, i)  -- 移除死亡 FOB
         elseif fobObj:getCoalition() == _heli:getCoalition() then
@@ -6015,7 +6015,7 @@ function ctld.farEnoughFromLogisticZone(_heli, distance, needcheck)
     --检查此处是否有fob
     for i = #ctld.fobLocation, 1, -1 do
         local fob = ctld.fobLocation[i]
-        local fobObj = StaticObject.getByName(fob.name)
+        local fobObj = fob.obj
         if fobObj == nil or fobObj:getLife() <= 0 then
             table.remove(ctld.fobLocation, i)  -- 移除死亡 FOB
         else
