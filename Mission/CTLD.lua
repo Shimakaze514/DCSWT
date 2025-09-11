@@ -3487,11 +3487,6 @@ function ctld.extractTroops(_args)
     return _extracted
 end
 
-function ctld.isMultiCrate(_name)
-    return string.find(_name, "蚊子") ~= nil 
-    or string.find(_name, "支奴干") ~= nil
-end
-
 function ctld.checkTroopStatus(_args)
     local _unitName = _args[1]
     local _heli = ctld.getTransportUnit(_unitName)
@@ -3696,7 +3691,7 @@ function ctld.loadNearbyCrate(_name)
     -- 初始化运输箱数组
     ctld.inTransitSlingLoadCrates[_name] = ctld.inTransitSlingLoadCrates[_name] or {}
     local _crateCount = #ctld.inTransitSlingLoadCrates[_name]
-    local availableUnitTypes = {"MosquitoFBMkVI"} --, "CH-47Fbl1"
+    local availableUnitTypes = {"MosquitoFBMkVI", "CH-47Fbl1"}
     local unitType = _transUnit:getTypeName()
     local _maxCrates = 1
     for _, typename in ipairs(availableUnitTypes) do

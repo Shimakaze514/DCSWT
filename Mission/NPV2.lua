@@ -18,12 +18,7 @@ net.log("LOAD - NP core script version "..NP.Version ..", script by VL")
 
 NP.RefreshTime = 10
 
-NP.CaptureDistance = 100
-
--- debug level, specific to this module
-NP.Debug = true
--- trace level, specific to this module
-NP.Trace = true
+NP.CaptureDistance = 200
  
 NP.AWACSList = {
     "blueAWACS",
@@ -71,13 +66,14 @@ function NP.capture(_args)
     NP.logDebug('进入cap函数')
     local _playerUnits = NP.findUnitControlByPlayer(_args)
     NP.logDebug('开始找最近的cc')
-    local _hasCloseEnough, _targetLogistic,_capturedPlayerName
+    local _hasCloseEnough, _targetLogistic,_capturedPlayerName, _capUsingUnit
     for _playerName,_unit in pairs(_playerUnits) do
         local _closeEnough,_logistic=NP.closeEnoughFromEnemyLogisticZone(_unit)
         if _closeEnough then
             _hasCloseEnough=true
             _targetLogistic=_logistic
             _capturedPlayerName=_playerName
+            _capUsingUnit = _unit
         end
     end
 
@@ -89,22 +85,19 @@ function NP.capture(_args)
 
     NP.logDebug('开始从mist获取数据')
     local _logisticData = NP.getLogisticData(_targetLogistic)
-    local _side = _targetLogistic:getCoalition()
-    local oppsiteCountryID
-    local oppsiteSide
-    local oppsiteCountry
-    local oppsiteCountrySide
+    local _side = _capUsingUnit:getCoalition()
+    local CountryID,Side,Country,CountrySide
     --TODO 抽象这里
-    if _side==2 then
-        oppsiteCountryID =country.id.CJTF_RED
-        oppsiteCountrySide="red"
-        oppsiteSide=1
-        oppsiteCountry=country.name[oppsiteCountryID]
+    if _side==1 then
+        CountryID =country.id.CJTF_RED
+        CountrySide="red"
+        Side=1
+        Country=country.name[CountryID]
     else
-        oppsiteCountryID =country.id.CJTF_BLUE
-        oppsiteCountrySide="blue"
-        oppsiteSide=2
-        oppsiteCountry=country.name[oppsiteCountryID]
+        CountryID =country.id.CJTF_BLUE
+        CountrySide="blue"
+        Side=2
+        Country=country.name[CountryID]
     end
 
     _logisticData.groupName=_logisticData.groupName.. ' '
@@ -112,10 +105,10 @@ function NP.capture(_args)
     _logisticData.groupId=ctld.getNextGroupId()
     --_logisticData.groupId=nil
 
-    _logisticData.countryId= oppsiteCountryID
-    _logisticData.country= oppsiteCountry
-    _logisticData.coalitionId= oppsiteSide
-    _logisticData.coalition= oppsiteCountrySide
+    _logisticData.countryId= CountryID
+    _logisticData.country= Country
+    _logisticData.coalitionId= Side
+    _logisticData.coalition= CountrySide
 
     _logisticData.units[1].groupName=_logisticData.groupName
     _logisticData.units[1].unitName=_logisticData.units[1].unitName..' '
@@ -123,10 +116,10 @@ function NP.capture(_args)
     --_logisticData.units[1].unitId= nil
     _logisticData.units[1].groupId= _logisticData.groupId
 
-    _logisticData.units[1].countryId= oppsiteCountryID
-    _logisticData.units[1].country= oppsiteCountry
-    _logisticData.units[1].coalition= oppsiteCountrySide
-    _logisticData.units[1].coalitionId= oppsiteSide
+    _logisticData.units[1].countryId= CountryID
+    _logisticData.units[1].country= Country
+    _logisticData.units[1].coalition= CountrySide
+    _logisticData.units[1].coalitionId= Side
 
     --_logisticData.units[1].alt= land.getHeight({x = _logisticData.units[1].x, y = _logisticData.units[1].y}) - 7
     NP.logDebug('_logistic:'..ctld.p(_targetLogistic))
@@ -148,12 +141,13 @@ function NP.capture(_args)
 
 
     NP.setRelatedZone(_logisticData.groupName,_logisticData.units[1].coalition)
-    NP.logInfo("战区".._logisticData.groupName.."被"..oppsiteCountrySide.."占领。操作者是".._capturedPlayerName)
-    trigger.action.outText("战区".._logisticData.groupName.."被"..oppsiteCountrySide.."占领。操作者是".._capturedPlayerName, 20)
+    NP.logInfo("战区".._logisticData.groupName.."被"..CountrySide.."占领。操作者是".._capturedPlayerName)
+    trigger.action.outText("战区".._logisticData.groupName.."被"..CountrySide.."占领。操作者是".._capturedPlayerName, 20)
 end
 
 function NP.setRelatedZone(groupName,coalition)
     local originalCCname
+    --NP.logDebug("[setRelatedZone] 所有的logisticUnits如下: "..ctld.p(ctld.logisticUnits))
     for k,v in pairs(ctld.logisticUnits) do
         if string.find(groupName, v) ~= nil then
             originalCCname = v
@@ -239,7 +233,7 @@ function NP.closeEnoughFromEnemyLogisticZone(_unitObject)
     local _logistic
     for _, _name in pairs(ctld.logisticUnits) do
         _logistic = StaticObject.getByName(_name)
-        if _logistic ~= nil and _logistic:getCoalition() ~= _unitObject:getCoalition()  then
+        if _logistic ~= nil and ((_logistic:getCoalition() ~= _unitObject:getCoalition()) or _logistic:getLife() <= 0)  then
             local _dist = ctld.getDistance(_unitPoint, _logistic:getPoint())
             if _dist <= NP.CaptureDistance then
                 _closeEnough = true

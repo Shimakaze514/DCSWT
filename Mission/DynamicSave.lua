@@ -130,14 +130,18 @@ function dsave.recordAllCCsElements()
     local checkRepeat = {}
     for _, _group in pairs(mist.DBs.groupsByName) do
         local needSave = false
+        local needKill = false
         for _key , _unitTable in pairs(_group.units) do
             if _unitTable.type~=nil and _unitTable.unitName~=nil and dsave.typeBelongsToCC(_unitTable.type) then
                 local _unitObject = StaticObject.getByName(_unitTable.unitName)
                 --dsave.logDebug("_unitObject"..ctld.formatTable(_unitObject))
-                if _unitObject ~= nil and _unitObject:getLife() > 0 and checkRepeat[_unitTable.unitName]==nil then
+                if _unitObject ~= nil and checkRepeat[_unitTable.unitName]==nil then
                     needSave = true
                     checkRepeat[_unitTable.unitName]=true
-                    --dsave.logDebug("_unitObject:getLife()"..ctld.formatTable(_unitObject))
+                    dsave.logDebug("_unitObject:getLife()"..ctld.formatTable(_unitObject).."\n生命值是: ".._unitObject:getLife())
+                    if _unitObject:getLife() <= 0 then
+                        needKill = true
+                    end
                 end
             end
         end
@@ -145,7 +149,7 @@ function dsave.recordAllCCsElements()
         if needSave == true then
             --dsave.logDebug("_group"..ctld.formatTable(_group))
             --dsave.saveToCache(_group)
-            table.insert(dsave.DSaveCCsOutCache,_group)
+            table.insert(dsave.DSaveCCsOutCache,{_group,needKill})
         end
     end
     dsave.SaveData(dsave.DSaveCCsFilePath, net.lua2json(dsave.DSaveCCsOutCache))
@@ -166,9 +170,9 @@ function dsave.destoryMissionEditorCCs() --在任务一开始把所有任务编�
         end
 
         if _needDestory == true then
-            local _groupObject = StaticObject.getByName(_group.groupName)
+            local _groupObject = StaticObject.getByName(_group.units[1].unitName) --!我草拟吗，这是groupname
             if _groupObject ~= nil then
-                dsave.logInfo("CC已被摧毁:".._group.groupName)
+                dsave.logInfo("CC已被摧毁:".._group.units[1].unitName)
                 _groupObject:destroy()
             end
         end
@@ -273,7 +277,7 @@ function dsave.loadDsaveCCsData()
         dsave.logError(err2)
         dsave.logError('如果没有cc动态保存文件，请忽略这条')
         dsave.recordAllCCsElements()
-        if File~=nil then
+        if File2~=nil then
             io.close(File2)
         end
         timer.scheduleFunction(dsave.loadDsaveCCsData, nil, timer.getTime() + 4)
@@ -282,11 +286,23 @@ function dsave.loadDsaveCCsData()
     dsave.logInfo('extract data from json file cc')
     dsave.logInfo(ctld.formatTable(tableData2))
 
-    for i, _group in pairs(tableData2) do
+    for i, entry in pairs(tableData2) do
+        local _group = entry[1]
+        local needKill = entry[2]
         --mist.dynAddStatic(_group)
-        timer.scheduleFunction(mist.dynAddStatic, _group, timer.getTime() + 0.2*i) -- 防止CC浮空
+        timer.scheduleFunction(mist.dynAddStatic, _group, timer.getTime() + 0.2) -- 防止CC浮空
         table.insert(ctld.logisticUnits, _group.units[1].unitName)
         dsave.logInfo('CC:|'.._group.groupName ..'|generated!'.. ' 阵营:' .._group.country)
+        if needKill == true then
+            timer.scheduleFunction(function()
+                local _unitName = _group.units[1].unitName
+                local _unitObject = StaticObject.getByName(_unitName)
+                if _unitObject ~= nil then
+                    trigger.action.explosion(_unitObject:getPoint(),3000)
+                    dsave.logInfo("CC在上次保存中死亡，现已被摧毁:" .. _group.groupName)
+                end
+            end, {}, timer.getTime() + 0.3)
+        end        
     end
     dsave.logInfo('CC载入完成')
 --[[
@@ -297,7 +313,7 @@ end
 function dsave.refreshFlagsAtMissionStart()
     for _, _name in pairs(ctld.logisticUnits) do
         local _logistic = StaticObject.getByName(_name)
-        if _logistic ~= nil and _logistic:getLife() > 0 then
+        if _logistic ~= nil then -- and _logistic:getLife() > 0 
             NP.setRelatedZone(_logistic:getName(),dsave.coalitionToString(_logistic:getCoalition()))
         end
     end
