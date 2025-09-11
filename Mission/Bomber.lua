@@ -4,23 +4,23 @@ Bomber.ActiveGroups = {}
 Bomber.Debug = false
 Bomber.Trace = false
 Bomber.CostTable = {
-    ["Attack"] = 100,  --记得在CTLD里更改描述（搜CallAttack
-    ["Bomber"] = 600,
-    ["LowBomber"] = 200,
-    ["StealthBomber"] = 100,
+    ["Attack"] = 200,  --记得在CTLD里更改描述（搜CallAttack
+    ["Bomber"] = 700,
+    ["LowBomber"] = 400,
+    ["StealthBomber"] = 200,
     ["Nuke"] = 1000,
 }
 Bomber.RangeTable = {
     ["Attack"] = 25 * 1852,
     ["Bomber"] = 55 * 1852,
-    ["LowBomber"] = 8 * 1852,
+    ["LowBomber"] = 4 * 1852,
     ["StealthBomber"] = 10 * 1852,
     ["Nuke"] = 12 * 1852,
 }
 Bomber.MissileTable = {
     ["Attack"] = 5,  -- Tu22
     ["Bomber"] = 20,
-    ["LowBomber"] = 9,
+    ["LowBomber"] = 15,
     ["StealthBomber"] = 2,
     ["Nuke"] = 1,
 }
