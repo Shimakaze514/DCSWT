@@ -13,7 +13,8 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
     local _playerInfo = net.get_player_info(playerID)
     local _ucid = net.get_player_info(playerID , 'ucid')
     local sideAvail = SLOT.allowSideSwitch(side, playerID)
-    local balance = SLOT.teamBalance(_side, playerID)
+    --local balance = SLOT.teamBalance(_side, playerID)
+    local balance = true
     local _slotID = slotID
     local slotAvail = SLOT.allowEnterSlotDynamic(playerID, _side, _slotID)
 
