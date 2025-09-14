@@ -207,30 +207,30 @@ SourceObj.getLoadout = function(_args)
     
     -- ruleMsg
     local ruleMsg = "\n========= 挂载规则 =========\n" ..
-        string.format("%-"..maxNameLen.."s %5s | %-"..maxNameLen.."s %4s\n",
+        string.format("%-"..maxNameLen.."s %5d | %-"..maxNameLen.."s %5d\n",
             "制空战斗机", Aircraft.superiorityFighterPoint,
             "轻型战斗机", Aircraft.lightFighterPoint) ..
-        string.format("%-"..maxNameLen.."s %5s | %-"..maxNameLen.."s %4s\n",
+        string.format("%-"..maxNameLen.."s %5d | %-"..maxNameLen.."s %5d\n",
             "对地攻击机", Aircraft.attackerPoint,
             "直升机", Aircraft.helicopterPoint) ..
         "--------------------------------\n" ..
-        string.format("%-"..maxNameLen.."s %5s | %-"..maxNameLen.."s %4s\n",
+        string.format("%-"..maxNameLen.."s %5d | %-"..maxNameLen.."s %5d\n",
             "现代主动弹", Weapon.AA_newARHPoint,
             "老旧主动弹", Weapon.AA_oldARHPoint) ..
-        string.format("%-"..maxNameLen.."s %5s | %-"..maxNameLen.."s %4s\n",
+        string.format("%-"..maxNameLen.."s %5d | %-"..maxNameLen.."s %5d\n",
             "半主动弹", Weapon.AA_SARHPoint,
             "现代红外弹", Weapon.AA_newIRPoint) ..
-        string.format("%-"..maxNameLen.."s %5s\n",
-            "老旧红外弹", Weapon.AA_oldIRPoint) ..
+        string.format("%-"..maxNameLen.."s %5d | %-"..maxNameLen.."s %5s\n", --! %5s
+            "老旧红外弹", Weapon.AA_oldIRPoint, "", "")
         "--------------------------------\n" ..
-        string.format("%-"..maxNameLen.."s %5s | %-"..maxNameLen.."s %4s\n",
+        string.format("%-"..maxNameLen.."s %5d | %-"..maxNameLen.."s %5d\n",
             "对地导弹", Weapon.AG_SmartMissilePoint,
             "精确炸弹", Weapon.AG_SmartBombPoint) ..
-        string.format("%-"..maxNameLen.."s %5s | %-"..maxNameLen.."s %4s\n",
+        string.format("%-"..maxNameLen.."s %5d | %-"..maxNameLen.."s %5d\n",
             "激光炸弹", Weapon.AG_LaserPoint,
             "无制导炸弹", Weapon.AG_DumbPoint) ..
         "--------------------------------\n" ..
-        string.format("%-"..maxNameLen.."s %5s | %-"..maxNameLen.."s %4s\n",
+        string.format("%-"..maxNameLen.."s %5d | %-"..maxNameLen.."s %5d\n",
             "吊舱", Weapon.ATGPodPoint,
             "副油箱", Weapon.mailboxPoint)
 
