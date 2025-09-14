@@ -36,12 +36,15 @@ Weapon.AG_SmartMissilePoint = 35
 
 Weapon.AG_SmartBomb = {
   "GBU_31",
+  "GBU_38",
 }
 Weapon.AG_SmartBombPoint = 20
 
 Weapon.AG_Laser = {
   "GBU_12",
   "GBU_10",
+  "S_25L",
+  "Vikhr_M",
 }
 Weapon.AG_LaserPoint = 15
 
