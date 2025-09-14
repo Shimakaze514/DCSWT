@@ -223,7 +223,7 @@ SourceObj.getLoadout = function(_args)
             "半主动弹", Weapon.AA_SARHPoint,
             "现代红外弹", Weapon.AA_newIRPoint) ..
         string.format("%-"..maxNameLen.."s %5d | %-"..maxNameLen.."s %5s\n", --! %5s
-            "老旧红外弹", Weapon.AA_oldIRPoint, "", "")
+            "老旧红外弹", Weapon.AA_oldIRPoint, "", "") ..
         "--------------------------------\n" ..
         string.format("%-"..maxNameLen.."s %5d | %-"..maxNameLen.."s %5d\n",
             "对地导弹", Weapon.AG_SmartMissilePoint,
