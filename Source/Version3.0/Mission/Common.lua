@@ -104,6 +104,28 @@ SourceObj.getSourceKillChange = function(_unit)
     return sourcePointChange
 end
 
+local function strDisplayLen(str)
+    local len = 0
+    for uchar in str:gmatch("[%z\1-\127\194-\244][\128-\191]*") do
+        if #uchar == 1 then
+            len = len + 1 -- 英文/符号
+        else
+            len = len + 2 -- 中文
+        end
+    end
+    return len
+end
+
+-- 左对齐填充到指定宽度
+local function padRight(str, width)
+    local len = strDisplayLen(str)
+    if len < width then
+        return str .. string.rep(" ", width - len)
+    else
+        return str
+    end
+end
+
 SourceObj.getSourceObjChange = function(_unit)
     local countInfo = {}
     local sourcePointChange = 0
@@ -144,8 +166,8 @@ SourceObj.getSourceObjChange = function(_unit)
         if item["飞机花费"] then
             prettyStr = prettyStr .. string.format("飞机花费: %d 分\n", item["飞机花费"])
         elseif item["挂载"] then
-            prettyStr = prettyStr .. string.format("挂载: %-20s | 单价: %3d | 数量: %2d | 小计: %4d\n",
-                item["挂载"], item["单价"], item["数量"], item["单价"] * item["数量"])
+            prettyStr = prettyStr .. string.format("挂载: %s | 单价: %3d | 数量: %2d | 小计: %4d\n",
+            padRight(item["挂载"], 20), item["单价"], item["数量"], item["单价"] * item["数量"])
         end
     end
     prettyStr = prettyStr .. "--------------------------------\n"
@@ -170,35 +192,32 @@ SourceObj.getLoadout = function(_args)
     local cost, detail = SourceObj.getSourceObjChange(unit)
 
     local ruleMsg = "\n========= 挂载规则 =========\n" ..
-                    string.format("%-12s %4s    %-12s %4s\n", 
-                        "制空战斗机", Aircraft.superiorityFighterPoint,
-                        "轻型战斗机", Aircraft.lightFighterPoint) ..
-                    string.format("%-12s %4s    %-12s %4s\n", 
-                        "对地攻击机", Aircraft.attackerPoint,
-                        "直升机", Aircraft.helicopterPoint) ..
+                    string.format("%s %4s    %s %4s\n", 
+                        padRight("制空战斗机", 16), Aircraft.superiorityFighterPoint,
+                        padRight("轻型战斗机", 16), Aircraft.lightFighterPoint) ..
+                    string.format("%s %4s    %s %4s\n", 
+                        padRight("对地攻击机", 16), Aircraft.attackerPoint,
+                        padRight("直升机", 16), Aircraft.helicopterPoint) ..
                     "--------------------------------\n" ..
-                    string.format("%-12s %4s    %-12s %4s\n", 
-                        "现代主动弹", Weapon.AA_newARHPoint, 
-                        "老旧主动弹", Weapon.AA_oldARHPoint) ..
-                    string.format("%-12s %4s    %-12s %4s\n", 
-                        "半主动弹", Weapon.AA_SARHPoint,
-                        "现代红外弹", Weapon.AA_newIRPoint) ..
-                    string.format("%-12s %4s\n", 
-                        "老旧红外弹", Weapon.AA_oldIRPoint) ..
+                    string.format("%s %4s    %s %4s\n", 
+                        padRight("现代主动弹", 16), Weapon.AA_newARHPoint, 
+                        padRight("老旧主动弹", 16), Weapon.AA_oldARHPoint) ..
+                    string.format("%s %4s    %s %4s\n", 
+                        padRight("半主动弹", 16), Weapon.AA_SARHPoint,
+                        padRight("现代红外弹", 16), Weapon.AA_newIRPoint) ..
+                    string.format("%s %4s\n", 
+                        padRight("老旧红外弹", 16), Weapon.AA_oldIRPoint) ..
                     "--------------------------------\n" ..
-                    string.format("%-12s %4s    %-12s %4s\n", 
-                        "对地导弹", Weapon.AG_SmartMissilePoint, 
-                        "精确炸弹", Weapon.AG_SmartBombPoint) ..
-                    string.format("%-12s %4s    %-12s %4s\n", 
-                        "激光炸弹", Weapon.AG_LaserPoint, 
-                        "无制导炸弹", Weapon.AG_DumbPoint) ..
+                    string.format("%s %4s    %s %4s\n", 
+                        padRight("对地导弹", 16), Weapon.AG_SmartMissilePoint, 
+                        padRight("精确炸弹", 16), Weapon.AG_SmartBombPoint) ..
+                    string.format("%s %4s    %s %4s\n", 
+                        padRight("激光炸弹", 16), Weapon.AG_LaserPoint, 
+                        padRight("无制导炸弹", 16), Weapon.AG_DumbPoint) ..
                     "--------------------------------\n" ..
-                    string.format("%-12s %4s    %-12s %4s\n", 
-                        "吊舱", Weapon.ATGPodPoint, 
-                        "副油箱", Weapon.mailboxPoint) ..
-                    "================================\n" ..
-                    "详细挂载消耗如下：\n"
-
+                    string.format("%s %4s    %s %4s\n", 
+                        padRight("吊舱", 16), Weapon.ATGPodPoint, 
+                        padRight("副油箱", 16), Weapon.mailboxPoint)
 
     local finalMsg = ruleMsg .. detail ..
                      string.format("你的当前资源点数: %d\n", ps.point)
