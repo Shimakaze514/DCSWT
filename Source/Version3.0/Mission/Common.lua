@@ -105,15 +105,15 @@ SourceObj.getSourceKillChange = function(_unit)
 end
 
 local function strDisplayLen(str)
-    local len = 0
-    for uchar in str:gmatch("[%z\1-\127\194-\244][\128-\191]*") do
-        if #uchar == 1 then
-            len = len + 1 -- 英文/符号
+    local width = 0
+    for uchar in str:gmatch(".") do
+        if uchar:byte() > 127 then
+            width = width + 2 -- 中文或全角
         else
-            len = len + 2 -- 中文
+            width = width + 1 -- 英文或半角
         end
     end
-    return len
+    return width
 end
 
 -- 左对齐填充到指定宽度
@@ -173,7 +173,7 @@ SourceObj.getSourceObjChange = function(_unit)
             prettyStr = prettyStr .. string.format("飞机花费: %d 分\n", item["飞机花费"])
         elseif item["挂载"] then
             prettyStr = prettyStr .. string.format("挂载: %s | 单价: %3d | 数量: %2d | 小计: %4d\n",
-            padRight(item["挂载"], 20), item["单价"], item["数量"], item["单价"] * item["数量"])
+            padRight(item["挂载"], 40), item["单价"], item["数量"], item["单价"] * item["数量"])
         end
     end
     prettyStr = prettyStr .. "--------------------------------\n"
