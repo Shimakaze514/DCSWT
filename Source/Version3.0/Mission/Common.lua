@@ -145,7 +145,7 @@ SourceObj.getSourceObjChange = function(_unit)
         -- SaveData.WeaponData(SourceObj.JSON:encode(countInfo) .. '\n')
     end
         ---------------------- 格式化输出 ----------------------
-    local prettyStr = "\n========= 出击消耗明细 =========\n"
+    local prettyStr = "\n========= 出击消耗/降落返还明细 =========\n"
     for i, item in ipairs(countInfo) do
         if item["飞机花费"] then
             prettyStr = prettyStr .. string.format("飞机花费: %d 点\n", item["飞机花费"])
@@ -155,7 +155,7 @@ SourceObj.getSourceObjChange = function(_unit)
         end
     end
     prettyStr = prettyStr .. "--------------------------------\n"
-    prettyStr = prettyStr .. string.format("合计消耗: %d 点\n", sourcePointChange)
+    prettyStr = prettyStr .. string.format("合计: %d 点\n", sourcePointChange)
     prettyStr = prettyStr .. "================================\n"
 
     return sourcePointChange, prettyStr
@@ -225,7 +225,7 @@ SourceObj.getLoadout = function(_args)
                      string.format("你的当前资源点数: %d\n", ps.point)
 
     if ps.point >= cost then
-        finalMsg = finalMsg .. "点数充足，可以起飞！"
+        finalMsg = finalMsg .. "点数充足，可以起飞！起飞后你将剩余 " .. (ps.point - cost) .. " 资源点。"
     else
         finalMsg = finalMsg .. string.format("点数不足，需要 %d 点，当前仅有 %d 点。请使用更便宜的挂载！",
                                              cost, ps.point)
