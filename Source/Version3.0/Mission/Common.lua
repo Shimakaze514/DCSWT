@@ -104,28 +104,6 @@ SourceObj.getSourceKillChange = function(_unit)
     return sourcePointChange
 end
 
-local function strDisplayLen(str)
-    local width = 0
-    for uchar in str:gmatch(".") do
-        if uchar:byte() > 127 then
-            width = width + 2 -- 中文或全角
-        else
-            width = width + 1 -- 英文或半角
-        end
-    end
-    return width
-end
-
--- 左对齐填充到指定宽度
-local function padRight(str, width)
-    local len = strDisplayLen(str)
-    if len < width then
-        return str .. string.rep(" ", width - len)
-    else
-        return str
-    end
-end
-
 SourceObj.getSourceObjChange = function(_unit)
     local countInfo = {}
     local sourcePointChange = 0
@@ -155,11 +133,11 @@ SourceObj.getSourceObjChange = function(_unit)
                 env.info("[AmmoInfo] 单位 ".._unitType.." 挂载了 "..typeName.." , 消耗点数"..ammoPoint)
 
                 if ammoPoint > 0 then
-                    sourcePointChange = sourcePointChange + ammoPoint * ammo.count
+                    sourcePointChange = sourcePointChange + ammoPoint * count
                     countInfo[#countInfo + 1] = {
                         ["挂载"] = ammo.desc.displayName,
                         ["单价"] = ammoPoint,
-                        ["数量"] = ammo.count
+                        ["数量"] = count
                     }
                 end
             end
@@ -170,14 +148,14 @@ SourceObj.getSourceObjChange = function(_unit)
     local prettyStr = "\n========= 出击消耗明细 =========\n"
     for i, item in ipairs(countInfo) do
         if item["飞机花费"] then
-            prettyStr = prettyStr .. string.format("飞机花费: %d 分\n", item["飞机花费"])
+            prettyStr = prettyStr .. string.format("飞机花费: %d 点\n", item["飞机花费"])
         elseif item["挂载"] then
-            prettyStr = prettyStr .. string.format("挂载: %s | 单价: %3d | 数量: %2d | 小计: %4d\n",
-            padRight(item["挂载"], 40), item["单价"], item["数量"], item["单价"] * item["数量"])
+            prettyStr = prettyStr .. string.format("挂载: %-30s | 单价: %3d | 数量: %2d | 小计: %4d\n",
+            item["挂载"], item["单价"], item["数量"], item["单价"] * item["数量"])
         end
     end
     prettyStr = prettyStr .. "--------------------------------\n"
-    prettyStr = prettyStr .. string.format("合计消耗: %d 分\n", sourcePointChange)
+    prettyStr = prettyStr .. string.format("合计消耗: %d 点\n", sourcePointChange)
     prettyStr = prettyStr .. "================================\n"
 
     return sourcePointChange, prettyStr
