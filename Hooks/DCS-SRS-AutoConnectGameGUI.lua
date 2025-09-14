@@ -24,7 +24,7 @@ SRSAuto.SRS_FREQUENCIES = {
 }
 
 ---- SRS NUDGE MESSAGE ----
-SRSAuto.SRS_NUDGE_ENABLED = true -- set to true to enable the message below
+SRSAuto.SRS_NUDGE_ENABLED = false -- set to true to enable the message below
 SRSAuto.SRS_NUDGE_TIME =  900 -- SECONDS between messages to non connected SRS users 间隔秒数
 SRSAuto.SRS_MESSAGE_TIME = 30 -- SECONDS to show the message for
 --SRSAuto.SRS_NUDGE_PATH = "C:\\Program Files\\DCS-SimpleRadio-Standalone\\clients-list.json" -- path to SERVER JSON EXPORT - enable Auto Export List on the server
