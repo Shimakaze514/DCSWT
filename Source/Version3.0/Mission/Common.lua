@@ -15,13 +15,13 @@ SourceObj.updatePlayerInfo = function(_name, _ucid)
     SourceObj.playerInfo[_name] = _ucid
     SourceObj.playerSource[_ucid] = SourceObj.playerSource[_ucid] or {}
 
-    if SourceObj.playerSource[_ucid]["point"] == nil then
-        SourceObj.playerSource[_ucid]["point"] = SourceObj.sourceInitPoint
+    if SourceObj.playerSource[_ucid].point == nil then
+        SourceObj.playerSource[_ucid].point = SourceObj.sourceInitPoint
         SourceObj.SaveSourcePoint()
     end
 
     if SourceObj.autoAddID[_ucid] == nil then
-        SourceObj.playerSource[_ucid]["name"] = _name
+        SourceObj.playerSource[_ucid].name = _name
         SourceObj.autoAddID[_ucid] = timer.scheduleFunction(SourceObj.autoAddSourcePoint, {_ucid,_name}, timer.getTime() + SourceObj.realRecoverTime)
         env.info("增加资源点自动任务，玩家:" .. _name .. ",  函数id:" .. SourceObj.autoAddID[_ucid])
     end
@@ -37,13 +37,13 @@ SourceObj.autoAddSourcePoint = function(_args, time)
     local _name = _args[2]
 
     local msg = ""
-    if SourceObj.playerSource[_ucid]["point"] and SourceObj.playerSource[_ucid]["point"] < SourceObj.recoverPoint then
-        SourceObj.playerSource[_ucid]["point"] = SourceObj.recoverPoint
+    if SourceObj.playerSource[_ucid].point and SourceObj.playerSource[_ucid].point < SourceObj.recoverPoint then
+        SourceObj.playerSource[_ucid].point = SourceObj.recoverPoint
         --SourceObj.SaveSourcePoint()
         msg = string.format("触发低保，恢复到%d资源点", SourceObj.recoverPoint)
     end
-    if SourceObj.playerSource[_ucid]["point"] > SourceObj.sourceMaxPoint then
-        SourceObj.playerSource[_ucid]["point"] = SourceObj.sourceMaxPoint
+    if SourceObj.playerSource[_ucid].point > SourceObj.sourceMaxPoint then
+        SourceObj.playerSource[_ucid].point = SourceObj.sourceMaxPoint
         --SourceObj.SaveSourcePoint()
         msg = string.format("资源点到达上限，恢复到%d资源点", SourceObj.sourceMaxPoint)
     end
@@ -124,7 +124,7 @@ SourceObj.getSourceObjChange = function(_unit)
                 local typeName = ammo.desc.typeName
                 local ammoPoint = 0
 
-                ammoPoint = WeaponPriceMap[typeName]
+                ammoPoint = WeaponPriceMap[typeName] or 0
 
                 if ammoPoint > 0 then
                     sourcePointChange = sourcePointChange + ammoPoint * ammo.count

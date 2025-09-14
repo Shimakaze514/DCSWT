@@ -3,10 +3,10 @@ Aircraft.superiorityFighter = {"F-15C", "J-11A", "Su-33",  "FA-18C_hornet", "JF-
 Aircraft.superiorityFighterPoint = 100
 
 Aircraft.lightFighter = {"Su-27", "MiG-29S", "MiG-29G", "MiG-29A", "M-2000C", "AJS37"}
-Aircraft.lightFighterPoint = 90
+Aircraft.lightFighterPoint = 80
 
 Aircraft.attacker = {"A-10A", "A-10C", "Ka-50", "A-10C_2", "AV-8B", "Su-25", "Su-25T","SA342Mistral"}
-Aircraft.attackerPoint = 70
+Aircraft.attackerPoint = 60
 
 Aircraft.helicopter = {"Mi-8MTV2", "Mi-8MT", "UH-1H", "MosquitoFBMkVI", "TF-51D","AH-64D_BLK_II","SA342M", "SA342L","Mi-24P"}
 Aircraft.helicopterPoint = 50

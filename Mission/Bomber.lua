@@ -485,7 +485,7 @@ function Bomber.CallAttack(_args)
     local cost = Bomber.CostTable[_planeType]
     local _unit = ctld.getTransportUnit(_unitName)
     local _name = _unit:getPlayerName()
-    local currentPoints = SourceObj.playerSource[_ucid]["point"]
+    local currentPoints = SourceObj.playerSource[_ucid].point
     local playerSource = SourceObj.playerSource[_ucid]
     if not playerSource or not playerSource["point"] then
         Bomber.logError("CallAttack: 玩家 " .. _name .. " 的资源点未初始化")
@@ -544,7 +544,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
     local _name = _unit:getPlayerName()
     local _ucid = SourceObj.playerInfo[_name] or "375acfc28f335ba12cd8270b6569e0d5"
     local _groupId = req.groupId
-    local currentPoints = SourceObj.playerSource[_ucid]["point"]
+    local currentPoints = SourceObj.playerSource[_ucid].point
     local playerSource = SourceObj.playerSource[_ucid]
     if not playerSource or not playerSource["point"] then
         Bomber.logError("CallAttack: 玩家 " .. _name .. " 的资源点未初始化")
@@ -599,11 +599,11 @@ function Bomber.addTask(_coalition, _unitName, _point)
     trigger.action.activateGroup(spawnGroup)
 
     -- 到这里说明生成成功 → 扣点
-    SourceObj.playerSource[_ucid]["point"] = currentPoints - cost
+    SourceObj.playerSource[_ucid].point = currentPoints - cost
     SourceObj.SaveSourcePoint()
     trigger.action.outTextForGroup(_groupId,
         string.format("成功呼叫 %s，消耗 %d 点，你的剩余资源点：%d",
-            planeType, cost, SourceObj.playerSource[_ucid]["point"]),
+            planeType, cost, SourceObj.playerSource[_ucid].point),
         15)
 
     -- local BombingTask = {
