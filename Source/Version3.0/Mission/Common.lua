@@ -123,8 +123,8 @@ SourceObj.getSourceObjChange = function(_unit)
             if ammo.desc and ammo.desc.typeName then
                 local typeName = ammo.desc.typeName
                 local ammoPoint = 0
-
                 ammoPoint = WeaponPriceMap[typeName] or 0
+                env.info("[AmmoInfo] 单位 ".._unitType.." 挂载了 "..typeName.." , 消耗点数"..ammoPoint)
 
                 if ammoPoint > 0 then
                     sourcePointChange = sourcePointChange + ammoPoint * ammo.count

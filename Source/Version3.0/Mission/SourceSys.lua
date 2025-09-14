@@ -138,7 +138,7 @@ SourceObj.onBirth = function(_unit)
         SourceObj.playerSource[_ucid].countdownTaskId = nil
     end
     SourceObj.playerSource[_ucid].countdownTaskId =
-        timer.scheduleFunction(SourceObj.countdownMessage, {_ucid, _groupId}, timer.getTime() + 10)
+        timer.scheduleFunction(SourceObj.countdownMessage, {_ucid, _groupId}, timer.getTime() + 15)
 end
 SourceObj.countdownMessage = function(args)
     local ucid, groupId = args[1], args[2]
@@ -152,7 +152,7 @@ SourceObj.countdownMessage = function(args)
         return nil
     end
 
-    local remaining = 90 - (timer.getTime() - ps.birthTime)
+    local remaining = 120 - (timer.getTime() - ps.birthTime)
     if remaining > 0 then
         -- 合并后的消息（initMessage + 倒计时信息）
         local mergedMsg = table.concat({
@@ -175,10 +175,10 @@ SourceObj.countdownMessage = function(args)
         }, "\n")
 
         -- 发送合并消息（显示时间短一些以免覆盖太久）
-        trigger.action.outTextForGroup(groupId, mergedMsg, 8, true)
+        trigger.action.outTextForGroup(groupId, mergedMsg, 14, true)
 
         -- 继续在 10 秒后再次执行
-        return timer.getTime() + 10
+        return timer.getTime() + 15
     else
         -- 倒计时结束：发送可起飞提示并清理任务引用
         trigger.action.outTextForGroup(groupId, "倒计时结束，您现在可以安全起飞。", 30, true)
