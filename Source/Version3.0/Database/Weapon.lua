@@ -44,7 +44,6 @@ Weapon.AG_Laser = {
   "GBU_12",
   "GBU_10",
   "S_25L",
-  "Vikhr_M",
 }
 Weapon.AG_LaserPoint = 15
 
@@ -90,16 +89,16 @@ Weapon.mailboxPoint = 15
 -- ---------- 在 Weapon 定义之后，建立映射表（只运行一次） ----------
 WeaponPriceMap = {}
 
-local function addToMap(list, point)
+local function addToMap(list, point, perCount)
     if not list then return end
+    perCount = perCount or 1  -- 默认每发计1点
     for _, name in ipairs(list) do
         if name and type(name) == "string" then
-            WeaponPriceMap[name] = point
+            WeaponPriceMap[name] = { point = point, perCount = perCount }
         end
     end
 end
 
--- 把各个分类加入映射
 addToMap(Weapon.AA_newARH ,   Weapon.AA_newARHPoint)
 addToMap(Weapon.AA_oldARH ,   Weapon.AA_oldARHPoint)
 addToMap(Weapon.AA_SARH   ,   Weapon.AA_SARHPoint)
@@ -113,5 +112,8 @@ addToMap(Weapon.AG_Dumb         ,   Weapon.AG_DumbPoint)
 
 addToMap(Weapon.ATGPod  ,   Weapon.ATGPodPoint)
 addToMap(Weapon.mailbox ,   Weapon.mailboxPoint)
+
+-- 特殊多发挂架
+addToMap({"Vikhr_M"}, Weapon.AG_LaserPoint, 16)  -- 最后一个参数是几发算一组
 
 env.info("武器信息已添加")
