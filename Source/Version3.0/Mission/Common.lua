@@ -192,32 +192,32 @@ SourceObj.getLoadout = function(_args)
     local cost, detail = SourceObj.getSourceObjChange(unit)
 
     local ruleMsg = "\n========= 挂载规则 =========\n" ..
-                    string.format("%s %4s    %s %4s\n", 
-                        padRight("制空战斗机", 16), Aircraft.superiorityFighterPoint,
-                        padRight("轻型战斗机", 16), Aircraft.lightFighterPoint) ..
-                    string.format("%s %4s    %s %4s\n", 
-                        padRight("对地攻击机", 16), Aircraft.attackerPoint,
-                        padRight("直升机", 16), Aircraft.helicopterPoint) ..
+                    string.format("%s %4s    |    %s %4s\n", 
+                        padRight("制空战斗机", 14), Aircraft.superiorityFighterPoint,
+                        padRight("轻型战斗机", 14), Aircraft.lightFighterPoint) ..
+                    string.format("%s %4s    |    %s %4s\n", 
+                        padRight("对地攻击机", 14), Aircraft.attackerPoint,
+                        padRight("直升机", 14), Aircraft.helicopterPoint) ..
                     "--------------------------------\n" ..
-                    string.format("%s %4s    %s %4s\n", 
-                        padRight("现代主动弹", 16), Weapon.AA_newARHPoint, 
-                        padRight("老旧主动弹", 16), Weapon.AA_oldARHPoint) ..
-                    string.format("%s %4s    %s %4s\n", 
-                        padRight("半主动弹", 16), Weapon.AA_SARHPoint,
-                        padRight("现代红外弹", 16), Weapon.AA_newIRPoint) ..
+                    string.format("%s %4s    |    %s %4s\n", 
+                        padRight("现代主动弹", 14), Weapon.AA_newARHPoint, 
+                        padRight("老旧主动弹", 14), Weapon.AA_oldARHPoint) ..
+                    string.format("%s %4s    |    %s %4s\n", 
+                        padRight("半主动弹", 14), Weapon.AA_SARHPoint,
+                        padRight("现代红外弹", 14), Weapon.AA_newIRPoint) ..
                     string.format("%s %4s\n", 
-                        padRight("老旧红外弹", 16), Weapon.AA_oldIRPoint) ..
+                        padRight("老旧红外弹", 14), Weapon.AA_oldIRPoint) ..
                     "--------------------------------\n" ..
-                    string.format("%s %4s    %s %4s\n", 
-                        padRight("对地导弹", 16), Weapon.AG_SmartMissilePoint, 
-                        padRight("精确炸弹", 16), Weapon.AG_SmartBombPoint) ..
-                    string.format("%s %4s    %s %4s\n", 
-                        padRight("激光炸弹", 16), Weapon.AG_LaserPoint, 
-                        padRight("无制导炸弹", 16), Weapon.AG_DumbPoint) ..
+                    string.format("%s %4s    |    %s %4s\n", 
+                        padRight("对地导弹", 14), Weapon.AG_SmartMissilePoint, 
+                        padRight("精确炸弹", 14), Weapon.AG_SmartBombPoint) ..
+                    string.format("%s %4s    |    %s %4s\n", 
+                        padRight("激光炸弹", 14), Weapon.AG_LaserPoint, 
+                        padRight("无制导炸弹", 14), Weapon.AG_DumbPoint) ..
                     "--------------------------------\n" ..
-                    string.format("%s %4s    %s %4s\n", 
-                        padRight("吊舱", 16), Weapon.ATGPodPoint, 
-                        padRight("副油箱", 16), Weapon.mailboxPoint)
+                    string.format("%s %4s    |    %s %4s\n", 
+                        padRight("吊舱", 14), Weapon.ATGPodPoint, 
+                        padRight("副油箱", 14), Weapon.mailboxPoint)
 
     local finalMsg = ruleMsg .. detail ..
                      string.format("你的当前资源点数: %d\n", ps.point)
