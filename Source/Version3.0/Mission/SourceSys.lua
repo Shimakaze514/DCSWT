@@ -129,7 +129,7 @@ SourceObj.onBirth = function(_unit)
 
     SourceObj.playerGroup[_ucid] = _groupId
     SourceObj.playerUcidByGroup[_groupId] = _ucid
-    SourceObj.addF10SourceMenu(_groupId)
+    SourceObj.addF10SourceMenu(_groupId,_unit,_ucid)
 
     SourceObj.playerSource[_ucid].birthTime = timer.getTime()
     -- 如果已有旧的倒计时任务，先移除（避免重复）
@@ -191,9 +191,10 @@ SourceObj.countdownMessage = function(args)
         return nil
     end
 end
-SourceObj.addF10SourceMenu = function(groupId)
+SourceObj.addF10SourceMenu = function(groupId,_unit,_ucid)
     if not SourceObj.addedF10Menu[groupId] then
         local status, err = pcall(function()
+            missionCommands.addCommandForGroup(groupId, "查询挂载信息", nil, SourceObj.getLoadout, {groupId,_unit, _ucid})
             local _rootPath = missionCommands.addSubMenuForGroup(groupId, "私有资源点")
             missionCommands.addCommandForGroup(groupId, "查询私有点数", _rootPath, SourceObj.getPointByGroupID,
                 groupId)

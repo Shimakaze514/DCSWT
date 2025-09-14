@@ -121,7 +121,7 @@ SourceObj.getSourceObjChange = function(_unit)
         for i = 1, #AmmoInfo do
             local ammo = AmmoInfo[i]
             if ammo.desc and ammo.desc.typeName then
-                local typeName = ammo.desc.typeName
+                local typeName = string.match(ammo.desc.typeName, "[^.]+$")
                 local ammoPoint = 0
                 ammoPoint = WeaponPriceMap[typeName] or 0
                 env.info("[AmmoInfo] 单位 ".._unitType.." 挂载了 "..typeName.." , 消耗点数"..ammoPoint)
@@ -153,6 +153,64 @@ SourceObj.getSourceObjChange = function(_unit)
     prettyStr = prettyStr .. "================================\n"
 
     return sourcePointChange, prettyStr
+end
+
+SourceObj.getLoadout = function(_args)
+    local groupId = _args[1]
+    local unit = _args[2]
+    if not unit then return end
+    local ucid = _args[3]
+    if not ucid then return end
+
+    local ps = SourceObj.playerSource[ucid]
+    if not ps or not ps.point then
+        return
+    end
+
+    local cost, detail = SourceObj.getSourceObjChange(unit)
+
+    local ruleMsg = "\n========= 挂载规则 =========\n" ..
+                    string.format("%-12s %4s    %-12s %4s\n", 
+                        "制空战斗机", Aircraft.superiorityFighterPoint,
+                        "轻型战斗机", Aircraft.lightFighterPoint) ..
+                    string.format("%-12s %4s    %-12s %4s\n", 
+                        "对地攻击机", Aircraft.attackerPoint,
+                        "直升机", Aircraft.helicopterPoint) ..
+                    "--------------------------------\n" ..
+                    string.format("%-12s %4s    %-12s %4s\n", 
+                        "现代主动弹", Weapon.AA_newARHPoint, 
+                        "老旧主动弹", Weapon.AA_oldARHPoint) ..
+                    string.format("%-12s %4s    %-12s %4s\n", 
+                        "半主动弹", Weapon.AA_SARHPoint,
+                        "现代红外弹", Weapon.AA_newIRPoint) ..
+                    string.format("%-12s %4s\n", 
+                        "老旧红外弹", Weapon.AA_oldIRPoint) ..
+                    "--------------------------------\n" ..
+                    string.format("%-12s %4s    %-12s %4s\n", 
+                        "对地导弹", Weapon.AG_SmartMissilePoint, 
+                        "精确炸弹", Weapon.AG_SmartBombPoint) ..
+                    string.format("%-12s %4s    %-12s %4s\n", 
+                        "激光炸弹", Weapon.AG_LaserPoint, 
+                        "无制导炸弹", Weapon.AG_DumbPoint) ..
+                    "--------------------------------\n" ..
+                    string.format("%-12s %4s    %-12s %4s\n", 
+                        "吊舱", Weapon.ATGPodPoint, 
+                        "副油箱", Weapon.mailboxPoint) ..
+                    "================================\n" ..
+                    "详细挂载消耗如下：\n"
+
+
+    local finalMsg = ruleMsg .. detail ..
+                     string.format("你的当前资源点数: %d\n", ps.point)
+
+    if ps.point >= cost then
+        finalMsg = finalMsg .. "点数充足，可以起飞！"
+    else
+        finalMsg = finalMsg .. string.format("点数不足，需要 %d 点，当前仅有 %d 点。请使用更便宜的挂载！",
+                                             cost, ps.point)
+    end
+
+    trigger.action.outTextForGroup(groupId, finalMsg, 30, true)
 end
 
 env.info("公用工具已添加")
