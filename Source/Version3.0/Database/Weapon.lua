@@ -8,6 +8,7 @@ Weapon.AA_newARHPoint = 25
 Weapon.AA_oldARH = {
   "AIM_54C_Mk47",
   "AIM_54C_Mk60",
+  "AIM_120", --B
 }
 Weapon.AA_oldARHPoint = 15
 
@@ -16,10 +17,12 @@ Weapon.AA_SARH = {
 Weapon.AA_SARHPoint = 10
 
 Weapon.AA_newIR = {
+  "AIM_9X",
 }
 Weapon.AA_newIRPoint = 10
 
 Weapon.AA_oldIR = {
+  "AIM_9",
 }
 Weapon.AA_oldIRPoint = 5
 

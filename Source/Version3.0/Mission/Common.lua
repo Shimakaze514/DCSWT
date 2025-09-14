@@ -191,19 +191,21 @@ SourceObj.getLoadout = function(_args)
 
     local cost, detail = SourceObj.getSourceObjChange(unit)
 
-    local allNames = {
-        "制空战斗机", "轻型战斗机", "对地攻击机", "直升机",
-        "现代主动弹", "老旧主动弹", "半主动弹", "现代红外弹",
-        "老旧红外弹", "对地导弹", "精确炸弹", "激光炸弹", "无制导炸弹",
-        "吊舱", "副油箱"
-    }
-    local maxNameLen = 0
-    for _, name in ipairs(allNames) do
-        local len = #name
-        if len > maxNameLen then maxNameLen = len end
-    end
-    maxNameLen = maxNameLen + 1 -- 额外留点空隙
-    env.info("[AmmoInfo] 最长名称长度: " .. maxNameLen)
+    -- local allNames = {
+    --     "制空战斗机", "轻型战斗机", "对地攻击机", "直升机",
+    --     "现代主动弹", "老旧主动弹", "半主动弹", "现代红外弹",
+    --     "老旧红外弹", "对地导弹", "精确炸弹", "激光炸弹", "无制导炸弹",
+    --     "吊舱", "副油箱"
+    -- }
+    -- local maxNameLen = 0
+    -- for _, name in ipairs(allNames) do
+    --     local len = #name
+    --     if len > maxNameLen then maxNameLen = len end
+    -- end
+    -- maxNameLen = maxNameLen + 1 -- 额外留点空隙
+    -- env.info("[AmmoInfo] 最长名称长度: " .. maxNameLen)
+    
+    local maxNameLen = 16
     
     -- ruleMsg
     local ruleMsg = "\n========= 挂载规则 =========\n" ..
