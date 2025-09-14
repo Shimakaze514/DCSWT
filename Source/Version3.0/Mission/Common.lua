@@ -214,11 +214,12 @@ SourceObj.getLoadout = function(_args)
             "精确炸弹", Weapon.AG_SmartBombPoint) ..
         string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4d\n",
             "激光炸弹", Weapon.AG_LaserPoint,
-            "无制导炸弹", Weapon.AG_DumbPoint) ..
-        "--------------------------------\n" ..
-        string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4d\n",
-            "吊舱", Weapon.ATGPodPoint,
-            "副油箱", Weapon.mailboxPoint)
+            "无制导炸弹", Weapon.AG_DumbPoint)
+        --      ..
+        -- "--------------------------------\n" ..
+        -- string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4d\n",
+        --     "吊舱", Weapon.ATGPodPoint,
+        --     "副油箱", Weapon.mailboxPoint)
 
     local finalMsg = ruleMsg .. detail ..
                      string.format("你的当前资源点数: %d\n", ps.point)
