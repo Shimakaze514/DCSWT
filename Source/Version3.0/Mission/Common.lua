@@ -201,13 +201,13 @@ SourceObj.getLoadout = function(_args)
             "直升机", Aircraft.helicopterPoint) ..
         "--------------------------------\n" ..
         string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4d\n",
-            "现代主动弹", Weapon.AA_newARHPoint,
-            "老旧主动弹", Weapon.AA_oldARHPoint) ..
+            "先进主动弹", Weapon.AA_newARHPoint,
+            "早期主动弹", Weapon.AA_oldARHPoint) ..
         string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4d\n",
-            "半主动弹", Weapon.AA_SARHPoint,
-            "现代红外弹", Weapon.AA_newIRPoint) ..
+            "先进红外弹", Weapon.AA_newIRPoint,
+            "早期红外弹", Weapon.AA_oldIRPoint) ..
         string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4s\n", --! %4s
-            "老旧红外弹", Weapon.AA_oldIRPoint, "", "") ..
+            "半主动弹", Weapon.AA_SARHPoint, "", "") ..
         "--------------------------------\n" ..
         string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4d\n",
             "对地导弹", Weapon.AG_SmartMissilePoint,
