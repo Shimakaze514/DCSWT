@@ -85,7 +85,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
             local killPoint = SourceObj.getSourceKillChange(_unit.target)
             SourceObj.pendingKillPoint[_ucid] = (SourceObj.pendingKillPoint[_ucid] or 0) + killPoint
             trigger.action.outTextForGroup(_groupId, string.format(
-                "击杀敌军，奖励已记录，将在降落后结算(+%d点)", killPoint), 10)
+                "击杀敌军，奖励已记录(+%d点)\n若在任务中阵亡，击杀奖励将减半！", killPoint), 10)
         else
             SourceObj.eventAddPoint("击杀友军:", -SourceObj.getSourceKillChange(_unit.target), _ucid, _groupId)
         end
@@ -139,9 +139,6 @@ SourceObj.onBirth = function(_unit)
     end
     SourceObj.playerSource[_ucid].countdownTaskId =
         timer.scheduleFunction(SourceObj.countdownMessage, {_ucid, _groupId}, timer.getTime() + 10)
-
-    timer.scheduleFunction(SourceObj.initMessage, {_groupId, SourceObj.playerSource[_ucid].point},
-        timer.getTime() + 15)
 end
 SourceObj.countdownMessage = function(args)
     local ucid, groupId = args[1], args[2]
@@ -157,29 +154,42 @@ SourceObj.countdownMessage = function(args)
 
     local remaining = 90 - (timer.getTime() - ps.birthTime)
     if remaining > 0 then
-        -- 每10秒提醒一次
-        trigger.action.outTextForGroup(groupId,
-            string.format("起飞倒计时剩余 %d 秒，请合理安排资源！", math.ceil(remaining)), 5, true)
-        -- 返回下一次执行的时间（继续复用同一个定时器 id）
+        -- 合并后的消息（initMessage + 倒计时信息）
+        local mergedMsg = table.concat({
+            "本服玩法需要团队配合，请您保持SRS无线电正常通联，以便于队友随时呼叫！",
+            "频道列表： ATC（起降协调）= 261.000  GCI（战斗通讯）= 124.800  公共频道 = 251.000",
+            '若忘记频率，聊天框内输入 "-freq" 即可重新收到提示。',
+            "",
+            "*服务器已启用资源系统，请阅系统介绍",
+            "[1] 服务器永久保存每位玩家的剩余资源点数，可通过通讯菜单F10查询;",
+            "[2] 飞机、弹药、吊舱等都消耗资源点，起飞后扣除。返场降落将根据余量返还点数;",
+            "[3] 击杀敌方单位、吊运、救援，值班GCI、ATC、OP都可获取点数;",
+            '[4] 起飞前请检查 "余额" 及挂载量、合理支配点数，如果资源点不足以支付消耗，强行起飞将会自爆;',
+            "[5] 若点数耗尽，每隔一段时间会发放低保点数;",
+            "[6] 若在任务中阵亡，该架次获取的点数将减半;",
+            "",
+            "你当前私有点数: " .. tostring(ps.point),
+            "--------------------------------",
+            "本服有出击冷却功能，在倒计时结束之前起飞将会自爆",
+            string.format("倒计时剩余 %d 秒，请在结束之后再起飞", math.ceil(remaining))
+        }, "\n")
+
+        -- 发送合并消息（显示时间短一些以免覆盖太久）
+        trigger.action.outTextForGroup(groupId, mergedMsg, 8, true)
+
+        -- 继续在 10 秒后再次执行
         return timer.getTime() + 10
     else
-        -- 计时结束：主动移除定时器引用并停止
+        -- 倒计时结束：发送可起飞提示并清理任务引用
+        trigger.action.outTextForGroup(groupId, "倒计时结束，您现在可以安全起飞。", 30, true)
+
         if ps.countdownTaskId then
             timer.removeFunction(ps.countdownTaskId)
             ps.countdownTaskId = nil
         end
+
         return nil
     end
-end
-SourceObj.initMessage = function(_args)
-    -- trigger.action.outTextForGroup(_args[1], "指挥官玩家请保持SRS正常通联,呼叫无回应者暂时取消权限。", 60, true)
-    trigger.action.outTextForGroup(_args[1],
-        "本服玩法需要团队配合，请您保持SRS无线电正常通联，以便于队友随时呼叫！\n频道列表：\n  ATC（起降协调）= 261.000\n  GCI（战斗通讯）= 124.800\n  公共频道 = 251.000（敌友都能听见！）\n若忘记频率，聊天框内输入\"-freq\"即可重新收到提示",
-        90, true)
-    local message = "*服务器已启用资源系统，请看下规则，避免起飞自爆" ..
-                        '\n[1]服务器永久保存每位玩家的剩余资源点数,可通过通讯菜单F10查询;\n[2]飞机、弹药、吊舱等都消耗资源点,起飞后扣除.返场降落将根据余量返点;\n[3]击杀敌方单位、吊运、救援，值班GCI、ATC、OP都可获取点数;\n[4]起飞前请检查"余额"及挂载量、合理支配点数，如果资源点不足以支付消耗，强行起飞将会自爆;\n[5]点数耗尽的话,每隔一段时间会发放低保点数;\n\n' ..
-                        "你当前私有点数: " .. tostring(_args[2])
-    trigger.action.outTextForGroup(_args[1], message, 90)
 end
 SourceObj.addF10SourceMenu = function(groupId)
     if not SourceObj.addedF10Menu[groupId] then
@@ -202,7 +212,7 @@ SourceObj.getPointByGroupID = function(groupId)
             local currentPoint = tostring(SourceObj.playerSource[_ucid].point)
             local pending = tostring(SourceObj.pendingKillPoint[_ucid] or 0)
             local text = string.format(
-                "你的私有资源点剩余:%s\n未结算的击杀奖励:%s\n你需要成功降落才能获得未结算奖励！",
+                "你的私有资源点剩余:%s\n未结算的击杀奖励:%s\n若在任务中阵亡，击杀奖励将减半！",
                 currentPoint, pending)
             trigger.action.outTextForGroup(groupId, text, 30)
             -- trigger.action.outTextForGroup(groupId, string.format("你的私有资源点剩余:%s", tostring(SourceObj.playerSource[_ucid].point)), 30)
