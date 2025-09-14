@@ -245,6 +245,30 @@ Weapon.mailboxPoint = 15
 --"M242",
 --"M56A3 20mm HEI" --机炮
 
+-- ---------- 在 Weapon 定义之后，建立映射表（只运行一次） ----------
+local WeaponPriceMap = {}
 
+local function addToMap(list, point)
+    if not list then return end
+    for _, name in ipairs(list) do
+        if name and type(name) == "string" then
+            WeaponPriceMap[name] = point
+        end
+    end
+end
+
+-- 把各个分类加入映射
+addToMap(Weapon.ATA_Zero,   Weapon.ATA_ZeroPoint)
+addToMap(Weapon.ATA_One,    Weapon.ATA_OnePoint)
+addToMap(Weapon.ATA_Two,    Weapon.ATA_TwoPoint)
+addToMap(Weapon.ATA_Three,  Weapon.ATA_ThreePoint)
+addToMap(Weapon.ATA_Four,   Weapon.ATA_FourPoint)
+
+addToMap(Weapon.ATG_One,    Weapon.ATG_OnePoint)
+addToMap(Weapon.ATG_Two,    Weapon.ATG_TwoPoint)
+addToMap(Weapon.ATG_Three,  Weapon.ATG_ThreePoint)
+
+addToMap(Weapon.ATGPod,     Weapon.ATGPodPoint)
+addToMap(Weapon.mailbox,    Weapon.mailboxPoint)
 
 env.info("武器信息已添加")

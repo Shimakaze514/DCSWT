@@ -5971,7 +5971,7 @@ function ctld.inLogisticsZone(_heli, needcheck)
         local fob = ctld.fobLocation[i]
         local fobObj = fob.obj
         if fobObj == nil or fobObj:getLife() <= 0 then
-            table.remove(ctld.fobLocation, i)  -- 移除死亡 FOB
+            --table.remove(ctld.fobLocation, i)  -- 移除死亡 FOB
         elseif fobObj:getCoalition() == _heli:getCoalition() then
             local _dist = ctld.getDistance(_heliPoint, fob.point)
             if _dist <= ctld.maximumDistanceLogistic then
@@ -6012,7 +6012,7 @@ function ctld.farEnoughFromLogisticZone(_heli, distance, needcheck)
         local fob = ctld.fobLocation[i]
         local fobObj = fob.obj
         if fobObj == nil or fobObj:getLife() <= 0 then
-            table.remove(ctld.fobLocation, i)  -- 移除死亡 FOB
+            _farEnough = false  -- 移除死亡 FOB
         else
             local _dist = ctld.getDistance(_heliPoint, fob.point)
             if _dist <= distance then

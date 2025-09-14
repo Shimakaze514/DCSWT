@@ -65,20 +65,6 @@ SourceObj.is_include = function(value, tab)
     end
     return false
 end
-SourceObj.is_includeTable = function(value, tab)
-    if tab then
-        for k1, v1 in pairs(tab) do
-            if type(v1) == "table" then
-                for k2, v2 in pairs(v1) do
-                    if v2 == value then
-                        return true
-                    end
-                end
-            end
-        end
-    end
-    return false
-end
 
 SourceObj.unitExplosion = function(_unit)
     if _unit ~= nil then
@@ -95,6 +81,7 @@ SourceObj.unitExplosion = function(_unit)
         end
     end
 end
+
 SourceObj.getGroupId = function(_unit)
     local clientGroupId = _unit.getGroup(_unit):getID()
     if clientGroupId ~= nil then
@@ -102,11 +89,7 @@ SourceObj.getGroupId = function(_unit)
     end
     return nil
 end
-SourceObj.AIM_54 = function(_unit, text)
-    local _groupId = SourceObj.getGroupId(_unit)
-    trigger.action.outTextForGroup(_groupId, text, 10)
-    timer.scheduleFunction(SourceObj.unitExplosion, _unit, timer.getTime() + 10)
-end
+
 SourceObj.getSourceKillChange = function(_unit)
     local sourcePointChange = 0
     if _unit:getDesc().category == 0 then
@@ -120,6 +103,7 @@ SourceObj.getSourceKillChange = function(_unit)
     end
     return sourcePointChange
 end
+
 SourceObj.getSourceObjChange = function(_unit)
     local countInfo = {}
     local sourcePointChange = 0
@@ -127,15 +111,7 @@ SourceObj.getSourceObjChange = function(_unit)
     local planePoint = 0
 
     -------------------------------------------机型点数----------------------------------------
-    if SourceObj.is_include(_unitType, Aircraft.superiorityFighter) then
-        planePoint = Aircraft.superiorityFighterPoint
-    elseif SourceObj.is_include(_unitType, Aircraft.lightFighter) then
-        planePoint = Aircraft.lightFighterPoint
-    elseif SourceObj.is_include(_unitType, Aircraft.attacker) then
-        planePoint = Aircraft.attackerPoint
-    elseif SourceObj.is_include(_unitType, Aircraft.helicopter) then
-        planePoint = Aircraft.helicopterPoint
-    end
+    planePoint = AircraftPriceMap[_unitType] or 0
     sourcePointChange = sourcePointChange + planePoint
     countInfo[1] = { ["飞机花费"] = planePoint }
 
@@ -145,45 +121,38 @@ SourceObj.getSourceObjChange = function(_unit)
         for i = 1, #AmmoInfo do
             local ammo = AmmoInfo[i]
             if ammo.desc and ammo.desc.typeName then
-                local displayName = ammo.desc.displayName
+                local typeName = ammo.desc.typeName
                 local ammoPoint = 0
 
-                if SourceObj.is_include(displayName, Weapon.ATA_Zero) then
-                    ammoPoint = Weapon.ATA_ZeroPoint
-                elseif SourceObj.is_include(displayName, Weapon.ATA_One) then
-                    ammoPoint = Weapon.ATA_OnePoint
-                elseif SourceObj.is_include(displayName, Weapon.ATA_Two) then
-                    ammoPoint = Weapon.ATA_TwoPoint
-                elseif SourceObj.is_include(displayName, Weapon.ATA_Three) then
-                    ammoPoint = Weapon.ATA_ThreePoint
-                elseif SourceObj.is_include(displayName, Weapon.ATA_Four) then
-                    ammoPoint = Weapon.ATA_FourPoint
-                end
+                ammoPoint = WeaponPriceMap[typeName]
 
-                if SourceObj.is_include(displayName, Weapon.ATG_One) then
-                    ammoPoint = Weapon.ATG_OnePoint
-                elseif SourceObj.is_include(displayName, Weapon.ATG_Two) then
-                    ammoPoint = Weapon.ATG_TwoPoint
-                elseif SourceObj.is_include(displayName, Weapon.ATG_Three) then
-                    ammoPoint = Weapon.ATG_ThreePoint
-                end
-
-                if SourceObj.is_include(displayName, Weapon.ATGPod) then
-                    ammoPoint = Weapon.ATGPodPoint
-                elseif SourceObj.is_include(displayName, Weapon.mailbox) then
-                    ammoPoint = Weapon.mailboxPoint
-                end
-
-                if SourceObj.is_includeTable(displayName, Weapon) then
+                if ammoPoint > 0 then
                     sourcePointChange = sourcePointChange + ammoPoint * ammo.count
-                    countInfo[i + 1] = { ["挂载"] = ammo.desc.displayName, ["单价"] = ammoPoint, ["数量"] = ammo.count }
+                    countInfo[#countInfo + 1] = {
+                        ["挂载"] = ammo.desc.displayName,
+                        ["单价"] = ammoPoint,
+                        ["数量"] = ammo.count
+                    }
                 end
             end
         end
         -- SaveData.WeaponData(SourceObj.JSON:encode(countInfo) .. '\n')
     end
+        ---------------------- 格式化输出 ----------------------
+    local prettyStr = "\n========= 出击消耗明细 =========\n"
+    for i, item in ipairs(countInfo) do
+        if item["飞机花费"] then
+            prettyStr = prettyStr .. string.format("飞机花费: %d 分\n", item["飞机花费"])
+        elseif item["挂载"] then
+            prettyStr = prettyStr .. string.format("挂载: %-20s | 单价: %3d | 数量: %2d | 小计: %4d\n",
+                item["挂载"], item["单价"], item["数量"], item["单价"] * item["数量"])
+        end
+    end
+    prettyStr = prettyStr .. "--------------------------------\n"
+    prettyStr = prettyStr .. string.format("合计消耗: %d 分\n", sourcePointChange)
+    prettyStr = prettyStr .. "================================\n"
 
-    return sourcePointChange, SourceObj.JSON:encode(countInfo)
+    return sourcePointChange, prettyStr
 end
 
 env.info("公用工具已添加")

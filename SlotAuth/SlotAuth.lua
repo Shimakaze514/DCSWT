@@ -3,7 +3,7 @@ SLOT.callbacks = SLOT.callbacks or {}
 
 SLOT.FilePath = lfs.writedir() .. [[SourceData/]] .. '动态槽位限制.json'
 SLOT.AuthDataCache = {}
-SLOT.teamBalenceCoefficient = 0.25
+SLOT.teamBalenceCoefficient = 0.33
 SLOT.UseNewDynamicSystem = true
 SLOT.LastSideSwitch = {}
 SLOT.SideSwitchCooldown = 300
@@ -13,8 +13,8 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
     local _playerInfo = net.get_player_info(playerID)
     local _ucid = net.get_player_info(playerID , 'ucid')
     local sideAvail = SLOT.allowSideSwitch(side, playerID)
-    --local balance = SLOT.teamBalance(_side, playerID)
-    local balance = true
+    local balance = SLOT.teamBalance(_side, playerID)
+    --local balance = true
     local _slotID = slotID
     local slotAvail = SLOT.allowEnterSlotDynamic(playerID, _side, _slotID)
 
@@ -63,10 +63,11 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
         
         --net.kick(playerID , kickMsg)
     elseif balance ~= true and _playerInfo.side ~= side then
-        if side == 1 then 
-            side = 2
+        local goSide = 1
+        if SLOT.LastSideSwitch[_ucid].side == 1 then 
+            goSide = 2
         end
-        sideName = sideNames[side]
+        sideName = sideNames[goSide]
         kickMsg = "由于人数不平衡，你需要加入 "..sideName.." 以获得最好的游戏体验。现在你可以重新加入服务器！你的跳边冷却已清空"
         SLOT.LastSideSwitch[_ucid] = nil
         ChatMsg = "由于人数不平衡，你需要加入 "..sideName.." 以获得最好的游戏体验。你的跳边冷却已清空"
