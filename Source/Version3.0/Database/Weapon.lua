@@ -246,7 +246,7 @@ Weapon.mailboxPoint = 15
 --"M56A3 20mm HEI" --机炮
 
 -- ---------- 在 Weapon 定义之后，建立映射表（只运行一次） ----------
-local WeaponPriceMap = {}
+WeaponPriceMap = {}
 
 local function addToMap(list, point)
     if not list then return end

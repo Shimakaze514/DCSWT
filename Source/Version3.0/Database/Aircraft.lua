@@ -11,7 +11,7 @@ Aircraft.attackerPoint = 60
 Aircraft.helicopter = {"Mi-8MTV2", "Mi-8MT", "UH-1H", "MosquitoFBMkVI", "TF-51D","AH-64D_BLK_II","SA342M", "SA342L","Mi-24P"}
 Aircraft.helicopterPoint = 50
 
-local AircraftPriceMap = {}
+AircraftPriceMap = {}
 
 local function addAircraftToMap(list, point)
     if not list then return end
