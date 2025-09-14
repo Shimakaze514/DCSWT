@@ -191,46 +191,47 @@ SourceObj.getLoadout = function(_args)
 
     local cost, detail = SourceObj.getSourceObjChange(unit)
 
-    local function padNum(num, width)
-        local str = tostring(num)
-        local len = #str
-        if len < width then
-            return str .. string.rep(" ", width - len)
-        else
-            return str
-        end
+    local allNames = {
+        "制空战斗机", "轻型战斗机", "对地攻击机", "直升机",
+        "现代主动弹", "老旧主动弹", "半主动弹", "现代红外弹",
+        "老旧红外弹", "对地导弹", "精确炸弹", "激光炸弹", "无制导炸弹",
+        "吊舱", "副油箱"
+    }
+    local maxNameLen = 0
+    for _, name in ipairs(allNames) do
+        local len = #name
+        if len > maxNameLen then maxNameLen = len end
     end
+    env.info("[AmmoInfo] 最长名称长度: " .. maxNameLen)
     
-    local nameWidth, numWidth = 16, 4
-    
+    -- ruleMsg
     local ruleMsg = "\n========= 挂载规则 =========\n" ..
-        string.format("%s %s  |  %s %s\n",
-            padRight("制空战斗机", nameWidth), padNum(Aircraft.superiorityFighterPoint, numWidth),
-            padRight("轻型战斗机", nameWidth), padNum(Aircraft.lightFighterPoint, numWidth)) ..
-        string.format("%s %s  |  %s %s\n",
-            padRight("对地攻击机", nameWidth), padNum(Aircraft.attackerPoint, numWidth),
-            padRight("直升机", nameWidth), padNum(Aircraft.helicopterPoint, numWidth)) ..
+        string.format("%-"..maxNameLen.."s %4s    %-"..maxNameLen.."s %4s\n",
+            "制空战斗机", Aircraft.superiorityFighterPoint,
+            "轻型战斗机", Aircraft.lightFighterPoint) ..
+        string.format("%-"..maxNameLen.."s %4s    %-"..maxNameLen.."s %4s\n",
+            "对地攻击机", Aircraft.attackerPoint,
+            "直升机", Aircraft.helicopterPoint) ..
         "--------------------------------\n" ..
-        string.format("%s %s  |  %s %s\n",
-            padRight("现代主动弹", nameWidth), padNum(Weapon.AA_newARHPoint, numWidth),
-            padRight("老旧主动弹", nameWidth), padNum(Weapon.AA_oldARHPoint, numWidth)) ..
-        string.format("%s %s  |  %s %s\n",
-            padRight("半主动弹", nameWidth), padNum(Weapon.AA_SARHPoint, numWidth),
-            padRight("现代红外弹", nameWidth), padNum(Weapon.AA_newIRPoint, numWidth)) ..
-        string.format("%s %s  |  %s %s\n",
-            padRight("老旧红外弹", nameWidth), padNum(Weapon.AA_oldIRPoint, numWidth),
-            padRight("", nameWidth), padNum("", numWidth)) ..
+        string.format("%-"..maxNameLen.."s %4s    %-"..maxNameLen.."s %4s\n",
+            "现代主动弹", Weapon.AA_newARHPoint,
+            "老旧主动弹", Weapon.AA_oldARHPoint) ..
+        string.format("%-"..maxNameLen.."s %4s    %-"..maxNameLen.."s %4s\n",
+            "半主动弹", Weapon.AA_SARHPoint,
+            "现代红外弹", Weapon.AA_newIRPoint) ..
+        string.format("%-"..maxNameLen.."s %4s\n",
+            "老旧红外弹", Weapon.AA_oldIRPoint) ..
         "--------------------------------\n" ..
-        string.format("%s %s  |  %s %s\n",
-            padRight("对地导弹", nameWidth), padNum(Weapon.AG_SmartMissilePoint, numWidth),
-            padRight("精确炸弹", nameWidth), padNum(Weapon.AG_SmartBombPoint, numWidth)) ..
-        string.format("%s %s  |  %s %s\n",
-            padRight("激光炸弹", nameWidth), padNum(Weapon.AG_LaserPoint, numWidth),
-            padRight("无制导炸弹", nameWidth), padNum(Weapon.AG_DumbPoint, numWidth)) ..
+        string.format("%-"..maxNameLen.."s %4s    %-"..maxNameLen.."s %4s\n",
+            "对地导弹", Weapon.AG_SmartMissilePoint,
+            "精确炸弹", Weapon.AG_SmartBombPoint) ..
+        string.format("%-"..maxNameLen.."s %4s    %-"..maxNameLen.."s %4s\n",
+            "激光炸弹", Weapon.AG_LaserPoint,
+            "无制导炸弹", Weapon.AG_DumbPoint) ..
         "--------------------------------\n" ..
-        string.format("%s %s  |  %s %s\n",
-            padRight("吊舱", nameWidth), padNum(Weapon.ATGPodPoint, numWidth),
-            padRight("副油箱", nameWidth), padNum(Weapon.mailboxPoint, numWidth))
+        string.format("%-"..maxNameLen.."s %4s    %-"..maxNameLen.."s %4s\n",
+            "吊舱", Weapon.ATGPodPoint,
+            "副油箱", Weapon.mailboxPoint)
 
     local finalMsg = ruleMsg .. detail ..
                      string.format("你的当前资源点数: %d\n", ps.point)
