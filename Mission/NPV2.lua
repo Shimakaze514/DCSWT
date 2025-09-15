@@ -10,6 +10,9 @@
 
 NP = {}
 
+local weaponTemplate = {}
+local liquidsTemplate = {}
+
 NP.Id = "NP - "
 
 NP.Version = "20220417"
@@ -140,23 +143,23 @@ function NP.capture(_args)
     table.insert(ctld.logisticUnits, _logisticData.units[1].unitName)--新的单位加到cc的白名单
 
 
-    NP.setRelatedZone(_logisticData.groupName,_logisticData.units[1].coalition)
+    NP.setRelatedZone(_logisticData,_logisticData.units[1].unitName,_logisticData.units[1].coalition)
     NP.logInfo("战区".._logisticData.groupName.."被"..CountrySide.."占领。操作者是".._capturedPlayerName)
     trigger.action.outText("战区".._logisticData.groupName.."被"..CountrySide.."占领。操作者是".._capturedPlayerName, 20)
 end
 
-function NP.setRelatedZone(groupName,coalition)
+function NP.setRelatedZone(static, unitName,coalition)
     local originalCCname
     --NP.logDebug("[setRelatedZone] 所有的logisticUnits如下: "..ctld.p(ctld.logisticUnits))
     for k,v in pairs(ctld.logisticUnits) do
-        if string.find(groupName, v) ~= nil then
+        if string.find(unitName, v) ~= nil then
             originalCCname = v
             break
         end
     end
 
     if originalCCname == nil then
-        NP.logError('[setRelatedZone] 在ctld.logisticUnits数据表中找不到对应的cc: '..groupName ..'| 阵营:'..coalition)
+        NP.logError('[setRelatedZone] 在ctld.logisticUnits数据表中找不到对应的cc: '..unitName ..'| 阵营:'..coalition)
         return
     end
 
@@ -185,30 +188,121 @@ function NP.setRelatedZone(groupName,coalition)
     end
 
     timer.scheduleFunction(function(_args)
-        local _ccname, _coalition, _oppsitecoalition = _args[1],_args[2],_args[3]
-        NP.logDebug('传进生成船的函数的值：'.._ccname.."|".._coalition.."|".._oppsitecoalition)
-
-        if Unitlist[_ccname]['ships']~=nil then
-            for _,_shipGroupName in pairs(Unitlist[_ccname]['ships'][_coalition]) do
-                local myGroup = Group.getByName(_shipGroupName)
-                if myGroup ~= nil then
-                    NP.logInfo('[setRelatedZone] 补给船已存在，不进行生成:'.._shipGroupName.."|")
-                else
-                    mist.respawnGroup(_shipGroupName,true)
-                    NP.logInfo('[setRelatedZone] 生成补给船:'.._shipGroupName.."|")
-                end
-            end
-            for _,_shipGroupName in pairs(Unitlist[_ccname]['ships'][_oppsitecoalition]) do
-                local myGroup = Group.getByName(_shipGroupName)
-                if myGroup ~= nil then
-                    Group.destroy(myGroup)
-                    NP.logInfo('[setRelatedZone] 销毁补给船:'.._shipGroupName.."|")
-                else
-                    NP.logError('[setRelatedZone] 销毁补给船时找不到组:'.._shipGroupName.."|")
-                end
-            end
+        local static, _coalition, _oppsitecoalition = _args[1],_args[2],_args[3]
+        
+        NP.logDebug('传进生成补给的函数的值：'..ctld.p(static).."|".._coalition.."|".._oppsitecoalition)
+        local CCunit = static.units[1]
+        
+        if StaticObject.getByName(CCunit.unitName..'_invisibleFarp') ~= nil then
+            StaticObject.getByName(CCunit.unitName..'_invisibleFarp'):destroy()
         end
-    end, {ccname,coalition,oppsitecoalition} , timer.getTime()+10)
+        if StaticObject.getByName(CCunit.unitName..'_Ammo') ~= nil then
+            StaticObject.getByName(CCunit.unitName..'_Ammo'):destroy()
+        end
+        if StaticObject.getByName(CCunit.unitName..'_Fuel') ~= nil then
+            StaticObject.getByName(CCunit.unitName..'_Fuel'):destroy()
+        end
+        if StaticObject.getByName(CCunit.unitName..'_Command') ~= nil then
+            StaticObject.getByName(CCunit.unitName..'_Command'):destroy()
+        end
+
+        local sep_h = 20
+        local sep_v = 10
+
+        local rad = CCunit.heading * math.pi / 180
+        local left_dx = math.cos(rad + math.pi/2)
+        local left_dy = math.sin(rad + math.pi/2)
+        local fwd_dx = math.cos(rad)
+        local fwd_dy = math.sin(rad)
+
+        local mid_x = CCunit.x + left_dx * sep_h
+        local mid_y = CCunit.y + left_dy * sep_h
+        local front_x = mid_x + fwd_dx * sep_v
+        local front_y = mid_y + fwd_dy * sep_v
+        local back_x = mid_x - fwd_dx * sep_v
+        local back_y = mid_y - fwd_dy * sep_v
+        
+        local vars = 
+        {
+        type = 'Invisible FARP', 
+        shape_name = "invisiblefarp",
+        country = CCunit.country, 
+        category = 'Heliports', 
+        x = CCunit.x, 
+        y = CCunit.y,
+        name = CCunit.unitName..'_invisibleFarp', 
+        heading = CCunit.heading,
+        clone = true,
+        dead =false,
+        }
+        
+        mist.dynAddStatic(vars)
+        timer.scheduleFunction(function()
+            local bases = world.getAirbases()
+            for _, base in pairs(bases) do
+                local desc = Airbase.getDesc(base)
+                if desc and desc.typeName == "Invisible FARP" then
+                    local invisWH = base:getWarehouse()
+                    if invisWH then
+                        invisWH:setLiquidAmount(0, 1000)
+                        invisWH:setLiquidAmount(1, 1000)
+                        invisWH:setLiquidAmount(2, 1000)
+                        invisWH:setLiquidAmount(3, 1000)
+                        for itemId,_ in pairs(weaponTemplate) do
+                            invisWH:setItem(itemId, 999)
+                        end
+                        local invisIV = invisWH:getInventory()
+                        NP.logDebug("[setRelatedZone] Invisible FARP的Inventory: " .. ctld.p(invisIV))
+                    end
+                end
+            end
+        end, {}, timer.getTime()+5)
+        
+        local vars2 = 
+        {
+        type = 'FARP Ammo Dump Coating', 
+        country = CCunit.country, 
+        category = 'Fortifications', 
+        x = front_x, 
+        y = front_y,
+        name = CCunit.unitName..'_Ammo', 
+        heading = CCunit.heading,
+        clone = true,
+        dead =false,
+        }
+        
+        mist.dynAddStatic(vars2)
+        
+        local vars3 = 
+        {
+        type = 'FARP Fuel Depot', 
+        country = CCunit.country, 
+        category = 'Fortifications', 
+        x = back_x, 
+        y = back_y,
+        name = CCunit.unitName..'_Fuel', 
+        heading = CCunit.heading,
+        clone = true,
+        dead =false,
+        }
+        
+        mist.dynAddStatic(vars3)
+        
+        local vars4 = 
+        {
+        type = 'FARP CP Blindage', 
+        country = CCunit.country, 
+        category = 'Fortifications', 
+        x = mid_x, 
+        y = mid_y,
+        name = CCunit.unitName..'_Command', 
+        heading = CCunit.heading,
+        clone = true,
+        dead =false,
+        }
+        
+        mist.dynAddStatic(vars4)
+    end, {static,coalition,oppsitecoalition} , timer.getTime()+5)
 
     NP.logInfo('[setRelatedZone] 占领CC的流程完成: '.. ccname..'| 阵营:'..coalition)
 end
@@ -260,6 +354,23 @@ function NP.RespawnAwacs()
     end
     timer.scheduleFunction(NP.RespawnAwacs, {}, timer.getTime() + 900)
 end
+
+function NP.InitInvisTemplate()
+    local bases = world.getAirbases()
+    for _, base in pairs(bases) do
+        local desc = Airbase.getDesc(base)
+        if Airbase.getUnit(base) then
+            local unitName = Airbase.getUnit(base):getName()
+            if unitName == "invisTemplate" then
+                weaponTemplate = base:getWarehouse():getInventory().weapon
+                liquidsTemplate = base:getWarehouse():getInventory().liquids
+                NP.logDebug("获取到Invisible FARP的仓库模板"..ctld.p(weaponTemplate))
+            end
+        end
+    end
+end
+
+timer.scheduleFunction(NP.InitInvisTemplate, {}, timer.getTime() + 5)
 
 timer.scheduleFunction(NP.RespawnAwacs, {}, timer.getTime() + 900)
 net.log("LOAD SUCCESS - NP version "..NP.Version ..", script by VL")
