@@ -44,7 +44,6 @@ function SourceCall.onPlayerStart(id)
     local mission_string = [[
         local ok, err = pcall(a_do_script([=[
             timer.scheduleFunction(function()
-                trigger.action.outText("操你妈注入成功", 50, false)
                 SourceObj.updatePlayerInfo("]] .. name .. [[", "]] .. ucid .. [[")
             end, {}, timer.getTime() + 5)
         ]=]))

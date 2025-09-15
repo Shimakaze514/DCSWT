@@ -18,9 +18,9 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
         local sourcePointChange, countInfo = SourceObj.getSourceObjChange(_unit)
 
         local ps = SourceObj.playerSource[_ucid] or {}
-        if ps.birthTime and (timer.getTime() - ps.birthTime < 90) then
+        if ps.birthTime and (timer.getTime() - ps.birthTime < 120) then
             local _groupId = SourceObj.getGroupId(_unit)
-            trigger.action.outTextForGroup(_groupId, "你在出生后90秒内起飞，触发自爆！", 10, true)
+            trigger.action.outTextForGroup(_groupId, "你在出生后120秒内起飞，触发自爆！", 10, true)
 
             if ps.countdownTaskId then
                 timer.removeFunction(ps.countdownTaskId)
