@@ -39,6 +39,7 @@ Weapon.AA_oldIR = {
   "AIM_9", --M
   "AIM-9L",
   "P_60",
+  "PL-5EII",
 
   "OH58D_FIM_92",
   "Mistral"
@@ -205,5 +206,6 @@ addToMap(Weapon.AG_Dumb         ,   Weapon.AG_DumbPoint)
 
 -- 特殊多发挂架
 addToMap({"Vikhr_M"}, Weapon.AG_LaserPoint, 8)  -- 最后一个参数是几发算一组
+addToMap({"BRM-1_90MM"}, Weapon.AG_LaserPoint, 16)
 
 env.info("武器信息已添加")
