@@ -110,20 +110,23 @@ SourceObj.onBirth = function(_unit)
     local _typeName = _unit:getTypeName()
     if _typeName and AircraftPriceMap[_typeName] then
         displayMsg = true
-    end
-    if not displayMsg then
+    else
+        env.info("[SourceObj.onBirth] 飞机不在价格表内，忽略资源系统")
         return
     end
     local _name = _unit:getPlayerName()
     if _name == nil then
+        env.info("[SourceObj.onBirth] _unit:getPlayerName()无法获取玩家名字！")
         return
     end
     local _ucid = SourceObj.playerInfo[_name]
     if _ucid == nil then
+        env.info("[SourceObj.onBirth] 玩家没有UCID！")
         return
     end
     local _groupId = SourceObj.getGroupId(_unit)
     if _groupId == nil then
+        env.info("[SourceObj.onBirth] 玩家的unit没有GroupId！")
         return
     end
 

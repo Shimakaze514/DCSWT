@@ -1,5 +1,5 @@
 SourceObj = SourceObj or {}
-SourceObj.playerInfo = {}
+SourceObj.playerInfo = SourceObj.playerInfo or {}
 SourceObj.playerSource = {}
 SourceObj.sourceInitPoint = 1500 --初始资源点
 SourceObj.sourceMaxPoint = 3000 --资源点上限
@@ -12,6 +12,15 @@ SourceObj.autoAddID = {}
 
 -- SourceObj.lua setUserCallbacks
 SourceObj.updatePlayerInfo = function(_name, _ucid)
+    env.info("[SourceObj.updatePlayerInfo] 开始执行")
+    if not _name then
+        env.info("[SourceObj.updatePlayerInfo] 缺少name，无法更新玩家信息")
+        return
+    end
+    if not _ucid then
+        env.info("[SourceObj.updatePlayerInfo] 缺少ucid，无法更新玩家信息")
+        return
+    end
     SourceObj.playerInfo[_name] = _ucid
     SourceObj.playerSource[_ucid] = SourceObj.playerSource[_ucid] or {}
 
@@ -26,6 +35,7 @@ SourceObj.updatePlayerInfo = function(_name, _ucid)
         env.info("增加资源点自动任务，玩家:" .. _name .. ",  函数id:" .. SourceObj.autoAddID[_ucid])
     end
 
+    env.info("[SourceObj.updatePlayerInfo] 更新玩家信息完成，name:" .. _name .. ", 储存在playerInfo中的ucid:" .. SourceObj.playerInfo[_name])
 end
 SourceObj.clearAutoAddSourcePoint = function(_ucid)
     env.info("取消资源点自动任务，id:"..SourceObj.autoAddID[_ucid])

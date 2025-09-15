@@ -9,38 +9,66 @@ function SourceCall.onPlayerTryConnect(ipaddr, name, ucid, playerID)
   end
 end
 
-function SourceCall.onPlayerConnect(id)
-  SourceCall.clients = SourceCall.clients or {}
-  SourceCall.clients[id] = {id = id, ipaddr = net.get_player_info(id, "ipaddr"), name = net.get_player_info(id, "name"), ucid = net.get_player_info(id, "ucid"), ip = net.get_player_info(id, "ipaddr")}
-  if not SourceCall.num_clients then
-    SourceCall.num_clients = 1
-  else
-    SourceCall.num_clients = SourceCall.num_clients + 1
-  end
+function SourceCall.onPlayerStart(id)
+  -- if not SourceCall.num_clients then
+  --   SourceCall.num_clients = 1
+  -- else
+  --   SourceCall.num_clients = SourceCall.num_clients + 1
+  -- end
 
   local name = net.get_player_info(id, "name")
+  if not name then
+    net.log("[SourceCall.onPlayerConnect] 无法获取玩家名字！")
+    return
+  end
   local ucid = net.get_player_info(id, "ucid")
-  
+  if not ucid then
+    net.log("[SourceCall.onPlayerConnect] 无法获取玩家UCID！")
+    return
+  end
+  net.log("[SourceCall.onPlayerConnect] 玩家已连接，名字：" .. name .. "， UCID: " .. ucid)
   SourceCall.PlayerName[name] = ucid
+  
+  SourceCall.clients = SourceCall.clients or {}
+  SourceCall.clients[id] = {id = id, 
+                            ipaddr = net.get_player_info(id, "ipaddr"), 
+                            name = name, 
+                            ucid = ucid, 
+                            ip = net.get_player_info(id, "ipaddr")}
 
   SourceCall.PlayerNameHistory = SourceCall.PlayerNameHistory or {}
   SourceCall.PlayerNameHistory[ucid] = SourceCall.PlayerNameHistory[ucid] or {}
   SourceCall.PlayerNameHistory[ucid][name] = true
-  if DCS.isServer() and DCS.isMultiplayer() and name and ucid and id ~= net.get_my_player_id() then
-    net.dostring_in("mission", 'a_do_script(\'SourceObj.updatePlayerInfo("' .. name .. '", "' .. ucid .. '")\')')
-    
+  if DCS.isServer() and DCS.isMultiplayer() and id ~= net.get_my_player_id() then
+    -- 构造 mission 字符串
+    local mission_string = [[
+        local ok, err = pcall(a_do_script([=[
+            timer.scheduleFunction(function()
+                trigger.action.outText("操你妈注入成功", 50, false)
+                SourceObj.updatePlayerInfo("]] .. name .. [[", "]] .. ucid .. [[")
+            end, {}, timer.getTime() + 5)
+        ]=]))
+        if not ok then
+            log.write("DCS Code Injector", log.ERROR, err)
+        end
+    ]]  
+    -- 发送到 mission 环境执行
+    net.dostring_in('mission', mission_string)
+    --net.dostring_in('server', mission_string)
+    net.log("[SourceCall.onPlayerConnect] 已注入SourceObj.updatePlayerInfo！")
+
     SourceCall.PlayerInfo = SourceCall.PlayerInfo or {}
-    SourceCall.PlayerInfo[ucid] = SourceCall.PlayerInfo[ucid] or {}
 
-    local oldNames = SourceCall.PlayerInfo[ucid].names or {}
+    -- 获取现有记录
+    local current = SourceCall.PlayerInfo[ucid] or {}
+    local oldNames = current.names or {}
     
-    SourceCall.PlayerInfo[ucid] = net.get_player_info(id)
-
+    -- 更新信息
+    SourceCall.PlayerInfo[ucid] = net.get_player_info(id) or {}
     SourceCall.PlayerInfo[ucid].names = oldNames
-    SourceCall.PlayerInfo[ucid].names = SourceCall.PlayerInfo[ucid].names or {}
-    if name and not SourceCall.PlayerInfo[ucid].names[name] then
-      SourceCall.PlayerInfo[ucid].names[name] = true
-    end
+    
+    -- 添加新名字
+    SourceCall.PlayerInfo[ucid].names[name] = true
     
     local tempQuitTime = SourceCall.PlayerInfo[ucid]["quitTime"] or 0
     local tempKillFriend = SourceCall.PlayerInfo[ucid]["KillFriend"] or 0
@@ -55,8 +83,7 @@ function SourceCall.onPlayerConnect(id)
   end
 end
 
-function SourceCall.onPlayerStart(id)
-
+function SourceCall.onPlayerConnect(id)
 end
 
 function SourceCall.onPlayerTrySendChat(id, msg, all)
@@ -70,15 +97,27 @@ function SourceCall.onPlayerTrySendChat(id, msg, all)
 end
 
 function SourceCall.onPlayerDisconnect(id)
+  SourceCall.clients = SourceCall.clients or {}
+  local rec = SourceCall.clients[id]
+  if not rec then return end
 
-  SourceCall.clients = SourceCall.clients or {} --should not be necessary.
-  local ucid
-  if SourceCall.clients[id] then
-    ucid = SourceCall.clients[id].ucid
-    SourceCall.clients[id] = nil
-    SourceCall.num_clients = SourceCall.num_clients - 1
+  local name = rec.name
+  local ucid = rec.ucid
+
+  -- 移除 PlayerName 映射（仅当还指向该 UCID）
+  if name and ucid and SourceCall.PlayerName and SourceCall.PlayerName[name] == ucid then
+    SourceCall.PlayerName[name] = nil
   end
 
+  -- 移除 clients 记录
+  SourceCall.clients[id] = nil
+
+  -- 可选：更新在线人数统计
+  -- if SourceCall.num_clients then
+  --   SourceCall.num_clients = SourceCall.num_clients - 1
+  -- end
+
+  -- 清理任务内的 SourcePoint
   if DCS.isServer() and DCS.isMultiplayer() and ucid and id ~= net.get_my_player_id() then
     net.dostring_in("mission", 'a_do_script(\'SourceObj.clearAutoAddSourcePoint("' .. ucid .. '")\')')
   end
@@ -106,23 +145,23 @@ function SourceCall.onMissionLoadEnd()
     SourceCall.mission_start_time = DCS.getRealTime() --需要防止CTD引起的C Lua的API上net.pause和net.resume
   end
 end
-function SourceCall.onSimulationFrame()
-  if SourceCall.mission_start_time then
-    if SourceCall.pause_when_empty and (DCS.getRealTime() > SourceCall.mission_start_time + 8) then -- 8秒窗口以希望总是避免CTD
-      if DCS.getPause() == false then
-        SourceCall.pause_forced = false -- 如果服务器由于任何原因未暂停，请关闭强制暂停。
-      end
-      if not SourceCall.pause_override then --暂停覆盖不是false
-        if (SourceCall.num_clients and SourceCall.num_clients == 1 or not SourceCall.num_clients) and DCS.getPause() == false then
-          DCS.setPause(true)
-        elseif SourceCall.num_clients and SourceCall.num_clients > 1 and DCS.getPause() == true and (not SourceCall.pause_forced) then
-          DCS.setPause(false)
-        end
-      end
-    end
-  end
-end
-function SourceCall.onSimulationStop()
-end
+-- function SourceCall.onSimulationFrame()
+--   if SourceCall.mission_start_time then
+--     if SourceCall.pause_when_empty and (DCS.getRealTime() > SourceCall.mission_start_time + 8) then -- 8秒窗口以希望总是避免CTD
+--       if DCS.getPause() == false then
+--         SourceCall.pause_forced = false -- 如果服务器由于任何原因未暂停，请关闭强制暂停。
+--       end
+--       if not SourceCall.pause_override then --暂停覆盖不是false
+--         if (SourceCall.num_clients and SourceCall.num_clients == 1 or not SourceCall.num_clients) and DCS.getPause() == false then
+--           DCS.setPause(true)
+--         elseif SourceCall.num_clients and SourceCall.num_clients > 1 and DCS.getPause() == true and (not SourceCall.pause_forced) then
+--           DCS.setPause(false)
+--         end
+--       end
+--     end
+--   end
+-- end
+-- function SourceCall.onSimulationStop()
+-- end
 -------------------------------------------------------游戏事件结束--------------------------------------------------
 DCS.setUserCallbacks(SourceCall)

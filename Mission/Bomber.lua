@@ -418,7 +418,7 @@ function Bomber.CallAttack(_args)
         return
     end
 
-    local _ucid = SourceObj.playerInfo[_playerName] or "375acfc28f335ba12cd8270b6569e0d5"
+    local _ucid = SourceObj.playerInfo[_playerName]
     if not _ucid then
         Bomber.logError("Bomber.CallAttack: 找不到 UCID")
         return
@@ -542,7 +542,7 @@ function Bomber.addTask(_coalition, _unitName, _point)
     local cost = Bomber.CostTable[planeType]
     local _unit = ctld.getTransportUnit(_unitName)
     local _name = _unit:getPlayerName()
-    local _ucid = SourceObj.playerInfo[_name] or "375acfc28f335ba12cd8270b6569e0d5"
+    local _ucid = SourceObj.playerInfo[_name]
     local _groupId = req.groupId
     local currentPoints = SourceObj.playerSource[_ucid].point
     local playerSource = SourceObj.playerSource[_ucid]
