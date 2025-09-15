@@ -262,10 +262,10 @@ function dsave.loadDsaveUnitsData()
     dsave.logInfo('地面单位载入完成')
 end
 
+local tableData2
 function dsave.loadDsaveCCsData()
 
     local File2,err2=io.open(dsave.DSaveCCsFilePath,"r");
-    local tableData2
     if err2 == nil then
         dsave.logInfo('cc动态保存文件读取成功')
         dsave.destoryMissionEditorCCs()--马上要动态保存了，赶紧把任务编辑器已有的cc都做掉
@@ -311,10 +311,10 @@ function dsave.loadDsaveCCsData()
 end
 
 function dsave.refreshFlagsAtMissionStart()
-    for _, _name in pairs(ctld.logisticUnits) do
-        local _logistic = StaticObject.getByName(_name)
-        if _logistic ~= nil then -- and _logistic:getLife() > 0 
-            NP.setRelatedZone(_logistic:getName(),dsave.coalitionToString(_logistic:getCoalition()))
+    for i, entry in pairs(tableData2) do
+        local _group = entry[1]
+        if _group ~= nil then -- and _logistic:getLife() > 0 
+            NP.setRelatedZone(_group,_group.units[1].unitName,_group.units[1].coalition)
         end
     end
     dsave.logInfo("Refresh userFlags complete!")
