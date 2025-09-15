@@ -90,7 +90,7 @@ Weapon.AG_SmartBomb = {
 
   "X_29T",
   "X_25MP",
-  "Kh25MP_PRGS1VP",
+  "Kh25MP_PRGS1VP",  --MPU
   "X_58",
 }
 Weapon.AG_SmartBombPoint = 20
@@ -132,12 +132,12 @@ Weapon.AG_Dumb = {
   "BetAB_500ShP",
   "RBK_250_275_AO_1SCH",
   "RBK_500AO",
-  "RBK_500U",
-  "RBK_500U_OAB_2_5RT",
+  "RBK_500U",  --255
+  "RBK_500U_OAB_2_5RT",  --real U
   
   "C_24",
   "C_25",
-  "S-25-O",
+  "S-25-O",  --OFM
 }
 Weapon.AG_DumbPoint = 5
 
