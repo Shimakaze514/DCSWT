@@ -4126,8 +4126,8 @@ function ctld.unpackCrates(_arguments)
         -- trigger.action.outText("Unpack Crates".._args[1],10)
 
         local _heli = ctld.getTransportUnit(_args[1])
-
-        if _heli ~= nil and ctld.inAir(_heli) == false then
+        
+        if _heli and (not ctld.inAir(_heli) or ctld.heightDiff(_heli) <= 7.5) then
 
             local _crates = ctld.getCratesAndDistance(_heli)
             local _crate = ctld.getClosestCrate(_heli, _crates)
