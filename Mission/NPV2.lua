@@ -30,6 +30,56 @@ NP.AWACSList = {
     --"redAWACS2"
 }
 
+local UnitlistHome = {
+    { 
+        type = "Tor 9A331", 
+        radius = 2000, 
+        count = 6, 
+        suffix = "_道尔", 
+        support = {} 
+    },
+    { 
+        type = {"2S6 Tunguska", "Strela-10M3"}, 
+        radius = 2500, 
+        count = 6, 
+        suffix = "_通古斯卡", 
+        support = {} 
+    },
+    { 
+        type = "SA-11 Buk LN 9A310M1", 
+        radius = 1000, 
+        count = 6, 
+        suffix = "_山毛榉", 
+        support = {
+            { type = "SA-11 Buk SR 9S18M1", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
+            { type = "SA-11 Buk CC 9S470M1", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
+        }
+    },
+    { 
+        type = {"Leclerc", "ZBD04A"}, 
+        radius = 1250, 
+        count = 5, 
+        suffix = "_坦克", 
+        support = {} 
+    },
+}
+
+local UnitlistFront = {
+    { type = "Tor 9A331", radius = 1500, count = 6, suffix = "_道尔", support = {} },
+    { type = {"2S6 Tunguska", "Strela-10M3"}, radius = 2000, count = 6, suffix = "_通古斯卡", support = {} },
+    { 
+        type = {"Leclerc","ZBD04A"}, 
+        radius = 1000, 
+        count = 3, 
+        suffix = "_坦克", 
+        support = {} 
+    },
+}
+
+local UnitlistMiddle = {
+    { type = "2S6 Tunguska", radius = 100, count = 1, suffix = "_通古斯卡", support = {} },
+}
+
 function NP.logError(message)
     env.info("[NP] Err: "  .. message)
 end
@@ -305,8 +355,101 @@ function NP.setRelatedZone(static, unitName,coalition)
     end, {static,coalition,oppsitecoalition} , timer.getTime()+5)
 
     NP.logInfo('[setRelatedZone] 占领CC的流程完成: '.. ccname..'| 阵营:'..coalition)
+    if string.find(unitName, "本场") then
+        NP.spawnDefenseFromUnitlist(static, UnitlistHome, coalition, unitName)
+    elseif string.find(unitName, "中场") then
+        NP.spawnDefenseFromUnitlist(static, UnitlistMiddle, coalition, unitName)
+    elseif string.find(unitName, "前线") then
+        NP.spawnDefenseFromUnitlist(static, UnitlistFront, coalition, unitName)
+    end
 end
 
+function NP.spawnDefenseFromUnitlist(static, defTable, coalition, ccName)
+    local CCunit = static.units[1]
+    local country = CCunit.country
+    local groupCount = #defTable
+    local totalUnits = 0
+    for _, def in ipairs(defTable) do
+        totalUnits = totalUnits + def.count
+    end
+
+    for idx, def in ipairs(defTable) do
+        local groupName = ccName .. def.suffix
+
+        -- 已存在就销毁
+        local old = Group.getByName(groupName)
+        if old then 
+            NP.logInfo(string.format("[spawnDefenseFromUnitlist] 已存在同名群组，先销毁: %s", groupName))
+            old:destroy() 
+        end
+
+        local group = {
+            visible = false,
+            hidden = false,
+            units = {},
+            name = groupName,
+            task = {},
+            playerCanDrive = false,
+            country = country,
+            category = Group.Category.GROUND
+        }
+
+        -- 每个群组在圆周上的起始角度均分
+        local groupStartAngle = 2 * math.pi * (idx - 1) / totalUnits
+        local angleStep = 2 * math.pi / def.count  -- 群组内部单位均分 360°
+
+        for i = 1, def.count do
+            local angle = groupStartAngle + (i - 1) * angleStep
+            local x = CCunit.x + math.cos(angle) * def.radius
+            local y = CCunit.y + math.sin(angle) * def.radius
+
+            local launcherName = string.format("%s_unit%d", groupName, i)
+            local unitType
+            if type(def.type) == "table" then
+                -- def.type 是数组，按索引循环取
+                unitType = def.type[((i-1) % #def.type) + 1]
+            else
+                -- def.type 是单个字符串
+                unitType = def.type
+            end
+            table.insert(group.units, {
+                type = unitType,
+                unitId = ctld.getNextUnitId(),
+                name = launcherName,
+                x = x,
+                y = y,
+                heading = angle,
+                skill = "High"
+            })
+
+            -- 支援单位只生成在每组第一辆主力旁边
+            if def.support and #def.support > 0 and i == 1 then
+                for _, sup in ipairs(def.support) do
+                    for r = 1, sup.count do
+                        table.insert(group.units, {
+                            type = sup.type,
+                            unitId = ctld.getNextUnitId(),
+                            name = string.format("%s_support_%s_%d", groupName, sup.type, r),
+                            x = x + (sup.offset and sup.offset.x or 0) + (r-1) * 10,
+                            y = y + (sup.offset and sup.offset.y or 0),
+                            heading = angle,
+                            skill = "High"
+                        })
+                    end
+                end
+            end
+        end
+
+        -- 生成群组
+        local newGroup = mist.dynAdd(group)
+        if newGroup then
+            NP.logInfo(string.format("[spawnDefenseFromUnitlist] 生成群组: %s (主力 %d + 支援 %d)", 
+                groupName, def.count, def.support and #def.support or 0))
+        else
+            NP.logError("[spawnDefenseFromUnitlist] 生成失败: " .. groupName)
+        end
+    end
+end
 
 function NP.getLogisticData(_logistic)
     for _, _group in pairs(mist.DBs.groupsByName) do
