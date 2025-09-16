@@ -53,6 +53,6 @@ PlayerCmd = function(REXtext, playerID, ucid)
 
   -- 占位的 -tb 功能
   elseif cmd == "-tb" then
-      net.dostring_in("mission", string.format("a_do_script('SLOT.resetSideSwitch(\"%s\",\"%s\")')",playerID, ucid))
+     SLOT.resetSideSwitch(playerID, ucid)
   end
 end

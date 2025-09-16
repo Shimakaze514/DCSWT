@@ -9,89 +9,117 @@ SLOT.LastSideSwitch = {}
 SLOT.SideSwitchCooldown = 300
 
 function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
-    local _side = side
     local _playerInfo = net.get_player_info(playerID)
-    local _ucid = net.get_player_info(playerID , 'ucid')
-    local sideAvail = SLOT.allowSideSwitch(side, playerID)
-    local balance = SLOT.teamBalance(_side, playerID)
-    --local balance = true
-    local _slotID = slotID
-    local slotAvail = SLOT.allowEnterSlotDynamic(playerID, _side, _slotID)
+
+    if not _playerInfo then
+        net.log('[SLOTAUTH] 无法获取玩家信息，拒绝切换 for playerID ' .. tostring(playerID))
+        return false
+    end
+
+    local _ucid = _playerInfo.ucid
+    if not _ucid then
+        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo.name or playerID) .. ' 无 UCID，拒绝切换')
+        return false
+    end
 
     SLOT.LastSideSwitch[_ucid] = SLOT.LastSideSwitch[_ucid] or {}
+    local lastEntry = SLOT.LastSideSwitch[_ucid]
 
-    if sideAvail == true and balance == true and slotAvail == true then
-        if _playerInfo ~= nil and _playerInfo.side ~= side then
-            if _side ~= 0 and SLOT.LastSideSwitch[_ucid].side ~= _side then
-                SLOT.LastSideSwitch[_ucid].time = os.time()
-                SLOT.LastSideSwitch[_ucid].side = _side
-            end
-        end
-        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 成功切换至阵营 ' .. tostring(_side))
-        return true
-    end
-
+    -- 后门权限优先检查（管理员等可绕过限制）
     if SLOT.backDoor(playerID) then
-        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 使用后门权限进入阵营 ' .. tostring(_side))
+        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo.name or playerID) .. ' 使用后门权限进入阵营 ' ..
+                    tostring(side))
         net.send_chat_to('后门权限已启用', playerID)
-        return true
+        return true                         -- 必须返回 true（允许）
     end
-    net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 切换阵营被拒绝，sideAvail=' .. tostring(sideAvail) .. ', balance=' .. tostring(balance) .. ', slotAvail=' .. tostring(slotAvail))
-    
-    local sideNames = { [1] = "红方", [2] = "蓝方" }
-    local lastSwitchEntry = SLOT.LastSideSwitch[_ucid]
-    local sideName = sideNames[(lastSwitchEntry and lastSwitchEntry.side) or _playerInfo.side] or "中立"
-    local oppositeSideName = sideNames[ (_playerInfo and (_playerInfo.side == 1 and 2 or 1)) ] or "中立"
-    local kickMsg
-    local ChatMsg
+
+    -- 如果玩家并未真正换边，只需检查槽位权限（短路优化）
+    if side == _playerInfo.side then
+        local slotAvail = SLOT.allowEnterSlotDynamic(playerID, side, slotID)
+        if slotAvail ~= true then
+            net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo.name or playerID) .. ' 被拒绝进入机位 ' .. tostring(slotID))
+            return false
+        end
+        return
+    end
+    -- 检查阵营切换冷却
+    local sideAvail = SLOT.allowSideSwitch(side, playerID)
     if sideAvail ~= true then
-        local lastSwitch = lastSwitchEntry.time
-        local allowedAt = lastSwitch + (SLOT.SideSwitchCooldown or 600)
-        local at = os.date("*t", allowedAt)
-        kickMsg = string.format(
+        -- 尽可能安全地计算允许的时间（如果没有 lastEntry.time 则使用当前时间作为基准）
+        local lastSwitch = lastEntry.time or 0
+        local cooldown = SLOT.SideSwitchCooldown or 600
+        local allowedAt = lastSwitch + cooldown
+        local at = os.date('*t', allowedAt)
+
+        local sideNames = {
+            [1] = '红方',
+            [2] = '蓝方'
+        }
+        local prevSide = lastEntry.side or _playerInfo.side or 0
+        local sideName = sideNames[prevSide] or '中立'
+        local oppositeSideName = sideNames[(prevSide == 1 and 2 or 1)] or '中立'
+
+        local kickMsg = string.format(
             "你因在冷却期内频繁切换阵营而被踢出。你可以重新进入服务器并加入 %s 。若要切换至 %s ，请等待至 %d月%d日 %02d时%02d分%02d秒 之后再尝试。",
-            sideName, oppositeSideName,
-            at.month, at.day, at.hour, at.min, at.sec
-        )              
-        ChatMsg = string.format(
+            sideName, oppositeSideName, at.month, at.day, at.hour, at.min, at.sec)
+        local ChatMsg = string.format(
             "禁止在%d秒内频繁切换阵营！你可以重新加入 %s 。若要切换至 %s ，请等待至 %d月%d日 %02d时%02d分%02d秒 之后再尝试。",
-            SLOT.SideSwitchCooldown,sideName, oppositeSideName,
-            at.month, at.day, at.hour, at.min, at.sec
-        )   
+            cooldown, sideName, oppositeSideName, at.month, at.day, at.hour, at.min, at.sec)
+
         net.send_chat_to(ChatMsg, playerID)
-        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 被踢，信息是 ' .. kickMsg)
-        --net.kick(playerID , kickMsg)
-        net.force_player_slot(playerID, 0, '')
+        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo.name or playerID) ..
+                    ' 被拒绝切换（冷却中），信息: ' .. kickMsg)
         return false
-    elseif balance ~= true and _playerInfo.side ~= side then
+    end
+
+    -- 检查人数平衡
+    local balance = SLOT.teamBalance(side, playerID)
+    if balance ~= true and _playerInfo.side ~= side then
+        -- 建议加入另一边并清空冷却（恢复用户体验）
+        SLOT.LastSideSwitch[_ucid] = SLOT.LastSideSwitch[_ucid] or {}
         local goSide = 1
-        if SLOT.LastSideSwitch[_ucid].side == 1 then 
+        if SLOT.LastSideSwitch[_ucid].side == 1 then
             goSide = 2
         end
-        sideName = sideNames[goSide]
-        kickMsg = "由于人数不平衡，你需要加入 "..sideName.." 以获得最好的游戏体验。现在你可以重新加入服务器！你的跳边冷却已清空"
+        local sideNames = {
+            [1] = '红方',
+            [2] = '蓝方'
+        }
+        local sideName = sideNames[goSide] or '中立'
+
         SLOT.LastSideSwitch[_ucid].time = nil
         SLOT.LastSideSwitch[_ucid].side = goSide
-        ChatMsg = "由于人数不平衡，你需要加入 "..sideName.." 以获得最好的游戏体验。你的跳边冷却已清空"
-        net.send_chat_to(ChatMsg, playerID)
-        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 被踢，信息是 ' .. kickMsg)
-        --net.kick(playerID , kickMsg)
-        net.force_player_slot(playerID, 0, '')
+
+        local msg = "由于人数不平衡，你需要加入 " .. sideName ..
+                        " 以获得最好的游戏体验。你的跳边冷却已清空"
+        net.send_chat_to(msg, playerID)
+        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo.name or playerID) .. ' 被提示加入 ' .. sideName ..
+                    '（人数平衡限制）')
         return false
-    elseif slotAvail ~= true then
-        net.force_player_slot(playerID, 0, '')
-        return false
-    else 
-        if _playerInfo ~= nil and _playerInfo.side ~= side then
-            if _side ~= 0 and SLOT.LastSideSwitch[_ucid].side ~= _side then
-                SLOT.LastSideSwitch[_ucid].time = os.time()
-                SLOT.LastSideSwitch[_ucid].side = _side
-            end
-        end
-        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 成功切换至阵营 ' .. tostring(_side))
-        return true
     end
+
+    -- 检查槽位权限/可选性
+    local slotAvail = SLOT.allowEnterSlotDynamic(playerID, side, slotID)
+    if slotAvail ~= true then
+        -- allowEnterSlotDynamic 已经负责给玩家提示
+        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo.name or playerID) .. ' 被拒绝进入机位 ' ..
+                    tostring(slotID))
+        return false
+    end
+
+    -- 所有检查通过：如果确实切换了阵营则记录时间与目标阵营
+    if side ~= 0 and _playerInfo.side ~= side then
+        if lastEntry.side ~= side then
+            lastEntry.time = os.time()
+            lastEntry.side = side
+        end
+    end
+
+    net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo.name or playerID) .. ' 成功切换至阵营 ' ..
+                tostring(side))
+    return
 end
+
 
 function SLOT.resetSideSwitch(playerID, ucid)
     SLOT.LastSideSwitch[ucid] = SLOT.LastSideSwitch[ucid] or {}
@@ -120,6 +148,7 @@ function SLOT.resetSideSwitch(playerID, ucid)
     net.send_chat_to("跳边成功！请直接选择到对面阵营！", playerID)
     net.log(string.format("[SLOTAUTH] 玩家 %s 成功使用-tb跳边，新的side=%d", ucid, SLOT.LastSideSwitch[ucid].side))
 end
+
 --[[ function SLOT.callbacks.onPlayerTryConnect(addr, name, ucid, playerId)
     --net.log('addr'..addr.."ucid"..ucid.."name"..name.."playerId"..playerId)
     if string.find(name, " ") ~= nil or string.find(name, "　") ~= nil then

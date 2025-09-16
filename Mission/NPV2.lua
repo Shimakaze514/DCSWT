@@ -414,7 +414,7 @@ function NP.spawnDefenseFromUnitlist(static, defTable, coalition, ccName)
             end
             table.insert(group.units, {
                 type = unitType,
-                unitId = ctld.getNextUnitId(),
+                --unitId = ctld.getNextUnitId(), --! 操你妈，没事别赋值unitId，会导致机位选不了（跟slotId冲突）
                 name = launcherName,
                 x = x,
                 y = y,
@@ -428,7 +428,7 @@ function NP.spawnDefenseFromUnitlist(static, defTable, coalition, ccName)
                     for r = 1, sup.count do
                         table.insert(group.units, {
                             type = sup.type,
-                            unitId = ctld.getNextUnitId(),
+                            --unitId = ctld.getNextUnitId(),
                             name = string.format("%s_support_%s_%d", groupName, sup.type, r),
                             x = x + (sup.offset and sup.offset.x or 0) + (r-1) * 10,
                             y = y + (sup.offset and sup.offset.y or 0),
