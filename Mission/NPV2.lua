@@ -193,12 +193,12 @@ function NP.capture(_args)
     table.insert(ctld.logisticUnits, _logisticData.units[1].unitName)--新的单位加到cc的白名单
 
 
-    NP.setRelatedZone(_logisticData,_logisticData.units[1].unitName,_logisticData.units[1].coalition)
+    NP.setRelatedZone(_logisticData,_logisticData.units[1].unitName,_logisticData.units[1].coalition,false)
     NP.logInfo("战区".._logisticData.groupName.."被"..CountrySide.."占领。操作者是".._capturedPlayerName)
     trigger.action.outText("战区".._logisticData.groupName.."被"..CountrySide.."占领。操作者是".._capturedPlayerName, 20)
 end
 
-function NP.setRelatedZone(static, unitName,coalition)
+function NP.setRelatedZone(static, unitName,coalition, firsttime)
     local originalCCname
     --NP.logDebug("[setRelatedZone] 所有的logisticUnits如下: "..ctld.p(ctld.logisticUnits))
     for k,v in pairs(ctld.logisticUnits) do
@@ -355,12 +355,16 @@ function NP.setRelatedZone(static, unitName,coalition)
     end, {static,coalition,oppsitecoalition} , timer.getTime()+5)
 
     NP.logInfo('[setRelatedZone] 占领CC的流程完成: '.. ccname..'| 阵营:'..coalition)
-    if string.find(unitName, "本场") then
-        NP.spawnDefenseFromUnitlist(static, UnitlistHome, coalition, unitName)
-    elseif string.find(unitName, "中场") then
-        NP.spawnDefenseFromUnitlist(static, UnitlistMiddle, coalition, unitName)
-    elseif string.find(unitName, "前线") then
-        NP.spawnDefenseFromUnitlist(static, UnitlistFront, coalition, unitName)
+    if not firsttime then
+        if string.find(unitName, "本场") then
+            NP.spawnDefenseFromUnitlist(static, UnitlistHome, coalition, unitName)
+        elseif string.find(unitName, "中场") then
+            NP.spawnDefenseFromUnitlist(static, UnitlistMiddle, coalition, unitName)
+        elseif string.find(unitName, "前线") then
+            NP.spawnDefenseFromUnitlist(static, UnitlistFront, coalition, unitName)
+        end
+    else
+        NP.logInfo('[setRelatedZone] 有保存的存档，不重新生成防御单位：'.. ccname..'| 阵营:'..coalition)
     end
 end
 

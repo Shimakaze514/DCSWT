@@ -33,6 +33,7 @@ dsave.DSaveGroupsCache={}
 dsave.Config_Dir = lfs.writedir() .. [[SourceData/]]
 dsave.DSaveGroupsFilePath = dsave.Config_Dir .. "动态保存单位.json"
 dsave.DSaveCCsFilePath = dsave.Config_Dir .. "动态保存物体.json"
+dsave.hasSaveFile = false
 
 function dsave.logError(message)
     env.info("[DSAVE] Err: "  .. message)
@@ -230,6 +231,7 @@ function dsave.loadDsaveUnitsData()
         local _data = File:read("*a"); -- 读取所有内容
         io.close(File)
         tableData =net.json2lua(_data)
+        dsave.hasSaveFile = true
     else
         dsave.logError(err)
         dsave.logError('如果没有单位动态保存文件，请忽略这条')
@@ -314,7 +316,7 @@ function dsave.refreshFlagsAtMissionStart()
     for i, entry in pairs(tableData2) do
         local _group = entry[1]
         if _group ~= nil then -- and _logistic:getLife() > 0 
-            NP.setRelatedZone(_group,_group.units[1].unitName,_group.units[1].coalition)
+            NP.setRelatedZone(_group,_group.units[1].unitName,_group.units[1].coalition,dsave.hasSaveFile)
         end
     end
     dsave.logInfo("Refresh userFlags complete!")
