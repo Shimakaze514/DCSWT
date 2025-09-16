@@ -111,7 +111,7 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
         SLOT.LastSideSwitch[_ucid].side = goSide
 
         local msg = "由于人数不平衡，你需要加入 " .. sideName ..
-                        " 以获得最好的游戏体验。你的跳边冷却已清空"
+                        " 以获得最好的游戏体验。若你正与朋友组队，可输入\"-tb\"来跳边（只能跳一次！）"
         net.send_chat_to(msg, playerID)
         net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo.name or playerID) .. ' 被提示加入 ' .. sideName ..
                     '（人数平衡限制）')
@@ -125,6 +125,18 @@ end
 
 
 function SLOT.resetSideSwitch(playerID, ucid)
+    local _playerInfo = net.get_player_info(playerID)
+    local _side = _playerInfo and _playerInfo.side or 0
+    if _side == 0 then
+        net.send_chat_to("你当前是观战状态，无需使用跳边功能！请先选择一个阵营！", playerID)
+        return
+    end
+    local _targetSide = (_side == 1) and 2 or 1
+    local balance = SLOT.teamBalance(_targetSide, playerID)
+    if balance == true then
+        net.send_chat_to("当前阵营人数平衡，无需跳边！", playerID)
+        return
+    end
     SLOT.LastSideSwitch[ucid] = SLOT.LastSideSwitch[ucid] or {}
 
     local lastTBTime = SLOT.LastSideSwitch[ucid].tbTime or 0
@@ -219,7 +231,7 @@ function SLOT.teamBalance(_side,_playerID)
     local space = (_teamMap[1] + _teamMap[2]) * SLOT.teamBalenceCoefficient
 
     if _teamMap[1] + _teamMap[2]<5 then
-        net.send_chat_to('总人数少，允许不平衡', _playerID)
+        --net.send_chat_to('总人数少，允许不平衡', _playerID)
         return true
     end
  
