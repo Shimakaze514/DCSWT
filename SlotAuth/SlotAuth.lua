@@ -3,7 +3,7 @@ SLOT.callbacks = SLOT.callbacks or {}
 
 SLOT.FilePath = lfs.writedir() .. [[SourceData/]] .. '动态槽位限制.json'
 SLOT.AuthDataCache = {}
-SLOT.teamBalenceCoefficient = 0.33
+SLOT.teamBalenceCoefficient = 0.34
 SLOT.UseNewDynamicSystem = true
 SLOT.LastSideSwitch = {}
 SLOT.SideSwitchCooldown = 300
@@ -60,8 +60,9 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
         )   
         net.send_chat_to(ChatMsg, playerID)
         net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 被踢，信息是 ' .. kickMsg)
-        
         --net.kick(playerID , kickMsg)
+        net.force_player_slot(playerID, 0, '')
+        return false
     elseif balance ~= true and _playerInfo.side ~= side then
         local goSide = 1
         if SLOT.LastSideSwitch[_ucid].side == 1 then 
@@ -69,18 +70,56 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
         end
         sideName = sideNames[goSide]
         kickMsg = "由于人数不平衡，你需要加入 "..sideName.." 以获得最好的游戏体验。现在你可以重新加入服务器！你的跳边冷却已清空"
-        SLOT.LastSideSwitch[_ucid] = nil
+        SLOT.LastSideSwitch[_ucid].time = nil
+        SLOT.LastSideSwitch[_ucid].side = goSide
         ChatMsg = "由于人数不平衡，你需要加入 "..sideName.." 以获得最好的游戏体验。你的跳边冷却已清空"
         net.send_chat_to(ChatMsg, playerID)
         net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 被踢，信息是 ' .. kickMsg)
         --net.kick(playerID , kickMsg)
+        net.force_player_slot(playerID, 0, '')
+        return false
+    elseif slotAvail ~= true then
+        net.force_player_slot(playerID, 0, '')
+        return false
+    else 
+        if _playerInfo ~= nil and _playerInfo.side ~= side then
+            if _side ~= 0 and SLOT.LastSideSwitch[_ucid].side ~= _side then
+                SLOT.LastSideSwitch[_ucid].time = os.time()
+                SLOT.LastSideSwitch[_ucid].side = _side
+            end
+        end
+        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo and _playerInfo.name or playerID) .. ' 成功切换至阵营 ' .. tostring(_side))
+        return true
     end
-    
-    net.force_player_slot(playerID, 0, '')
-    return false
 end
 
+function SLOT.resetSideSwitch(playerID, ucid)
+    SLOT.LastSideSwitch[ucid] = SLOT.LastSideSwitch[ucid] or {}
 
+    local lastTBTime = SLOT.LastSideSwitch[ucid].tbTime or 0
+    local now = os.time()
+    local cooldown = 600  -- 10分钟冷却
+
+    if now - lastTBTime < cooldown then
+        local remain = cooldown - (now - lastTBTime)
+        net.send_chat_to(string.format("跳边失败！你已跳过一次！"), playerID)
+        net.log(string.format("[SLOTAUTH] 玩家 %s 尝试-tb失败，冷却中 %d 秒剩余", ucid, remain))
+        return
+    end
+
+    -- 清空上次冷却时间
+    SLOT.LastSideSwitch[ucid].time = nil
+
+    -- 切换阵营
+    local currentSide = SLOT.LastSideSwitch[ucid].side or 1
+    SLOT.LastSideSwitch[ucid].side = (currentSide == 1) and 2 or 1
+
+    -- 更新-tb使用时间
+    SLOT.LastSideSwitch[ucid].tbTime = now
+
+    net.send_chat_to("跳边成功！请直接选择到对面阵营！", playerID)
+    net.log(string.format("[SLOTAUTH] 玩家 %s 成功使用-tb跳边，新的side=%d", ucid, SLOT.LastSideSwitch[ucid].side))
+end
 --[[ function SLOT.callbacks.onPlayerTryConnect(addr, name, ucid, playerId)
     --net.log('addr'..addr.."ucid"..ucid.."name"..name.."playerId"..playerId)
     if string.find(name, " ") ~= nil or string.find(name, "　") ~= nil then

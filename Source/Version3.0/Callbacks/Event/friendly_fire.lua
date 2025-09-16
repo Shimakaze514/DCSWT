@@ -1,6 +1,9 @@
 SourceCall = SourceCall or {}
 
 SourceCall.friendly_fire = function(eventName, playerID, weaponName, victimPlayerID)
+    if victimPlayerID == nil or playerID == victimPlayerID then
+        return
+    end
     local ucid = net.get_player_info(playerID, "ucid")
     local name = net.get_player_info(playerID, "name")
     local ipaddr = net.get_player_info(playerID, "ipaddr")
