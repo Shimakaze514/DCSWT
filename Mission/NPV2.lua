@@ -238,22 +238,22 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
     end
 
     timer.scheduleFunction(function(_args)
-        local static, _coalition, _oppsitecoalition = _args[1],_args[2],_args[3]
+        local static, _coalition, _oppsitecoalition,ccname = _args[1],_args[2],_args[3],_args[4]
         
         NP.logDebug('传进生成补给的函数的值：'..ctld.p(static).."|".._coalition.."|".._oppsitecoalition)
         local CCunit = static.units[1]
         
-        if StaticObject.getByName(CCunit.unitName..'_invisibleFarp') ~= nil then
-            StaticObject.getByName(CCunit.unitName..'_invisibleFarp'):destroy()
+        if StaticObject.getByName(ccname..'_invisibleFarp') ~= nil then
+            StaticObject.getByName(ccname..'_invisibleFarp'):destroy()
         end
-        if StaticObject.getByName(CCunit.unitName..'_Ammo') ~= nil then
-            StaticObject.getByName(CCunit.unitName..'_Ammo'):destroy()
+        if StaticObject.getByName(ccname..'_Ammo') ~= nil then
+            StaticObject.getByName(ccname..'_Ammo'):destroy()
         end
-        if StaticObject.getByName(CCunit.unitName..'_Fuel') ~= nil then
-            StaticObject.getByName(CCunit.unitName..'_Fuel'):destroy()
+        if StaticObject.getByName(ccname..'_Fuel') ~= nil then
+            StaticObject.getByName(ccname..'_Fuel'):destroy()
         end
-        if StaticObject.getByName(CCunit.unitName..'_Command') ~= nil then
-            StaticObject.getByName(CCunit.unitName..'_Command'):destroy()
+        if StaticObject.getByName(ccname..'_Command') ~= nil then
+            StaticObject.getByName(ccname..'_Command'):destroy()
         end
 
         local sep_h = 20
@@ -280,7 +280,7 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
         category = 'Heliports', 
         x = CCunit.x, 
         y = CCunit.y,
-        name = CCunit.unitName..'_invisibleFarp', 
+        name = ccname..'_invisibleFarp', 
         heading = CCunit.heading,
         clone = true,
         dead =false,
@@ -315,7 +315,7 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
         category = 'Fortifications', 
         x = front_x, 
         y = front_y,
-        name = CCunit.unitName..'_Ammo', 
+        name = ccname..'_Ammo', 
         heading = CCunit.heading,
         clone = true,
         dead =false,
@@ -330,7 +330,7 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
         category = 'Fortifications', 
         x = back_x, 
         y = back_y,
-        name = CCunit.unitName..'_Fuel', 
+        name = ccname..'_Fuel', 
         heading = CCunit.heading,
         clone = true,
         dead =false,
@@ -345,14 +345,14 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
         category = 'Fortifications', 
         x = mid_x, 
         y = mid_y,
-        name = CCunit.unitName..'_Command', 
+        name = ccname..'_Command', 
         heading = CCunit.heading,
         clone = true,
         dead =false,
         }
         
         mist.dynAddStatic(vars4)
-    end, {static,coalition,oppsitecoalition} , timer.getTime()+5)
+    end, {static,coalition,oppsitecoalition,ccname} , timer.getTime()+5)
 
     NP.logInfo('[setRelatedZone] 占领CC的流程完成: '.. ccname..'| 阵营:'..coalition)
     if not firsttime then
