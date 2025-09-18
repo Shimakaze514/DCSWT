@@ -164,7 +164,7 @@ function NP.capture(_args)
     _logisticData.coalition= CountrySide
 
     _logisticData.units[1].groupName=_logisticData.groupName
-    _logisticData.units[1].unitName=_logisticData.units[1].unitName..' '
+    _logisticData.units[1].unitName=_logisticData.units[1].unitName  -- ..' '
     _logisticData.units[1].unitId= ctld.getNextUnitId()
     --_logisticData.units[1].unitId= nil
     _logisticData.units[1].groupId= _logisticData.groupId
@@ -177,7 +177,7 @@ function NP.capture(_args)
     --_logisticData.units[1].alt= land.getHeight({x = _logisticData.units[1].x, y = _logisticData.units[1].y}) - 7
     NP.logDebug('_logistic:'..ctld.p(_targetLogistic))
     NP.logDebug('_logisticData:'..ctld.formatTable(_logisticData))
-    NP.logDebug('_unit:'..ctld.p(_unit))
+    --NP.logDebug('_unit:'..ctld.p(_logisticData.units[1]))
 
     _targetLogistic:destroy()--把老一边的cc做掉
     for index=#ctld.logisticUnits,1,-1 do
@@ -195,6 +195,7 @@ function NP.capture(_args)
 
     NP.setRelatedZone(_logisticData,_logisticData.units[1].unitName,_logisticData.units[1].coalition,false)
     NP.logInfo("战区".._logisticData.groupName.."被"..CountrySide.."占领。操作者是".._capturedPlayerName)
+    NP.logDebug("占领后的logisticUnits是："..ctld.p(ctld.logisticUnits))
     trigger.action.outText("战区".._logisticData.groupName.."被"..CountrySide.."占领。操作者是".._capturedPlayerName, 20)
 end
 
@@ -243,17 +244,20 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
         NP.logDebug('传进生成补给的函数的值：'..ctld.p(static).."|".._coalition.."|".._oppsitecoalition)
         local CCunit = static.units[1]
         
-        if StaticObject.getByName(ccname..'_invisibleFarp') ~= nil then
-            StaticObject.getByName(ccname..'_invisibleFarp'):destroy()
-        end
         if StaticObject.getByName(ccname..'_Ammo') ~= nil then
             StaticObject.getByName(ccname..'_Ammo'):destroy()
+        else
+            NP.logError('[setRelatedZone] 没有找到要销毁的Ammo: '.. ccname..'_Ammo')
         end
         if StaticObject.getByName(ccname..'_Fuel') ~= nil then
             StaticObject.getByName(ccname..'_Fuel'):destroy()
+        else
+            NP.logError('[setRelatedZone] 没有找到要销毁的Fuel: '.. ccname..'_Fuel')
         end
         if StaticObject.getByName(ccname..'_Command') ~= nil then
             StaticObject.getByName(ccname..'_Command'):destroy()
+        else
+            NP.logError('[setRelatedZone] 没有找到要销毁的Command: '.. ccname..'_Command')
         end
 
         local sep_h = 20
@@ -272,21 +276,27 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
         local back_x = mid_x - fwd_dx * sep_v
         local back_y = mid_y - fwd_dy * sep_v
         
-        local vars = 
-        {
-        type = 'Invisible FARP', 
-        shape_name = "invisiblefarp",
-        country = CCunit.country, 
-        category = 'Heliports', 
-        x = CCunit.x, 
-        y = CCunit.y,
-        name = ccname..'_invisibleFarp', 
-        heading = CCunit.heading,
-        clone = true,
-        dead =false,
-        }
         
-        mist.dynAddStatic(vars)
+        if StaticObject.getByName(ccname..'_invisibleFarp') == nil then
+            local vars = 
+            {
+            type = 'Invisible FARP', 
+            shape_name = "invisiblefarp",
+            country = CCunit.country, 
+            category = 'Heliports', 
+            x = CCunit.x, 
+            y = CCunit.y,
+            name = ccname..'_invisibleFarp', 
+            heading = CCunit.heading,
+            --clone = true,
+            dead =false,
+            }
+            
+            mist.dynAddStatic(vars)
+        else
+            NP.logError('[setRelatedZone] Invisible Farp已存在，无需新建: '.. ccname..'_invisibleFarp')
+        end
+
         timer.scheduleFunction(function()
             local bases = world.getAirbases()
             for _, base in pairs(bases) do
@@ -317,7 +327,7 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
         y = front_y,
         name = ccname..'_Ammo', 
         heading = CCunit.heading,
-        clone = true,
+        --clone = true,
         dead =false,
         }
         
@@ -332,7 +342,7 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
         y = back_y,
         name = ccname..'_Fuel', 
         heading = CCunit.heading,
-        clone = true,
+        --clone = true,
         dead =false,
         }
         
@@ -347,7 +357,7 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
         y = mid_y,
         name = ccname..'_Command', 
         heading = CCunit.heading,
-        clone = true,
+        --clone = true,
         dead =false,
         }
         
@@ -356,12 +366,12 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
 
     NP.logInfo('[setRelatedZone] 占领CC的流程完成: '.. ccname..'| 阵营:'..coalition)
     if not firsttime then
-        if string.find(unitName, "本场") then
-            NP.spawnDefenseFromUnitlist(static, UnitlistHome, coalition, unitName)
-        elseif string.find(unitName, "中场") then
-            NP.spawnDefenseFromUnitlist(static, UnitlistMiddle, coalition, unitName)
-        elseif string.find(unitName, "前线") then
-            NP.spawnDefenseFromUnitlist(static, UnitlistFront, coalition, unitName)
+        if string.find(ccname, "本场") then
+            NP.spawnDefenseFromUnitlist(static, UnitlistHome, coalition, ccname)
+        elseif string.find(ccname, "中场") then
+            NP.spawnDefenseFromUnitlist(static, UnitlistMiddle, coalition, ccname)
+        elseif string.find(ccname, "前线") then
+            NP.spawnDefenseFromUnitlist(static, UnitlistFront, coalition, ccname)
         end
     else
         NP.logInfo('[setRelatedZone] 有保存的存档，不重新生成防御单位：'.. ccname..'| 阵营:'..coalition)

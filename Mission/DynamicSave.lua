@@ -139,7 +139,7 @@ function dsave.recordAllCCsElements()
                 if _unitObject ~= nil and checkRepeat[_unitTable.unitName]==nil then
                     needSave = true
                     checkRepeat[_unitTable.unitName]=true
-                    dsave.logDebug("_unitObject:getLife()"..ctld.formatTable(_unitObject).."\n生命值是: ".._unitObject:getLife())
+                    dsave.logDebug("_unitObject:getLife()".._unitTable.unitName.."\n生命值是: ".._unitObject:getLife())
                     if _unitObject:getLife() <= 0 then
                         needKill = true
                     end

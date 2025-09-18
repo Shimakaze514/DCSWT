@@ -5953,11 +5953,12 @@ function ctld.inLogisticsZone(_heli, needcheck)
     end
 
     local _heliPoint = _heli:getPoint()
-
+    ctld.logDebug("[inLogisticsZone] logisticUnits:" .. ctld.formatTable(ctld.logisticUnits))
     for i = #ctld.logisticUnits, 1, -1 do
         local _name = ctld.logisticUnits[i]
         local _logistic = StaticObject.getByName(_name)
         if _logistic == nil or _logistic:getLife() <= 0 then
+            ctld.logDebug("CC不存在或已死亡！name: \"".._name.."\"")
             --table.remove(ctld.logisticUnits, i)  -- 移除就占领不回来了
         elseif _logistic:getCoalition() == _heli:getCoalition() then
             local _dist = ctld.getDistance(_heliPoint, _logistic:getPoint())
@@ -5971,6 +5972,7 @@ function ctld.inLogisticsZone(_heli, needcheck)
         local fob = ctld.fobLocation[i]
         local fobObj = fob.obj
         if fobObj == nil or fobObj:getLife() <= 0 then
+            ctld.logDebug("FOB不存在或已死亡！")
             --table.remove(ctld.fobLocation, i)  -- 移除死亡 FOB
         elseif fobObj:getCoalition() == _heli:getCoalition() then
             local _dist = ctld.getDistance(_heliPoint, fob.point)
