@@ -2626,7 +2626,7 @@ function ctld.spawnCrate(_arguments)
             if ctld.inLogisticsZone(_heli) == false then
 
                 --ctld.displayMessageToGroup(_heli, "You are not close enough to friendly logistics to get a crate!", 10)
-                ctld.displayMessageToGroup(_heli, "距离CC或FOB过远，无法拿到一个板条箱！", 10)
+                ctld.displayMessageToGroup(_heli, "距离CC或FOB超过"..ctld.maximumDistanceLogistic.."米，无法获取箱子！", 10)
 
                 return
             end
@@ -4093,15 +4093,18 @@ function ctld.dropAndUnpackCrates(_arguments)
     local _unitName = _arguments[1]
     local _heli = ctld.getTransportUnit(_unitName)
     if _heli == nil then return end
-    
-    local _currentCrates = ctld.inTransitSlingLoadCrates[_unitName] or {}
-    local _crateCount = #_currentCrates
-    
-    for i = 1, _crateCount do
-        timer.scheduleFunction(ctld.dropSlingCrate, _arguments, timer.getTime() + 0.2*i)
+    if not ctld.inAir(_heli) or ctld.heightDiff(_heli) <= 7.5 then
+        local _currentCrates = ctld.inTransitSlingLoadCrates[_unitName] or {}
+        local _crateCount = #_currentCrates
+        
+        for i = 1, _crateCount do
+            timer.scheduleFunction(ctld.dropSlingCrate, _arguments, timer.getTime() + 0.2*i)
+        end
+        
+        timer.scheduleFunction(ctld.unpackCrates, _arguments, timer.getTime() + 1.0) -- 1秒延迟（最多支持4个箱）
+    else
+        ctld.displayMessageToGroup(_heli, "你的离地高度大于7.5米，无法卸货！", 10, true)
     end
-    
-    timer.scheduleFunction(ctld.unpackCrates, _arguments, timer.getTime() + 1.0) -- 1秒延迟（最多支持4个箱）
 end
 
 function ctld.crateAddPoint(_heli,_num)
@@ -4119,7 +4122,7 @@ function ctld.crateAddPoint(_heli,_num)
     local text = string.format("吊箱子奖励%d点", SourceObj.addCrate*_num)
     ctld.displayMessageToGroup(_heli, text, 20)
 end
-function ctld.unpackCrates(_arguments)
+function ctld.unpackCrates(_arguments)--_arguments
 
     local _status, _err = pcall(function(_args)
 
@@ -4154,10 +4157,11 @@ function ctld.unpackCrates(_arguments)
                     ctld.displayMessageToGroup(_heli, "抱歉，你必须在打开箱子之前把它搬走！", 20)
                     return
                 end
-
+                ctld.logDebug(string.format("开始Unpacking crate %s", ctld.p(_crate.details)))
                 local _groupTemplate = ctld.getGroupTemplate(_crate.details.unit)
 
                 if _groupTemplate then
+                    ctld.logDebug(string.format("Found group template for %s", ctld.p(_crate.details.unit)))
                     if _crate.details.unit == _groupTemplate.repair then
                         ctld.repairGroupSystem(_heli, _crate, _groupTemplate)
                     else
@@ -4170,12 +4174,13 @@ function ctld.unpackCrates(_arguments)
                     --我们一般不会用到不是一个组，又需要多个箱子的情况，这个可以不用管
                 elseif _crate.details.cratesRequired ~= nil and _crate.details.cratesRequired > 1 then
                     -- multicrate
+                    ctld.logDebug(string.format("Unpacking multi crate %s", ctld.p(_crate.details)))
                     ctld.unpackMultiCrate(_heli, _crate, _crates)
                     return
 
                 else
                     -- single crate
-
+                    ctld.logDebug(string.format("Unpacking single crate %s", ctld.p(_crate.details)))
                     local _cratePoint = _crate.crateUnit:getPoint()
                     local _crateName = _crate.crateUnit:getName()
 
@@ -4225,6 +4230,8 @@ function ctld.unpackCrates(_arguments)
                 --ctld.displayMessageToGroup(_heli, "No friendly crates close enough to unpack", 20)
                 ctld.displayMessageToGroup(_heli, "附近没有箱子可展开！", 20)
             end
+        else
+            ctld.displayMessageToGroup(_heli, "你的离地高度大于7.5米，无法展开箱子！", 20)
         end
     end, _arguments)
 
