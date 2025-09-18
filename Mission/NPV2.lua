@@ -164,7 +164,7 @@ function NP.capture(_args)
     _logisticData.coalition= CountrySide
 
     _logisticData.units[1].groupName=_logisticData.groupName
-    _logisticData.units[1].unitName=_logisticData.units[1].unitName  -- ..' '
+    _logisticData.units[1].unitName=_logisticData.units[1].unitName  -- ..' '  --! Static的name是groupName,放进查找表里的是UnitName,所以两个要一致.
     _logisticData.units[1].unitId= ctld.getNextUnitId()
     --_logisticData.units[1].unitId= nil
     _logisticData.units[1].groupId= _logisticData.groupId

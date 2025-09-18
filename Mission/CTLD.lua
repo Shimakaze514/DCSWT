@@ -845,9 +845,9 @@ ctld.spawnableCrates = {
             { weight = 640, desc = "道尔M2地空导弹(2箱1车)", unit = "CHAP_TorM2" , cratesRequired = 2},
             { weight = 680, desc = "铠甲S1弹炮一体系统(2箱1车)", unit = "CHAP_PantsirS1", cratesRequired = 2},
             { weight = 1480, desc = "【阵地】道尔M1地空导弹(2箱3车+补给)", unit = "SA-15 Buk" },
+            { weight = 560, desc = "【阵地】IRIS-T地空导弹(2箱2车+补给)", unit = "IRIST" },
             --{ weight = 1449, desc = "(小队)库班河(SA-6)地空导弹阵地(3箱4车+补给)", unit = "SA-6 Buk" },
             { weight = 1880, desc = "【阵地】山毛榉地空导弹(3箱3车+补给)", unit = "SA-11 Buk" },
-            { weight = 560, desc = "【阵地】IRIS-T地空导弹(3箱2车+补给)", unit = "IRIST" },
         }
     },
     {
@@ -5948,7 +5948,7 @@ function ctld.inLogisticsZone(_heli, needcheck)
     if needcheck == false then
         return false
     end
-    if ctld.inAir(_heli) then
+    if ctld.inAir(_heli) and ctld.heightDiff(_heli) > 7.5 then
         return false
     end
 
@@ -5968,11 +5968,12 @@ function ctld.inLogisticsZone(_heli, needcheck)
         end
     end
 
+    ctld.logDebug("[inLogisticsZone] fobLocation:" .. ctld.formatTable(ctld.fobLocation))
     for i = #ctld.fobLocation, 1, -1 do
         local fob = ctld.fobLocation[i]
         local fobObj = fob.obj
         if fobObj == nil or fobObj:getLife() <= 0 then
-            ctld.logDebug("FOB不存在或已死亡！")
+            ctld.logDebug("FOB不存在或已死亡！fob: \""..fob.."\"")
             --table.remove(ctld.fobLocation, i)  -- 移除死亡 FOB
         elseif fobObj:getCoalition() == _heli:getCoalition() then
             local _dist = ctld.getDistance(_heliPoint, fob.point)
@@ -5991,7 +5992,7 @@ function ctld.farEnoughFromLogisticZone(_heli, distance, needcheck)
     if needcheck == false then
         return true
     end
-    if ctld.inAir(_heli) then
+    if ctld.inAir(_heli) and ctld.heightDiff(_heli) > 7.5 then
         return false
     end
     local _heliPoint = _heli:getPoint()
