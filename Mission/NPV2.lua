@@ -156,7 +156,7 @@ function NP.capture(_args)
 
                 for _, _leader in pairs(_units) do
 
-                    if _leader ~= nil and _leader:getLife() > 1 then
+                    if _leader ~= nil and _leader:getCoalition() ~= _side and _leader:getLife() > 1 then
                         NP.logInfo('占点之前未清除所有防御单位，活着的单位是: '.._leader:getName())
                         trigger.action.outText('还有残余的防御单位，无法占领该CC！请手动搜寻或者使用JTAC单位寻找残存的防御单位',10)
                         return
@@ -165,7 +165,7 @@ function NP.capture(_args)
             end
         end
     end
-    
+
     NP.logDebug('开始从mist获取数据')
     local CountryID,Side,Country,CountrySide
     --TODO 抽象这里
