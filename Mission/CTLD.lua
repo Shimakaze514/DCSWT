@@ -2790,8 +2790,8 @@ end
 
 function ctld.inAir(_heli)
 
-    if _heli:inAir() == false then
-        return false
+    if _heli:inAir() == false or (_heli:getDesc().category == Unit.Category.AIRPLANE and ctld.heightDiff(_heli) <= ctld.airDropHeight) then
+        return false  -- allow load/unload
     end
 
     -- less than 5 cm/s a second so landed
@@ -4094,7 +4094,7 @@ function ctld.dropAndUnpackCrates(_arguments)
     local _unitName = _arguments[1]
     local _heli = ctld.getTransportUnit(_unitName)
     if _heli == nil then return end
-    if not ctld.inAir(_heli) or ctld.heightDiff(_heli) <= ctld.airDropHeight then
+    if not ctld.inAir(_heli) then
         local _currentCrates = ctld.inTransitSlingLoadCrates[_unitName] or {}
         local _crateCount = #_currentCrates
         
@@ -4131,7 +4131,7 @@ function ctld.unpackCrates(_arguments)--_arguments
 
         local _heli = ctld.getTransportUnit(_args[1])
         
-        if _heli and (not ctld.inAir(_heli) or ctld.heightDiff(_heli) <= ctld.airDropHeight) then
+        if _heli and not ctld.inAir(_heli) then
 
             local _crates = ctld.getCratesAndDistance(_heli)
             local _crate = ctld.getClosestCrate(_heli, _crates)
@@ -4505,7 +4505,7 @@ function ctld.dropSlingCrate(_args)
     local _heightDiff = ctld.heightDiff(_heli)
 
     -- 投放逻辑
-    if ctld.inAir(_heli) == false or _heightDiff <= ctld.airDropHeight then
+    if ctld.inAir(_heli) == false then
         ctld.displayMessageToGroup(_heli, _currentCrate.desc .. " 箱子已放下，在你12点方向", 10)
         _point = ctld.getPointAt12Oclock(_heli, 50)
     elseif _heightDiff > ctld.airDropHeight and _heightDiff <= 40.0 then
@@ -5956,7 +5956,7 @@ function ctld.inLogisticsZone(_heli, needcheck)
     if needcheck == false then
         return false
     end
-    if ctld.inAir(_heli) and ctld.heightDiff(_heli) > ctld.airDropHeight then
+    if ctld.inAir(_heli) then
         return false
     end
 
@@ -6000,7 +6000,7 @@ function ctld.farEnoughFromLogisticZone(_heli, distance, needcheck)
     if needcheck == false then
         return true
     end
-    if ctld.inAir(_heli) and ctld.heightDiff(_heli) > ctld.airDropHeight then
+    if ctld.inAir(_heli) then
         return false
     end
     local _heliPoint = _heli:getPoint()
