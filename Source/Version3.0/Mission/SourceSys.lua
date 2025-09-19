@@ -22,11 +22,6 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
             local _groupId = SourceObj.getGroupId(_unit)
             trigger.action.outTextForGroup(_groupId, "你在出生后120秒内起飞，触发自爆！", 10, true)
 
-            if ps.countdownTaskId then
-                timer.removeFunction(ps.countdownTaskId)
-                ps.countdownTaskId = nil
-            end
-
             timer.scheduleFunction(SourceObj.unitExplosion, _unit, timer.getTime() + 5)
             return
         end
@@ -135,23 +130,14 @@ SourceObj.onBirth = function(_unit)
     SourceObj.addF10SourceMenu(_groupId,_unit,_ucid)
 
     SourceObj.playerSource[_ucid].birthTime = timer.getTime()
-    -- 如果已有旧的倒计时任务，先移除（避免重复）
-    if SourceObj.playerSource[_ucid].countdownTaskId then
-        timer.removeFunction(SourceObj.playerSource[_ucid].countdownTaskId)
-        SourceObj.playerSource[_ucid].countdownTaskId = nil
-    end
-    SourceObj.playerSource[_ucid].countdownTaskId =
-        timer.scheduleFunction(SourceObj.countdownMessage, {_ucid, _groupId}, timer.getTime() + 15)
+
+    timer.scheduleFunction(SourceObj.countdownMessage, {_ucid, _groupId}, timer.getTime() + 15)
 end
 SourceObj.countdownMessage = function(args)
     local ucid, groupId = args[1], args[2]
     local ps = SourceObj.playerSource[ucid]
     -- 如果玩家数据不存在或没有 birthTime，清理并停止
     if not ps or not ps.birthTime then
-        if ps and ps.countdownTaskId then
-            timer.removeFunction(ps.countdownTaskId)
-            ps.countdownTaskId = nil
-        end
         return nil
     end
 
@@ -188,11 +174,6 @@ SourceObj.countdownMessage = function(args)
     else
         -- 倒计时结束：发送可起飞提示并清理任务引用
         trigger.action.outTextForGroup(groupId, "倒计时结束，您现在可以安全起飞。", 30, true)
-
-        if ps.countdownTaskId then
-            timer.removeFunction(ps.countdownTaskId)
-            ps.countdownTaskId = nil
-        end
 
         return nil
     end
