@@ -206,6 +206,7 @@ ctld.maximumHoverHeight = 12.0 -- Highest allowable height for crate hover
 ctld.maxDistanceFromCrate = 5.5 -- Maximum distance from from crate for hover
 ctld.hoverTime = 10 -- Time to hold hover above a crate for loading in seconds
 
+ctld.airDropHeight = 15
 -- end of Simulated Sling load configuration
 
 -- AA SYSTEM CONFIG --
@@ -4093,7 +4094,7 @@ function ctld.dropAndUnpackCrates(_arguments)
     local _unitName = _arguments[1]
     local _heli = ctld.getTransportUnit(_unitName)
     if _heli == nil then return end
-    if not ctld.inAir(_heli) or ctld.heightDiff(_heli) <= 7.5 then
+    if not ctld.inAir(_heli) or ctld.heightDiff(_heli) <= ctld.airDropHeight then
         local _currentCrates = ctld.inTransitSlingLoadCrates[_unitName] or {}
         local _crateCount = #_currentCrates
         
@@ -4103,7 +4104,7 @@ function ctld.dropAndUnpackCrates(_arguments)
         
         timer.scheduleFunction(ctld.unpackCrates, _arguments, timer.getTime() + 1.0) -- 1秒延迟（最多支持4个箱）
     else
-        ctld.displayMessageToGroup(_heli, "你的离地高度大于7.5米，无法卸货！", 10, true)
+        ctld.displayMessageToGroup(_heli, "你的离地高度大于"..ctld.airDropHeight.."米，无法卸货！", 10, true)
     end
 end
 
@@ -4130,7 +4131,7 @@ function ctld.unpackCrates(_arguments)--_arguments
 
         local _heli = ctld.getTransportUnit(_args[1])
         
-        if _heli and (not ctld.inAir(_heli) or ctld.heightDiff(_heli) <= 7.5) then
+        if _heli and (not ctld.inAir(_heli) or ctld.heightDiff(_heli) <= ctld.airDropHeight) then
 
             local _crates = ctld.getCratesAndDistance(_heli)
             local _crate = ctld.getClosestCrate(_heli, _crates)
@@ -4231,7 +4232,7 @@ function ctld.unpackCrates(_arguments)--_arguments
                 ctld.displayMessageToGroup(_heli, "附近没有箱子可展开！", 20)
             end
         else
-            ctld.displayMessageToGroup(_heli, "你的离地高度大于7.5米，无法展开箱子！", 20)
+            ctld.displayMessageToGroup(_heli, "你的离地高度大于"..ctld.airDropHeight.."米，无法展开箱子！", 20)
         end
     end, _arguments)
 
@@ -4504,10 +4505,10 @@ function ctld.dropSlingCrate(_args)
     local _heightDiff = ctld.heightDiff(_heli)
 
     -- 投放逻辑
-    if ctld.inAir(_heli) == false or _heightDiff <= 7.5 then
+    if ctld.inAir(_heli) == false or _heightDiff <= ctld.airDropHeight then
         ctld.displayMessageToGroup(_heli, _currentCrate.desc .. " 箱子已放下，在你12点方向", 10)
         _point = ctld.getPointAt12Oclock(_heli, 50)
-    elseif _heightDiff > 7.5 and _heightDiff <= 40.0 then
+    elseif _heightDiff > ctld.airDropHeight and _heightDiff <= 40.0 then
         ctld.displayMessageToGroup(_heli, _currentCrate.desc .. " 箱子已经放在你下面了", 10)
         _point = ctld.getPointAt12Oclock(_heli, 5)
     else
@@ -5955,7 +5956,7 @@ function ctld.inLogisticsZone(_heli, needcheck)
     if needcheck == false then
         return false
     end
-    if ctld.inAir(_heli) and ctld.heightDiff(_heli) > 7.5 then
+    if ctld.inAir(_heli) and ctld.heightDiff(_heli) > ctld.airDropHeight then
         return false
     end
 
@@ -5999,7 +6000,7 @@ function ctld.farEnoughFromLogisticZone(_heli, distance, needcheck)
     if needcheck == false then
         return true
     end
-    if ctld.inAir(_heli) and ctld.heightDiff(_heli) > 7.5 then
+    if ctld.inAir(_heli) and ctld.heightDiff(_heli) > ctld.airDropHeight then
         return false
     end
     local _heliPoint = _heli:getPoint()
