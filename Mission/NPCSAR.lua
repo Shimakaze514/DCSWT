@@ -391,21 +391,62 @@ function npcsar.getDistance(_point1, _point2)
 end
 
 
+-- function npcsar.cleanPilots()
+--     npcsar.logInfo('开始清除时间过长的跳伞驾驶员')
+--     local hasClean = false
+--     for groupName,detail in pairs(npcsar.EjectedPilots) do
+--         if timer.getTime()-detail.spawnTime>npcsar.cleanTime then
+--             Group.destroy(Group.getByName(groupName))
+--             npcsar.EjectedPilots[groupName]=nil
+--             hasClean = true
+--             npcsar.logInfo('跳伞驾驶员'..groupName..'被清除')
+--         end
+--     end
+--     if hasClean == true then
+--         trigger.action.outText('清除了一些好长时间都没人捞的跳伞驾驶员，RIP',10)
+--     end
+--     timer.scheduleFunction(npcsar.cleanPilots, nil, timer.getTime() + npcsar.cleanTime)
+-- end
+
 function npcsar.cleanPilots()
     npcsar.logInfo('开始清除时间过长的跳伞驾驶员')
-    local hasClean = false
-    for groupName,detail in pairs(npcsar.EjectedPilots) do
-        if timer.getTime()-detail.spawnTime>npcsar.cleanTime then
-            Group.destroy(Group.getByName(groupName))
-            npcsar.EjectedPilots[groupName]=nil
-            hasClean = true
-            npcsar.logInfo('跳伞驾驶员'..groupName..'被清除')
+    local now = timer.getTime()
+    local toRemove = {}
+
+    for groupName, detail in pairs(npcsar.EjectedPilots or {}) do
+        if not detail then
+            npcsar.logInfo('cleanPilots: 无 detail, key=' .. tostring(groupName))
+        elseif type(detail.spawnTime) ~= 'number' then
+            npcsar.logInfo('cleanPilots: spawnTime 缺失或类型不对, key=' .. tostring(groupName) .. ' spawnTime=' .. tostring(detail.spawnTime))
+        else
+            local age = now - detail.spawnTime
+            if age > (npcsar.cleanTime or 0) then
+                npcsar.logInfo(string.format('cleanPilots: 标记删除 %s (age=%.1f > cleanTime=%s)', tostring(groupName), age, tostring(npcsar.cleanTime)))
+                table.insert(toRemove, groupName)
+            end
         end
     end
-    if hasClean == true then
-        trigger.action.outText('清除了一些好长时间都没人捞的跳伞驾驶员，RIP',10)
+
+    local cleaned = false
+    for _, name in ipairs(toRemove) do
+        local g = Group.getByName(name)
+        if g then
+            Group.destroy(g)
+            npcsar.logInfo('cleanPilots: 已销毁 Group ' .. tostring(name))
+        else
+            npcsar.logInfo('cleanPilots: Group.getByName 返回 nil: ' .. tostring(name))
+        end
+        npcsar.EjectedPilots[name] = nil
+        cleaned = true
     end
-    timer.scheduleFunction(npcsar.cleanPilots, nil, timer.getTime() + npcsar.cleanTime)
+
+    if cleaned then
+        trigger.action.outText('清除了一些好长时间都没人捞的跳伞驾驶员，RIP', 10)
+    end
+
+    -- 安排下一次：不要把下一次直接设置为 cleanTime 秒后（可能太长），至少用一个合理最小值
+    local nextDelay = math.max(10, tonumber(npcsar.cleanTime) or 60) -- 至少 10 秒，或 cleanTime（秒）
+    timer.scheduleFunction(npcsar.cleanPilots, nil, timer.getTime() + nextDelay)
 end
 
 world.addEventHandler(npcsar.eventHandler)
