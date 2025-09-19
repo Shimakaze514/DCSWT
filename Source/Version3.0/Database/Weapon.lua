@@ -53,7 +53,7 @@ Weapon.AG_NLOS = {
   "AGM_84H",
   "CM_802AKG",
 }
-Weapon.AG_NLOSPoint = 150
+Weapon.AG_NLOSPoint = 100
 
 Weapon.AG_SmartMissile = {
   "AGM_88",
