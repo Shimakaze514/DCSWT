@@ -4244,6 +4244,7 @@ end
 
 -- builds a fob!
 function ctld.unpackFOBCrates(_crates, _heli)
+    if not _heli then return end
     if ctld.farEnoughFromLogisticZone(_heli, ctld.minimumDistanceBetweenFobs) == false then
         ctld.displayMessageToGroup(_heli, "野战FOB以及CC之间必须至少间隔" .. ctld.minimumDistanceBetweenFobs, 20)
         return
@@ -5170,8 +5171,8 @@ function ctld.repairGroupSystem(_heli, _nearestCrate, _groupTemplate)
     local _nearestGroup = ctld.findNearestGroupSystem(_heli, _groupTemplate)
     local lastRepairTime = ctld.lastRepairTimes[_nearestGroup.group:getName()]
 
-    if lastRepairTime ~= nil and timer.getTime() - lastRepairTime < 600 then
-        ctld.displayMessageToGroup(_heli, "无法修复  " .. _groupTemplate.name .. ". 距离你上次维修" .. _groupTemplate.name .. " 没有超过10分钟！工兵太忙了！", 10)
+    if lastRepairTime ~= nil and timer.getTime() - lastRepairTime < 1200 then
+        ctld.displayMessageToGroup(_heli, "无法修复  " .. _groupTemplate.name .. ". 距离你上次维修" .. _groupTemplate.name .. " 没有超过20分钟！工兵太忙了！", 10)
     elseif _nearestGroup ~= nil and _nearestGroup.dist < 300 then
 
         local _oldGroup = ctld.completeGroupSystems[_nearestGroup.group:getName()]
@@ -5965,7 +5966,7 @@ function ctld.inLogisticsZone(_heli, needcheck)
     for i = #ctld.logisticUnits, 1, -1 do
         local _name = ctld.logisticUnits[i]
         local _logistic = StaticObject.getByName(_name)
-        if _logistic == nil or _logistic:getLife() <= 0 then
+        if _logistic == nil or not Object.isExist(_logistic) or _logistic:getLife() <= 1 then
             ctld.logDebug("CC不存在或已死亡！name: \"".._name.."\"")
             --table.remove(ctld.logisticUnits, i)  -- 移除就占领不回来了
         elseif _logistic:getCoalition() == _heli:getCoalition() then
@@ -5976,17 +5977,24 @@ function ctld.inLogisticsZone(_heli, needcheck)
         end
     end
 
-    ctld.logDebug("[inLogisticsZone] fobLocation:" .. ctld.formatTable(ctld.fobLocation))
     for i = #ctld.fobLocation, 1, -1 do
         local fob = ctld.fobLocation[i]
         local fobObj = fob.obj
-        if fobObj == nil or fobObj:getLife() <= 0 then
-            ctld.logDebug("FOB不存在或已死亡！fob: \""..fob.."\"")
-            --table.remove(ctld.fobLocation, i)  -- 移除死亡 FOB
-        elseif fobObj:getCoalition() == _heli:getCoalition() then
-            local _dist = ctld.getDistance(_heliPoint, fob.point)
-            if _dist <= ctld.maximumDistanceLogistic then
-                return true
+    
+        if fobObj == nil or not Object.isExist(fobObj) then
+            ctld.logInfo("[farEnoughFromLogisticZone] FOB对象为空或已不存在！fob: \"" .. ctld.formatTable(fob) .. "\"")
+        else
+            -- 安全调用 getLife
+            local ok, life = pcall(function() return fobObj:getLife() end)
+            if not ok then
+                ctld.logInfo("[farEnoughFromLogisticZone] FOB对象调用 getLife() 失败，可能已经失效！fob: \"" .. ctld.formatTable(fob) .. "\"")
+            elseif life <= 1 then
+                ctld.logInfo("[farEnoughFromLogisticZone] FOB生命值 <= 1，视为已死亡！fob: \"" .. ctld.formatTable(fob) .. "\"")
+            elseif fobObj:getCoalition() == _heli:getCoalition() then
+                local _dist = ctld.getDistance(_heliPoint, fob.point)
+                if _dist <= ctld.maximumDistanceLogistic then
+                    return true
+                end
             end
         end
     end
@@ -6009,7 +6017,7 @@ function ctld.farEnoughFromLogisticZone(_heli, distance, needcheck)
     for i = #ctld.logisticUnits, 1, -1 do
         local _name = ctld.logisticUnits[i]
         local _logistic = StaticObject.getByName(_name)
-        if _logistic == nil or _logistic:getLife() <= 0 then
+        if _logistic == nil or not Object.isExist(_logistic) or _logistic:getLife() <= 0 then
             -- table.remove(ctld.logisticUnits, i)  -- 移除就占领不回来了
         elseif _logistic:getCoalition() == _heli:getCoalition() then
             local _dist = ctld.getDistance(_heliPoint, _logistic:getPoint())
@@ -6018,16 +6026,25 @@ function ctld.farEnoughFromLogisticZone(_heli, distance, needcheck)
             end
         end
     end
-    --检查此处是否有fob
+
     for i = #ctld.fobLocation, 1, -1 do
         local fob = ctld.fobLocation[i]
         local fobObj = fob.obj
-        if fobObj == nil or fobObj:getLife() <= 0 then
-            _farEnough = false  -- 移除死亡 FOB
+    
+        if fobObj == nil or not Object.isExist(fobObj) then
+            ctld.logInfo("[farEnoughFromLogisticZone] FOB对象为空或已不存在！fob: \"" .. ctld.formatTable(fob) .. "\"")
         else
-            local _dist = ctld.getDistance(_heliPoint, fob.point)
-            if _dist <= distance then
-                _farEnough = false
+            -- 安全调用 getLife
+            local ok, life = pcall(function() return fobObj:getLife() end)
+            if not ok then
+                ctld.logInfo("[farEnoughFromLogisticZone] FOB对象调用 getLife() 失败，可能已经失效！fob: \"" .. ctld.formatTable(fob) .. "\"")
+            elseif life <= 1 then
+                ctld.logInfo("[farEnoughFromLogisticZone] FOB生命值 <= 1，视为已死亡！fob: \"" .. ctld.formatTable(fob) .. "\"")
+            else
+                local _dist = ctld.getDistance(_heliPoint, fob.point)
+                if _dist <= distance then
+                    _farEnough = false
+                end
             end
         end
     end
