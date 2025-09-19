@@ -136,9 +136,37 @@ function NP.capture(_args)
         return
     end
 
-    NP.logDebug('开始从mist获取数据')
     local _logisticData = NP.getLogisticData(_targetLogistic)
     local _side = _capUsingUnit:getCoalition()
+
+    if _logisticData.coalitionId ~= _side then
+        local defList
+        if string.find(_logisticData.groupName, "本场") then
+            defList =  UnitlistHome
+        elseif string.find(_logisticData.groupName, "中场") then
+            defList =  UnitlistMiddle
+        elseif string.find(_logisticData.groupName, "前线") then
+            defList =  UnitlistFront
+        end
+        for idx, def in ipairs(defList) do
+            local groupName = _logisticData.groupName .. def.suffix
+            local old = Group.getByName(groupName)
+            if old then 
+                local _units = old:getUnits()
+
+                for _, _leader in pairs(_units) do
+
+                    if _leader ~= nil and _leader:getLife() > 1 then
+                        NP.logInfo('占点之前未清除所有防御单位，活着的单位是: '.._leader:getName())
+                        trigger.action.outText('还有残余的防御单位，无法占领该CC！请手动搜寻或者使用JTAC单位寻找残存的防御单位',10)
+                        return
+                    end
+                end
+            end
+        end
+    end
+    
+    NP.logDebug('开始从mist获取数据')
     local CountryID,Side,Country,CountrySide
     --TODO 抽象这里
     if _side==1 then
