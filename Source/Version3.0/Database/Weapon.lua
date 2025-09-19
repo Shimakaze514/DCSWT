@@ -48,6 +48,13 @@ Weapon.AA_oldIRPoint = 5
 
 
 -----------------------------------AG----------------------------------
+Weapon.AG_NLOS = {
+  "AGM_84E",
+  "AGM_84H",
+  "CM_802AKG",
+}
+Weapon.AG_NLOSPoint = 150
+
 Weapon.AG_SmartMissile = {
   "AGM_88",
   "AGM_65D",
@@ -57,14 +64,11 @@ Weapon.AG_SmartMissile = {
   "AGM_65H",
   "AGM_65K",
   "AGM_84D",
-  "AGM_84E",
-  "AGM_84H",
 
   "LD-10",
   "C_701IR",
   "C_701T",
   "C_802AK",
-  "CM_802AKG",
   
   "AGM_114",
 }
@@ -196,6 +200,7 @@ addToMap(Weapon.AA_SARH   ,   Weapon.AA_SARHPoint)
 addToMap(Weapon.AA_newIR  ,   Weapon.AA_newIRPoint)
 addToMap(Weapon.AA_oldIR  ,   Weapon.AA_oldIRPoint)
 
+addToMap(Weapon.AG_NLOS ,   Weapon.AG_NLOSPoint)
 addToMap(Weapon.AG_SmartMissile ,   Weapon.AG_SmartMissilePoint)
 addToMap(Weapon.AG_SmartBomb    ,   Weapon.AG_SmartBombPoint)
 addToMap(Weapon.AG_Laser        ,   Weapon.AG_LaserPoint)

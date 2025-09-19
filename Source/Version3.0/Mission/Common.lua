@@ -3,8 +3,8 @@ SourceObj.playerInfo = SourceObj.playerInfo or {}
 SourceObj.playerSource = {}
 SourceObj.sourceInitPoint = 1500 --初始资源点
 SourceObj.sourceMaxPoint = 3000 --资源点上限
-SourceObj.recoverPoint = 500 --低保的阈值，以及低保指标
-SourceObj.realRecoverTime = 300
+SourceObj.recoverPoint = 400 --低保的阈值，以及低保指标
+SourceObj.realRecoverTime = 600 
 SourceObj.autoAddID = {}
 -- SourceObj.landRecoverTime = 60 -- 以秒为单位
 -- SourceObj.skyRecoverTime = 30 -- 以秒为单位
@@ -224,7 +224,9 @@ SourceObj.getLoadout = function(_args)
             "精确炸弹", Weapon.AG_SmartBombPoint) ..
         string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4d\n",
             "激光炸弹", Weapon.AG_LaserPoint,
-            "无制导炸弹", Weapon.AG_DumbPoint)
+            "无制导炸弹", Weapon.AG_DumbPoint) ..
+        string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4s\n", --! %4s
+            "人在回路", Weapon.AG_NLOSPoint, "", "")
         --      ..
         -- "--------------------------------\n" ..
         -- string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4d\n",
