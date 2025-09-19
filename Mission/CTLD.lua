@@ -5982,7 +5982,7 @@ function ctld.inLogisticsZone(_heli, needcheck)
         local fobObj = fob.obj
     
         if fobObj == nil or not Object.isExist(fobObj) then
-            ctld.logInfo("[farEnoughFromLogisticZone] FOB对象为空或已不存在！fob: \"" .. ctld.formatTable(fob) .. "\"")
+            ctld.logInfo("[farEnoughFromLogisticZone] FOB对象为空或已不存在！fob: \"" .. ctld.formatTable(fob) .. "\"") --! For StaticObject, always use nil and isExist to check
         else
             -- 安全调用 getLife
             local ok, life = pcall(function() return fobObj:getLife() end)
