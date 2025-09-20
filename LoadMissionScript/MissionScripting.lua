@@ -12,6 +12,7 @@ dofile(lfs.writedir() .. 'Scripts/StaticDataBase/UnitsList.lua')
 dofile(lfs.writedir() .. 'Scripts/Mission/NPV2.lua')
 dofile(lfs.writedir() .. 'Scripts/Mission/NPCSAR.lua')
 dofile(lfs.writedir() .. 'Scripts/Mission/Bomber.lua')
+dofile(lfs.writedir() .. 'Scripts/Mission/AddEXPL.lua')
 dofile(lfs.writedir() .. 'Scripts/Source/Version3.0/Mission/SourceInit.lua')
 
 dofile(lfs.writedir() .. 'Scripts/Mission/SweepDebris.lua')
