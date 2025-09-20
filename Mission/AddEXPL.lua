@@ -6,7 +6,7 @@ function AddEXPL.eventHandler:onEvent(_event)
         if _event.id == world.event.S_EVENT_HIT then
             if _event.target and _event.target:getTypeName() == "CH-47Fbl1" then
                 env.info("[AddEXPL] Info: 击中CH47的事件触发")
-                if _event.weapon ~= nil then
+                if _event.weapon and _event.weapon.getDesc then
                     env.info("[AddEXPL] Info: 成功找到击中CH47的武器")
                     local weaponDesc = _event.weapon:getDesc()
                     if weaponDesc then
@@ -22,6 +22,9 @@ function AddEXPL.eventHandler:onEvent(_event)
                         env.info("[AddEXPL] Info: 击中CH47的武器没有WeaponDesc，使用默认当量爆破")
                         trigger.action.explosion(_event.target:getPoint(),100)
                     end
+                else
+                    env.info("[AddEXPL] Info: 击中CH47的武器没有WeaponDesc，使用默认当量爆破")
+                    trigger.action.explosion(_event.target:getPoint(),100)
                 end
             end
         end
