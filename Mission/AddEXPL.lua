@@ -32,3 +32,4 @@ function AddEXPL.eventHandler:onEvent(_event)
     end
 end
 world.addEventHandler(AddEXPL.eventHandler)
+net.log("LOAD SUCCESS - AddEXPL, script by SMKZ")
