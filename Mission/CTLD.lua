@@ -872,7 +872,7 @@ ctld.spawnableCrates = {
             { weight = 402, desc = "补给车(Supply Truck)", unit = "M 818" },
             { weight = 591, desc = "陶悍马(TOW HUMVEE)", unit = "M1045 HMMWV TOW" },
             { weight = 401, desc = "彩蛋(Easter Egg)", unit = "Pz_IV_H" },
-            { weight = 325, desc = "捕食者无人机 JTAC", unit = "RQ-1A Predator" },
+            { weight = 325, desc = "无人机 JTAC", unit = "MQ-9 Reaper" },
             { weight = 800, desc = "FOB Crate", unit = "FOB" },
         }
     },
@@ -953,7 +953,7 @@ ctld.spawnableCratesModel_sling = {
 ctld.jtacUnitTypes = {
     "SKP",
     "M1043 HMMWV Armament",
-    "RQ-1A Predator", --there are some wierd encoding issues so if you write SKP-11 it wont match as the - sign is encoded differently...
+    "MQ-9 Reaper", --there are some wierd encoding issues so if you write SKP-11 it wont match as the - sign is encoded differently...
 }
 
 
@@ -5336,7 +5336,7 @@ function ctld.spawnCrateGroup(_heli, _positions, _types, _groupSystemTemplate)
     end
 
     local _spawnedGroup
-    if _types[1] == "RQ-1A Predator" then
+    if _types[1] == "MQ-9 Reaper" then
         --之前问题出在mist上，改用dcs自己的生成方法 --TODO 把这里的判断抽象
         _group = ctld.groupToPlanes(_group, _positions[1].x + 1000, _positions[1].z + 1000)
         local _countryID
@@ -5541,9 +5541,11 @@ function ctld.groupToPlanes(_group, _x, _y)
     _group.units[1].alt = 1000
     _group.units[1].speed = 250
     _group.units[1].category = Unit.Category.AIRPLANE
+    _group.units[1].task = "AFAC"
+    _group.units[1].taskSelected = true
 
     _group.units[1].payload = {
-        ["fuel"] = 1000,
+        ["fuel"] = 1300,
         --["flare"] = 60,
         --["ammo_type"] = 5,
         --["chaff"] = 60,
@@ -5562,6 +5564,33 @@ function ctld.groupToPlanes(_group, _x, _y)
                     ["id"] = "ComboTask",
                     ["params"] = {
                         ["tasks"] = {
+                            [1] = 
+                            {
+                                ["enabled"] = true,
+                                ["auto"] = true,
+                                ["id"] = "FAC",
+                                ["number"] = 1,
+                                ["params"] = 
+                                {
+                                }, -- end of ["params"]
+                            }, -- end of [1]
+                            [2] = 
+                            {
+                                ["enabled"] = true,
+                                ["auto"] = true,
+                                ["id"] = "WrappedAction",
+                                ["number"] = 2,
+                                ["params"] = 
+                                {
+                                    ["action"] = 
+                                    {
+                                        ["id"] = "EPLRS",
+                                        ["params"] = 
+                                        {
+                                        }, -- end of ["params"]
+                                    }, -- end of ["action"]
+                                }, -- end of ["params"]
+                            }, -- end of [2]
                         }, -- end of ["tasks"]
                     }, -- end of ["params"]
                 }, -- end of ["task"]
