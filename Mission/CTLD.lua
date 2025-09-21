@@ -817,12 +817,13 @@ ctld.spawnableCrates = {
             --{ weight = 840*2, desc = "2S19自行火炮(1箱2车)", unit = "SAU Msta Group" },
             --{ weight = 550*2, desc = "M109自行火炮(1箱2车)", unit = "M109 Group" },
             { weight = 940*2, desc = "T155自行火炮(1箱2车)", unit = "T155 Group" },
-            { weight = 585*2, desc = "达纳卡车炮(SpGH_Dana)(1箱2车)", unit = "Dana Group" },
+            { weight = 585*2, desc = "达纳卡车炮(1箱2车)", unit = "Dana Group" },
             { weight = 400+50, desc = "TOS-1A火箭炮阵地(2箱2车+补给)", unit = "TOS1A Group" },
-            { weight = 400+50, desc = "BM27远程火箭炮阵地(2箱2车+补给)", unit = "BM27 Group" },
-            { weight = 400+50, desc = "BM30远程火箭炮阵地(3箱2车+补给)", unit = "Smerch_HE Group" },
-            { weight = 400+50, desc = "海马斯远程火箭炮阵地(3箱2车+补给)", unit = "MLRS Group" },
-            { weight = 1000, desc = "【导弹】ATACMS(集束)(1箱1车)", unit = "ATACMSCM Group" },
+            --{ weight = 400+50, desc = "BM27远程火箭炮阵地(2箱2车+补给)", unit = "BM27 Group" },
+            --{ weight = 400+50, desc = "BM30远程火箭炮阵地(3箱2车+补给)", unit = "Smerch_HE Group" },
+            { weight = 400+50, desc = "MLRS远程火箭炮阵地(3箱2车+补给)", unit = "MLRS Group" },
+            { weight = 400+50, desc = "GMLRS制导火箭炮阵地(3箱2车+补给)", unit = "GMLRS Group" },
+            --{ weight = 1000, desc = "【导弹】ATACMS(集束)(1箱1车)", unit = "ATACMSCM Group" },
             { weight = 1000, desc = "【导弹】伊斯坎德尔(高爆)(2箱1车)", unit = "9K720HE Group" },
             { weight = 1000, desc = "【导弹】伊斯坎德尔（集束）(2箱1车)", unit = "9K720CM Group" },
             --{ weight = 1000, desc = "【导弹】ATACMS（高爆）(2箱1车)", unit = "ATACMSHE Group" },
@@ -854,13 +855,14 @@ ctld.spawnableCrates = {
     {
         name = "修理箱(repair)",
         items = {
-            { weight = 821, desc = "山毛榉维护箱", unit = "SA-11 BUK Repair" },
-            { weight = 823, desc = "道尔M1维护箱", unit = "SA-15 BUK Repair" },
             { weight = 823, desc = "IRIS-T维护箱", unit = "IRIST Repair" },
+            { weight = 823, desc = "道尔M1维护箱", unit = "SA-15 BUK Repair" },
+            { weight = 821, desc = "山毛榉维护箱", unit = "SA-11 BUK Repair" },
             { weight = 824, desc = "TOS-1A火箭炮阵地维护箱", unit = "TOS1A Group Repair" },
-            { weight = 824, desc = "BM27火箭炮阵地维护箱", unit = "BM27 Group Repair" },
-            { weight = 824, desc = "BM30火箭炮阵地维护箱", unit = "Smerch_HE Group Repair" },
-            { weight = 824, desc = "海马斯火箭炮阵地维护箱", unit = "MLRS Group Repair" },
+            --{ weight = 824, desc = "BM27火箭炮阵地维护箱", unit = "BM27 Group Repair" },
+            --{ weight = 824, desc = "BM30火箭炮阵地维护箱", unit = "Smerch_HE Group Repair" },
+            { weight = 824, desc = "MLRS远程火箭炮阵地维护箱", unit = "MLRS Group Repair" },
+            { weight = 824, desc = "GMLRS制导火箭炮阵地维护箱", unit = "GMLRS Group Repair" },
         }
     },
     {
@@ -2055,7 +2057,7 @@ ctld.GroupSystemTemplate = {
         repair = "Smerch_HE Group Repair",
     },
     {
-        name = "海马斯远程火箭炮阵地",
+        name = "MLRS远程火箭炮阵地",
         sysName = "MLRS Group",
         cratesRequired = 3,
         aaLaunchers = 2,
@@ -2067,6 +2069,20 @@ ctld.GroupSystemTemplate = {
             { name = "M 818", desc = "远程火箭炮(海马斯)补弹车2" },
         },
         repair = "MLRS Group Repair",
+    },
+    {
+        name = "GMLRS制导火箭炮阵地",
+        sysName = "GMLRS Group",
+        cratesRequired = 3,
+        aaLaunchers = 2,
+
+        count = 2,
+        hasLimit = false,
+        parts = {
+            { name = "CHAP_M142_GMLRS_M31", desc = "远程火箭炮(海马斯)", launcher = true },
+            { name = "M 818", desc = "远程火箭炮(海马斯)补弹车2" },
+        },
+        repair = "GMLRS Group Repair",
     },
     {
         name = "山毛榉(SA-11)地空导弹阵地",
@@ -7605,7 +7621,7 @@ function ctld.initialize(force)
 
     ctld.builtFOBS = {} -- stores fully built fobs
 
-    ctld.completeGroupSystems = {} -- stores complete spawned groups from multiple crates
+    ctld.completeGroupSystems = ctld.completeGroupSystems or {} -- stores complete spawned groups from multiple crates
 
     ctld.fobBeacons = {} -- stores FOB radio beacon details, refreshed every 60 seconds
 

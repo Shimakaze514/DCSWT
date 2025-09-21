@@ -33,6 +33,7 @@ dsave.DSaveGroupsCache={}
 dsave.Config_Dir = lfs.writedir() .. [[SourceData/]]
 dsave.DSaveGroupsFilePath = dsave.Config_Dir .. "动态保存单位.json"
 dsave.DSaveCCsFilePath = dsave.Config_Dir .. "动态保存物体.json"
+dsave.DSaveCTLDFilePath = dsave.Config_Dir .. "动态保存ctld.json"
 dsave.hasSaveFile = false
 
 function dsave.logError(message)
@@ -121,6 +122,12 @@ function dsave.recordAllVehiclesElements(inputDB)
     dsave.SaveData(dsave.DSaveGroupsFilePath, net.lua2json(dsave.DSaveGroupsCache))
     dsave.DSaveGroupsCache={}
     dsave.logInfo("地面目标已经写入 动态保存单位.json")
+    if ctld.completeGroupSystems ~= nil then
+        dsave.SaveData(dsave.DSaveCTLDFilePath, net.lua2json(ctld.completeGroupSystems))
+        dsave.logInfo("ctld.completeGroupSystems 已写入文件")
+    else
+        dsave.logInfo("ctld.completeGroupSystems 为空，未写入文件")
+    end
     timer.scheduleFunction(dsave.recordAllVehiclesElements, inputDB, timer.getTime() + dsave.RefreshTime)
 end
 
@@ -224,7 +231,6 @@ end
 
 function dsave.loadDsaveUnitsData()
     local File,err=io.open(dsave.DSaveGroupsFilePath,"r");
-
     local tableData
     if err == nil then
         dsave.logInfo('单位动态保存文件读取成功')
@@ -240,8 +246,20 @@ function dsave.loadDsaveUnitsData()
         end
         return
     end
-        dsave.logInfo('extract data from json file 单位')
-        dsave.logInfo(ctld.formatTable(tableData))
+    
+    local File2, err2 = io.open(dsave.DSaveCTLDFilePath, "r")
+    if err2 == nil then
+        local _data2 = File2:read("*a")
+        io.close(File2)
+        ctld.completeGroupSystems = net.json2lua(_data2) or {}
+        dsave.logInfo("ctld.completeGroupSystems 文件读取成功")
+    else
+        dsave.logError("ctld.completeGroupSystems 文件不存在或读取失败")
+        ctld.completeGroupSystems = ctld.completeGroupSystems or {}
+    end
+
+    dsave.logInfo('extract data from json file 单位')
+    dsave.logInfo(ctld.formatTable(tableData))
 
     for _, _group in pairs(tableData) do
         local _spawnedGroup
