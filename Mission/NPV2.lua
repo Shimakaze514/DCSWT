@@ -25,9 +25,13 @@ NP.CaptureDistance = 200
  
 NP.AWACSList = {
     "blueAWACS",
-    --"blueAWACS2",
+    "blueAWACS-1",
+    "blueAWACS-2",
+    "blueAWACS-3",
     "redAWACS",
-    --"redAWACS2"
+    "redAWACS2",
+    "redAWACS-1",
+    "redAWACS2-1"
 }
 
 local UnitlistHome = {
