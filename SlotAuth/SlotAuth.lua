@@ -141,7 +141,7 @@ function SLOT.resetSideSwitch(playerID, ucid)
 
     local lastTBTime = SLOT.LastSideSwitch[ucid].tbTime or 0
     local now = os.time()
-    local cooldown = 600  -- 10分钟冷却
+    local cooldown = 60*60  -- 1小时冷却
 
     if now - lastTBTime < cooldown then
         local remain = cooldown - (now - lastTBTime)
