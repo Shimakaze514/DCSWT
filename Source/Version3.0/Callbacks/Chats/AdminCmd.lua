@@ -151,9 +151,10 @@ AdminCmd = function(REXtext, playerID, ucid, name)
     end
   elseif REXtext[1] == "-tb" and REXtext[2] then
     if playerID == 1 or SourceCall.Admins[ucid] then
-      local targetUCID = SourceCall.PlayerName[REXtext[2]]
+      local targetName = table.concat(REXtext, " ", 2)
+      local targetUCID = SourceCall.PlayerName[targetName]
       if not targetUCID then
-          net.send_chat_to("玩家UCID不存在: " .. REXtext[2], playerID)
+          net.send_chat_to("玩家UCID不存在: " .. targetName, playerID)
           return
       end
       local targetPlayerID = nil
