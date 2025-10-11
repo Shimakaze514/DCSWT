@@ -6,14 +6,14 @@ Bomber.Trace = false
 Bomber.CostTable = {
     ["Attack"] = 200,  --记得在CTLD里更改描述（搜CallAttack
     ["Bomber"] = 700,
-    ["LowBomber"] = 400,
+    ["LowBomber"] = 200,
     ["StealthBomber"] = 200,
     ["Nuke"] = 1000,
 }
 Bomber.RangeTable = {
     ["Attack"] = 25 * 1852,
     ["Bomber"] = 55 * 1852,
-    ["LowBomber"] = 4 * 1852,
+    ["LowBomber"] = 5 * 1852,
     ["StealthBomber"] = 10 * 1852,
     ["Nuke"] = 12 * 1852,
 }

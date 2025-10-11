@@ -149,5 +149,27 @@ AdminCmd = function(REXtext, playerID, ucid, name)
     else
       Utils.admin_caveat(ucid, 100, playerID)
     end
+  elseif REXtext[1] == "-tb" and REXtext[2] then
+    if playerID == 1 or SourceCall.Admins[ucid] then
+      local targetUCID = SourceCall.PlayerName[REXtext[2]]
+      if not targetUCID then
+          net.send_chat_to("玩家UCID不存在: " .. REXtext[2], playerID)
+          return
+      end
+      local targetPlayerID = nil
+      for id, info in pairs(SourceCall.clients) do
+          if info.ucid == targetUCID then
+            targetPlayerID = id
+              break
+          end
+      end
+      if not targetPlayerID then
+          net.send_chat_to("玩家ID不存在: " .. targetUCID, playerID)
+          return
+      end
+      SLOT.resetSideSwitch(targetPlayerID, targetUCID)
+    else
+      Utils.admin_caveat(ucid, 100, playerID)
+    end
   end
 end
