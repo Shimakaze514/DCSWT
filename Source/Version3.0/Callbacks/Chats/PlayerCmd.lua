@@ -52,7 +52,7 @@ PlayerCmd = function(REXtext, playerID, ucid)
       end
 
   -- 占位的 -tb 功能
-  elseif cmd == "-tb" then
-     SLOT.resetSideSwitch(playerID, ucid)
+--   elseif cmd == "-tb" then
+--      SLOT.resetSideSwitch(playerID, ucid)
   end
 end
