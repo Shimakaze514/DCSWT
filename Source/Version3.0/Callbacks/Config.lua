@@ -4,7 +4,7 @@ do
   SourceCall.Config_Dir = lfs.writedir() .. [[SourceData/]]
   SourceCall.pause_when_empty = false --动态暂停(仅主机一人时)
   SourceCall.AdminFile = SourceCall.Config_Dir .. "管理员列表.json"
-  SourceCall.DynamicAdminFile = SourceCall.Config_Dir .. "动态槽位限制.json"
+  SourceCall.DynamicAdminFile = lfs.writedir() .. [[Scripts/SlotAuth]] .. "动态槽位限制.json"
   SourceCall.PlayerInfoFile = SourceCall.Config_Dir .. "玩家信息.json"
   SourceCall.BannedClientsFile = SourceCall.Config_Dir .. "封禁列表.json"
   SourceCall.BannedClients = FileData.load_File(SourceCall.BannedClientsFile) or {}
