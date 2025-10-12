@@ -831,8 +831,6 @@ function ctld.RefreshConfig()
             ["中远程防空(Mid&Long Range AA)"] = 4,
             ["无人机、悍马JTAC、FOB等"] = 5,
         }
-        ctld.logisticUnits = {}
-        ctld.fobLocation = {}
         ctld.FOBLimit = 1
         ctld.CoalitionKillerLimit = 4 --红方的阵营级大杀器
 
@@ -893,8 +891,6 @@ function ctld.RefreshConfig()
             ["中远程防空(Mid&Long Range AA)"] = 1,
             ["无人机、悍马JTAC、FOB等"] = 1,
         }
-        ctld.logisticUnits = {}
-        ctld.fobLocation = {}
         ctld.FOBLimit = 0
         ctld.CoalitionKillerLimit = 1 --红方的阵营级大杀器
 
