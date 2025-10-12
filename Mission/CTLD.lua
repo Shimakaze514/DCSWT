@@ -7057,16 +7057,23 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
 
         if _tempUnit ~= nil and _tempUnit:getLife() > 0 and _tempUnit:isActive() == true then
             targetLost = true
+            local markInfo = ctld.jtacMarkIDs[_tempUnit:getName()]
+            if markInfo and markInfo.jtac == _jtacGroupName then
+                pcall(function()
+                    trigger.action.removeMark(markInfo.id)
+                end)
+                ctld.jtacMarkIDs[_tempUnit:getName()] = nil
+            end
         else
             targetDestroyed = true
             ctld.jtacSelectedTarget[_jtacGroupName] = 1
-        end
-        local markInfo = ctld.jtacMarkIDs[_tempUnit:getName()]
-        if markInfo and markInfo.jtac == _jtacGroupName then
-            pcall(function()
-                trigger.action.removeMark(markInfo.id)
-            end)
-            ctld.jtacMarkIDs[_tempUnit:getName()] = nil
+            local markInfo = ctld.jtacMarkIDs[_tempUnit:getName()]
+            if markInfo and markInfo.jtac == _jtacGroupName then
+                pcall(function()
+                    trigger.action.removeMark(markInfo.id)
+                end)
+                ctld.jtacMarkIDs[_tempUnit:getName()] = nil
+            end
         end
 
         --remove from smoke list

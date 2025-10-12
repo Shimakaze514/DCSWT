@@ -54,13 +54,13 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
                 lastEntry.side = side
             end
         end
-        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo.name or playerID) .. ' 成功切换至阵营 ' .. tostring(side))
+        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo.name or playerID) .. ' 成功切换至阵营 ' .. tostring(side)..". SideAvail:"..tostring(sideAvail)..", Balance:"..tostring(balance)..", SlotAvail:"..tostring(slotAvail))
         return
     end
 
     -- 三项中任一项失败且后门存在时：最后的放行（后门优先于所有拒绝）
     if SLOT.backDoor(playerID) then
-        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo.name or playerID) .. ' 在常规检查失败后使用后门进入阵营 ' .. tostring(side))
+        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo.name or playerID) .. ' 在常规检查失败后使用后门进入阵营 ' .. tostring(side)..". SideAvail:"..tostring(sideAvail)..", Balance:"..tostring(balance)..", SlotAvail:"..tostring(slotAvail))
         net.send_chat_to('后门权限已启用', playerID)
         -- 记录切换（与上面一致）
         if side ~= 0 then
@@ -96,7 +96,7 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
             cooldown, sideName, oppositeSideName, at.month, at.day, at.hour, at.min, at.sec)
 
         net.send_chat_to(ChatMsg, playerID)
-        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo.name or playerID) ..
+        net.log('[SLOTAUTH] 因sideAvail被拒 玩家 ' .. tostring(_playerInfo.name or playerID) ..
                     ' 被拒绝切换（冷却中），信息: ' .. kickMsg)
         return false
     end
@@ -113,13 +113,13 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
         local msg = "由于人数不平衡，你需要加入 " .. sideName ..
                         " 以获得最好的游戏体验。若你正与朋友组队，可输入\"-tb\"来跳边（只能跳一次！）"
         net.send_chat_to(msg, playerID)
-        net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo.name or playerID) .. ' 被提示加入 ' .. sideName ..
+        net.log('[SLOTAUTH] 因balance被拒 玩家 ' .. tostring(_playerInfo.name or playerID) .. ' 被提示加入 ' .. sideName ..
                     '（人数平衡限制）')
         return false
     end
 
     -- 最后剩下的就是 slotAvail 为 false 的情况（allowEnterSlotDynamic 应已向玩家提示）
-    net.log('[SLOTAUTH] 玩家 ' .. tostring(_playerInfo.name or playerID) .. ' 被拒绝进入机位 ' .. tostring(slotID))
+    net.log('[SLOTAUTH] 因slotAvail被拒 玩家 ' .. tostring(_playerInfo.name or playerID) .. ' 被拒绝进入机位 ' .. tostring(slotID))
     return false
 end
 
@@ -141,7 +141,7 @@ function SLOT.resetSideSwitch(playerID, ucid)
 
     local lastTBTime = SLOT.LastSideSwitch[ucid].tbTime or 0
     local now = os.time()
-    local cooldown = 60*60  -- 1小时冷却
+    local cooldown = 1  -- 1小时冷却 -- 管理员用，无需冷却了
 
     if now - lastTBTime < cooldown then
         local remain = cooldown - (now - lastTBTime)
