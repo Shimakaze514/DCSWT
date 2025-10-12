@@ -1,28 +1,3 @@
---[[
-    Combat Troop and Logistics Drop
-
-    Allows Huey, Mi-8 and C130 to transport troops internally and Helicopters to transport Logistic / Vehicle units to the field via sling-loads
-    without requiring external mods.
-
-    Supports all of the original CTTS functionality such as AI auto troop load and unload as well as group spawning and preloading of troops into units.
-
-    Supports deployment of Auto Lasing JTAC to the field
-
-    See https://github.com/ciribob/DCS-CTLD for a user manual and the latest version
-
-	Contributors:
-	    - Steggles - https://github.com/Bob7heBuilder
-	    - mvee - https://github.com/mvee
-	    - jmontleon - https://github.com/jmontleon
-	    - emilianomolina - https://github.com/emilianomolina
-	    - davidp57 - https://github.com/veaf
-
-      - Allow minimum distance from friendly logistics to be set
- ]]
-
---some cases:
---trigger.action.smoke(_centroid, trigger.smokeColor.Green)
-
 ctld = {} -- DONT REMOVE!
 
 --- Identifier. All output in DCS.log will start with this.
@@ -60,7 +35,7 @@ if ctld.Debug == false then
 
     ctld.F10RefreshTime = 60
     ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
-
+    
     ctld.hoverPickup = false --  if set to false you can load crates with the F10 menu instead of hovering... Only if not using real crates!
 
     ctld.enableCrates = true -- if false, Helis will not be able to spawn or unpack crates so will be normal CTTS
@@ -327,181 +302,6 @@ ctld.wpZones = {
 
 -- Use any of the predefined names or set your own ones
 ctld.transportPilotNames = {
-    --"helicargo1",
-    "transport Red #001",
-    "transport Red #002",
-    "transport Red #003",
-    "transport Red #004",
-    "transport Red #005",
-    "transport Red #006",
-    "transport Red #007",
-    "transport Red #008",
-    "transport Red #009",
-    "transport Red #010",
-
-    "transport Red #011",
-    "transport Red #012",
-    "transport Red #013",
-    "transport Red #014",
-    "transport Red #015",
-    "transport Red #016",
-    "transport Red #017",
-    "transport Red #018",
-    "transport Red #019",
-    "transport Red #020",
-
-    "transport Red #021",
-    "transport Red #022",
-    "transport Red #023",
-    "transport Red #024",
-    "transport Red #025",
-    "transport Red #026",
-    "transport Red #027",
-    "transport Red #028",
-    "transport Red #029",
-    "transport Red #030",
-
-    "transport Red #031",
-    "transport Red #032",
-    "transport Red #033",
-    "transport Red #034",
-    "transport Red #035",
-    "transport Red #036",
-    "transport Red #037",
-    "transport Red #038",
-    "transport Red #039",
-    "transport Red #040",
-    "transport Red #041",
-    "transport Red #042",
-    "transport Red #043",
-    "transport Red #044",
-    "transport Red #045",
-    "transport Red #046",
-    "transport Red #047",
-    "transport Red #048",
-    "transport Red #049",
-    "transport Red #050",
-    "transport Red #051",
-    "transport Red #052",
-    "transport Red #053",
-    "transport Red #054",
-    "transport Red #055",
-    "transport Red #056",
-    "transport Red #057",
-    "transport Red #058",
-    "transport Red #059",
-    "transport Red #060",
-    "transport Red #061",
-    "transport Red #062",
-    "transport Red #063",
-    "transport Red #064",
-    "transport Red #065",
-    "transport Red #066",
-    "transport Red #067",
-    "transport Red #068",
-    "transport Red #069",
-    "transport Red #070",
-    "transport Red #071",
-    "transport Red #072",
-    "transport Red #073",
-    "transport Red #074",
-    "transport Red #075",
-    "transport Red #076",
-    "transport Red #077",
-    "transport Red #078",
-    "transport Red #079",
-    "transport Red #080",
-    "transport Red #081",
-    "transport Red #082",
-    "transport Red #083",
-
-    "transport Blue #001",
-    "transport Blue #002",
-    "transport Blue #003",
-    "transport Blue #004",
-    "transport Blue #005",
-    "transport Blue #006",
-    "transport Blue #007",
-    "transport Blue #008",
-    "transport Blue #009",
-    "transport Blue #010",
-
-    "transport Blue #011",
-    "transport Blue #012",
-    "transport Blue #013",
-    "transport Blue #014",
-    "transport Blue #015",
-    "transport Blue #016",
-    "transport Blue #017",
-    "transport Blue #018",
-    "transport Blue #019",
-    "transport Blue #020",
-
-    "transport Blue #021",
-    "transport Blue #022",
-    "transport Blue #023",
-    "transport Blue #024",
-    "transport Blue #025",
-    "transport Blue #026",
-    "transport Blue #027",
-    "transport Blue #028",
-    "transport Blue #029",
-    "transport Blue #030",
-
-    "transport Blue #031",
-    "transport Blue #032",
-    "transport Blue #033",
-    "transport Blue #034",
-    "transport Blue #035",
-    "transport Blue #036",
-    "transport Blue #037",
-    "transport Blue #038",
-    "transport Blue #039",
-    "transport Blue #040",
-    "transport Blue #041",
-    "transport Blue #042",
-    "transport Blue #043",
-    "transport Blue #044",
-    "transport Blue #045",
-    "transport Blue #046",
-    "transport Blue #047",
-    "transport Blue #048",
-    "transport Blue #049",
-    "transport Blue #050",
-    "transport Blue #051",
-    "transport Blue #052",
-    "transport Blue #053",
-    "transport Blue #054",
-    "transport Blue #055",
-    "transport Blue #056",
-    "transport Blue #057",
-    "transport Blue #058",
-    "transport Blue #059",
-    "transport Blue #060",
-    "transport Blue #061",
-    "transport Blue #062",
-    "transport Blue #063",
-    "transport Blue #064",
-    "transport Blue #065",
-    "transport Blue #066",
-    "transport Blue #067",
-    "transport Blue #068",
-    "transport Blue #069",
-    "transport Blue #070",
-    "transport Blue #071",
-    "transport Blue #072",
-    "transport Blue #073",
-    "transport Blue #074",
-    "transport Blue #075",
-    "transport Blue #076",
-    "transport Blue #077",
-    "transport Blue #078",
-    "transport Blue #079",
-    "transport Blue #080",
-    "transport Blue #081",
-    "transport Blue #082",
-    "transport Blue #083",
-    "transport Blue #083",
 
     "【库塔伊西】蚊子（运输）R1-1",
     "【库塔伊西】蚊子（运输）R1-2",
@@ -607,55 +407,6 @@ ctld.transportPilotNames = {
     "【苏呼米】支奴干（运输）B1-1",
     "【苏呼米】支奴干（运输）B1-2",
 
-    "transport Red AH64D-1",
-    "transport Red AH64D-2",
-    "transport Red AH64D-3",
-    "transport Red AH64D-4",
-    "transport Red AH64D-5",
-    "transport Red AH64D-6",
-    "transport Red AH64D-7",
-    "transport Red AH64D-8",
-    "transport Red AH64D-9",
-    "transport Red AH64D-10",
-    "transport Red AH64D-11",
-    "transport Red AH64D-12",
-    "transport Red AH64D-13",
-    "transport Red AH64D-14",
-    "transport Red AH64D-15",
-    "transport Red AH64D-16",
-    "transport Red AH64D-17",
-    "transport Red AH64D-18",
-    "transport Red AH64D-19",
-    "transport Red AH64D-20",
-    "transport Red AH64D-21",
-    "transport Red AH64D-22",
-    "transport Red AH64D-23",
-    "transport Red AH64D-24",
-    "transport Red AH64D-25",
-    "transport Blue AH64D-1",
-    "transport Blue AH64D-2",
-    "transport Blue AH64D-3",
-    "transport Blue AH64D-4",
-    "transport Blue AH64D-5",
-    "transport Blue AH64D-6",
-    "transport Blue AH64D-7",
-    "transport Blue AH64D-8",
-    "transport Blue AH64D-9",
-    "transport Blue AH64D-10",
-    "transport Blue AH64D-11",
-    "transport Blue AH64D-12",
-    "transport Blue AH64D-13",
-    "transport Blue AH64D-14",
-    "transport Blue AH64D-15",
-    "transport Blue AH64D-16",
-    "transport Blue AH64D-17",
-    "transport Blue AH64D-18",
-    "transport Blue AH64D-19",
-    "transport Blue AH64D-20",
-    "transport Blue AH64D-21",
-    "transport Blue AH64D-22",
-    "transport Blue AH64D-23",
-    "transport Blue AH64D-24",
 }
 
 -- *************** Optional Extractable GROUPS *****************
@@ -663,33 +414,6 @@ ctld.transportPilotNames = {
 -- Use any of the predefined names or set your own ones
 
 ctld.extractableGroups = {
-    "extract1",
-    "extract2",
-    "extract3",
-    "extract4",
-    "extract5",
-    "extract6",
-    "extract7",
-    "extract8",
-    "extract9",
-    "extract10",
-
-    "extract11",
-    "extract12",
-    "extract13",
-    "extract14",
-    "extract15",
-    "extract16",
-    "extract17",
-    "extract18",
-    "extract19",
-    "extract20",
-
-    "extract21",
-    "extract22",
-    "extract23",
-    "extract24",
-    "extract25",
 }
 
 -- ************** Logistics UNITS FOR CRATE SPAWNING ******************
@@ -707,10 +431,19 @@ ctld.shipYards={
 -- units db has all the names or you can extract a mission.miz file by making it a zip and looking
 -- in the contained mission file
 ctld.vehicleTransportEnabled = {
-    "76MD", -- the il-76 mod doesnt use a normal - sign so il-76md wont match... !!!! GRR
+    "76MD",     -- the il-76 mod doesnt use a normal - sign so il-76md wont match... !!!! GRR
     "Hercules",
+    --"CH-47Fbl1",
 }
 
+-- ************** Units able to use DCS dynamic cargo system ******************
+-- DCS (version) added the ability to load and unload cargo from aircraft.
+-- Units listed here will spawn a cargo static that can be loaded with the standard DCS cargo system
+-- We will also use this to make modifications to the menu and other checks and messages
+ctld.dynamicCargoUnits = {
+   --"CH-47Fbl1",
+   --"UH-1H",
+}
 
 -- ************** Maximum Units SETUP for UNITS ******************
 
@@ -728,11 +461,64 @@ ctld.unitLoadLimits = {
     -- ["SA342L"] = 4,
     -- ["SA342M"] = 4,
 
+    --%%%%% MODS %%%%%
+    --["Bronco-OV-10A"] = 4,
+    ["Hercules"] = 30,
+    --["SK-60"] = 1,
+    ["UH-60L"] = 12,
+    --["T-45"] = 1,
+
+    --%%%%% CHOPPERS %%%%%
+    ["Mi-8MT"] = 16,
+    ["Mi-24P"] = 10,
+    --["SA342L"] = 4,
+    --["SA342M"] = 4,
+    --["SA342Mistral"] = 4,
+    --["SA342Minigun"] = 3,
+    ["UH-1H"] = 8,
+    ["CH-47Fbl1"] = 33,
+
+    --%%%%% AIRCRAFTS %%%%%
+    --["C-101EB"] = 1,
+    --["C-101CC"] = 1,
+    --["Christen Eagle II"] = 1,
+    --["L-39C"] = 1,
+    --["L-39ZA"] = 1,
+    --["MB-339A"] = 1,
+    --["MB-339APAN"] = 1,
+    --["Mirage-F1B"] = 1,
+    --["Mirage-F1BD"] = 1,
+    --["Mirage-F1BE"] = 1,
+    --["Mirage-F1BQ"] = 1,
+    --["Mirage-F1DDA"] = 1,
+    --["Su-25T"] = 1,
+    --["Yak-52"] = 1,
+
+    --%%%%% WARBIRDS %%%%%
+    --["Bf-109K-4"] = 1,
+    --["Fw 190A8"] = 1,
+    --["FW-190D9"] = 1,
+    --["I-16"] = 1,
+    --["MosquitoFBMkVI"] = 1,
+    --["P-47D-30"] = 1,
+    --["P-47D-40"] = 1,
+    --["P-51D"] = 1,
+    --["P-51D-30-NA"] = 1,
+    --["SpitfireLFMkIX"] = 1,
+    --["SpitfireLFMkIXCW"] = 1,
+    --["TF-51D"] = 1,
+}
+
+-- Put the name of the Unit you want to enable loading multiple crates
+ctld.internalCargoLimits = {
+
+    -- Remove the -- below to turn on options
+    ["Mi-8MT"] = 2,
+    ["CH-47Fbl1"] = 8,
 }
 
 
 -- ************** Allowable actions for UNIT TYPES ******************
-
 -- Put the name of the Unit you want to limit actions for
 -- NOTE - the unit must've been listed in the transportPilotNames list above
 -- This can be used in conjunction with the options above for group sizes
@@ -745,6 +531,62 @@ ctld.unitLoadLimits = {
 -- ["SA342Mistral"] = {crates=fales, troops=true},
 -- Will allow Mistral Gazelle to only transport crates, not troops
 
+ctld.unitActions = {
+
+    -- Remove the -- below to turn on options
+    -- ["SA342Mistral"] = {crates=true, troops=true},
+    -- ["SA342L"] = {crates=false, troops=true},
+    -- ["SA342M"] = {crates=false, troops=true},
+
+    --%%%%% MODS %%%%%
+    --["Bronco-OV-10A"] = {crates=true, troops=true},
+    ["Hercules"] = { crates = true, troops = true },
+    ["SK-60"] = { crates = true, troops = true },
+    ["UH-60L"] = { crates = true, troops = true },
+    --["T-45"] = {crates=true, troops=true},
+
+    --%%%%% CHOPPERS %%%%%
+    --["Ka-50"] = {crates=true, troops=false},
+    --["Ka-50_3"] = {crates=true, troops=false},
+    ["Mi-8MT"] = { crates = true, troops = true },
+    ["Mi-24P"] = { crates = true, troops = true },
+    --["SA342L"] = {crates=false, troops=true},
+    --["SA342M"] = {crates=false, troops=true},
+    --["SA342Mistral"] = {crates=false, troops=true},
+    --["SA342Minigun"] = {crates=false, troops=true},
+    ["UH-1H"] = { crates = true, troops = true },
+    ["CH-47Fbl1"] = { crates = true, troops = true },
+
+    --%%%%% AIRCRAFTS %%%%%
+    --["C-101EB"] = {crates=true, troops=true},
+    --["C-101CC"] = {crates=true, troops=true},
+    --["Christen Eagle II"] = {crates=true, troops=true},
+    --["L-39C"] = {crates=true, troops=true},
+    --["L-39ZA"] = {crates=true, troops=true},
+    --["MB-339A"] = {crates=true, troops=true},
+    --["MB-339APAN"] = {crates=true, troops=true},
+    --["Mirage-F1B"] = {crates=true, troops=true},
+    --["Mirage-F1BD"] = {crates=true, troops=true},
+    --["Mirage-F1BE"] = {crates=true, troops=true},
+    --["Mirage-F1BQ"] = {crates=true, troops=true},
+    --["Mirage-F1DDA"] = {crates=true, troops=true},
+    --["Su-25T"]= {crates=true, troops=false},
+    --["Yak-52"] = {crates=true, troops=true},
+
+    --%%%%% WARBIRDS %%%%%
+    --["Bf-109K-4"] = {crates=true, troops=false},
+    --["Fw 190A8"] = {crates=true, troops=false},
+    --["FW-190D9"] = {crates=true, troops=false},
+    --["I-16"] = {crates=true, troops=false},
+    --["MosquitoFBMkVI"] = {crates=true, troops=true},
+    --["P-47D-30"] = {crates=true, troops=false},
+    --["P-47D-40"] = {crates=true, troops=false},
+    --["P-51D"] = {crates=true, troops=false},
+    --["P-51D-30-NA"] = {crates=true, troops=false},
+    --["SpitfireLFMkIX"] = {crates=true, troops=false},
+    --["SpitfireLFMkIXCW"] = {crates=true, troops=false},
+    --["TF-51D"] = {crates=true, troops=true},
+}
 
 -- ************** WEIGHT CALCULATIONS FOR INFANTRY GROUPS ******************
 
@@ -758,13 +600,13 @@ ctld.unitLoadLimits = {
 -- Mortar servants carry their tube and a few rounds (ctld.MORTAR_WEIGHT)
 
 ctld.SOLDIER_WEIGHT = 80 -- kg, will be randomized between 90% and 120%
-ctld.KIT_WEIGHT = 20 -- kg
-ctld.RIFLE_WEIGHT = 5 -- kg
-ctld.MANPAD_WEIGHT = 18 -- kg
-ctld.RPG_WEIGHT = 7.6 -- kg
-ctld.MG_WEIGHT = 10 -- kg
-ctld.MORTAR_WEIGHT = 26 -- kg
-ctld.JTAC_WEIGHT = 15 -- kg
+ctld.KIT_WEIGHT = 20     -- kg
+ctld.RIFLE_WEIGHT = 5    -- kg
+ctld.MANPAD_WEIGHT = 18  -- kg
+ctld.RPG_WEIGHT = 7.6    -- kg
+ctld.MG_WEIGHT = 10      -- kg
+ctld.MORTAR_WEIGHT = 26  -- kg
+ctld.JTAC_WEIGHT = 15    -- kg
 
 -- ************** INFANTRY GROUPS FOR PICKUP ******************
 -- Unit Types
@@ -778,13 +620,22 @@ ctld.JTAC_WEIGHT = 15 -- kg
 -- You can also add an optional coalition side to limit the group to one side
 -- for the side - 2 is BLUE and 1 is RED
 ctld.loadableGroups = {
-    --{ name = "Standard Group", inf = 6, mg = 2, at = 2 }, -- will make a loadable group with 6 infantry, 2 MGs and 2 anti-tank for both coalitions
-    { name = "Anti Air", mg = 5, aa = 2 },
-    { name = "Anti Tank", mg = 5, at = 2 },
-    { name = "Mortar Squad", mortar = 3 },
-    { name = "JTAC Group", mg = 5, jtac = 1 }, -- will make a loadable group with 4 infantry and a JTAC soldier for both coalitions
-    --{ name = "Single JTAC", jtac = 1 }, -- will make a loadable group witha single JTAC soldier for both coalitions
-    -- {name = "Mortar Squad Red", inf = 2, mortar = 5, side =1 }, --would make a group loadable by RED only
+    { name = "Standard Group",                   inf = 6,    mg = 2,  at = 2 }, -- will make a loadable group with 6 infantry, 2 MGs and 2 anti-tank for both coalitions
+    { name = "Anti Air",                         inf = 2,    aa = 3 },
+    { name = "Anti Tank",                        inf = 2,    at = 6 },
+    { name = "Mortar Squad",                     mortar = 6 },
+    { name = "JTAC Group",                       inf = 4,    jtac = 1 }, -- will make a loadable group with 4 infantry and a JTAC soldier for both coalitions
+    { name = "Single JTAC",                      jtac = 1 }, -- will make a loadable group witha single JTAC soldier for both coalitions
+    { name = "2x - Standard Groups",             inf = 12,   mg = 4,  at = 4 },
+    { name = "2x - Anti Air",                    inf = 4,    aa = 6 },
+    { name = "2x - Anti Tank",                   inf = 4,    at = 12 },
+    { name = "2x - Standard Groups + 2x Mortar", inf = 12,   mg = 4,  at = 4, mortar = 12 },
+    { name = "3x - Standard Groups",             inf = 18,   mg = 6,  at = 6 },
+    { name = "3x - Anti Air",                    inf = 6,    aa = 9 },
+    { name = "3x - Anti Tank",                   inf = 6,    at = 18 },
+    { name = "3x - Mortar Squad",                mortar = 18 },
+    { name = "5x - Mortar Squad",                mortar = 30 },
+    -- {name = "Mortar Squad Red"), inf = 2, mortar = 5, side =1 }, --would make a group loadable by RED only
 }
 
 -- ************** SPAWNABLE CRATES ******************
@@ -1117,7 +968,7 @@ end
 -- Spawns 1 machine gun, 2 anti tank, 3 anti air, 4 standard soldiers and 5 mortars
 --
 function ctld.spawnGroupAtTrigger(_groupSide, _number, _triggerName, _searchRadius)
-    local _spawnTrigger = trigger.misc.getZone(_triggerName) -- trigger to use as reference position
+    local _spawnTrigger = trigger.misc.getZone(_triggerName)     -- trigger to use as reference position
 
     if _spawnTrigger == nil then
         trigger.action.outText("CTLD.lua ERROR: Cant find trigger called " .. _triggerName, 10)
@@ -1152,7 +1003,6 @@ function ctld.spawnGroupAtTrigger(_groupSide, _number, _triggerName, _searchRadi
     end
 end
 
-
 -----------------------------------------------------------------
 -- Spawn group at a Vec3 Point and set them as extractable. Usage:
 -- ctld.spawnGroupAtPoint("groupside", number,Vec3 Point, radius)
@@ -1171,7 +1021,6 @@ end
 -- ctld.spawnGroupAtPoint("blue", {mg=1,at=2,aa=3,inf=4,mortar=5}, {x=1,y=2,z=3}, 2000)
 -- Spawns 1 machine gun, 2 anti tank, 3 anti air, 4 standard soldiers and 5 mortars
 function ctld.spawnGroupAtPoint(_groupSide, _number, _point, _searchRadius)
-
     local _country
     if _groupSide == "red" then
         _groupSide = 1
@@ -1196,22 +1045,18 @@ function ctld.spawnGroupAtPoint(_groupSide, _number, _point, _searchRadius)
     end
 end
 
-
 -- Preloads a transport with troops or vehicles
 -- replaces any troops currently on board
 function ctld.preLoadTransport(_unitName, _number, _troops)
-
     local _unit = ctld.getTransportUnit(_unitName)
 
     if _unit ~= nil then
-
         -- will replace any units currently on board
-        --        if not ctld.troopsOnboard(_unit,_troops)  then
+        --                if not ctld.troopsOnboard(_unit,_troops)    then
         ctld.loadTroops(_unit, _troops, _number)
-        --        end
+        --                end
     end
 end
-
 
 -- Continuously counts the number of crates in a zone and sets the value of the passed in flag
 -- to the count amount
@@ -1282,7 +1127,7 @@ end
 --
 --
 function ctld.createExtractZone(_zone, _flagNumber, _smoke)
-    local _triggerZone = trigger.misc.getZone(_zone) -- trigger to use as reference position
+    local _triggerZone = trigger.misc.getZone(_zone)     -- trigger to use as reference position
 
     if _triggerZone == nil then
         trigger.action.outText("CTLD.lua ERROR: Cant find zone called " .. _zone, 10)
@@ -1293,7 +1138,7 @@ function ctld.createExtractZone(_zone, _flagNumber, _smoke)
     local _alt = land.getHeight(_pos2)
     local _pos3 = { x = _pos2.x, y = _alt, z = _pos2.y }
 
-    trigger.action.setUserFlag(_flagNumber, 0) --start at 0
+    trigger.action.setUserFlag(_flagNumber, 0)     --start at 0
 
     local _details = { point = _pos3, name = _zone, smoke = _smoke, flag = _flagNumber, radius = _triggerZone.radius }
 
@@ -1321,7 +1166,6 @@ function ctld.createExtractZone(_zone, _flagNumber, _smoke)
         _smokeFunction(_details)
     end
 end
-
 
 -- Removes an extraction zone
 --
@@ -1375,7 +1219,6 @@ function ctld.countDroppedGroupsInZone(_zone, _blueFlag, _redFlag)
                 local _dist = ctld.getDistance(_groupUnits[1]:getPoint(), _zonePos)
 
                 if _dist <= _triggerZone.radius then
-
                     if (_groupUnits[1]:getCoalition() == 1) then
                         _redCount = _redCount + 1;
                     else
@@ -6657,13 +6500,36 @@ function ctld.addF10MenuOptionsBomber(_unitName)
 
             if _groupId then
                 if ctld.addedBomberTo[tostring(_groupId)] == nil then
-                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "轰炸机支援")
+                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "轰炸机行动")
                     missionCommands.addCommandForGroup(_groupId, "呼叫超音速轰炸机("..Bomber.CostTable["Attack"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "Attack"})
                     missionCommands.addCommandForGroup(_groupId, "呼叫低空轰炸机("..Bomber.CostTable["LowBomber"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "LowBomber"})
                     missionCommands.addCommandForGroup(_groupId, "呼叫隐身轰炸机("..Bomber.CostTable["StealthBomber"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "StealthBomber"})
                     missionCommands.addCommandForGroup(_groupId, "呼叫远程轰炸机("..Bomber.CostTable["Bomber"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "Bomber"})
                     missionCommands.addCommandForGroup(_groupId, "!!呼叫核弹机!!("..Bomber.CostTable["Nuke"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "Nuke"})
                     ctld.addedBomberTo[tostring(_groupId)]=true
+                end
+            end
+        end
+    end)
+end
+
+function ctld.addF10MenuOptionsSupport(_unitName)
+    local status, error = pcall(function()
+
+        ctld.logTrace(string.format("_unitName=%s",_unitName))
+        local _unit = ctld.getTransportUnit(_unitName)
+        if _unit ~= nil then
+
+            local _groupId = ctld.getGroupId(_unit)
+            env.info("[CTLD] group id is " .. _groupId)
+
+            if _groupId then
+                if ctld.addedSupportTo[tostring(_groupId)] == nil then
+                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "后勤支援")
+                    missionCommands.addCommandForGroup(_groupId, "呼叫侦查无人机("..Support.CostTable["Attack"].."分)", _rootPath,  Support.CallAttack, { _unitName , "Attack"})
+                    missionCommands.addCommandForGroup(_groupId, "呼叫低空运输机("..Support.CostTable["LowBomber"].."分)", _rootPath,  Support.CallAttack, { _unitName , "LowBomber"})
+                    missionCommands.addCommandForGroup(_groupId, "呼叫高空运输机("..Support.CostTable["StealthBomber"].."分)", _rootPath,  Support.CallAttack, { _unitName , "StealthBomber"})
+                    ctld.addedSupportTo[tostring(_groupId)]=true
                 end
             end
         end
@@ -7078,14 +6944,31 @@ function ctld.notifyCoalition(_message, _displayFor, _side, _radio, _shortMessag
     trigger.action.outTextForCoalition(_side, _message, _displayFor)
     trigger.action.outSoundForCoalition(_side, "radiobeep.ogg")
 end
-
+function ctld.RandomizePointByRadius(point,r)
+    local radius = math.random() * r
+    local theta = math.random() * 2 * math.pi
+    local offsetX = radius * math.cos(theta)
+    local offsetZ = radius * math.sin(theta)
+    point.x = point.x + offsetX
+    point.z = point.z + offsetZ
+    return point    
+end
 function ctld.createSmokeMarker(_enemyUnit, _colour)
 
     --recreate in 5 mins
     ctld.jtacSmokeMarks[_enemyUnit:getName()] = timer.getTime() + 300.0
 
     -- move smoke 2 meters above target for ease
+    if not ctld.smokeID then ctld.smokeID = 900 end
+    ctld.smokeID = ctld.smokeID + 1
+    
     local _enemyPoint = _enemyUnit:getPoint()
+    local _randomizedPoint = ctld.RandomizePointByRadius(_enemyPoint,50)
+
+    local _enemyCoalition = _enemyUnit:getCoalition()
+    local _coalition = (_enemyCoalition == 1) and 2 or 1
+
+    trigger.action.markToCoalition(ctld.smokeID, _enemyUnit:getName() , _randomizedPoint, _coalition)
     trigger.action.smoke({ x = _enemyPoint.x, y = _enemyPoint.y + 2.0, z = _enemyPoint.z }, _colour)
 end
 
@@ -7772,6 +7655,7 @@ function ctld.initialize(force)
     ctld.captureCommandAdded = {}
     ctld.addedCSARTo= {}
     ctld.addedBomberTo= {}
+    ctld.addedSupportTo= {}
     ctld.addedTo = {}
     ctld.spawnedCratesRED = {} -- use to store crates that have been spawned
     ctld.spawnedCratesBLUE = {} -- use to store crates that have been spawned
