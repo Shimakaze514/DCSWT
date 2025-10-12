@@ -3,7 +3,7 @@ SLOT.callbacks = SLOT.callbacks or {}
 
 SLOT.FilePath = lfs.writedir() .. [[Scripts/SlotAuth/]] .. '动态槽位限制.json'
 SLOT.AuthDataCache = {}
-SLOT.teamBalenceCoefficient = 0.34
+SLOT.teamBalenceCoefficient = 0.2  -- 0.34
 SLOT.UseNewDynamicSystem = true
 SLOT.LastSideSwitch = {}
 SLOT.SideSwitchCooldown = 300
