@@ -891,11 +891,11 @@ function ctld.RefreshConfig()
         ctld.logInfo("当前在线玩家数正常，使用正常参数")
     else
         ctld.UnitLimitPerPlayer = {
-            ["主战坦克(Tank)"] = 1,
-            ["步兵战车(IFV)"] = 1,
-            ["远程火力(Artillery)"] = 1,
-            ["近程防空(Short Range AA)"] = 1,
-            ["中远程防空(Mid&Long Range AA)"] = 1,
+            ["主战坦克(Tank)"] = 2,
+            ["步兵战车(IFV)"] = 2,
+            ["远程火力(Artillery)"] = 2,
+            ["近程防空(Short Range AA)"] = 2,
+            ["中远程防空(Mid&Long Range AA)"] = 2,
             ["无人机、悍马JTAC、FOB等"] = 1,
         }
         ctld.FOBLimit = 0
@@ -7322,7 +7322,7 @@ function ctld.createSmokeMarker(_enemyUnit, _colour, _jtacGroupName)
     local _coalition = (_enemyCoalition == 1) and 2 or 1
 
     trigger.action.markToCoalition(newID, _enemyUnit:getTypeName() , _randomizedPoint, _coalition,true)
-    trigger.action.smoke({ x = _enemyPoint.x, y = _enemyPoint.y + 2.0, z = _enemyPoint.z }, _colour)
+    -- trigger.action.smoke({ x = _enemyPoint.x, y = _enemyPoint.y + 2.0, z = _enemyPoint.z }, _colour)
 end
 
 function ctld.cancelLase(_jtacGroupName)
