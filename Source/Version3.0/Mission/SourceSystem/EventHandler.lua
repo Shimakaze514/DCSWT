@@ -1,0 +1,74 @@
+SourceObj = SourceObj or {}
+
+SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
+    SourceObj.playerSource[_ucid] = SourceObj.playerSource[_ucid] or {}
+    if SourceObj.playerSource[_ucid].point == nil then
+        SourceObj.playerSource[_ucid].point = SourceObj.sourceInitPoint
+        SourceObj.SaveSourcePoint()
+    end
+    if _event == "takeoff" then
+        local _groupId = SourceObj.getGroupId(_unit)
+        local sourcePointChange, countInfo = SourceObj.getSourceObjChange(_unit)
+
+        local ps = SourceObj.playerSource[_ucid] or {}
+        if ps.birthTime and (timer.getTime() - ps.birthTime < 120) then
+            local _groupId = SourceObj.getGroupId(_unit)
+            trigger.action.outTextForGroup(_groupId, "你在出生后120秒内起飞，触发自爆！", 10, true)
+
+            timer.scheduleFunction(SourceObj.unitExplosion, _unit, timer.getTime() + 5)
+            return
+        end
+
+        if SourceObj.playerSource[_ucid].point - sourcePointChange > 0 then
+            SourceObj.playerSource[_ucid].point = SourceObj.playerSource[_ucid].point - sourcePointChange
+            SourceObj.SaveSourcePoint()
+            local text = string.format(
+                "起飞成功,本次总共消耗私有资源点:%d,个人剩余:%d点.\n详细信息:%s",
+                tostring(sourcePointChange), tostring(SourceObj.playerSource[_ucid].point), tostring(countInfo))
+            trigger.action.outTextForGroup(_groupId, text, 20, true)
+        else
+            local text = string.format(
+                "你的私有资源点剩余(%d),本次起飞需要:%d,即将自爆！请挂机等低保或改用低价挂载！",
+                SourceObj.playerSource[_ucid].point, sourcePointChange)
+            trigger.action.outTextForGroup(_groupId, text, 120, true)
+            timer.scheduleFunction(SourceObj.unitExplosion, _unit, timer.getTime() + 10)
+        end
+    elseif _event == "landing" then
+        local _groupId = SourceObj.getGroupId(_unit)
+        local sourcePointChange, countInfo = SourceObj.getSourceObjChange(_unit)
+        local totalReturn = sourcePointChange
+        if SourceObj.pendingKillPoint[_ucid] then
+            totalReturn = totalReturn + SourceObj.pendingKillPoint[_ucid]
+            countInfo = countInfo .. string.format("\n击杀奖励结算:+%d", SourceObj.pendingKillPoint[_ucid])
+            SourceObj.pendingKillPoint[_ucid] = nil
+        end
+        SourceObj.playerSource[_ucid].point = SourceObj.playerSource[_ucid].point + totalReturn
+        SourceObj.SaveSourcePoint()
+        local text = string.format("降落成功,结算添加资源点:%d,个人剩余:%d点.\n详细信息:%s",
+            tostring(totalReturn), tostring(SourceObj.playerSource[_ucid].point), tostring(countInfo))
+        trigger.action.outTextForGroup(_groupId, text, 10)
+    elseif _event == "pilotDead" then
+        local _groupId = SourceObj.getGroupId(_unit)
+        local halfPoint = 0
+        if SourceObj.pendingKillPoint[_ucid] then
+            halfPoint = math.floor(SourceObj.pendingKillPoint[_ucid] / 2)
+            SourceObj.pendingKillPoint[_ucid] = nil
+        end
+        SourceObj.playerSource[_ucid].point = SourceObj.playerSource[_ucid].point + halfPoint
+        SourceObj.SaveSourcePoint()
+        local text = string.format(
+            "您已阵亡，获得资源点减半！\n结算添加资源点:%d，个人剩余:%d点",
+            tostring(halfPoint), tostring(SourceObj.playerSource[_ucid].point))
+        trigger.action.outTextForGroup(_groupId, text, 10)
+    elseif _event == "kill" then
+        local _groupId = SourceObj.getGroupId(_unit.initiator)
+        if _unit.initiator:getCoalition() ~= _unit.target:getCoalition() then
+            local killPoint = SourceObj.getSourceKillChange(_unit.target)
+            SourceObj.pendingKillPoint[_ucid] = (SourceObj.pendingKillPoint[_ucid] or 0) + killPoint
+            trigger.action.outTextForGroup(_groupId, string.format(
+                "击杀敌军，奖励已记录(+%d点)\n若在任务中阵亡，击杀奖励将减半！", killPoint), 10)
+        else
+            SourceObj.eventAddPoint("击杀友军:", -SourceObj.getSourceKillChange(_unit.target), _ucid, _groupId)
+        end
+    end
+end
