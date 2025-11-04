@@ -4096,7 +4096,7 @@ function ctld.dropAndUnpackCrates(_arguments)
     if _heli == nil then return end
     if not ctld.inAir(_heli) then
         local _currentCrates = ctld.inTransitSlingLoadCrates[_unitName] or {}
-        local _crateCount = #_currentCrates
+        local _crateCount = #_currentCrates + 1
 
         if _crateCount == 0 then
             ctld.displayMessageToGroup(_heli, "你目前没有运输任何箱子。", 10)
@@ -4520,7 +4520,7 @@ function ctld.dropSlingCrate(_args)
     if needCheck == true then
         if ctld.inAir(_heli) == false then
             ctld.displayMessageToGroup(_heli, _currentCrate.desc .. " 箱子已放下，在你12点方向", 10)
-            _point = ctld.getPointAt12Oclock(_heli, 50)
+            _point = ctld.getPointAt12Oclock(_heli, 40)
         elseif _heightDiff > ctld.airDropHeight and _heightDiff <= 40.0 then
             ctld.displayMessageToGroup(_heli, _currentCrate.desc .. " 箱子已经放在你下面了", 10)
             _point = ctld.getPointAt12Oclock(_heli, 5)
@@ -4529,7 +4529,7 @@ function ctld.dropSlingCrate(_args)
             return
         end
     else
-        _point = ctld.getPointAt12Oclock(_heli, 50)
+        _point = ctld.getPointAt12Oclock(_heli, 40)
     end
 
     -- 生成箱子
