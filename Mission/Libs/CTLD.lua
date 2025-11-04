@@ -4097,9 +4097,14 @@ function ctld.dropAndUnpackCrates(_arguments)
     if not ctld.inAir(_heli) then
         local _currentCrates = ctld.inTransitSlingLoadCrates[_unitName] or {}
         local _crateCount = #_currentCrates
-        
+
+        if _crateCount == 0 then
+            ctld.displayMessageToGroup(_heli, "你目前没有运输任何箱子。", 10)
+            return
+        end
+
         for i = 1, _crateCount do
-            timer.scheduleFunction(ctld.dropSlingCrate, _arguments, timer.getTime() + 0.2 * (i - 1))
+            timer.scheduleFunction(ctld.dropSlingCrate, _arguments, timer.getTime() + 0.2 * (i-1))
         end
         
         -- Schedule the unpack to run after the last crate has been dropped, with a small buffer.
@@ -4523,6 +4528,8 @@ function ctld.dropSlingCrate(_args)
             ctld.displayMessageToGroup(_heli, "你太高了！箱子已被毁", 10)
             return
         end
+    else
+        _point = ctld.getPointAt12Oclock(_heli, 50)
     end
 
     -- 生成箱子
