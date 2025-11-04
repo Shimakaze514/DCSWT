@@ -3,7 +3,7 @@ AddEXPL.eventHandler = {}
 function AddEXPL.eventHandler:onEvent(_event)
     local status, err = pcall(function()
         if not _event or not _event.id then return end
-        if _event.id == world.event.S_EVENT_HIT and _event.target then
+        if _event.id == world.event.S_EVENT_HIT and _event.target and _event.target.getDesc then
             if not _event.target:getDesc().category == Unit.Category.AIRPLANE or _event.target:getDesc().category == Unit.Category.HELICOPTER then return end
             local life = _event.target:getLife()/_event.target:getLife0()
             if life <= 0.5 then
