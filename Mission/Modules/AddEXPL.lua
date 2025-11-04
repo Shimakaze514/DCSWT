@@ -3,28 +3,23 @@ AddEXPL.eventHandler = {}
 function AddEXPL.eventHandler:onEvent(_event)
     local status, err = pcall(function()
         if not _event or not _event.id then return end
-        if _event.id == world.event.S_EVENT_HIT then
-            if _event.target and _event.target:getTypeName() == "CH-47Fbl1" then
-                --env.info("[AddEXPL] Info: 击中CH47的事件触发: "..ctld.p(_event))
+        if _event.id == world.event.S_EVENT_HIT and _event.target then
+            if not _event.target:getDesc().category == Unit.Category.AIRPLANE or _event.target:getDesc().category == Unit.Category.HELICOPTER then return end
+            local life = _event.target:getLife()/_event.target:getLife0()
+            if life <= 0.5 then
+                env.info("[AddEXPL] Info: 单位血量小于爆炸临界，血量分数(0,1)为"..life)
                 if _event.weapon and type(_event.weapon) == "table" and _event.weapon.isExist and _event.weapon:isExist() then
                     local weaponObj = _event.weapon
-                    env.info("[AddEXPL] Info: 成功找到击中CH47的武器")
+                    env.info("[AddEXPL] Info: 成功找到击毁目标的武器")
                     local weaponDesc = weaponObj.getDesc and weaponObj:getDesc()
                     if weaponDesc then
-                        env.info("[AddEXPL] Info: 成功获取描述，击中CH47的武器是: " .. ctld.formatTable(weaponDesc))
-                        local explMass = 50
-                        if weaponDesc.warhead and weaponDesc.warhead.explosiveMass then
-                            explMass = weaponDesc.warhead.explosiveMass * 6
-                            env.info("[AddEXPL] Info: 使用武器的当量设置爆炸，原武器当量: " .. weaponDesc.warhead.explosiveMass .. "，设置爆炸当量: " .. explMass)
-                        else
-                        end
-                        trigger.action.explosion(_event.target:getPoint(),explMass)
+                        env.info("[AddEXPL] Info: 成功获取描述，击毁目标的武器是: " .. ctld.formatTable(weaponDesc))
                     else
-                        env.info("[AddEXPL] Info: 击中CH47的武器没有WeaponDesc，使用默认当量爆破")
-                        trigger.action.explosion(_event.target:getPoint(),50)
+                        env.info("[AddEXPL] Info: 击毁目标的武器没有WeaponDesc")
                     end
+                    trigger.action.explosion(_event.target:getPoint(),50)
                 else
-                    env.info("[AddEXPL] Info: 击中CH47的武器没有Weapon对象信息，使用默认当量爆破")
+                    env.info("[AddEXPL] Info: 击毁目标的武没有Weapon对象信息")
                     trigger.action.explosion(_event.target:getPoint(),50)
                 end
             end
