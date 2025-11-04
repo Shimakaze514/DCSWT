@@ -5351,7 +5351,13 @@ function ctld.spawnCrateGroup(_heli, _positions, _types, _groupSystemTemplate)
         _group.category = Group.Category.GROUND
         _spawnedGroup = Group.getByName(mist.dynAdd(_group).name)
         local _dest = _spawnedGroup:getUnit(1):getPoint()
-        _dest = { x = _dest.x + 0.5, _y = _dest.y + 0.5, z = _dest.z + 0.5 }
+
+        local offset = 50
+        local heading  = mist.getHeading(_spawnedGroup:getUnit(1))
+        local new_x = _dest.x + offset * math.sin(heading)
+        local new_z = _dest.z + offset * math.cos(heading)
+
+        _dest = { x = new_x, _y = _dest.y + 0.5, z = new_z }
         ctld.orderGroupToMoveToPoint(_spawnedGroup:getUnit(1), _dest)
     end
 
@@ -5866,12 +5872,12 @@ function ctld.orderGroupToMoveToPoint(_leader, _destination)
 
         if _grp ~= nil then
             local _controller = _grp:getController();
-            Controller.setOption(_controller, AI.Option.Ground.id.ALARM_STATE, AI.Option.Ground.val.ALARM_STATE.AUTO)
+            Controller.setOption(_controller, AI.Option.Ground.id.ALARM_STATE, AI.Option.Ground.val.ALARM_STATE.RED)
             Controller.setOption(_controller, AI.Option.Ground.id.ROE, AI.Option.Ground.val.ROE.OPEN_FIRE)
             _controller:setTask(_arg[2])
         end
     end
-    , { _group:getName(), _mission }, timer.getTime() + 2)
+    , { _group:getName(), _mission }, timer.getTime() + 15)
 
 end
 
