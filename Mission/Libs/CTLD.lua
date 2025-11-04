@@ -5865,19 +5865,19 @@ function ctld.orderGroupToMoveToPoint(_leader, _destination)
         },
     }
 
-
-    -- delayed 2 second to work around bug
-    timer.scheduleFunction(function(_arg)
-        local _grp = ctld.getAliveGroup(_arg[1])
-
-        if _grp ~= nil then
-            local _controller = _grp:getController();
-            Controller.setOption(_controller, AI.Option.Ground.id.ALARM_STATE, AI.Option.Ground.val.ALARM_STATE.RED)
+    local _grp = ctld.getAliveGroup(_group:getName())
+    if _grp ~= nil then
+        local _controller = _grp:getController();
+        timer.scheduleFunction(function(_arg)
+            Controller.setOption(_controller, AI.Option.Ground.id.ALARM_STATE, AI.Option.Ground.val.ALARM_STATE.GREEN)
             Controller.setOption(_controller, AI.Option.Ground.id.ROE, AI.Option.Ground.val.ROE.OPEN_FIRE)
-            _controller:setTask(_arg[2])
-        end
+            _controller:setTask(_mission)
+        end, {}, timer.getTime() + 2) -- delayed 2 second to work around bug
+        timer.scheduleFunction(function(_arg)
+            Controller.setOption(_controller, AI.Option.Ground.id.ALARM_STATE, AI.Option.Ground.val.ALARM_STATE.RED)
+        end, {}, timer.getTime() + 30)
     end
-    , { _group:getName(), _mission }, timer.getTime() + 15)
+
 
 end
 
