@@ -5353,9 +5353,10 @@ function ctld.spawnCrateGroup(_heli, _positions, _types, _groupSystemTemplate)
         local _dest = _spawnedGroup:getUnit(1):getPoint()
 
         local offset = 50
-        local heading  = mist.getHeading(_spawnedGroup:getUnit(1))
-        local new_x = _dest.x + offset * math.sin(heading)
-        local new_z = _dest.z + offset * math.cos(heading)
+        local heading  = mist.getHeading(_heli)
+        ctld.logInfo("Unpack heading is"..heading)
+        local new_x = _dest.x + offset * math.cos(heading)
+        local new_z = _dest.z + offset * math.sin(heading)
 
         _dest = { x = new_x, _y = _dest.y + 0.5, z = new_z }
         ctld.orderGroupToMoveToPoint(_spawnedGroup:getUnit(1), _dest)
