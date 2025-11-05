@@ -127,7 +127,7 @@ function SourceCall.onGameEvent(eventName, playerID, ...)
   local calls = {}
   calls.change_slot = SourceCall.change_slot
   calls.takeoff = SourceCall.takeoff
-  calls.friendly_fire = SourceCall.friendly_fire
+  --calls.friendly_fire = SourceCall.friendly_fire
   calls.self_kill = SourceCall.self_kill
   calls.kill = SourceCall.kill
   calls.pilot_death = SourceCall.pilot_death
