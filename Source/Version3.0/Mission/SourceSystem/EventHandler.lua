@@ -36,7 +36,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
             end, {_groupId,_unit}, timer.getTime() + 15)
             return
         end
-
+        SourceObj.landASAP[_groupId] = false
         if SourceObj.playerSource[_ucid].point - sourcePointChange > 0 then
             SourceObj.playerSource[_ucid].point = SourceObj.playerSource[_ucid].point - sourcePointChange
             SourceObj.SaveSourcePoint()
