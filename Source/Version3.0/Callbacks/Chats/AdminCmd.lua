@@ -33,10 +33,12 @@ AdminCmd = function(REXtext, playerID, ucid, name)
   if REXtext[1] == "-admin" then
     if commands[commandName] then
       commands[commandName].handle(REXtext, playerID, ucid, name)
+      return true
     end
   elseif REXtext[1] == "-tb" then
     if commands["tb"] then
       commands["tb"].handle(REXtext, playerID, ucid, name)
+      return true
     end
   end
 end

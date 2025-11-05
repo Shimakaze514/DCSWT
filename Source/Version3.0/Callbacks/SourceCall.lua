@@ -90,9 +90,8 @@ function SourceCall.onPlayerTrySendChat(id, msg, all)
   local name = net.get_player_info(id, "name")
   local realString = Cut_tail_spaces(msg)
   local REXtext = Split_by_space(realString)
-  AdminCmd(REXtext, id, ucid, name)
-  PlayerCmd(REXtext, id, ucid, name)
   ChatFile(id, realString, all)
+  if AdminCmd(REXtext, id, ucid, name) or PlayerCmd(REXtext, id, ucid, name) then return "" end
 end
 
 function SourceCall.onPlayerDisconnect(id)

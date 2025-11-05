@@ -2,7 +2,7 @@ local function handle(args, playerID, ucid)
 	if playerID == 1 or SourceCall.Admins[ucid] then
 		if SourceCall.PlayerName[args[3]] then
 			local fun_str =
-				[[a_do_script('SourceObj.addSourcePoint("]] .. SourceCall.PlayerName[args[3]] .. '",' .. args[4] .. [[')]]
+				[[a_do_script('SourceObj.addSourcePoint("]] .. SourceCall.PlayerName[args[3]] .. '",' .. args[4] .. [[)')]]
 			net.dostring_in('mission', fun_str)
 			net.send_chat_to(string.format('%s资源点已增加%d点', args[3], args[4]), playerID)
 		else

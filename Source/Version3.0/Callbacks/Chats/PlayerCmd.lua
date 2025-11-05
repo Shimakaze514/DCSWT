@@ -21,9 +21,12 @@ PlayerCmd = function(REXtext, playerID, ucid, name)
   
   if cmd == "help" or cmd == "h" then
     commands["h"].handle(REXtext, playerID, ucid, name)
+    return true
   elseif cmd == "-donatePoint" then
     commands["donatePoint"].handle(REXtext, playerID, ucid, name)
-  elseif cmd == "-tb" then
-    commands["tb"].handle(REXtext, playerID, ucid, name)
+    return true
+--   elseif cmd == "-tb" then
+--     commands["tb"].handle(REXtext, playerID, ucid, name)
+--     return true
   end
 end
