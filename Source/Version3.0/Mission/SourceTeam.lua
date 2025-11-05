@@ -5,6 +5,7 @@ SourceObj.BLUEPOINT = 80000
 SourceObj.updateTeamSourcePointsByEvent = function(_unit, _ucid, _event)
     if _event == "takeoff" then
         local _groupId = SourceObj.getGroupId(_unit)
+        if SourceObj.landASAP[_groupId] == true then return end
         local sourcePointChange = SourceObj.getSourceObjChange(_unit)
         if SourceObj.playerSource[_ucid]["point"] - sourcePointChange > 0 then
             if _unit:getCoalition() == 1 then

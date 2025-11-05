@@ -1,4 +1,5 @@
 SourceObj = SourceObj or {}
+SourceObj.landASAP = SourceObj.landASAP or {}
 
 SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
     SourceObj.playerSource[_ucid] = SourceObj.playerSource[_ucid] or {}
@@ -18,7 +19,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
                     trigger.action.outTextForGroup(groupId, "你在出生后120秒内起飞，请立即降落！15秒内不着陆将会自爆！", 15-i, true)
                 end, {_groupId}, timer.getTime() + i)
             end
-
+            SourceObj.landASAP[_groupId] = true
             timer.scheduleFunction(function(args)
                 local groupId = args[1]
                 local unit = args[2]
@@ -30,6 +31,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
                     else
                         trigger.action.outTextForGroup(groupId, "已及时降落，处罚取消。", 15, true)
                     end
+                    SourceObj.landASAP[_groupId] = false
                 end
             end, {_groupId,_unit}, timer.getTime() + 15)
             return
@@ -54,6 +56,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
         end
     elseif _event == "landing" then
         local _groupId = SourceObj.getGroupId(_unit)
+        if SourceObj.landASAP[_groupId] == true then return end
         local sourcePointChange, countInfo = SourceObj.getSourceObjChange(_unit)
         local totalReturn = sourcePointChange
         if SourceObj.pendingKillPoint[_ucid] then
