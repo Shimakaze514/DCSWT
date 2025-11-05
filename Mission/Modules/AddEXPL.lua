@@ -14,6 +14,7 @@ function AddEXPL.eventHandler:onEvent(_event)
 				 then
 					return
 				end
+                if _event.target:getTypeName() == "CH-47Fbl1" then trigger.action.explosion(_event.target:getPoint(), 50) return end
 				local life = _event.target:getLife() / _event.target:getLife0()
 				if life <= 0.5 then
 					env.info('[AddEXPL] Info: 单位血量小于爆炸临界，血量分数(0,1)为' .. life)
