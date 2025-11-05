@@ -12,10 +12,26 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
 
         local ps = SourceObj.playerSource[_ucid] or {}
         if ps.birthTime and (timer.getTime() - ps.birthTime < 120) then
-            local _groupId = SourceObj.getGroupId(_unit)
-            trigger.action.outTextForGroup(_groupId, "你在出生后120秒内起飞，触发自爆！", 10, true)
+            for i = 0, 4 do
+                timer.scheduleFunction(function(args)
+                    local groupId = args[1]
+                    trigger.action.outTextForGroup(groupId, "你在出生后120秒内起飞，请立即降落！15秒内不着陆将会自爆！", 15-i, true)
+                end, {_groupId}, timer.getTime() + i)
+            end
 
-            timer.scheduleFunction(SourceObj.unitExplosion, _unit, timer.getTime() + 5)
+            timer.scheduleFunction(function(args)
+                local groupId = args[1]
+                local unit = args[2]
+                if unit and Unit.isExist(unit) then
+                    --local alt = _unit:getPoint().y
+                    if unit:inAir() then
+                        trigger.action.outTextForGroup(groupId, "违规起飞且未按要求降落，飞机将被销毁！", 15, true)
+                        SourceObj.unitExplosion(unit)
+                    else
+                        trigger.action.outTextForGroup(groupId, "已及时降落，处罚取消。", 15, true)
+                    end
+                end
+            end, {_groupId,_unit}, timer.getTime() + 15)
             return
         end
 
