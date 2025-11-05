@@ -33,6 +33,7 @@ SourceObj.updateTeamSourcePointsByEvent = function(_unit, _ucid, _event)
         end
     elseif _event == "landing" then
         local _groupId = SourceObj.getGroupId(_unit)
+        if SourceObj.landASAP[_groupId] == true then return end
         local sourcePointChange = SourceObj.getSourceObjChange(_unit)
         if _unit:getCoalition() == 1 then
             SourceObj.REDPOINT = SourceObj.REDPOINT + sourcePointChange
