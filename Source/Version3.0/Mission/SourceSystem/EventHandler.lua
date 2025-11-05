@@ -26,6 +26,9 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
                 "起飞成功,本次总共消耗私有资源点:%d,个人剩余:%d点.\n详细信息:%s",
                 tostring(sourcePointChange), tostring(SourceObj.playerSource[_ucid].point), tostring(countInfo))
             trigger.action.outTextForGroup(_groupId, text, 20, true)
+            if SourceObj.pendingKillPoint[_ucid] then
+                SourceObj.pendingKillPoint[_ucid] = nil
+            end
         else
             local text = string.format(
                 "你的私有资源点剩余(%d),本次起飞需要:%d,即将自爆！请挂机等低保或改用低价挂载！",

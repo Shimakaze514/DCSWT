@@ -43,7 +43,12 @@ Chatcmd = function(REXtext, playerID, ucid)
     if playerID == 1 or SourceCall.Admins[ucid] then
       -- -admin addPoint Admin 1000
       if SourceCall.PlayerName[REXtext[3]] then
-        local fun_str = [[a_do_script('SourceObj.addSourcePoint("]] .. SourceCall.PlayerName[REXtext[3]] .. '",' .. REXtext[4] .. [[)')]]
+        -- local fun_str = [[a_do_script('SourceObj.addSourcePoint("]] .. SourceCall.PlayerName[REXtext[3]] .. '",' .. REXtext[4] .. [[)')]]
+        local fun_str = string.format(
+            'a_do_script([[SourceObj.addSourcePoint("%s", %s)]])',
+            SourceCall.PlayerName[REXtext[3]],
+            REXtext[4]
+        )
         net.dostring_in("mission", fun_str)
         net.send_chat_to(string.format("%s资源点已增加%d点", REXtext[3], REXtext[4]), playerID)
       else
