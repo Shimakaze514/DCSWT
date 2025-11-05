@@ -14,13 +14,12 @@ function AddEXPL.eventHandler:onEvent(_event)
 				 then
 					return
 				end
-				local life = _event.target:getLife() / _event.target:getLife0()
-                
                 if _event.target:getTypeName() == "CH-47Fbl1" then
-                    env.info('[AddEXPL] Info: CH-47F被击中，血量分数(0,1)为' .. life)
-                    trigger.action.explosion(_event.target:getPoint(), 50)
+                    env.info('[AddEXPL] Info: CH-47Fbl1被击中')
+                    trigger.action.explosion(_event.target:getPoint(), 80)
                     return
                 end
+				local life = _event.target:getLife() / _event.target:getLife0()
 				if life <= 0.5 then
 					env.info('[AddEXPL] Info: 单位血量小于爆炸临界，血量分数(0,1)为' .. life)
 					if _event.weapon and type(_event.weapon) == 'table' and _event.weapon.isExist and _event.weapon:isExist() then
