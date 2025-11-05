@@ -3,9 +3,9 @@ SourceObj.playerGroup = {}
 SourceObj.playerUcidByGroup = {}
 SourceObj.addedF10Menu = {}
 SourceObj.pendingKillPoint = {}
-SourceObj.killEnemy = 100
-SourceObj.killFriend = -250
-SourceObj.pilotDead = 150
+-- SourceObj.killEnemy = 100
+-- SourceObj.killFriend = -150
+-- SourceObj.pilotDead = 150
 SourceObj.addCrate = 50
 
 dofile(lfs.writedir() .. "Scripts/Source/Version3.0/Mission/SourceSystem/EventHandler.lua")
@@ -14,6 +14,9 @@ dofile(lfs.writedir() .. "Scripts/Source/Version3.0/Mission/SourceSystem/PlayerM
 dofile(lfs.writedir() .. "Scripts/Source/Version3.0/Mission/SourceSystem/PointManager.lua")
 
 SourceObj.onBirth = function(_unit)
+    if _unit:getDesc().category ~= Unit.Category.AIRPLANE and
+    _unit:getDesc().category ~= Unit.Category.HELICOPTER
+    then return end
     local displayMsg = false
     local _typeName = _unit:getTypeName()
     if _typeName and AircraftPriceMap[_typeName] then
