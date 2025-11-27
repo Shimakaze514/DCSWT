@@ -8,7 +8,12 @@ do
 
 		-- Protection against multiple references (typically wrong script installation)
 
-		isTacviewModuleInitialized=true;
+		isTacviewModuleInitialized=true
+
+		-- Debug info to detect invalid installation
+
+		local scriptFullPath = debug.getinfo(1).source
+		log.write('TACVIEW.EXPORT.LUA',log.INFO,'Starting ['..scriptFullPath..']')
 
 		-- Load Tacview DLL from Saved Games folder
 
@@ -33,50 +38,70 @@ do
 
 		-- Register Callbacks in DCS World Export environment
 
-		local tacviewName = 'Tacview 1.9.1.200 C++ flight data recorder';
+		local tacviewName = 'Tacview 1.9.5.200 C++ flight data recorder'
 
 		if status then
 
 			-- (Hook) Called once right before mission start.
+
 			do
-				local PrevLuaExportStart=LuaExportStart;
+				local PrevLuaExportStart=LuaExportStart
 
 				LuaExportStart=function()
-
+				
 					tacview.ExportStart()
 
 					if PrevLuaExportStart then
-						PrevLuaExportStart();
+						PrevLuaExportStart()
 					end
 				end
 			end
 
-			-- (Hook) Called right after every simulation frame.
+			-- (Hook) Called at the BEGINING of the current simulation frame.
+
 			do
-				local PrevLuaExportAfterNextFrame=LuaExportAfterNextFrame;
+				local PrevLuaExportBeforeNextFrame=LuaExportBeforeNextFrame
+
+				LuaExportBeforeNextFrame=function()
+
+					-- log.write('TACVIEW.EXPORT.LUA',log.INFO,string.format("calling tacview.ExportUpdateBegin(%g) clock=%.6f",LoGetModelTime(), os.clock()))
+
+					tacview.ExportUpdateBegin()
+
+					if PrevLuaExportBeforeNextFrame then
+						PrevLuaExportBeforeNextFrame()
+					end
+				end
+			end
+
+			-- (Hook) Called at the END of the current simulation frame.
+
+			do
+				local PrevLuaExportAfterNextFrame=LuaExportAfterNextFrame
 
 				LuaExportAfterNextFrame=function()
 
-					-- log.info(string.format("LUA heap size: %d KiB",collectgarbage("count")));
+					-- log.write('TACVIEW.EXPORT.LUA',log.INFO,string.format("calling tacview.ExportUpdateEnd(%g) clock=%.6f",LoGetModelTime(),os.clock()))
 
-					tacview.ExportUpdate()
+					tacview.ExportUpdateEnd()
 
 					if PrevLuaExportAfterNextFrame then
-						PrevLuaExportAfterNextFrame();
+						PrevLuaExportAfterNextFrame()
 					end
 				end
 			end
 
 			-- (Hook) Called right after mission end.
+
 			do
-				local PrevLuaExportStop=LuaExportStop;
+				local PrevLuaExportStop=LuaExportStop
 
 				LuaExportStop=function()
 
 					tacview.ExportStop()
 
 					if PrevLuaExportStop then
-						PrevLuaExportStop();
+						PrevLuaExportStop()
 					end
 				end
 			end

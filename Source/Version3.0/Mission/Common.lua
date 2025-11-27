@@ -204,34 +204,34 @@ SourceObj.getLoadout = function(_args)
     -- ruleMsg
     local ruleMsg = "\n========= 挂载规则 =========\n" ..
         string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4d\n",
-            "制空战斗机", Aircraft.superiorityFighterPoint,
-            "轻型战斗机", Aircraft.lightFighterPoint) ..
+            "制空战斗机", NPAircraftList.superiorityFighterPoint,
+            "轻型战斗机", NPAircraftList.lightFighterPoint) ..
         string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4d\n",
-            "对地攻击机", Aircraft.attackerPoint,
-            "直升机", Aircraft.helicopterPoint) ..
+            "对地攻击机", NPAircraftList.attackerPoint,
+            "直升机", NPAircraftList.helicopterPoint) ..
         "--------------------------------\n" ..
         string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4d\n",
-            "先进主动弹", Weapon.AA_newARHPoint,
-            "早期主动弹", Weapon.AA_oldARHPoint) ..
+            "先进主动弹", NPWeaponList.AA_newARHPoint,
+            "早期主动弹", NPWeaponList.AA_oldARHPoint) ..
         string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4d\n",
-            "先进红外弹", Weapon.AA_newIRPoint,
-            "早期红外弹", Weapon.AA_oldIRPoint) ..
+            "先进红外弹", NPWeaponList.AA_newIRPoint,
+            "早期红外弹", NPWeaponList.AA_oldIRPoint) ..
         string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4s\n", --! %4s
-            "半主动弹", Weapon.AA_SARHPoint, "", "") ..
+            "半主动弹", NPWeaponList.AA_SARHPoint, "", "") ..
         "--------------------------------\n" ..
         string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4d\n",
-            "对地导弹", Weapon.AG_SmartMissilePoint,
-            "精确炸弹", Weapon.AG_SmartBombPoint) ..
+            "对地导弹", NPWeaponList.AG_SmartMissilePoint,
+            "精确炸弹", NPWeaponList.AG_SmartBombPoint) ..
         string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4d\n",
-            "激光炸弹", Weapon.AG_LaserPoint,
-            "无制导炸弹", Weapon.AG_DumbPoint) ..
+            "激光炸弹", NPWeaponList.AG_LaserPoint,
+            "无制导炸弹", NPWeaponList.AG_DumbPoint) ..
         string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4s\n", --! %4s
-            "人在回路", Weapon.AG_NLOSPoint, "", "")
+            "人在回路", NPWeaponList.AG_NLOSPoint, "", "")
         --      ..
         -- "--------------------------------\n" ..
         -- string.format("%-"..maxNameLen.."s %4d | %-"..maxNameLen.."s %4d\n",
-        --     "吊舱", Weapon.ATGPodPoint,
-        --     "副油箱", Weapon.mailboxPoint)
+        --     "吊舱", NPWeaponList.ATGPodPoint,
+        --     "副油箱", NPWeaponList.mailboxPoint)
 
     local finalMsg = ruleMsg .. detail ..
                      string.format("你的当前资源点数: %d\n", ps.point)

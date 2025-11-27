@@ -1,13 +1,13 @@
-Weapon = {}
+local NPWeaponList = {}
 --------------------------------AA---------------------------------
-Weapon.AA_newARH = {
+NPWeaponList.AA_newARH = {
   "AIM_120C",
   "SD-10",
   "PL-12",
 }
-Weapon.AA_newARHPoint = 25
+NPWeaponList.AA_newARHPoint = 25
 
-Weapon.AA_oldARH = {
+NPWeaponList.AA_oldARH = {
   "AIM_54C_Mk47",
   "AIM_54C_Mk60",
   "AIM_120", --B
@@ -16,9 +16,9 @@ Weapon.AA_oldARH = {
   "P_27TE",
   "P_27PE",
 }
-Weapon.AA_oldARHPoint = 15
+NPWeaponList.AA_oldARHPoint = 15
 
-Weapon.AA_SARH = {
+NPWeaponList.AA_SARH = {
   "AIM-7P",
   "AIM-7MH",
   "AIM_7", --M
@@ -27,15 +27,15 @@ Weapon.AA_SARH = {
   "P_27T",
   "Matra Super 530D",
 }
-Weapon.AA_SARHPoint = 10
+NPWeaponList.AA_SARHPoint = 10
 
-Weapon.AA_newIR = {
+NPWeaponList.AA_newIR = {
   "AIM_9X",
   "P_73",
 }
-Weapon.AA_newIRPoint = 10
+NPWeaponList.AA_newIRPoint = 10
 
-Weapon.AA_oldIR = {
+NPWeaponList.AA_oldIR = {
   "AIM_9", --M
   "AIM-9L",
   "P_60",
@@ -44,18 +44,18 @@ Weapon.AA_oldIR = {
   "OH58D_FIM_92",
   "Mistral"
 }
-Weapon.AA_oldIRPoint = 5
+NPWeaponList.AA_oldIRPoint = 5
 
 
 -----------------------------------AG----------------------------------
-Weapon.AG_NLOS = {
+NPWeaponList.AG_NLOS = {
   "AGM_84E",
   "AGM_84H",
   "CM_802AKG",
 }
-Weapon.AG_NLOSPoint = 100
+NPWeaponList.AG_NLOSPoint = 100
 
-Weapon.AG_SmartMissile = {
+NPWeaponList.AG_SmartMissile = {
   "AGM_88",
   "AGM_65D",
   "AGM_65E",
@@ -72,9 +72,9 @@ Weapon.AG_SmartMissile = {
   
   "AGM_114",
 }
-Weapon.AG_SmartMissilePoint = 35
+NPWeaponList.AG_SmartMissilePoint = 35
 
-Weapon.AG_SmartBomb = {
+NPWeaponList.AG_SmartBomb = {
   "GBU_31",
   "GBU_31_V_2B",
   "GBU_31_V_3B",
@@ -98,9 +98,9 @@ Weapon.AG_SmartBomb = {
   "Kh25MP_PRGS1VP",  --MPU
   "X_58",
 }
-Weapon.AG_SmartBombPoint = 20
+NPWeaponList.AG_SmartBombPoint = 20
 
-Weapon.AG_Laser = {
+NPWeaponList.AG_Laser = {
   "GBU_10",
   "GBU_12",
   "GBU_16",
@@ -115,9 +115,9 @@ Weapon.AG_Laser = {
   "Ataka_9M120F",
   "Ataka_9M220",
 }
-Weapon.AG_LaserPoint = 15
+NPWeaponList.AG_LaserPoint = 15
 
-Weapon.AG_Dumb = {
+NPWeaponList.AG_Dumb = {
   "Mk_82",
   "Mk_82Y",
   "MK_82AIR",
@@ -144,10 +144,10 @@ Weapon.AG_Dumb = {
   "C_25",
   "S-25-O",  --OFM
 }
-Weapon.AG_DumbPoint = 5
+NPWeaponList.AG_DumbPoint = 5
 
 ----------------------吊舱-------------------
--- Weapon.ATGPod = {
+-- NPWeaponList.ATGPod = {
 --   "AN/AAQ-28 LITENING 瞄准吊舱",
 --   "ALQ-184 电子对抗吊舱",
 --   "ALQ-131 电子对抗吊舱",
@@ -159,10 +159,10 @@ Weapon.AG_DumbPoint = 5
 --   "数据链指令吊舱",
 --   "自保护干扰吊舱",
 -- }
--- Weapon.ATGPodPoint = 50
+-- NPWeaponList.ATGPodPoint = 50
 
 -- ----------------------油箱-------------------------
--- Weapon.mailbox = {
+-- NPWeaponList.mailbox = {
 --   "1100升副油箱",
 --   "800升副油箱",
 --   "800升机翼副油箱",
@@ -179,7 +179,7 @@ Weapon.AG_DumbPoint = 5
 --   "610加仑副油箱",
 --   "FT600 副油箱"
 -- }
--- Weapon.mailboxPoint = 15
+-- NPWeaponList.mailboxPoint = 15
 
 -- ---------- 在 Weapon 定义之后，建立映射表（只运行一次） ----------
 WeaponPriceMap = {}
@@ -194,23 +194,23 @@ local function addToMap(list, point, perCount)
     end
 end
 
-addToMap(Weapon.AA_newARH ,   Weapon.AA_newARHPoint)
-addToMap(Weapon.AA_oldARH ,   Weapon.AA_oldARHPoint)
-addToMap(Weapon.AA_SARH   ,   Weapon.AA_SARHPoint)
-addToMap(Weapon.AA_newIR  ,   Weapon.AA_newIRPoint)
-addToMap(Weapon.AA_oldIR  ,   Weapon.AA_oldIRPoint)
+addToMap(NPWeaponList.AA_newARH ,   NPWeaponList.AA_newARHPoint)
+addToMap(NPWeaponList.AA_oldARH ,   NPWeaponList.AA_oldARHPoint)
+addToMap(NPWeaponList.AA_SARH   ,   NPWeaponList.AA_SARHPoint)
+addToMap(NPWeaponList.AA_newIR  ,   NPWeaponList.AA_newIRPoint)
+addToMap(NPWeaponList.AA_oldIR  ,   NPWeaponList.AA_oldIRPoint)
 
-addToMap(Weapon.AG_NLOS ,   Weapon.AG_NLOSPoint)
-addToMap(Weapon.AG_SmartMissile ,   Weapon.AG_SmartMissilePoint)
-addToMap(Weapon.AG_SmartBomb    ,   Weapon.AG_SmartBombPoint)
-addToMap(Weapon.AG_Laser        ,   Weapon.AG_LaserPoint)
-addToMap(Weapon.AG_Dumb         ,   Weapon.AG_DumbPoint)
+addToMap(NPWeaponList.AG_NLOS ,   NPWeaponList.AG_NLOSPoint)
+addToMap(NPWeaponList.AG_SmartMissile ,   NPWeaponList.AG_SmartMissilePoint)
+addToMap(NPWeaponList.AG_SmartBomb    ,   NPWeaponList.AG_SmartBombPoint)
+addToMap(NPWeaponList.AG_Laser        ,   NPWeaponList.AG_LaserPoint)
+addToMap(NPWeaponList.AG_Dumb         ,   NPWeaponList.AG_DumbPoint)
 
--- addToMap(Weapon.ATGPod  ,   Weapon.ATGPodPoint)
--- addToMap(Weapon.mailbox ,   Weapon.mailboxPoint)
+-- addToMap(NPWeaponList.ATGPod  ,   NPWeaponList.ATGPodPoint)
+-- addToMap(NPWeaponList.mailbox ,   NPWeaponList.mailboxPoint)
 
 -- 特殊多发挂架
-addToMap({"Vikhr_M"}, Weapon.AG_LaserPoint, 8)  -- 最后一个参数是几发算一组
-addToMap({"BRM-1_90MM"}, Weapon.AG_LaserPoint, 16)
+addToMap({"Vikhr_M"}, NPWeaponList.AG_LaserPoint, 8)  -- 最后一个参数是几发算一组
+addToMap({"BRM-1_90MM"}, NPWeaponList.AG_LaserPoint, 16)
 
 env.info("武器信息已添加")

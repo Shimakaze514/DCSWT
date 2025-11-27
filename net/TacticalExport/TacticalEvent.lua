@@ -186,7 +186,7 @@ function onMissionEvent(event)
 
 	if event.weapon then
         local weaponObj = event.weapon
-		payload.weapon = weaponObj:getDisplayName() or 'Unknown Weapon' --event.weapon:getTypeName()
+		payload.weapon = weaponObj:getDesc().displayName or 'Unknown Weapon' --event.weapon:getTypeName()
         
 	elseif event.weapon_name then
 		payload.weapon = event.weapon_name ~= '' and event.weapon_name or 'Gun'
