@@ -4,6 +4,11 @@
 -- All rights reserved.
 
 do
+	-- Debug info to detect invalid installation
+
+	local scriptFullPath = debug.getinfo(1).source
+	log.write('TACVIEW.GUI.LUA',log.INFO,'Starting ['..scriptFullPath..']')
+
 	-- Load Tacview DLL from Saved Games folder
 
 	local tacviewModPath = lfs.writedir()..'Mods\\tech\\Tacview\\bin\\'
@@ -27,7 +32,7 @@ do
 
 	-- Register Callbacks in DCS World GUI environment
 
-	local tacviewName = 'Tacview 1.9.1.200 C++ flight data recorder';
+	local tacviewName = 'Tacview 1.9.5.200 C++ flight data recorder';
 
 	if status then
 
