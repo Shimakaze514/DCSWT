@@ -117,7 +117,7 @@ function onMissionEvent(event)
 	}
 
     if eventType == "BIRTH" then
-        if event.initiator and event.initiator:getPlayerName() ~= nil and event.initiator:inAir() == true then
+        if event.initiator and event.initiator.getPlayerName and event.initiator:getPlayerName() ~= nil and event.initiator:inAir() == true then
             payload.type = "TAKEOFF"
             payload.location = "Air"
         else return end
@@ -184,7 +184,7 @@ function onMissionEvent(event)
 		end
 	end
 
-	if event.weapon and event.weapon:isExist() then
+	if event.weapon then
 		payload.weapon = event.weapon:getDesc().displayName or 'Unknown Weapon' --event.weapon:getTypeName()
         
 	elseif event.weapon_name then
