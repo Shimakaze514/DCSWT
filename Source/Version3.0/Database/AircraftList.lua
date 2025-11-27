@@ -1,5 +1,5 @@
 local NPAircraftList = {}
-NPAircraftList.superiorityFighter = {"F-15C", "J-11A", "Su-33",  "FA-18C_hornet", "JF-17", "F-14B", "F-14A", "F-16C_50","F-15ESE", "F-14A-135-GR", "F-14A-95-GR"}
+NPAircraftList.superiorityFighter = {"F-15C", "J-11A", "Su-33",  "FA-18C_hornet", "JF-17", "F-14B", "F-14A", "F-16C_50","F-15ESE", "F-14A-135-GR", "F-14A-95-GR", "C-130J-30"}
 NPAircraftList.superiorityFighterPoint = 100
 
 NPAircraftList.lightFighter = {"Su-27", "MiG-29S", "MiG-29G", "MiG-29A",'MiG-29 Fulcrum', "M-2000C", "AJS37", "MiG-21Bis", "MiG-15bis_FC", "MiG-15bis", "MiG-19P", "F-5E-3", "F-5E-3_FC", "F-86F Sabre", "F-86F_FC", "AV8BNA"}

@@ -94,6 +94,7 @@ local event_by_id = {
     [world.event.S_EVENT_TOOK_CONTROL]  = "STARTUP",
     [world.event.S_EVENT_BIRTH]  = "BIRTH",
     [world.event.S_EVENT_PLAYER_LEAVE_UNIT]  = "DESLOT",
+    [world.event.S_EVENT_KILL]  = "KILL",
 }
 
 function onMissionEvent(event)
@@ -186,10 +187,10 @@ function onMissionEvent(event)
 
 	if event.weapon then
         local weaponObj = event.weapon
-		payload.weapon = weaponObj:getDesc().displayName or 'Unknown Weapon' --event.weapon:getTypeName()
-        
-	elseif event.weapon_name then
-		payload.weapon = event.weapon_name ~= '' and event.weapon_name or 'Gun'
+		payload.weapon = event.weapon:getTypeName() or 'Unknown Weapon' -- weaponObj:getDesc().displayName
+        tacticalExport.log("Weapon TypeName: ".. payload.weapon .. ", DisplayName: ".. weaponObj:getDesc().displayName)
+	-- elseif event.weapon_name then
+	-- 	payload.weapon = event.weapon_name ~= '' and event.weapon_name or 'Gun'
 	end
 
 	sendJsonPayload(payload)

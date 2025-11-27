@@ -184,26 +184,26 @@ function tacticalExport.onGameEvent(eventName, arg1, arg2, arg3, arg4, arg5, arg
     -------------------------------------------------------
     -- EVENT: KILL
     -------------------------------------------------------
-    if eventName == "kill" then
-        shouldSend = true
-        payload.type = "KILL"
-        tacticalExport.log("KILLER TYPE IS: "..arg2)
-        payload.airframe = arg2 or getUnitTypeName(arg1)
+    -- if eventName == "kill" then
+    --     shouldSend = true
+    --     payload.type = "KILL"
+    --     tacticalExport.log("KILLER TYPE IS: "..arg2)
+    --     payload.airframe = arg2 or getUnitTypeName(arg1)
         
-        -- Victim Info
-        local victimName = getPlayerName(arg4)
-        local victimType = arg5 or getUnitTypeName(arg4)
-        payload.target = victimName
-        payload.target_airframe = victimType
-        payload.target_ucid = getPlayerUCID(arg4)
+    --     -- Victim Info
+    --     local victimName = getPlayerName(arg4)
+    --     local victimType = arg5 or getUnitTypeName(arg4)
+    --     payload.target = victimName
+    --     payload.target_airframe = victimType
+    --     payload.target_ucid = getPlayerUCID(arg4)
         
-        -- Weapon
-        payload.weapon = arg7 or "Unknown"
+    --     -- Weapon
+    --     payload.weapon = arg7 or "Unknown"
 
     -------------------------------------------------------
     -- EVENT: FRIENDLY FIRE
     -------------------------------------------------------
-    elseif eventName == "friendly_fire" then
+    if eventName == "friendly_fire" then
         shouldSend = true
         payload.type = "FRIENDLY_FIRE"
         payload.airframe = getUnitTypeName(arg1)
