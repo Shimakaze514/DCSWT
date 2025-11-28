@@ -3693,6 +3693,11 @@ function ctld.loadNearbyCrate(_name)
     local _crateCount = #ctld.inTransitSlingLoadCrates[_name]
     local availableUnitTypes = {"MosquitoFBMkVI", "CH-47Fbl1"}
     local unitType = _transUnit:getTypeName()
+    if unitType == "C-130J-30" then
+        local _msg = "C-130J 请使用自带装卸面板装载箱子！"
+        ctld.displayMessageToGroup(_transUnit, _msg, 10, true)
+        return
+    end
     local _maxCrates = 1
     for _, typename in ipairs(availableUnitTypes) do
                 if unitType == typename then
@@ -6575,7 +6580,8 @@ function AdditionalEventHandler:onEvent(event)
             local unitType = group:getUnit(1):getTypeName()
             local availableUnitTypes = {"MosquitoFBMkVI", "TF-51D", "CH-47Fbl1", "Mi-8MT", "Ka-50", "Ka-50_3",
                                         "AH-64D_BLK_II", "Mi-24P", "OH58D", "UH-1H", "SA342M", "SA342L", "SA342Mistral",
-                                        "SA342Minigun"}
+                                        "SA342Minigun",
+                                        "C-130J-30"}
             --trigger.action.outTextForUnit(event.initiator:getID(), "机型：" .. unitType .. "出生", 20, true) -- 出生时显示机型
             timer.scheduleFunction(ctld.addF10MenuOptionsBomber, unitName, timer.getTime() + 1)
             for _, typename in ipairs(availableUnitTypes) do
