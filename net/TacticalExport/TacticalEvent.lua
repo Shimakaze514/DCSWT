@@ -164,10 +164,11 @@ function onMissionEvent(event)
 			payload.pilot = 'AI'
 			payload.airframe = event.initiator:getTypeName() or ''
 		else
-			payload.pilot = 'AI'
-			if event.initiator.getTypeName then
-				payload.airframe = event.initiator:getTypeName() or ''
-			end
+			-- payload.pilot = 'AI'
+			-- if event.initiator.getTypeName then
+			-- 	payload.airframe = event.initiator:getTypeName() or ''
+			-- end
+            return
 		end
 	end
 
@@ -187,6 +188,8 @@ function onMissionEvent(event)
                     payload.type = "FRIENDLY_FIRE"
                 end
             end
+        else
+            return
             --payload.targetId = unit:getID()
 		-- elseif tgtCat == Object.Category.WEAPON then
 		-- 	payload.target = event.target:getTypeName() or 'Weapon'
