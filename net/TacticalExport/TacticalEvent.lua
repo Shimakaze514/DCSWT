@@ -188,15 +188,15 @@ function onMissionEvent(event)
                 end
             end
             --payload.targetId = unit:getID()
-		elseif tgtCat == Object.Category.WEAPON then
-			payload.target = event.target:getTypeName() or 'Weapon'
-		elseif
-			tgtCat == Object.Category.STATIC or tgtCat == Object.Category.CARGO or tgtCat == Object.Category.BASE or
-				tgtCat == Object.Category.SCENERY
-		 then
-			if event.target.getTypeName then
-				payload.target = event.target:getTypeName() or 'Object'
-			end
+		-- elseif tgtCat == Object.Category.WEAPON then
+		-- 	payload.target = event.target:getTypeName() or 'Weapon'
+		-- elseif
+		-- 	tgtCat == Object.Category.STATIC or tgtCat == Object.Category.CARGO or tgtCat == Object.Category.BASE or
+		-- 		tgtCat == Object.Category.SCENERY
+		--  then
+		-- 	if event.target.getTypeName then
+		-- 		payload.target = event.target:getTypeName() or 'Object'
+		-- 	end
 		end
 	end
 
