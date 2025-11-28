@@ -202,7 +202,7 @@ function onMissionEvent(event)
 
 	if event.weapon then
         tacticalExport.log("Weapon category is: "..Object.getCategory(event.weapon))
-        if Object.getCategory(event.weapon) ~= Object.Category.UNIT then
+        if Object.getCategory(event.weapon) == Object.Category.WEAPON then
             local weaponObj = event.weapon
             payload.weapon = event.weapon:getTypeName() or 'Unknown Weapon' -- weaponObj:getDesc().displayName
             tacticalExport.log("Weapon TypeName: ".. payload.weapon .. ", DisplayName: ".. weaponObj:getDesc().displayName)
