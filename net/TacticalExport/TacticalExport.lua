@@ -110,9 +110,7 @@ local function getUnitTypeName(playerID)
     local typeName = DCS.getUnitProperty(
         net.get_player_info(playerID, "slot"),
         DCS.UNIT_TYPE)
-    if typeName then 
-        tacticalExport.log("Unit Type is: "..typeName)
-    else 
+    if not typeName then 
         tacticalExport.log("Failed to get typeName")
     end
     return typeName
@@ -203,23 +201,23 @@ function tacticalExport.onGameEvent(eventName, arg1, arg2, arg3, arg4, arg5, arg
     -------------------------------------------------------
     -- EVENT: FRIENDLY FIRE
     -------------------------------------------------------
-    if eventName == "friendly_fire" then
-        shouldSend = true
-        payload.type = "FRIENDLY_FIRE"
-        payload.airframe = getUnitTypeName(arg1)
+    -- elseif eventName == "friendly_fire" then
+    --     shouldSend = true
+    --     payload.type = "FRIENDLY_FIRE"
+    --     payload.airframe = getUnitTypeName(arg1)
         
-        -- Victim Info
-        -- arg3: victimID
-        payload.target = getPlayerName(arg3)
-        payload.target_ucid = getPlayerUCID(arg3)
+    --     -- Victim Info
+    --     -- arg3: victimID
+    --     payload.target = getPlayerName(arg3)
+    --     payload.target_ucid = getPlayerUCID(arg3)
         
-        -- arg2: weaponName
-        payload.weapon = arg2
+    --     -- arg2: weaponName
+    --     payload.weapon = arg2
 
     -------------------------------------------------------
     -- EVENTS: TAKEOFF / LANDING
     -------------------------------------------------------
-    elseif eventName == "takeoff" then
+    if eventName == "takeoff" then
         shouldSend = true
         payload.type = "TAKEOFF"
         payload.airframe = getUnitTypeName(arg1)

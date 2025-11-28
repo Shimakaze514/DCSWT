@@ -81,6 +81,15 @@ local function sendJsonPayload(data)
     httpPost(json)
 end
 
+local function getUnitTypeName(_unit)
+    local typeName = _unit:getTypeName()
+    if _unit.getDesc then
+        local displayName = _unit:getDesc().displayName or "No Display Name!"
+        tacticalExport.log("Unit Type: "..typeName..", DisplayName: "..displayName)
+    end
+    return typeName
+end
+
 function tacticalExport.eventHandler:onEvent(event)
 	status, err = pcall(onMissionEvent, event)
 	if not status then
@@ -129,7 +138,7 @@ function onMissionEvent(event)
 		if initCat == Object.Category.UNIT then
 			local unit = event.initiator
 			payload.pilot = unit:getPlayerName() or 'AI'
-			payload.airframe = unit:getTypeName() or ''
+			payload.airframe = getUnitTypeName(unit) or ''
             --payload.unitId = unit:getID()
 
 			-- if unit.getPoint then
@@ -168,10 +177,16 @@ function onMissionEvent(event)
 		if tgtCat == Object.Category.UNIT then
 			local unit = event.target
 			local targetName = unit:getPlayerName() or 'AI'
-			local targetType = unit:getTypeName() or ''
+			local targetType = getUnitTypeName(unit) or ''
 
 			payload.target = targetName
             payload.target_airframe = targetType
+
+            if event.initiator and Object.getCategory(event.initiator) == Object.Category.UNIT then 
+                if event.initiator:getCoalition() == unit:getCoalition() then 
+                    payload.type = "FRIENDLY_FIRE"
+                end
+            end
             --payload.targetId = unit:getID()
 		elseif tgtCat == Object.Category.WEAPON then
 			payload.target = event.target:getTypeName() or 'Weapon'
@@ -185,7 +200,7 @@ function onMissionEvent(event)
 		end
 	end
 
-	if event.weapon then
+	if event.weapon and Object.getCategory(event.weapon) == Object.Category.WEAPON then
         local weaponObj = event.weapon
 		payload.weapon = event.weapon:getTypeName() or 'Unknown Weapon' -- weaponObj:getDesc().displayName
         tacticalExport.log("Weapon TypeName: ".. payload.weapon .. ", DisplayName: ".. weaponObj:getDesc().displayName)
