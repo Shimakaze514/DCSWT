@@ -152,9 +152,8 @@ function tacticalExport.onPlayerDisconnect(id, err)
     if tacticalExport.PlayerName[_pilot] == _ucid then
         tacticalExport.PlayerName[_pilot] = nil
         local fun_str = string.format(
-            [=[a_do_script('tacticalExport.PlayerName[%q] = %q')]=], 
-            _pilot, 
-            nil)
+            [=[a_do_script('tacticalExport.PlayerName[%q] = nil')]=], 
+            _pilot)
         net.dostring_in("mission", fun_str)
     end
 end
