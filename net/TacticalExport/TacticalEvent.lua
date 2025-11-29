@@ -203,7 +203,7 @@ function onMissionEvent(event)
 		end
 	end
 
-	if event.weapon and event.weapon.isExist and event.weapon:isExist() then
+	if event.weapon then --and event.weapon.isExist and event.weapon:isExist() !will cause timeline issue
         tacticalExport.log("Weapon category is: "..Object.getCategory(event.weapon))
         if Object.getCategory(event.weapon) == Object.Category.WEAPON then
             local weaponObj = event.weapon
