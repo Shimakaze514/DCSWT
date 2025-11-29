@@ -65,7 +65,7 @@ function tacticalExport.registerWeapon(weaponObj)
             elseif missCat == 2 then enumType = "WeaponType.SAM"
             elseif missCat == 3 then enumType = "WeaponType.SSM"
             elseif missCat == 4 then enumType = "WeaponType.AGM"
-            elseif missCat == 5 then enumType = "WeaponType.SSM"
+            elseif missCat == 5 then enumType = "WeaponType.AGM"
             elseif missCat == 6 then enumType = "WeaponType.AGM" 
             end
         end
