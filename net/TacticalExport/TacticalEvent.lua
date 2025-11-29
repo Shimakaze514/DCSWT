@@ -3,6 +3,7 @@ tacticalExport = base.tacticalExport or {}
 
 tacticalExport.eventHandler = tacticalExport.eventHandler or {}
 tacticalExport.PlayerName = tacticalExport.PlayerName or {}
+tacticalExport.WeaponName = tacticalExport.WeaponName or {}
 
 package.path  = package.path..";.\\LuaSocket\\?.lua;"
 package.cpath = package.cpath..";.\\LuaSocket\\?.dll;"
@@ -16,6 +17,73 @@ function tacticalExport.log(msg)
     if f then
         f:write(os.date("%Y-%m-%d %H:%M:%S ") .. tostring(msg) .. "\n")
         f:close()
+    end
+end
+
+local DICT_FILE_PATH = lfs.writedir() .. "Logs/WeaponDict.txt"
+
+tacticalExport.loggedWeapons = {}
+
+local function loadExistingDict()
+    local f = io.open(DICT_FILE_PATH, "r")
+    if f then
+        tacticalExport.log("Loading existing weapon dictionary...")
+        for line in f:lines() do
+            local key = line:match("^'([^']+)'")
+            if key then
+                tacticalExport.loggedWeapons[key] = true
+            end
+        end
+        f:close()
+        tacticalExport.log("Dictionary loaded. Cached " .. 
+            (table.count and table.count(tacticalExport.loggedWeapons) or "some") .. " weapons.")
+    end
+end
+
+loadExistingDict()
+
+function tacticalExport.registerWeapon(weaponObj)
+    if not weaponObj or not weaponObj:isExist() then return end
+    
+    local typeName = weaponObj:getTypeName()
+    if not typeName or typeName == "" then return end
+
+    if tacticalExport.loggedWeapons[typeName] then return end
+
+    local desc = weaponObj:getDesc()
+    local displayName = desc.displayName or typeName
+    local enumType = "WeaponType.GUN" -- 默认值
+
+    if desc then
+        -- 0:SHELL, 1:MISSILE, 2:ROCKET, 3:BOMB
+        if desc.category == 2 then enumType = "WeaponType.ROCKET"
+        elseif desc.category == 3 then enumType = "WeaponType.BOMB"
+        elseif desc.category == 1 then
+            local missCat = desc.missileCategory
+            -- 1:AAM, 2:SAM, 3:BM, 4:ANTI_SHIP, 5:CRUISE, 6:OTHER
+            if missCat == 1 then enumType = "WeaponType.AAM"
+            elseif missCat == 2 then enumType = "WeaponType.SAM"
+            elseif missCat == 3 then enumType = "WeaponType.SSM"
+            elseif missCat == 4 then enumType = "WeaponType.AGM"
+            elseif missCat == 5 then enumType = "WeaponType.SSM"
+            elseif missCat == 6 then enumType = "WeaponType.AGM" 
+            end
+        end
+    end
+
+    local f = io.open(DICT_FILE_PATH, "a")
+    if f then
+        local safeName = displayName:gsub("'", "\\'")
+        
+        local line = string.format("'%s': { name: '%s', type: %s },\n", typeName, safeName, enumType)
+        
+        f:write(line)
+        f:close()
+        
+        tacticalExport.loggedWeapons[typeName] = true
+        tacticalExport.log("Exported NEW weapon: " .. typeName .. " [" .. enumType .. "]")
+    else
+        tacticalExport.log("Error: Could not open dictionary file for writing.")
     end
 end
 
@@ -203,15 +271,17 @@ function onMissionEvent(event)
 		end
 	end
 
-	if event.weapon then --and event.weapon.isExist and event.weapon:isExist() !will cause timeline issue
+	if event.weapon and event.weapon.isExist and event.weapon:isExist() then 
         tacticalExport.log("Weapon category is: "..Object.getCategory(event.weapon))
         if Object.getCategory(event.weapon) == Object.Category.WEAPON then
             local weaponObj = event.weapon
             payload.weapon = event.weapon:getTypeName() or 'Unknown Weapon' -- weaponObj:getDesc().displayName
+            tacticalExport.WeaponName[weaponObj:getDesc().displayName] = event.weapon:getTypeName()
+            tacticalExport.registerWeapon(weaponObj)
             tacticalExport.log("Weapon TypeName: ".. payload.weapon .. ", DisplayName: ".. weaponObj:getDesc().displayName)
         end
-	-- elseif event.weapon_name then
-	-- 	payload.weapon = event.weapon_name ~= '' and event.weapon_name or 'Gun'
+	elseif event.weapon_name then
+		payload.weapon = (event.weapon_name ~= '' and tacticalExport.WeaponName[event.weapon_name]) or 'Gun'
 	end
 
 	sendJsonPayload(payload)
