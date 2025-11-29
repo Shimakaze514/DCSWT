@@ -9,8 +9,8 @@ package.path  = package.path..";.\\LuaSocket\\?.lua;"
 package.cpath = package.cpath..";.\\LuaSocket\\?.dll;"
 local socket = require("socket")
 local BACKEND_HOST = "localhost"
-local BACKEND_PORT = 3001
-local BACKEND_PATH = "/api/telemetry"
+local BACKEND_PORT = 3002
+-- local BACKEND_PATH = "/api/telemetry"
 
 function tacticalExport.log(msg)
     local f = io.open(lfs.writedir().."Logs/TacticalExport.log","a")
@@ -87,26 +87,30 @@ function tacticalExport.registerWeapon(weaponObj)
     end
 end
 
+local udp = socket.udp()
+udp:settimeout(0)
+udp:setpeername(BACKEND_HOST, BACKEND_PORT)
 local function httpPost(json)
-    local tcp = socket.tcp()
-    tcp:settimeout(1)
-    local ok, err = tcp:connect(BACKEND_HOST, BACKEND_PORT)
-    if not ok then 
-        tacticalExport.log("TCP connect fail: "..tostring(err))
-        return 
-    end
+    -- local tcp = socket.tcp()
+    -- tcp:settimeout(1)
+    -- local ok, err = tcp:connect(BACKEND_HOST, BACKEND_PORT)
+    -- if not ok then 
+    --     tacticalExport.log("TCP connect fail: "..tostring(err))
+    --     return 
+    -- end
 
-    local req =
-        "POST "..BACKEND_PATH.." HTTP/1.1\r\n" ..
-        "Host: "..BACKEND_HOST.."\r\n" ..
-        "Content-Type: application/json\r\n" ..
-        "Content-Length: "..#json.."\r\n" ..
-        "Connection: close\r\n\r\n" ..
-        json
+    -- local req =
+    --     "POST "..BACKEND_PATH.." HTTP/1.1\r\n" ..
+    --     "Host: "..BACKEND_HOST.."\r\n" ..
+    --     "Content-Type: application/json\r\n" ..
+    --     "Content-Length: "..#json.."\r\n" ..
+    --     "Connection: close\r\n\r\n" ..
+    --     json
 
-    tcp:send(req)
-    local resp = tcp:receive("*a")
-    tcp:close()
+    -- tcp:send(req)
+    -- --local resp = tcp:receive("*a")
+    -- tcp:close()
+    udp:send(json)
 end
 
 local function sendJsonPayload(data)
