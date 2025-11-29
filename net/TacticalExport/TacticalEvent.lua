@@ -3,7 +3,6 @@ tacticalExport = base.tacticalExport or {}
 
 tacticalExport.eventHandler = tacticalExport.eventHandler or {}
 tacticalExport.PlayerName = tacticalExport.PlayerName or {}
-tacticalExport.WeaponName = tacticalExport.WeaponName or {}
 
 package.path  = package.path..";.\\LuaSocket\\?.lua;"
 package.cpath = package.cpath..";.\\LuaSocket\\?.dll;"
@@ -279,13 +278,11 @@ function onMissionEvent(event)
         tacticalExport.log("Weapon category is: "..Object.getCategory(event.weapon))
         if Object.getCategory(event.weapon) == Object.Category.WEAPON then
             local weaponObj = event.weapon
-            payload.weapon = event.weapon:getTypeName() or 'Unknown Weapon' -- weaponObj:getDesc().displayName
-            tacticalExport.WeaponName[weaponObj:getDesc().displayName] = event.weapon:getTypeName()
+            payload.weapon = event.weapon:getTypeName() or 'Unknown Weapon'
             tacticalExport.registerWeapon(weaponObj)
-            tacticalExport.log("Weapon TypeName: ".. payload.weapon .. ", DisplayName: ".. weaponObj:getDesc().displayName)
         end
-	elseif event.weapon_name then
-		payload.weapon = (event.weapon_name ~= '' and tacticalExport.WeaponName[event.weapon_name]) or 'Gun'
+	elseif event.weapon_name then  --! this is typename!
+		payload.weapon = (event.weapon_name ~= '' and event.weapon_name) or 'Gun'
 	end
 
 	sendJsonPayload(payload)
