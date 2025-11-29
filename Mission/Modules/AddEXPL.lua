@@ -32,6 +32,7 @@ function AddEXPL.eventHandler:onEvent(_event)
                     env.info('[AddEXPL] Info: 击毁目标的武没有Weapon对象信息')
                 end
 				local life = _event.target:getLife() / _event.target:getDesc().life
+                env.info('[AddEXPL] Info: 当前血量'.._event.target:getLife().."，最大血量".._event.target:getDesc().life.."，血量分数"..life)
 				if life <= 0.5 then
 					env.info('[AddEXPL] Info: 单位血量小于爆炸临界，血量分数(0,1)为' .. life)
                     trigger.action.explosion(_event.target:getPoint(), 50)
