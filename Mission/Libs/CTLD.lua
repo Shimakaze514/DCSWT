@@ -892,12 +892,12 @@ function ctld.RefreshConfig()
         ctld.logInfo("当前在线玩家数正常，使用正常参数")
     else
         ctld.UnitLimitPerPlayer = {
-            ["主战坦克(Tank)"] = 2,
-            ["步兵战车(IFV)"] = 2,
-            ["远程火力(Artillery)"] = 2,
-            ["近程防空(Short Range AA)"] = 2,
-            ["中远程防空(Mid&Long Range AA)"] = 2,
-            ["无人机、悍马JTAC、FOB等"] = 1,
+            ["主战坦克(Tank)"] = 4,
+            ["步兵战车(IFV)"] = 3,
+            ["远程火力(Artillery)"] = 5,
+            ["近程防空(Short Range AA)"] = 4,
+            ["中远程防空(Mid&Long Range AA)"] = 4,
+            ["无人机、悍马JTAC、FOB等"] = 5,
         }
         ctld.FOBLimit = 0
         ctld.CoalitionKillerLimit = 1 --红方的阵营级大杀器
@@ -950,6 +950,7 @@ function ctld.RefreshConfig()
         }
         ctld.unloadTroopsTime = 10
         ctld.logInfo("当前在线玩家数过少，已启用低人数参数")
+        trigger.action.outText("当前在线玩家数小于"..Bomber.MinimumNukePlayers.."人，禁止部署FOB！",15)
     end
 end
 
