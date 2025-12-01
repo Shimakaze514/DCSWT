@@ -6571,7 +6571,7 @@ end
 
 AdditionalEventHandler = {}
 function AdditionalEventHandler:onEvent(event)
-    if (event.id == 15) then
+    if (event.id == 15 and event.initiator and event.initiator.getPlayerName and event.initiator:getPlayerName() ~= nil) then
         local success, group = pcall(function()
             return event.initiator:getGroup()
         end)
