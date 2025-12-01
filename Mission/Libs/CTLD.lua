@@ -31,9 +31,9 @@ if ctld.Debug == false then
         ["主战坦克(Tank)"] = 4,
         ["步兵战车(IFV)"] = 3,
         ["远程火力(Artillery)"] = 5,
-        ["近程防空(Short Range AA)"] = 4,
-        ["中远程防空(Mid&Long Range AA)"] = 4,
-        ["无人机、悍马JTAC、FOB等"] = 5,
+        ["近程防空(Short Range AA)"] = 3,
+        ["中远程防空(Mid&Long Range AA)"] = 3,
+        ["无人机、悍马JTAC、FOB等"] = 4,
     }
     ctld.logisticUnits = {}
     ctld.fobLocation = {}
@@ -700,22 +700,22 @@ ctld.spawnableCrates = {
     {
         name = "中远程防空(Mid&Long Range AA)",
         items = {
-            { weight = 680, desc = "罗兰(Roland)近程地空导弹(1箱2车)", unit = "Roland Group" },
-            { weight = 296, desc = "HQ-7LNE近程地空导弹(1箱2车)", unit = "HQ-7_Group" },
-            { weight = 640, desc = "道尔M2地空导弹(2箱1车)", unit = "CHAP_TorM2" , cratesRequired = 2},
-            { weight = 680, desc = "铠甲S1弹炮一体系统(2箱1车)", unit = "CHAP_PantsirS1", cratesRequired = 2},
-            { weight = 1480, desc = "【阵地】道尔M1地空导弹(2箱3车+补给)", unit = "SA-15 Buk" },
-            { weight = 560, desc = "【阵地】IRIS-T地空导弹(2箱2车+补给)", unit = "IRIST" },
-            --{ weight = 1449, desc = "(小队)库班河(SA-6)地空导弹阵地(3箱4车+补给)", unit = "SA-6 Buk" },
-            { weight = 1880, desc = "【阵地】山毛榉地空导弹(3箱3车+补给)", unit = "SA-11 Buk" },
+            { weight = 680, desc = "罗兰(Roland)地空导弹(1箱2车)", unit = "Roland Group" },
+            { weight = 296, desc = "HQ-7LNE地空导弹(1箱2车)", unit = "HQ-7_Group" },
+            -- { weight = 640, desc = "道尔M2地空导弹(2箱1车)", unit = "CHAP_TorM2" , cratesRequired = 2},
+            -- { weight = 680, desc = "铠甲S1弹炮一体系统(2箱1车)", unit = "CHAP_PantsirS1", cratesRequired = 2},
+            -- { weight = 1480, desc = "【阵地】道尔M1地空导弹(2箱3车+补给)", unit = "SA-15 Buk" },
+            -- { weight = 560, desc = "【阵地】IRIS-T地空导弹(2箱2车+补给)", unit = "IRIST" },
+            -- --{ weight = 1449, desc = "(小队)库班河(SA-6)地空导弹阵地(3箱4车+补给)", unit = "SA-6 Buk" },
+            -- { weight = 1880, desc = "【阵地】山毛榉地空导弹(3箱3车+补给)", unit = "SA-11 Buk" },
         }
     },
     {
         name = "修理箱(repair)",
         items = {
-            { weight = 823, desc = "IRIS-T维护箱", unit = "IRIST Repair" },
-            { weight = 823, desc = "道尔M1维护箱", unit = "SA-15 BUK Repair" },
-            { weight = 821, desc = "山毛榉维护箱", unit = "SA-11 BUK Repair" },
+            -- { weight = 823, desc = "IRIS-T维护箱", unit = "IRIST Repair" },
+            -- { weight = 823, desc = "道尔M1维护箱", unit = "SA-15 BUK Repair" },
+            -- { weight = 821, desc = "山毛榉维护箱", unit = "SA-11 BUK Repair" },
             { weight = 824, desc = "TOS-1A火箭炮阵地维护箱", unit = "TOS1A Group Repair" },
             --{ weight = 824, desc = "BM27火箭炮阵地维护箱", unit = "BM27 Group Repair" },
             --{ weight = 824, desc = "BM30火箭炮阵地维护箱", unit = "Smerch_HE Group Repair" },

@@ -1,5 +1,6 @@
 AddEXPL = {}
 AddEXPL.eventHandler = {}
+AddEXPL.warheadMass = AddEXPL.warheadMass or {}
 function AddEXPL.eventHandler:onEvent(_event)
 	local status, err =
 		pcall(
@@ -14,20 +15,20 @@ function AddEXPL.eventHandler:onEvent(_event)
 				 then
                     local life = _event.target:getLife() / _event.target:getDesc().life
                     env.info('[AddEXPL] Info: 当前血量'.._event.target:getLife().."，最大血量".._event.target:getDesc().life.."，血量分数"..life)
-                    if _event.weapon and type(_event.weapon) == 'table' and _event.weapon.isExist and _event.weapon:isExist() then
+                    if _event.weapon and _event.weapon.isExist and _event.weapon:isExist() then
                         local weaponObj = _event.weapon
-                        env.info('[AddEXPL] Info: 成功找到击毁目标的武器')
-                        local weaponDesc = weaponObj.getDesc and weaponObj:getDesc()
-                        if weaponDesc then
-                            env.info('[AddEXPL] Info: 成功获取描述，击毁目标的武器是: ' .. ctld.formatTable(weaponDesc))
-                            if weaponDesc.warhead then
+                        local weaponTypeName = weaponObj:getTypeName()
+                        if weaponTypeName then
+                            env.info('[AddEXPL] Info: 击毁目标的武器是: ' .. weaponTypeName)
+                            local warheadMass = AddEXPL.warheadMass[weaponTypeName]
+                            if warheadMass then
                                 if life <= 0.5 then
                                     env.info('[AddEXPL] Info: 单位血量小于爆炸临界，血量分数(0,1)为' .. life)
                                     trigger.action.explosion(_event.target:getPoint(), 50)
                                 end
                                 if _event.target:getTypeName() == "CH-47Fbl1" then
                                     env.info('[AddEXPL] Info: CH-47Fbl1被击中')
-                                    trigger.action.explosion(_event.target:getPoint(), weaponDesc.warhead.mass * 8)
+                                    trigger.action.explosion(_event.target:getPoint(), warheadMass * 10)
                                     return
                                 end
                             end
@@ -38,7 +39,14 @@ function AddEXPL.eventHandler:onEvent(_event)
                         env.info('[AddEXPL] Info: 击毁目标的武没有Weapon对象信息')
                     end
 				end
-			end
+			elseif _event.id == world.event.S_EVENT_SHOT and _event.weapon and _event.weapon.isExist and _event.weapon:isExist() and Object.getCategory(_event.weapon) == Object.Category.WEAPON then 
+                local weaponObj = _event.weapon
+                local weaponTypeName = weaponObj:getTypeName()
+                local weaponDesc = weaponObj.getDesc and weaponObj:getDesc()
+                if weaponDesc and weaponTypeName and weaponDesc.warhead then
+                    AddEXPL.warheadMass[weaponTypeName] = weaponDesc.warhead.mass
+                end
+            end          
 		end
 	)
 
