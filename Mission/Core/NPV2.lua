@@ -276,18 +276,18 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
         NP.logDebug('传进生成补给的函数的值：'..ctld.p(static).."|".._coalition.."|".._oppsitecoalition)
         local CCunit = static.units[1]
         
-        if StaticObject.getByName(ccname..'_Ammo') ~= nil then
-            StaticObject.getByName(ccname..'_Ammo'):destroy()
+        if 	Unit.getByName(ccname..'_Ammo') ~= nil then
+            Unit.getByName(ccname..'_Ammo'):destroy()
         else
             NP.logError('[setRelatedZone] 没有找到要销毁的Ammo: '.. ccname..'_Ammo')
         end
-        if StaticObject.getByName(ccname..'_Fuel') ~= nil then
-            StaticObject.getByName(ccname..'_Fuel'):destroy()
+        if 	Unit.getByName(ccname..'_Fuel') ~= nil then
+            Unit.getByName(ccname..'_Fuel'):destroy()
         else
             NP.logError('[setRelatedZone] 没有找到要销毁的Fuel: '.. ccname..'_Fuel')
         end
-        if StaticObject.getByName(ccname..'_Command') ~= nil then
-            StaticObject.getByName(ccname..'_Command'):destroy()
+        if 	Unit.getByName(ccname..'_Command') ~= nil then
+            Unit.getByName(ccname..'_Command'):destroy()
         else
             NP.logError('[setRelatedZone] 没有找到要销毁的Command: '.. ccname..'_Command')
         end
@@ -350,50 +350,110 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
             end
         end, {}, timer.getTime()+5)
         
-        local vars2 = 
-        {
-        type = 'FARP Ammo Dump Coating', 
-        country = CCunit.country, 
-        category = 'Fortifications', 
-        x = front_x, 
-        y = front_y,
-        name = ccname..'_Ammo', 
-        heading = CCunit.heading,
-        --clone = true,
-        dead =false,
+        -- local vars2 = 
+        -- {
+        -- type = 'FARP Ammo Dump Coating', 
+        -- country = CCunit.country, 
+        -- category = 'Fortifications', 
+        -- x = front_x, 
+        -- y = front_y,
+        -- name = ccname..'_Ammo', 
+        -- heading = CCunit.heading,
+        -- --clone = true,
+        -- dead =false,
+        -- }
+        
+        -- mist.dynAddStatic(vars2)
+        
+        -- local vars3 = 
+        -- {
+        -- type = 'FARP Fuel Depot', 
+        -- country = CCunit.country, 
+        -- category = 'Fortifications', 
+        -- x = back_x, 
+        -- y = back_y,
+        -- name = ccname..'_Fuel', 
+        -- heading = CCunit.heading,
+        -- --clone = true,
+        -- dead =false,
+        -- }
+        
+        -- mist.dynAddStatic(vars3)
+        
+        -- local vars4 = 
+        -- {
+        -- type = 'FARP CP Blindage', 
+        -- country = CCunit.country, 
+        -- category = 'Fortifications', 
+        -- x = mid_x, 
+        -- y = mid_y,
+        -- name = ccname..'_Command', 
+        -- heading = CCunit.heading,
+        -- --clone = true,
+        -- dead =false,
+        -- }
+        
+        -- mist.dynAddStatic(vars4)
+
+        local unitCommand = {
+            ["y"] = mid_x,
+            ["x"] = mid_x,
+            ["name"] = ccname..'_Command',
+            ["heading"] = CCunit.heading,
+            ["playerCanDrive"] = false,
+            ["skill"] = "Excellent",
         }
-        
-        mist.dynAddStatic(vars2)
-        
-        local vars3 = 
-        {
-        type = 'FARP Fuel Depot', 
-        country = CCunit.country, 
-        category = 'Fortifications', 
-        x = back_x, 
-        y = back_y,
-        name = ccname..'_Fuel', 
-        heading = CCunit.heading,
-        --clone = true,
-        dead =false,
+        local unitAmmo = {
+            ["y"] = front_y,
+            ["x"] = front_x,
+            ["name"] = ccname..'_Ammo',
+            ["heading"] = CCunit.heading,
+            ["playerCanDrive"] = false,
+            ["skill"] = "Excellent",
         }
-        
-        mist.dynAddStatic(vars3)
-        
-        local vars4 = 
-        {
-        type = 'FARP CP Blindage', 
-        country = CCunit.country, 
-        category = 'Fortifications', 
-        x = mid_x, 
-        y = mid_y,
-        name = ccname..'_Command', 
-        heading = CCunit.heading,
-        --clone = true,
-        dead =false,
+        local unitFuel = {
+            ["y"] = back_y,
+            ["x"] = back_x,
+            ["name"] = ccname..'_Fuel',
+            ["heading"] = CCunit.heading,
+            ["playerCanDrive"] = false,
+            ["skill"] = "Excellent",
         }
-        
-        mist.dynAddStatic(vars4)
+        if _coalition == "blue" then
+            unitCommand.type = "Hummer"
+            unitAmmo.type = "M 818"
+            unitFuel.type = "M978 HEMTT Tanker"
+        else
+            unitCommand.type = "SKP-11"
+            unitAmmo.type = "ZIL-135"
+            unitFuel.type = "ATZ-10"
+        end
+        local _group = {
+            ["visible"] = false,
+            ["hiddenOnPlanner"] = true,
+            ["uncontrollable"] = true,
+            ["hiddenOnMFD"] = true,
+            ["hidden"] = true,
+            ["country"] = CCunit.country, 
+            ["units"] = {},
+            -- ["y"] = mid_x,
+            -- ["x"] = mid_y,
+            -- ["name"] = ccname..'_Command',
+            ["heading"] = CCunit.heading,
+            ["task"] = {},
+        }
+        _group.units[1] = unitCommand
+        _group.units[2] = unitFuel
+        _group.units[3] = unitAmmo
+        _group.category = Group.Category.GROUND
+        local _spawnedGroup = Group.getByName(mist.dynAdd(_group).name)
+        Controller.setCommand(_spawnedGroup:getController(), {
+            id = 'SetImmortal',
+            params = {
+                value = true
+            }
+        })
+        _spawnedGroup:getController():setOption(8,false)
     end, {static,coalition,oppsitecoalition,ccname} , timer.getTime()+5)
 
     NP.logInfo('[setRelatedZone] 占领CC的流程完成: '.. ccname..'| 阵营:'..coalition)
