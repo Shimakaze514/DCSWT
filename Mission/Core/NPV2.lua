@@ -336,12 +336,12 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
                 if desc and desc.typeName == "Invisible FARP" then
                     local invisWH = base:getWarehouse()
                     if invisWH then
-                        invisWH:setLiquidAmount(0, 1000)
-                        invisWH:setLiquidAmount(1, 1000)
-                        invisWH:setLiquidAmount(2, 1000)
-                        invisWH:setLiquidAmount(3, 1000)
+                        invisWH:setLiquidAmount(0, 1073741823)
+                        invisWH:setLiquidAmount(1, 1073741823)
+                        invisWH:setLiquidAmount(2, 1073741823)
+                        invisWH:setLiquidAmount(3, 1073741823)
                         for itemId,_ in pairs(weaponTemplate) do
-                            invisWH:setItem(itemId, 999)
+                            invisWH:setItem(itemId, 1073741823)
                         end
                         local invisIV = invisWH:getInventory()
                         NP.logDebug("[setRelatedZone] Invisible FARP的Inventory: " .. ctld.p(invisIV))
