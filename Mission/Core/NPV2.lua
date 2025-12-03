@@ -455,6 +455,7 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
         })
         _spawnedGroup:getController():setOption(8,false)
 
+        mist.marker.remove(ccname)
         local drawColor
         local drawFillColor
         if _coalition == "blue" then
