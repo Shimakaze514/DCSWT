@@ -11,10 +11,12 @@ function AddEXPL.eventHandler:onEvent(_event)
 			if _event.id == world.event.S_EVENT_HIT and _event.target and _event.target.getDesc then
                 local life = _event.target:getLife() / _event.target:getDesc().life
                 env.info('[AddEXPL] Info: 当前血量'.._event.target:getLife().."，最大血量".._event.target:getDesc().life.."，血量分数"..life)
-                if _event.weapon_name and _event.weapon_name ~= "" then
+                if _event.target:getLife() <= 1 then
+                    trigger.action.explosion(_event.target:getPoint(), 50)
+                elseif _event.weapon_name and _event.weapon_name ~= "" then
                     local weaponTypeName = _event.weapon_name
                     if weaponTypeName then
-                        env.info('[AddEXPL] Info: 击毁目标的武器是: ' .. weaponTypeName)
+                        env.info('[AddEXPL] Info: 击中目标的武器是: ' .. weaponTypeName)
                         local warheadMass = AddEXPL.warheadMass[weaponTypeName]
                         if warheadMass then
                             if _event.target:getDesc().category == Unit.Category.AIRPLANE or
@@ -33,12 +35,14 @@ function AddEXPL.eventHandler:onEvent(_event)
                                 env.info('[AddEXPL] Info: 单位是地面或海面目标，单位血量小于爆炸临界0.1，血量分数(0,1)为' .. life)
                                 trigger.action.explosion(_event.target:getPoint(), 100)
                             end
+                        else
+                            env.info('[AddEXPL] Info: AddEXPL.warheadMass中没有对应的weaponTypeName')
                         end
                     else
-                        env.info('[AddEXPL] Info: 击毁目标的武器没有WeaponDesc')
+                        env.info('[AddEXPL] Info: 击中目标的武器没有WeaponDesc')
                     end
                 else
-                    env.info('[AddEXPL] Info: 击毁目标的武没有Weapon对象信息')
+                    env.info('[AddEXPL] Info: 击中目标的武器没有Weapon对象信息')
                 end
 			elseif _event.id == world.event.S_EVENT_SHOT and _event.weapon and _event.weapon.isExist and _event.weapon:isExist() and Object.getCategory(_event.weapon) == Object.Category.WEAPON then 
                 local weaponObj = _event.weapon
@@ -46,6 +50,9 @@ function AddEXPL.eventHandler:onEvent(_event)
                 local weaponDesc = weaponObj.getDesc and weaponObj:getDesc()
                 if weaponDesc and weaponTypeName and weaponDesc.warhead then
                     AddEXPL.warheadMass[weaponTypeName] = weaponDesc.warhead.mass
+                    env.info('[AddEXPL] Info: 记录发射事件，weaponTypeName是'..weaponTypeName.."，弹头质量是"..weaponDesc.warhead.mass)
+                else
+                    env.info('[AddEXPL] Info: 击中目标的武器没有weaponTypeName或weaponDesc.warhead')
                 end
             end          
 		end
