@@ -143,11 +143,11 @@ function dsave.recordAllCCsElements()
             if _unitTable.type~=nil and _unitTable.unitName~=nil and dsave.typeBelongsToCC(_unitTable.type) then
                 local _unitObject = StaticObject.getByName(_unitTable.unitName)
                 --dsave.logDebug("_unitObject"..ctld.formatTable(_unitObject))
-                if _unitObject ~= nil and checkRepeat[_unitTable.unitName]==nil and _unitObject.isExist and _unitObject:isExist() then
+                if _unitObject ~= nil and checkRepeat[_unitTable.unitName]==nil then
                     needSave = true
                     checkRepeat[_unitTable.unitName]=true
                     dsave.logDebug("_unitObject:getLife()".._unitTable.unitName.."\n生命值是: ".._unitObject:getLife())
-                    if _unitObject:getLife() <= 0 then
+                    if _unitObject:getLife() <= 0 or (_unitObject.isExist and _unitObject:isExist()) then
                         needKill = true
                     end
                 end
