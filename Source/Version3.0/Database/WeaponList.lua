@@ -1,3 +1,5 @@
+
+WeaponPriceMap = {}
 local NPWeaponList = {}
 --------------------------------AA---------------------------------
 NPWeaponList.AA_newARH = {
@@ -5,7 +7,7 @@ NPWeaponList.AA_newARH = {
   "SD-10",
   "PL-12",
 }
-NPWeaponList.AA_newARHPoint = 25
+WeaponPriceMap.AA_newARHPoint = 25
 
 NPWeaponList.AA_oldARH = {
   "AIM_54C_Mk47",
@@ -16,7 +18,7 @@ NPWeaponList.AA_oldARH = {
   "P_27TE",
   "P_27PE",
 }
-NPWeaponList.AA_oldARHPoint = 15
+WeaponPriceMap.AA_oldARHPoint = 15
 
 NPWeaponList.AA_SARH = {
   "AIM-7P",
@@ -27,13 +29,13 @@ NPWeaponList.AA_SARH = {
   "P_27T",
   "Matra Super 530D",
 }
-NPWeaponList.AA_SARHPoint = 10
+WeaponPriceMap.AA_SARHPoint = 10
 
 NPWeaponList.AA_newIR = {
   "AIM_9X",
   "P_73",
 }
-NPWeaponList.AA_newIRPoint = 10
+WeaponPriceMap.AA_newIRPoint = 10
 
 NPWeaponList.AA_oldIR = {
   "AIM_9", --M
@@ -44,7 +46,7 @@ NPWeaponList.AA_oldIR = {
   "OH58D_FIM_92",
   "Mistral"
 }
-NPWeaponList.AA_oldIRPoint = 5
+WeaponPriceMap.AA_oldIRPoint = 5
 
 
 -----------------------------------AG----------------------------------
@@ -182,7 +184,6 @@ NPWeaponList.AG_DumbPoint = 5
 -- NPWeaponList.mailboxPoint = 15
 
 -- ---------- 在 Weapon 定义之后，建立映射表（只运行一次） ----------
-WeaponPriceMap = {}
 
 local function addToMap(list, point, perCount)
     if not list then return end
