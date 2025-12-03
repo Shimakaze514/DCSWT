@@ -454,6 +454,34 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
             }
         })
         _spawnedGroup:getController():setOption(8,false)
+
+        local drawColor
+        local drawFillColor
+        if _coalition == "blue" then
+            drawColor = {0, 0, 1, 1}
+            drawFillColor = {0, 0, 1, 0.5}
+        else
+            drawColor = {1, 0, 0, 1}
+            drawFillColor = {1, 0, 0, 0.5}
+        end
+        local drawVars = {
+            pos = {x=CCunit.x,z=CCunit.y,y=0},
+            name = ccname, 
+            markType = 2,
+            --ignoreColor = boolean ignoreColor, 
+            radius = 3000, 
+            --text = string text, 
+            --markFor = table markFor,
+            --markForCoa = coalition, 
+            color = drawColor,
+            fillColor = drawFillColor, 
+            lineType = 1,
+            readOnly = true,
+            --message = text message,
+            --fontSize = number fontSize,
+        }
+        mist.marker.add(drawVars)
+
     end, {static,coalition,oppsitecoalition,ccname} , timer.getTime()+5)
 
     NP.logInfo('[setRelatedZone] 占领CC的流程完成: '.. ccname..'| 阵营:'..coalition)
