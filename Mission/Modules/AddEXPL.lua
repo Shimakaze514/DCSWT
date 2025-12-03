@@ -11,9 +11,8 @@ function AddEXPL.eventHandler:onEvent(_event)
 			if _event.id == world.event.S_EVENT_HIT and _event.target and _event.target.getDesc then
                 local life = _event.target:getLife() / _event.target:getDesc().life
                 env.info('[AddEXPL] Info: 当前血量'.._event.target:getLife().."，最大血量".._event.target:getDesc().life.."，血量分数"..life)
-                if _event.weapon and _event.weapon.getTypeName then
-                    local weaponObj = _event.weapon
-                    local weaponTypeName = weaponObj:getTypeName()
+                if _event.weapon_name and _event.weapon_name ~= "" then
+                    local weaponTypeName = _event.weapon_name
                     if weaponTypeName then
                         env.info('[AddEXPL] Info: 击毁目标的武器是: ' .. weaponTypeName)
                         local warheadMass = AddEXPL.warheadMass[weaponTypeName]
