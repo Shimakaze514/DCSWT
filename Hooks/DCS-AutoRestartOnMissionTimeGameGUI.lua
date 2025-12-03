@@ -4,7 +4,7 @@ net.log("[auto-restart] Begin script auto-restart server")
 local SW = {}
 
 function SW.onPlayerDisconnect(reason_msg, err_code)
-    if DCS.getModelTime() > 21600 then -- Number of seconds
+    if DCS.getRealTime() > 21600 then -- Number of seconds
         net.log("[auto-restart] It's time! restarting if possible")
         net.load_mission(DCS.getMissionFilename())
         -- local listPlayers = net.get_player_list()
