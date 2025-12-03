@@ -1,13 +1,13 @@
 
 WeaponPriceMap = {}
-local NPWeaponList = {}
+NPWeaponList = {}
 --------------------------------AA---------------------------------
 NPWeaponList.AA_newARH = {
   "AIM_120C",
   "SD-10",
   "PL-12",
 }
-WeaponPriceMap.AA_newARHPoint = 25
+NPWeaponList.AA_newARHPoint = 25
 
 NPWeaponList.AA_oldARH = {
   "AIM_54C_Mk47",
@@ -18,7 +18,7 @@ NPWeaponList.AA_oldARH = {
   "P_27TE",
   "P_27PE",
 }
-WeaponPriceMap.AA_oldARHPoint = 15
+NPWeaponList.AA_oldARHPoint = 15
 
 NPWeaponList.AA_SARH = {
   "AIM-7P",
@@ -29,13 +29,13 @@ NPWeaponList.AA_SARH = {
   "P_27T",
   "Matra Super 530D",
 }
-WeaponPriceMap.AA_SARHPoint = 10
+NPWeaponList.AA_SARHPoint = 10
 
 NPWeaponList.AA_newIR = {
   "AIM_9X",
   "P_73",
 }
-WeaponPriceMap.AA_newIRPoint = 10
+NPWeaponList.AA_newIRPoint = 10
 
 NPWeaponList.AA_oldIR = {
   "AIM_9", --M
@@ -46,7 +46,7 @@ NPWeaponList.AA_oldIR = {
   "OH58D_FIM_92",
   "Mistral"
 }
-WeaponPriceMap.AA_oldIRPoint = 5
+NPWeaponList.AA_oldIRPoint = 5
 
 
 -----------------------------------AG----------------------------------
