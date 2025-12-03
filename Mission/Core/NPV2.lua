@@ -36,16 +36,16 @@ NP.AWACSList = {
 
 local UnitlistHome = {
     { 
-        type = "Tor 9A331", 
+        type = {"Tor 9A331","CHAP_TorM2"},
         radius = 2000, 
-        count = 6, 
+        count = 8, 
         suffix = "_道尔", 
         support = {} 
     },
     { 
-        type = {"2S6 Tunguska", "Strela-10M3"}, 
+        type = {"CHAP_PantsirS1","2S6 Tunguska", "Strela-10M3"}, 
         radius = 2500, 
-        count = 6, 
+        count = 9, 
         suffix = "_通古斯卡", 
         support = {} 
     },
@@ -62,26 +62,26 @@ local UnitlistHome = {
     { 
         type = {"Leclerc", "ZBD04A"}, 
         radius = 1250, 
-        count = 5, 
+        count = 6, 
         suffix = "_坦克", 
         support = {} 
     },
 }
 
 local UnitlistFront = {
-    { type = "Tor 9A331", radius = 1500, count = 6, suffix = "_道尔", support = {} },
-    { type = {"2S6 Tunguska", "Strela-10M3"}, radius = 2000, count = 6, suffix = "_通古斯卡", support = {} },
+    { type = {"Tor 9A331","CHAP_TorM2"}, radius = 1500, count = 6, suffix = "_道尔", support = {} },
+    { type = {"2S6 Tunguska", "Strela-10M3","CHAP_PantsirS1"}, radius = 2000, count = 6, suffix = "_通古斯卡", support = {} },
     { 
         type = {"Leclerc","ZBD04A"}, 
         radius = 1000, 
-        count = 3, 
+        count = 4, 
         suffix = "_坦克", 
         support = {} 
     },
 }
 
 local UnitlistMiddle = {
-    { type = "2S6 Tunguska", radius = 100, count = 1, suffix = "_通古斯卡", support = {} },
+    { type = {"2S6 Tunguska",'Tor 9A331'}, radius = 100, count = 2, suffix = "_通古斯卡", support = {} },
 }
 
 function NP.logError(message)

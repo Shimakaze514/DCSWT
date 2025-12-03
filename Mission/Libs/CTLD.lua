@@ -701,8 +701,8 @@ ctld.spawnableCrates = {
         name = "中远程防空(Mid&Long Range AA)",
         items = {
             { weight = 680, desc = "罗兰(Roland)地空导弹(1箱2车)", unit = "Roland Group" },
-            { weight = 296, desc = "HQ-7LNE地空导弹(1箱2车)", unit = "HQ-7_Group" },
-            -- { weight = 640, desc = "道尔M2地空导弹(2箱1车)", unit = "CHAP_TorM2" , cratesRequired = 2},
+            { weight = 296, desc = "HQ-7LNE地空导弹(2箱2车)", unit = "HQ-7_Group" },
+            { weight = 640, desc = "道尔M2地空导弹(3箱1车)", unit = "CHAP_TorM2" , cratesRequired = 3},
             -- { weight = 680, desc = "铠甲S1弹炮一体系统(2箱1车)", unit = "CHAP_PantsirS1", cratesRequired = 2},
             -- { weight = 1480, desc = "【阵地】道尔M1地空导弹(2箱3车+补给)", unit = "SA-15 Buk" },
             -- { weight = 560, desc = "【阵地】IRIS-T地空导弹(2箱2车+补给)", unit = "IRIST" },
@@ -1974,7 +1974,7 @@ ctld.GroupSystemTemplate = {
     {
         name = "红旗-7(HQ-7)近程地空导弹小队",
         sysName = "HQ-7_Group",
-        cratesRequired = 1,
+        cratesRequired = 2,
         aaLaunchers = 2,
 
         count = 1,
