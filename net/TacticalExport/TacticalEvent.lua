@@ -260,7 +260,10 @@ function onMissionEvent(event)
                 end
             end
         else
-            return
+			local targetName = '' --Ground
+			local targetType = '' --Ground
+			payload.target = targetName
+            payload.target_airframe = targetType
             --payload.targetId = unit:getID()
 		-- elseif tgtCat == Object.Category.WEAPON then
 		-- 	payload.target = event.target:getTypeName() or 'Weapon'

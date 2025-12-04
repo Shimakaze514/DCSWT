@@ -147,7 +147,7 @@ function dsave.recordAllCCsElements()
                     needSave = true
                     checkRepeat[_unitTable.unitName]=true
                     dsave.logDebug("_unitObject:getLife()".._unitTable.unitName.."\n生命值是: ".._unitObject:getLife())
-                    if _unitObject:getLife() <= 0 or (_unitObject.isExist and _unitObject:isExist()) then
+                    if (_unitObject.isExist and not _unitObject:isExist()) or _unitObject:getLife() <= 1 then
                         needKill = true
                     end
                 end
