@@ -12,7 +12,8 @@ function AddEXPL.eventHandler:onEvent(_event)
                 local life = _event.target:getLife() / _event.target:getDesc().life
                 env.info('[AddEXPL] Info: 当前血量'.._event.target:getLife().."，最大血量".._event.target:getDesc().life.."，血量分数"..life)
                 if _event.target:getLife() <= 1 then
-                    trigger.action.explosion(_event.target:getPoint(), 50)
+                    trigger.action.explosion(_event.target:getPoint(), 80)
+                    env.info('[AddEXPL] Info:单位血量小于等于1，执行爆破')
                 elseif _event.weapon_name and _event.weapon_name ~= "" then
                     local weaponTypeName = _event.weapon_name
                     if weaponTypeName then
