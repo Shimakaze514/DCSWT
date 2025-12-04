@@ -1,7 +1,6 @@
 ---Initialization script for the Mission lua Environment (SSE)
 dofile('Scripts/ScriptingSystem.lua')
 --不要随意切换顺序
-dofile(lfs.writedir().."Scripts\\net\\TacticalExport\\TacticalEvent.lua")
 local settingsPath = lfs.writedir() .. "Config\\serverSettings.lua"
 dofile(settingsPath)
 local serverName = cfg and cfg.name
@@ -12,6 +11,7 @@ else
 end
 if string.find(serverName, "TD动态战役", 1, true) then
     env.info("Loading TD env")
+    dofile(lfs.writedir().."Scripts\\net\\TacticalExport\\TacticalEvent.lua")
     dofile(lfs.writedir() .. 'Scripts/Mission/Libs/mist.lua')
     dofile(lfs.writedir() .. 'Scripts/Mission/Libs/CTLD.lua')
     dofile(lfs.writedir() .. 'Scripts/Mission/Core/DynamicSave.lua')
