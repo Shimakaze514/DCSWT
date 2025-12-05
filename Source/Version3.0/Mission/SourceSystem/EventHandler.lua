@@ -13,6 +13,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
 
         local ps = SourceObj.playerSource[_ucid] or {}
         if ps.birthTime and (timer.getTime() - ps.birthTime < 120) then
+            trigger.action.outSoundForGroup(_groupId, "beepbeepbeepbeep.ogg")
             for i = 0, 4 do
                 timer.scheduleFunction(function(args)
                     local groupId = args[1]
@@ -44,6 +45,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
                 "起飞成功,本次总共消耗私有资源点:%d,个人剩余:%d点.\n详细信息:%s",
                 tostring(sourcePointChange), tostring(SourceObj.playerSource[_ucid].point), tostring(countInfo))
             trigger.action.outTextForGroup(_groupId, text, 20, true)
+            trigger.action.outSoundForGroup(_groupId, "ding.ogg")
             if SourceObj.pendingKillPoint[_ucid] then
                 SourceObj.pendingKillPoint[_ucid] = nil
             end
@@ -52,6 +54,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
                 "你的私有资源点剩余(%d),本次起飞需要:%d,即将自爆！请挂机等低保或改用低价挂载！",
                 SourceObj.playerSource[_ucid].point, sourcePointChange)
             trigger.action.outTextForGroup(_groupId, text, 120, true)
+            trigger.action.outSoundForGroup(_groupId, "beepbeepbeepbeep.ogg")
             timer.scheduleFunction(SourceObj.unitExplosion, _unit, timer.getTime() + 10)
         end
     elseif _event == "landing" then
@@ -69,6 +72,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
         local text = string.format("降落成功,结算添加资源点:%d,个人剩余:%d点.\n详细信息:%s",
             tostring(totalReturn), tostring(SourceObj.playerSource[_ucid].point), tostring(countInfo))
         trigger.action.outTextForGroup(_groupId, text, 10)
+        trigger.action.outSoundForGroup(_groupId, "war-thunder-kill.ogg")
     elseif _event == "pilotDead" then
         local _groupId = SourceObj.getGroupId(_unit)
         local halfPoint = 0
@@ -89,6 +93,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
             SourceObj.pendingKillPoint[_ucid] = (SourceObj.pendingKillPoint[_ucid] or 0) + killPoint
             trigger.action.outTextForGroup(_groupId, string.format(
                 "击杀敌军，奖励已记录(+%d点)\n若在任务中阵亡，击杀奖励将减半！", killPoint), 10)
+            trigger.action.outSoundForGroup(_groupId, "war-thunder-kill.ogg")
         else
             SourceObj.eventAddPoint("击杀友军:", -SourceObj.getSourceKillChange(_unit.target), _ucid, _groupId)
         end
