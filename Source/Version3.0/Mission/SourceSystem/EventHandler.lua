@@ -29,12 +29,12 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
                     if unit:inAir() then
                         trigger.action.outTextForGroup(groupId, "违规起飞且未按要求降落，飞机将被销毁！", 15, true)
                         SourceObj.unitExplosion(unit)
-                        trigger.action.outSoundForGroup(_groupId, "takeoff-config-warning.ogg")
+                        trigger.action.outSoundForGroup(groupId, "takeoff-config-warning.ogg")
                     else
                         trigger.action.outTextForGroup(groupId, "已及时降落，处罚取消。", 15, true)
-                        trigger.action.outSoundForGroup(_groupId, "clear-of-conflict.ogg")
+                        trigger.action.outSoundForGroup(groupId, "clear-of-conflict.ogg")
                     end
-                    SourceObj.landASAP[_groupId] = false
+                    SourceObj.landASAP[groupId] = false
                 end
             end, {_groupId,_unit}, timer.getTime() + 15)
             return
