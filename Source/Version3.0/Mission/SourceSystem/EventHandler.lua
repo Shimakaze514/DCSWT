@@ -13,7 +13,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
 
         local ps = SourceObj.playerSource[_ucid] or {}
         if ps.birthTime and (timer.getTime() - ps.birthTime < 120) then
-            trigger.action.outSoundForGroup(_groupId, "beepbeepbeepbeep.ogg")
+            trigger.action.outSoundForGroup(_groupId, "descend-descend-now.ogg")
             for i = 0, 4 do
                 timer.scheduleFunction(function(args)
                     local groupId = args[1]
@@ -29,8 +29,10 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
                     if unit:inAir() then
                         trigger.action.outTextForGroup(groupId, "违规起飞且未按要求降落，飞机将被销毁！", 15, true)
                         SourceObj.unitExplosion(unit)
+                        trigger.action.outSoundForGroup(_groupId, "takeoff-config-warning.ogg")
                     else
                         trigger.action.outTextForGroup(groupId, "已及时降落，处罚取消。", 15, true)
+                        trigger.action.outSoundForGroup(_groupId, "clear-of-conflict.ogg")
                     end
                     SourceObj.landASAP[_groupId] = false
                 end
@@ -54,7 +56,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
                 "你的私有资源点剩余(%d),本次起飞需要:%d,即将自爆！请挂机等低保或改用低价挂载！",
                 SourceObj.playerSource[_ucid].point, sourcePointChange)
             trigger.action.outTextForGroup(_groupId, text, 120, true)
-            trigger.action.outSoundForGroup(_groupId, "beepbeepbeepbeep.ogg")
+            trigger.action.outSoundForGroup(_groupId, "overspeed.ogg")
             timer.scheduleFunction(SourceObj.unitExplosion, _unit, timer.getTime() + 10)
         end
     elseif _event == "landing" then
@@ -72,7 +74,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
         local text = string.format("降落成功,结算添加资源点:%d,个人剩余:%d点.\n详细信息:%s",
             tostring(totalReturn), tostring(SourceObj.playerSource[_ucid].point), tostring(countInfo))
         trigger.action.outTextForGroup(_groupId, text, 10)
-        trigger.action.outSoundForGroup(_groupId, "war-thunder-kill.ogg")
+        trigger.action.outSoundForGroup(_groupId, "chest-open.ogg")
     elseif _event == "pilotDead" then
         local _groupId = SourceObj.getGroupId(_unit)
         local halfPoint = 0
