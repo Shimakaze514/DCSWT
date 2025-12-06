@@ -453,6 +453,12 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
                 value = true
             }
         })
+        Controller.setCommand(_spawnedGroup:getController(), {
+            id = 'SetInvisible',
+            params = {
+                value = true
+            }
+        })
         _spawnedGroup:getController():setOption(8,false)
 
         mist.marker.remove(ccname)

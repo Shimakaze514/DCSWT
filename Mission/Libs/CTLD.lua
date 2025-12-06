@@ -4467,10 +4467,10 @@ function ctld.spawnShip(_heli,unitType)
     local _group = {
         ["visible"] = false,
         ["hidden"] = false,
+        ["uncontrollable"] = false,
         ["units"] = {},
         ["name"] = _groupName,
         ["task"] = {},
-        ["playerCanDrive"] = true,
     }
 
     local _unitId = ctld.getNextUnitId()
