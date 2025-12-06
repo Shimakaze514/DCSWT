@@ -4480,6 +4480,12 @@ function ctld.spawnShip(_heli,unitType)
     _group.country = _heli:getCountry()
     _group.category = Group.Category.SHIP
     local _spawnedGroup = Group.getByName(mist.dynAdd(_group).name)
+    Controller.setCommand(_spawnedGroup:getController(), {
+        id = 'SetInvisible',
+        params = {
+            value = true
+        }
+    })
     local _dest = _spawnedGroup:getUnit(1):getPoint()
     _dest = { x = _dest.x + 0.5, _y = _dest.y + 0.5, z = _dest.z + 0.5 }
     ctld.orderGroupToMoveToPoint(_spawnedGroup:getUnit(1), _dest)
