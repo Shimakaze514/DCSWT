@@ -49,11 +49,11 @@ SourceObj.countdownMessage = function(args)
                 if NPAircraftList and inList(NPAircraftList.superiorityFighter, unitType) then
                     tipStr = "【本机玩法提示】\n定位: [制空战斗机]\n任务: 夺取空中优势、为友军护航。建议携带空对空导弹。\n你可以通过 F10 菜单呼叫AI轰炸机来打击地面目标。"
                 elseif NPAircraftList and inList(NPAircraftList.lightFighter, unitType) then
-                    tipStr = "【本机玩法提示】\n定位: [多用途战斗机]\n任务: 可执行对空或对地打击，请根据战局需要和资源点数合理选择挂载，与队友协同作战。\n你可以通过 F10 菜单呼叫AI轰炸机来打击地面目标。"
+                    tipStr = "【本机玩法提示】\n定位: [多用途战斗机]\n任务: 可执行对空或对地打击，请根据战局需要合理选择挂载，与队友协同作战。\n你可以通过 F10 菜单呼叫AI轰炸机来打击地面目标。"
                 elseif NPAircraftList and inList(NPAircraftList.attacker, unitType) then
-                    tipStr = "【本机玩法提示】\n定位: [攻击机]\n任务: 摧毁地面/海面目标。请携带精确制导武器或大量炸弹。建议与执行制空任务的队友保持沟通。\n你可以通过 F10 菜单呼叫AI轰炸机来打击地面目标。"
+                    tipStr = "【本机玩法提示】\n定位: [攻击机]\n任务: 摧毁地面/海面目标。请携带炸弹或对地导弹，与执行制空任务的队友保持沟通。\n你可以通过 F10 菜单呼叫AI轰炸机来打击地面目标。"
                 elseif (NPAircraftList and inList(NPAircraftList.helicopter, unitType)) or desc.category == 1 then
-                    tipStr = "【本机玩法提示】\n定位: [直升机]\n任务: 核心玩法是运输与后勤。使用 F10 -> [运输&部署] 菜单执行吊运、救援、部署FOB等任务来为团队赚取优势。"
+                    tipStr = "【本机玩法提示】\n定位: [直升机]\n任务: 可以进行对地攻击，也可以运输与救援。\n使用 F10 -> [运输&部署] 菜单呼叫箱子，部署防空、火炮和FOB等地面单位，为团队获取地面和低空优势。"
                 else
                     if string.find(unitType, "C%-130") or string.find(unitType, "Transport") then
                         tipStr = "【本机玩法提示】\n定位: [运输机]\n任务: 通过 F10 -> [运输&部署] 菜单执行大规模物资运输任务。"
