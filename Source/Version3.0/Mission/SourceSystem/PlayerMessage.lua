@@ -9,29 +9,87 @@ SourceObj.countdownMessage = function(args)
 
     local remaining = 120 - (timer.getTime() - ps.birthTime)
     if remaining > 0 then
+        -- 规则部分
+        local rulesTbl = {
+            "欢迎来到TD动态战役服务器。请阅读并遵守以下起飞与资源规则以获得最佳体验：",
+            "1) 出生保护与起飞：出生后有120秒冷却（倒计时期间请勿起飞）。如误起飞，请在15秒内重新着陆。",
+            "2) 私有资源点：起飞时扣除所选挂载的资源点，返场安全降落后按剩余返还；击杀、吊运、救援可获得点数奖励。",
+            "3) 起飞前请通过 通讯菜单 -> F10 -> 私有资源点 查询本次消耗，合理分配挂载。",
+            "4) 若资源点不足，请更换更便宜的挂载或等待系统发放低保（每5分钟400点）；强行起飞将导致飞机被销毁。",
+            "5) 若在任务中阵亡，击杀奖励将减半。",
+            "*服务器已启用出击冷却功能，在倒计时结束之前起飞将会自爆"
+        }
+        local rulesMsg = table.concat(rulesTbl, "\n")
+
+        -- 玩法提示（根据机型/类别计算，防护性处理）
+        local roleTip = "玩法提示：无法读取机位信息，如需详细玩法请使用 F10 菜单查询。"
+        local loadoutInfo = "挂载信息：无法读取（请使用 F10->私有资源点 查询详细挂载）。"
+        do
+            local ok, computed = pcall(function()
+                local group = Group.getByID(groupId)
+                if not group then return nil end
+                local unit = group:getUnit(1)
+                if not unit then return nil end
+                local cost, detail = SourceObj.getSourceObjChange(unit)
+                if not cost then return nil end
+
+                -- 挂载信息描述
+                local s
+                if ps.point >= cost then
+                    s = string.format("当前私有点数：%d 点\n当前挂载消耗：%d 点（点数充足）。起飞后余额：%d 点。\n%s", ps.point, cost, ps.point - cost, detail)
+                else
+                    s = string.format("当前私有点数：%d 点\n当前挂载消耗：%d 点（点数不足）。请改用更便宜的挂载或等待补偿。\n%s", ps.point, cost, detail)
+                end
+
+                -- 机型玩法提示
+                local function inList(tbl, name)
+                    if not tbl then return false end
+                    for _, v in ipairs(tbl) do if v == name then return true end end
+                    return false
+                end
+                local unitType = unit:getTypeName()
+                local desc = unit:getDesc() or {}
+                local tip = ""
+                if NPAircraftList and inList(NPAircraftList.superiorityFighter, unitType) then
+                    tip = "制空/护航为主：携带空对空武器为核心，可兼顾轻型对地挂载；可通过 F10 呼叫轰炸机支援（消耗点数）。"
+                elseif NPAircraftList and inList(NPAircraftList.lightFighter, unitType) then
+                    tip = "多面手：可执行对空或对地任务，注意挂载消耗并与队友分工。"
+                elseif NPAircraftList and inList(NPAircraftList.attacker, unitType) then
+                    tip = "对地/近距支援：优先携带精确炸弹或对地导弹；配合轰炸/侦察清除防御。"
+                elseif (NPAircraftList and inList(NPAircraftList.helicopter, unitType)) or desc.category == 1 then
+                    tip = "直升机：支持吊运、救援、部署/拾取箱子与建造 FOB（使用 F10->运输&部署）。"
+                else
+                    if string.find(unitType, "C%-130") or string.find(unitType, "Transport") then
+                        tip = "运输机：可参与吊运/运输任务，使用 F10->运输&部署 查询可用操作。"
+                    else
+                        tip = "部分飞机支持吊运/救援/呼叫轰炸机等功能，详见 F10 菜单。"
+                    end
+                end
+
+                return tip, s
+            end)
+
+            if ok and computed and computed ~= nil then
+                roleTip = computed[1]
+                loadoutInfo = computed[2]
+            end
+        end
+
+        -- 倒计时段
+        local countdownMsg = string.format("倒计时剩余 %d 秒，请在倒计时结束后再安全起飞。", math.ceil(remaining))
+
+        -- 合并为单条消息：规则 / 分割线 / 玩法 / 分割线 / 挂载信息 / 分割线 / 倒计时
         local mergedMsg = table.concat({
-            "本服需要团队配合以获得最佳体验，请您保持SRS或TS在线，以便队友联系！",
-            "频道列表：ATC(起降协调): 261 | GCI(战斗通讯): 124.8 | 公共频道:251",
-            '若忘记频率，聊天框内输入 "-freq" 即可重新收到提示。',
-            '您也可以下载TeamSpeak软件并加入101.37.13.29(同本服IP)',
-            '欢迎来TS服务器挂机/聊天/等人/玩别的游戏~',
-            "",
-            "*服务器已启用资源系统，请阅系统介绍：",
-            "[1] 服务器永久保存您的资源点，可通过 通讯菜单(\"->F10->私有资源点 查询;",
-            "[2] 飞机和弹药都消耗资源点，起飞后扣除；返场降落将根据余量返还点数;",
-            "[3] 击杀敌方单位，吊运，救援，值班GCI、ATC、OP都可获取点数;",
-            '[4] 起飞前请点击 通讯菜单->F10->查询挂载信息 确认点数消耗，合理分配挂载;',
-            '[5] 若资源点不足以支付消耗，请更换更便宜的挂载，强行起飞将会自爆;',
-            "[6] 若点数耗尽，每隔一段时间会发放低保点数;",
-            "[7] 若在任务中阵亡，该架次获取的点数将减半。",
-            "",
-            "你当前私有点数: " .. tostring(ps.point),
+            rulesMsg,
             "--------------------------------",
-            "*服务器已启用出击冷却功能，在倒计时结束之前起飞将会自爆",
-            string.format("倒计时剩余 %d 秒，请在结束之后再起飞", math.ceil(remaining))
+            roleTip,
+            "--------------------------------",
+            loadoutInfo,
+            "--------------------------------",
+            countdownMsg
         }, "\n")
 
-        trigger.action.outTextForGroup(groupId, mergedMsg, 14, true)
+        trigger.action.outTextForGroup(groupId, mergedMsg, 25, true)
 
         return timer.getTime() + 15
     else

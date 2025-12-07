@@ -17,7 +17,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
             for i = 0, 4 do
                 timer.scheduleFunction(function(args)
                     local groupId = args[1]
-                    trigger.action.outTextForGroup(groupId, "你在出生后120秒内起飞，请立即降落！15秒内不着陆将会自爆！", 15-i, true)
+                    trigger.action.outTextForGroup(groupId, "规则提示：您在出生后120秒内起飞。请立即返航并在" .. tostring(15-i) .. "秒内安全着陆，否则飞机将被销毁。", 15-i, true)
                 end, {_groupId}, timer.getTime() + i)
             end
             SourceObj.landASAP[_groupId] = true
@@ -27,11 +27,11 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
                 if unit and Unit.isExist(unit) then
                     --local alt = _unit:getPoint().y
                     if unit:inAir() then
-                        trigger.action.outTextForGroup(groupId, "违规起飞且未按要求降落，飞机将被销毁！", 15, true)
+                        trigger.action.outTextForGroup(groupId, "处罚：未在规定时间内着陆，飞机已被销毁。请遵守出生起飞规则。", 15, true)
                         SourceObj.unitExplosion(unit)
                         trigger.action.outSoundForGroup(groupId, "takeoff-config-warning.ogg")
                     else
-                        trigger.action.outTextForGroup(groupId, "已及时降落，处罚取消。", 15, true)
+                        trigger.action.outTextForGroup(groupId, "已及时降落，处罚已取消。感谢配合。", 15, true)
                         trigger.action.outSoundForGroup(groupId, "clear-of-conflict.ogg")
                     end
                     SourceObj.landASAP[groupId] = false
@@ -44,7 +44,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
             SourceObj.playerSource[_ucid].point = SourceObj.playerSource[_ucid].point - sourcePointChange
             SourceObj.SaveSourcePoint()
             local text = string.format(
-                "起飞成功,本次总共消耗私有资源点:%d,个人剩余:%d点.\n详细信息:%s",
+                "起飞成功。消耗私有资源点：%d。当前余额：%d点。\n详情：%s",
                 tostring(sourcePointChange), tostring(SourceObj.playerSource[_ucid].point), tostring(countInfo))
             trigger.action.outTextForGroup(_groupId, text, 20, true)
             trigger.action.outSoundForGroup(_groupId, "ding.ogg")
@@ -53,7 +53,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
             end
         else
             local text = string.format(
-                "你的私有资源点剩余(%d),本次起飞需要:%d,即将自爆！请挂机等低保或改用低价挂载！",
+                "资源不足：您的私有资源点为 %d，本次起飞需要 %d 点。若继续起飞，飞机将在10秒后被销毁。\n提示：可等待系统补偿/低保，或选择更便宜的挂载。",
                 SourceObj.playerSource[_ucid].point, sourcePointChange)
             trigger.action.outTextForGroup(_groupId, text, 120, true)
             trigger.action.outSoundForGroup(_groupId, "overspeed.ogg")
@@ -85,7 +85,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
         SourceObj.playerSource[_ucid].point = SourceObj.playerSource[_ucid].point + halfPoint
         SourceObj.SaveSourcePoint()
         local text = string.format(
-            "您已阵亡，获得资源点减半！\n结算添加资源点:%d，个人剩余:%d点",
+            "您已阵亡。击杀奖励结算将减半。\n结算获得：+%d 点。当前余额：%d 点。",
             tostring(halfPoint), tostring(SourceObj.playerSource[_ucid].point))
         trigger.action.outTextForGroup(_groupId, text, 10)
     elseif _event == "kill" then

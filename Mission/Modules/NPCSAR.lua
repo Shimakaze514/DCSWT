@@ -99,7 +99,7 @@ end
 function npcsar.addCsar(_coalition , _country, _point, _unitTypeName,_unitName, _playerName)
     local _spawnedGroup = npcsar.spawnPilotModel( _coalition, _country, _point)
 
-    trigger.action.outTextForCoalition(_spawnedGroup:getCoalition(), "MAYDAY MAYDAY! " .. _playerName .."的" .._unitTypeName.. "跳伞了，够够我.", 10)
+    trigger.action.outTextForCoalition(_spawnedGroup:getCoalition(), string.format("紧急求救：玩家 %s 的 %s 已跳伞，请就近的直升机准备救援！", tostring(_playerName), tostring(_unitTypeName)), 10)
     local _text = "Pilot " .. _playerName .. " of " .. _unitName
 
     if _spawnedGroup ~= nil then
@@ -185,11 +185,11 @@ function npcsar.loadPilots(_args)
    local pilotsInfo = npcsar.findNearPilots(_heli)
 
     if #pilotsInfo==0 then
-        ctld.displayMessageToGroup(_heli,'你周围找不到任何跳伞飞行员',10)
+        ctld.displayMessageToGroup(_heli,'未在周围发现可救援的跳伞飞行员。',10)
         return
     end
 
-    ctld.displayMessageToGroup(_heli,'捞跳伞飞行员中。。。。。',10)
+    ctld.displayMessageToGroup(_heli,'正在尝试捞起跳伞飞行员，请稍候……',10)
 
     timer.scheduleFunction(function(_args)
         local _pilotsInfo=_args[1]

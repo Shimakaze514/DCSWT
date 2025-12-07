@@ -136,7 +136,7 @@ function NP.capture(_args)
 
     if _hasCloseEnough == nil then
         NP.logInfo('占点不够近')
-        trigger.action.outText('操作地面单位的指挥官，在靠近敌方cc后再占领。如果你乱按这个按钮，整个服务器都会被这个消息吵到',10)
+        trigger.action.outText('提示：请使用地面指挥官控制单位靠近敌方指挥中心（CC）后再执行占领操作；未靠近时无法占领。',10)
         return
     end
 
@@ -160,9 +160,9 @@ function NP.capture(_args)
 
                 for _, _leader in pairs(_units) do
 
-                    if _leader ~= nil and _leader:getCoalition() ~= _side and _leader:getLife() > 1 then
+                        if _leader ~= nil and _leader:getCoalition() ~= _side and _leader:getLife() > 1 then
                         NP.logInfo('占点之前未清除所有防御单位，活着的单位是: '.._leader:getName())
-                        trigger.action.outText('还有残余的防御单位，无法占领该CC！请手动搜寻或者使用JTAC单位寻找残存的防御单位',10)
+                        trigger.action.outText('占领失败：目标区域仍有存活的防御单位，请先清除残余部队，或使用JTAC/侦察单位协助搜索。',10)
                         return
                     end
                 end
@@ -226,9 +226,9 @@ function NP.capture(_args)
 
 
     NP.setRelatedZone(_logisticData,_logisticData.units[1].unitName,_logisticData.units[1].coalition,false)
-    NP.logInfo("战区".._logisticData.groupName.."被"..CountrySide.."占领。操作者是".._capturedPlayerName)
+    NP.logInfo("战区 ".._logisticData.groupName.." 已被 "..CountrySide.." 阵营占领，操作者：".._capturedPlayerName)
     NP.logDebug("占领后的logisticUnits是："..ctld.p(ctld.logisticUnits))
-    trigger.action.outText("战区".._logisticData.groupName.."被"..CountrySide.."占领。操作者是".._capturedPlayerName, 20)
+    trigger.action.outText("战区 ".._logisticData.groupName.." 已被 "..CountrySide.." 阵营占领。操作者：".._capturedPlayerName, 20)
 end
 
 function NP.setRelatedZone(static, unitName,coalition, firsttime)
