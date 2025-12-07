@@ -166,7 +166,7 @@ SourceObj.getSourceObjChange = function(_unit)
     end
     prettyStr = prettyStr .. "--------------------------------\n"
     prettyStr = prettyStr .. string.format("合计: %d 点\n", sourcePointChange)
-    prettyStr = prettyStr .. "----------------------------------------------------------------\n"
+    prettyStr = prettyStr .. "================================\n"
 
     return sourcePointChange, prettyStr
 end
