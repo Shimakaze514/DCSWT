@@ -2627,7 +2627,7 @@ function ctld.spawnCrate(_arguments)
             if ctld.inLogisticsZone(_heli) == false then
 
                 --ctld.displayMessageToGroup(_heli, "You are not close enough to friendly logistics to get a crate!", 10)
-                ctld.displayMessageToGroup(_heli, "距离CC或FOB超过"..ctld.maximumDistanceLogistic.."米，无法获取箱子！", 10)
+                ctld.displayMessageToGroup(_heli, "距离指挥中心（CC）或FOB太远！超过"..ctld.maximumDistanceLogistic.."米，无法获取箱子！请在CC旁的小圈内获取箱子。", 10)
 
                 return
             end
@@ -4155,7 +4155,7 @@ function ctld.unpackCrates(_arguments)--_arguments
 
             if ctld.inLogisticsZone(_heli, ctld.IsCheckfarEnoughFromLogisticZone) == true or ctld.farEnoughFromLogisticZone(_heli, ctld.minimumDeployDistance, ctld.IsCheckfarEnoughFromLogisticZone) == false then
                 --ctld.displayMessageToGroup(_heli, "You can't unpack that here! Take it to where it's needed!", 20)
-                ctld.displayMessageToGroup(_heli, "你不能在这里部署！把箱子带到更远的地方！", 20)
+                ctld.displayMessageToGroup(_heli, "距离指挥中心（CC）或FOB太近，无法部署！把箱子带到离CC或FOB更远的地方！在CC的大圈外才能展开箱子。", 20)
                 return
             end
 

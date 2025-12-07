@@ -45,7 +45,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
         if SourceObj.playerSource[_ucid].point - sourcePointChange >= 0 then
             SourceObj.playerSource[_ucid].point = SourceObj.playerSource[_ucid].point - sourcePointChange
             SourceObj.SaveSourcePoint()
-            local text = string.format("起飞成功，祝您武运昌隆！\n消耗资源点: -%d\n当前余额: %d\n\n挂载详情: %s",
+            local text = string.format("起飞成功，祝您武运昌隆！\n消耗资源点: %d\n当前余额: %d\n\n挂载详情: %s",
                 sourcePointChange, SourceObj.playerSource[_ucid].point, countInfo)
             trigger.action.outTextForGroup(_groupId, text, 20, true)
             trigger.action.outSoundForGroup(_groupId, "ding.ogg")
