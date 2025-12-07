@@ -17,7 +17,6 @@ SourceObj.countdownMessage = function(args)
             "3. [获取资源]: 可通过击杀敌军、完成吊运/救援任务或等待系统低保（每5分钟400点）来获得资源点。",
             "4. [查询与规划]: 起飞前，请务必使用 F10菜单 -> 私有资源点 -> 查询挂载信息，检查开销，避免因点数不足导致起飞后飞机自毁。",
             "5. [阵亡惩罚]: 若在任务中被击落或阵亡，本次任务中积累的未结算击杀奖励将减半。",
-            "--------------------------------"
         }
         local rulesMsg = table.concat(rulesTbl, "\n")
 
@@ -33,7 +32,7 @@ SourceObj.countdownMessage = function(args)
                 -- 挂载信息描述
                 local loadoutStr
                 if ps.point >= cost then
-                    loadoutStr = string.format("【当前挂载开销】\n当前私有点数: %d\n本次挂载消耗: %d (点数充足)\n起飞后预计剩余: %d\n\n挂载详情:\n%s", ps.point, cost, ps.point - cost, detail)
+                    loadoutStr = string.format("【当前挂载开销】\n当前私有点数: %d\n本次挂载消耗: %d (点数充足)\n起飞后预计剩余: %d\n%s", ps.point, cost, ps.point - cost, detail)
                 else
                     loadoutStr = string.format("【当前挂载开销】\n当前私有点数: %d\n本次挂载消耗: %d (点数不足!)\n\n[警告] 请更换便宜的挂载方案，或等待资源点补充，否则强行起飞将在10秒后自毁！\n\n挂载详情:\n%s", ps.point, cost, detail)
                 end
@@ -48,11 +47,11 @@ SourceObj.countdownMessage = function(args)
                 local desc = unit:getDesc() or {}
                 local tipStr = ""
                 if NPAircraftList and inList(NPAircraftList.superiorityFighter, unitType) then
-                    tipStr = "【本机玩法提示】\n定位: [制空战斗机]\n任务: 夺取空中优势、为友军护航。建议携带空对空导弹。你也可以通过 F10 菜单呼叫AI轰炸机来打击地面目标。"
+                    tipStr = "【本机玩法提示】\n定位: [制空战斗机]\n任务: 夺取空中优势、为友军护航。建议携带空对空导弹。\n你可以通过 F10 菜单呼叫AI轰炸机来打击地面目标。"
                 elseif NPAircraftList and inList(NPAircraftList.lightFighter, unitType) then
-                    tipStr = "【本机玩法提示】\n定位: [多用途战斗机]\n任务: 可执行对空或对地打击，请根据战局需要和资源点数合理选择挂载，与队友协同作战。"
+                    tipStr = "【本机玩法提示】\n定位: [多用途战斗机]\n任务: 可执行对空或对地打击，请根据战局需要和资源点数合理选择挂载，与队友协同作战。\n你可以通过 F10 菜单呼叫AI轰炸机来打击地面目标。"
                 elseif NPAircraftList and inList(NPAircraftList.attacker, unitType) then
-                    tipStr = "【本机玩法提示】\n定位: [攻击机]\n任务: 摧毁地面/海面目标。请携带精确制导武器或大量炸弹。建议与执行制空任务的队友保持沟通。"
+                    tipStr = "【本机玩法提示】\n定位: [攻击机]\n任务: 摧毁地面/海面目标。请携带精确制导武器或大量炸弹。建议与执行制空任务的队友保持沟通。\n你可以通过 F10 菜单呼叫AI轰炸机来打击地面目标。"
                 elseif (NPAircraftList and inList(NPAircraftList.helicopter, unitType)) or desc.category == 1 then
                     tipStr = "【本机玩法提示】\n定位: [直升机]\n任务: 核心玩法是运输与后勤。使用 F10 -> [运输&部署] 菜单执行吊运、救援、部署FOB等任务来为团队赚取优势。"
                 else
@@ -78,8 +77,9 @@ SourceObj.countdownMessage = function(args)
         -- 合并为单条消息：规则 / 分割线 / 玩法 / 分割线 / 挂载信息 / 分割线 / 倒计时
         local mergedMsg = table.concat({
             rulesMsg,
+            "================================",
             roleTip,
-            "--------------------------------",
+            "================================",
             loadoutInfo,
             countdownMsg
         }, "\n")

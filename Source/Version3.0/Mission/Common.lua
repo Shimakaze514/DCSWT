@@ -155,7 +155,7 @@ SourceObj.getSourceObjChange = function(_unit)
         -- SaveData.WeaponData(SourceObj.JSON:encode(countInfo) .. '\n')
     end
         ---------------------- 格式化输出 ----------------------
-    local prettyStr = "\n========= 出击消耗/降落返还明细 =========\n"
+    local prettyStr = "\n------------------ 出击消耗/降落返还明细 ------------------\n"
     for i, item in ipairs(countInfo) do
         if item["飞机花费"] then
             prettyStr = prettyStr .. string.format("飞机花费: %d 点\n", item["飞机花费"])
@@ -166,7 +166,7 @@ SourceObj.getSourceObjChange = function(_unit)
     end
     prettyStr = prettyStr .. "--------------------------------\n"
     prettyStr = prettyStr .. string.format("合计: %d 点\n", sourcePointChange)
-    prettyStr = prettyStr .. "================================\n"
+    prettyStr = prettyStr .. "----------------------------------------------------------------\n"
 
     return sourcePointChange, prettyStr
 end
