@@ -47,7 +47,7 @@ SourceObj.onBirth = function(_unit)
 
     SourceObj.playerSource[_ucid].birthTime = timer.getTime()
 
-    timer.scheduleFunction(SourceObj.countdownMessage, {_ucid, _groupId}, timer.getTime() + 15)
+    timer.scheduleFunction(SourceObj.countdownMessage, {_ucid, _groupId, _unit}, timer.getTime() + 15)
 end
 
 env.info("资源系统事件处理加载完毕")

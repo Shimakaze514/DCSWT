@@ -21,11 +21,9 @@ SourceObj.getPointByGroupID = function(groupId)
         if _ucid then
             local currentPoint = tostring(SourceObj.playerSource[_ucid].point)
             local pending = tostring(SourceObj.pendingKillPoint[_ucid] or 0)
-            local text = string.format(
-                "你的私有资源点剩余:%s\n未结算的击杀奖励:%s\n若在任务中阵亡，击杀奖励将减半！",
+            local text = string.format("【私有资源点查询】\n- 当前余额: %s 点\n- 未结算的击杀奖励: %s 点\n\n提示：若在任务中阵亡，未结算的击杀奖励将减半！",
                 currentPoint, pending)
             trigger.action.outTextForGroup(groupId, text, 30)
         end
     end
 end
-

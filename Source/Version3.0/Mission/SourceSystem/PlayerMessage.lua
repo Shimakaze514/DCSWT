@@ -11,13 +11,13 @@ SourceObj.countdownMessage = function(args)
     if remaining > 0 then
         -- 规则部分
         local rulesTbl = {
-            "欢迎来到TD动态战役服务器。请阅读并遵守以下起飞与资源规则以获得最佳体验：",
-            "1) 出生保护与起飞：出生后有120秒冷却（倒计时期间请勿起飞）。如误起飞，请在15秒内重新着陆。",
-            "2) 私有资源点：起飞时扣除所选挂载的资源点，返场安全降落后按剩余返还；击杀、吊运、救援可获得点数奖励。",
-            "3) 起飞前请通过 通讯菜单 -> F10 -> 私有资源点 查询本次消耗，合理分配挂载。",
-            "4) 若资源点不足，请更换更便宜的挂载或等待系统发放低保（每5分钟400点）；强行起飞将导致飞机被销毁。",
-            "5) 若在任务中阵亡，击杀奖励将减半。",
-            "*服务器已启用出击冷却功能，在倒计时结束之前起飞将会自爆"
+            "【服务器核心规则】",
+            "1. [出生/起飞]: 出生后有120秒冷却，期间请勿起飞。若误操作起飞，请在15秒内降落，否则飞机将自毁。",
+            "2. [私有资源点]: 每次起飞会根据挂载消耗资源点。安全降落后，未使用的武器资源将返还。",
+            "3. [获取资源]: 可通过击杀敌军、完成吊运/救援任务或等待系统低保（每5分钟400点）来获得资源点。",
+            "4. [查询与规划]: 起飞前，请务必使用 F10菜单 -> 私有资源点 -> 查询挂载信息，检查开销，避免因点数不足导致起飞后飞机自毁。",
+            "5. [阵亡惩罚]: 若在任务中被击落或阵亡，本次任务中积累的未结算击杀奖励将减半。",
+            "--------------------------------"
         }
         local rulesMsg = table.concat(rulesTbl, "\n")
 
@@ -33,9 +33,9 @@ SourceObj.countdownMessage = function(args)
                 -- 挂载信息描述
                 local loadoutStr
                 if ps.point >= cost then
-                    loadoutStr = string.format("当前私有点数：%d 点\n当前挂载消耗：%d 点（点数充足）。起飞后余额：%d 点。\n%s", ps.point, cost, ps.point - cost, detail)
+                    loadoutStr = string.format("【当前挂载开销】\n当前私有点数: %d\n本次挂载消耗: %d (点数充足)\n起飞后预计剩余: %d\n\n挂载详情:\n%s", ps.point, cost, ps.point - cost, detail)
                 else
-                    loadoutStr = string.format("当前私有点数：%d 点\n当前挂载消耗：%d 点（点数不足）。请改用更便宜的挂载或等待补偿。\n%s", ps.point, cost, detail)
+                    loadoutStr = string.format("【当前挂载开销】\n当前私有点数: %d\n本次挂载消耗: %d (点数不足!)\n\n[警告] 请更换便宜的挂载方案，或等待资源点补充，否则强行起飞将在10秒后自毁！\n\n挂载详情:\n%s", ps.point, cost, detail)
                 end
 
                 -- 机型玩法提示
@@ -48,18 +48,18 @@ SourceObj.countdownMessage = function(args)
                 local desc = unit:getDesc() or {}
                 local tipStr = ""
                 if NPAircraftList and inList(NPAircraftList.superiorityFighter, unitType) then
-                    tipStr = "制空/护航为主：携带空对空武器为核心，可兼顾轻型对地挂载；可通过 F10 呼叫轰炸机支援（消耗点数）。"
+                    tipStr = "【本机玩法提示】\n定位: [制空战斗机]\n任务: 夺取空中优势、为友军护航。建议携带空对空导弹。你也可以通过 F10 菜单呼叫AI轰炸机来打击地面目标。"
                 elseif NPAircraftList and inList(NPAircraftList.lightFighter, unitType) then
-                    tipStr = "多面手：可执行对空或对地任务，注意挂载消耗并与队友分工。"
+                    tipStr = "【本机玩法提示】\n定位: [多用途战斗机]\n任务: 可执行对空或对地打击，请根据战局需要和资源点数合理选择挂载，与队友协同作战。"
                 elseif NPAircraftList and inList(NPAircraftList.attacker, unitType) then
-                    tipStr = "对地/近距支援：优先携带精确炸弹或对地导弹；配合轰炸/侦察清除防御。"
+                    tipStr = "【本机玩法提示】\n定位: [攻击机]\n任务: 摧毁地面/海面目标。请携带精确制导武器或大量炸弹。建议与执行制空任务的队友保持沟通。"
                 elseif (NPAircraftList and inList(NPAircraftList.helicopter, unitType)) or desc.category == 1 then
-                    tipStr = "直升机：支持吊运、救援、部署/拾取箱子与建造 FOB（使用 F10->运输&部署）。"
+                    tipStr = "【本机玩法提示】\n定位: [直升机]\n任务: 核心玩法是运输与后勤。使用 F10 -> [运输&部署] 菜单执行吊运、救援、部署FOB等任务来为团队赚取优势。"
                 else
                     if string.find(unitType, "C%-130") or string.find(unitType, "Transport") then
-                        tipStr = "运输机：可参与吊运/运输任务，使用 F10->运输&部署 查询可用操作。"
+                        tipStr = "【本机玩法提示】\n定位: [运输机]\n任务: 通过 F10 -> [运输&部署] 菜单执行大规模物资运输任务。"
                     else
-                        tipStr = "部分飞机支持吊运/救援/呼叫轰炸机等功能，详见 F10 菜单。"
+                        tipStr = "【本机玩法提示】\n玩法多样，请打开 F10 菜单探索本机支持的特殊功能（如呼叫轰炸机、运输等）。"
                     end
                 end
 
@@ -73,16 +73,14 @@ SourceObj.countdownMessage = function(args)
         end
 
         -- 倒计时段
-        local countdownMsg = string.format("倒计时剩余 %d 秒，请在倒计时结束后再安全起飞。", math.ceil(remaining))
+        local countdownMsg = string.format("【起飞倒计时】\n%d 秒后可安全起飞，祝您武运昌隆！", math.ceil(remaining))
 
         -- 合并为单条消息：规则 / 分割线 / 玩法 / 分割线 / 挂载信息 / 分割线 / 倒计时
         local mergedMsg = table.concat({
             rulesMsg,
-            "--------------------------------",
             roleTip,
             "--------------------------------",
             loadoutInfo,
-            "--------------------------------",
             countdownMsg
         }, "\n")
 

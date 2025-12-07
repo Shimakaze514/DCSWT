@@ -99,7 +99,7 @@ end
 function npcsar.addCsar(_coalition , _country, _point, _unitTypeName,_unitName, _playerName)
     local _spawnedGroup = npcsar.spawnPilotModel( _coalition, _country, _point)
 
-    trigger.action.outTextForCoalition(_spawnedGroup:getCoalition(), string.format("紧急求救：玩家 %s 的 %s 已跳伞，请就近的直升机准备救援！", tostring(_playerName), tostring(_unitTypeName)), 10)
+    trigger.action.outTextForCoalition(_spawnedGroup:getCoalition(), string.format("紧急求救！我方飞行员 %s (%s) 已跳伞，请附近的直升机前往救援！", tostring(_playerName), tostring(_unitTypeName)), 15)
     local _text = "Pilot " .. _playerName .. " of " .. _unitName
 
     if _spawnedGroup ~= nil then

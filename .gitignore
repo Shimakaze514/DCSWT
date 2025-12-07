@@ -3,3 +3,6 @@
 .history
 /Debug/draft.lua
 /Debug/csarGitdraft.lua
+.vscode
+.github
+.vs
