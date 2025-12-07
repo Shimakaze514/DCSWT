@@ -1,7 +1,7 @@
 SourceObj = SourceObj or {}
 
 SourceObj.countdownMessage = function(args)
-    local ucid, groupId = args[1], args[2]
+    local ucid, groupId, unit = args[1], args[2], args[3]
     local ps = SourceObj.playerSource[ucid]
     if not ps or not ps.birthTime then
         return nil
@@ -25,20 +25,17 @@ SourceObj.countdownMessage = function(args)
         local roleTip = "玩法提示：无法读取机位信息，如需详细玩法请使用 F10 菜单查询。"
         local loadoutInfo = "挂载信息：无法读取（请使用 F10->私有资源点 查询详细挂载）。"
         do
-            local ok, computed = pcall(function()
-                local group = Group.getByID(groupId)
-                if not group then return nil end
-                local unit = group:getUnit(1)
-                if not unit then return nil end
+            local ok, tip, s = pcall(function()
+                if not unit then error("无法读取单元") end
                 local cost, detail = SourceObj.getSourceObjChange(unit)
-                if not cost then return nil end
+                if not cost then error("无法计算消耗") end
 
                 -- 挂载信息描述
-                local s
+                local loadoutStr
                 if ps.point >= cost then
-                    s = string.format("当前私有点数：%d 点\n当前挂载消耗：%d 点（点数充足）。起飞后余额：%d 点。\n%s", ps.point, cost, ps.point - cost, detail)
+                    loadoutStr = string.format("当前私有点数：%d 点\n当前挂载消耗：%d 点（点数充足）。起飞后余额：%d 点。\n%s", ps.point, cost, ps.point - cost, detail)
                 else
-                    s = string.format("当前私有点数：%d 点\n当前挂载消耗：%d 点（点数不足）。请改用更便宜的挂载或等待补偿。\n%s", ps.point, cost, detail)
+                    loadoutStr = string.format("当前私有点数：%d 点\n当前挂载消耗：%d 点（点数不足）。请改用更便宜的挂载或等待补偿。\n%s", ps.point, cost, detail)
                 end
 
                 -- 机型玩法提示
@@ -49,29 +46,29 @@ SourceObj.countdownMessage = function(args)
                 end
                 local unitType = unit:getTypeName()
                 local desc = unit:getDesc() or {}
-                local tip = ""
+                local tipStr = ""
                 if NPAircraftList and inList(NPAircraftList.superiorityFighter, unitType) then
-                    tip = "制空/护航为主：携带空对空武器为核心，可兼顾轻型对地挂载；可通过 F10 呼叫轰炸机支援（消耗点数）。"
+                    tipStr = "制空/护航为主：携带空对空武器为核心，可兼顾轻型对地挂载；可通过 F10 呼叫轰炸机支援（消耗点数）。"
                 elseif NPAircraftList and inList(NPAircraftList.lightFighter, unitType) then
-                    tip = "多面手：可执行对空或对地任务，注意挂载消耗并与队友分工。"
+                    tipStr = "多面手：可执行对空或对地任务，注意挂载消耗并与队友分工。"
                 elseif NPAircraftList and inList(NPAircraftList.attacker, unitType) then
-                    tip = "对地/近距支援：优先携带精确炸弹或对地导弹；配合轰炸/侦察清除防御。"
+                    tipStr = "对地/近距支援：优先携带精确炸弹或对地导弹；配合轰炸/侦察清除防御。"
                 elseif (NPAircraftList and inList(NPAircraftList.helicopter, unitType)) or desc.category == 1 then
-                    tip = "直升机：支持吊运、救援、部署/拾取箱子与建造 FOB（使用 F10->运输&部署）。"
+                    tipStr = "直升机：支持吊运、救援、部署/拾取箱子与建造 FOB（使用 F10->运输&部署）。"
                 else
                     if string.find(unitType, "C%-130") or string.find(unitType, "Transport") then
-                        tip = "运输机：可参与吊运/运输任务，使用 F10->运输&部署 查询可用操作。"
+                        tipStr = "运输机：可参与吊运/运输任务，使用 F10->运输&部署 查询可用操作。"
                     else
-                        tip = "部分飞机支持吊运/救援/呼叫轰炸机等功能，详见 F10 菜单。"
+                        tipStr = "部分飞机支持吊运/救援/呼叫轰炸机等功能，详见 F10 菜单。"
                     end
                 end
 
-                return tip, s
+                return tipStr, loadoutStr
             end)
 
-            if ok and computed and computed ~= nil then
-                roleTip = computed[1]
-                loadoutInfo = computed[2]
+            if ok then
+                roleTip = tip
+                loadoutInfo = s
             end
         end
 
