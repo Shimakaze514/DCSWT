@@ -16,10 +16,9 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
             trigger.action.outSoundForGroup(_groupId, "overspeed.ogg")
             trigger.action.outSoundForGroup(_groupId, "descend-descend-now.ogg")
             for i = 0, 14 do
-                timer.scheduleFunction(function(args)
-                    local groupId = args[1]
+                timer.scheduleFunction(function(groupId)
                     trigger.action.outTextForGroup(groupId, "规则提示：您在出生后120秒内起飞。请立即返航并在" .. tostring(15-i) .. "秒内安全着陆，否则飞机将被销毁。", 15-i, true)
-                end, {_groupId}, timer.getTime() + i)
+                end, _groupId, timer.getTime() + i)
             end
             SourceObj.landASAP[_groupId] = true
             timer.scheduleFunction(function(args)
@@ -35,13 +34,15 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
                         trigger.action.outTextForGroup(groupId, "已及时降落，处罚已取消。感谢配合。", 15, true)
                         trigger.action.outSoundForGroup(groupId, "clear-of-conflict.ogg")
                     end
-                    SourceObj.landASAP[groupId] = false
+                    timer.scheduleFunction(function(groupId)
+                        SourceObj.landASAP[groupId] = false
+                    end, groupId, timer.getTime() + 2)
                 end
             end, {_groupId,_unit}, timer.getTime() + 15)
             return
         end
 
-        if SourceObj.playerSource[_ucid].point - sourcePointChange > 0 then
+        if SourceObj.playerSource[_ucid].point - sourcePointChange >= 0 then
             SourceObj.playerSource[_ucid].point = SourceObj.playerSource[_ucid].point - sourcePointChange
             SourceObj.SaveSourcePoint()
             local text = string.format("起飞成功，祝您武运昌隆！\n消耗资源点: -%d\n当前余额: %d\n\n挂载详情: %s",
@@ -58,10 +59,9 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
             trigger.action.outSoundForGroup(_groupId, "overspeed.ogg")
             trigger.action.outSoundForGroup(_groupId, "descend-descend-now.ogg")
             for i = 0, 14 do
-                timer.scheduleFunction(function(args)
-                    local groupId = args[1]
+                timer.scheduleFunction(function(groupId)
                     trigger.action.outTextForGroup(groupId, "规则提示：您的资源点不足，请立即返航并在 " .. tostring(15-i) .. " 秒内安全着陆，否则飞机将被销毁。", 15-i, true)
-                end, {_groupId}, timer.getTime() + i)
+                end, _groupId, timer.getTime() + i)
             end
             SourceObj.landASAP[_groupId] = true
             timer.scheduleFunction(function(args)
@@ -76,7 +76,9 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
                         trigger.action.outTextForGroup(groupId, "已及时降落，处罚已取消。请更换挂载或等待资源补充。", 15, true)
                         trigger.action.outSoundForGroup(groupId, "clear-of-conflict.ogg")
                     end
-                    SourceObj.landASAP[groupId] = false
+                    timer.scheduleFunction(function(groupId)
+                        SourceObj.landASAP[groupId] = false
+                    end, groupId, timer.getTime() + 2)
                 end
             end, {_groupId, _unit}, timer.getTime() + 15)
         end

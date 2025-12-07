@@ -32,9 +32,9 @@ SourceObj.countdownMessage = function(args)
                 -- 挂载信息描述
                 local loadoutStr
                 if ps.point >= cost then
-                    loadoutStr = string.format("【当前挂载开销】\n当前私有点数: %d\n本次挂载消耗: %d (点数充足)\n起飞后预计剩余: %d\n%s", ps.point, cost, ps.point - cost, detail)
+                    loadoutStr = string.format("【当前挂载开销】\n当前私有点数: %d\n本次挂载消耗: %d (点数充足)\n起飞后预计剩余: %d %s", ps.point, cost, ps.point - cost, detail)
                 else
-                    loadoutStr = string.format("【当前挂载开销】\n当前私有点数: %d\n本次挂载消耗: %d (点数不足!)\n\n[警告] 请更换便宜的挂载方案，或等待资源点补充，否则强行起飞将在10秒后自毁！\n\n挂载详情:\n%s", ps.point, cost, detail)
+                    loadoutStr = string.format("【当前挂载开销】\n当前私有点数: %d\n本次挂载消耗: %d (点数不足!)\n\n[警告] 请更换便宜的挂载方案，或等待资源点补充，否则强行起飞将在10秒后自毁！ %s", ps.point, cost, detail)
                 end
 
                 -- 机型玩法提示
@@ -72,7 +72,7 @@ SourceObj.countdownMessage = function(args)
         end
 
         -- 倒计时段
-        local countdownMsg = string.format("【起飞倒计时】\n%d 秒后可安全起飞，祝您武运昌隆！", math.ceil(remaining))
+        local countdownMsg = string.format("%d 秒后可安全起飞，祝您武运昌隆！", math.ceil(remaining))
 
         -- 合并为单条消息：规则 / 分割线 / 玩法 / 分割线 / 挂载信息 / 分割线 / 倒计时
         local mergedMsg = table.concat({
