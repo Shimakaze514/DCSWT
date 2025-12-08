@@ -34,10 +34,10 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
                         trigger.action.outTextForGroup(groupId, "已及时降落，处罚已取消。感谢配合。", 15, true)
                         trigger.action.outSoundForGroup(groupId, "clear-of-conflict.ogg")
                     end
-                    timer.scheduleFunction(function(groupId)
-                        SourceObj.landASAP[groupId] = false
-                    end, groupId, timer.getTime() + 2)
                 end
+                timer.scheduleFunction(function(groupId)
+                    SourceObj.landASAP[groupId] = false
+                end, groupId, timer.getTime() + 2)
             end, {_groupId,_unit}, timer.getTime() + 15)
             return
         end
@@ -52,6 +52,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
             if SourceObj.pendingKillPoint[_ucid] then
                 SourceObj.pendingKillPoint[_ucid] = nil
             end
+            SourceObj.landASAP[groupId] = false --fallback
         else
             local text = string.format("【警告：资源不足】\n当前资源点: %d\n本次起飞需要: %d\n\n若不更换挂载强行起飞，飞机将在10秒后自毁！\n提示: 可等待系统低保或更换更便宜的挂载。",
                 SourceObj.playerSource[_ucid].point, sourcePointChange)
@@ -76,10 +77,10 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
                         trigger.action.outTextForGroup(groupId, "已及时降落，处罚已取消。请更换挂载或等待资源补充。", 15, true)
                         trigger.action.outSoundForGroup(groupId, "clear-of-conflict.ogg")
                     end
-                    timer.scheduleFunction(function(groupId)
-                        SourceObj.landASAP[groupId] = false
-                    end, groupId, timer.getTime() + 2)
                 end
+                timer.scheduleFunction(function(groupId)
+                    SourceObj.landASAP[groupId] = false
+                end, groupId, timer.getTime() + 2)
             end, {_groupId, _unit}, timer.getTime() + 15)
         end
     elseif _event == "landing" then

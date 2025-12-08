@@ -22,7 +22,7 @@ function sourceMissionEvent.eventHandler:onEvent(event)
       elseif event.id == world.event.S_EVENT_LAND and event.initiator ~= nil then
         if SourceObj.playerInfo[event.initiator:getPlayerName()] then
           SourceObj.updateSourcePointsByEvent(event.initiator, SourceObj.playerInfo[event.initiator:getPlayerName()], "landing")
-		 SourceObj.updateTeamSourcePointsByEvent(event.initiator, SourceObj.playerInfo[event.initiator:getPlayerName()], "landing")
+		      SourceObj.updateTeamSourcePointsByEvent(event.initiator, SourceObj.playerInfo[event.initiator:getPlayerName()], "landing")
         end
       elseif event.id == world.event.S_EVENT_BIRTH and event.initiator ~= nil then
         SourceObj.onBirth(event.initiator)
@@ -31,7 +31,7 @@ function sourceMissionEvent.eventHandler:onEvent(event)
         if event.initiator:getPlayerName() ~= nil then
           if SourceObj.playerInfo[event.initiator:getPlayerName()] then
             SourceObj.updateSourcePointsByEvent(event, SourceObj.playerInfo[event.initiator:getPlayerName()], "kill")
-			SourceObj.updateTeamSourcePointsByEvent(event, SourceObj.playerInfo[event.initiator:getPlayerName()], "kill")
+			      SourceObj.updateTeamSourcePointsByEvent(event, SourceObj.playerInfo[event.initiator:getPlayerName()], "kill")
           end
         end
       else

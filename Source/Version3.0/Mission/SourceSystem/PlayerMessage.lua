@@ -77,16 +77,19 @@ SourceObj.countdownMessage = function(args)
         local countdownMsg = string.format("%d 秒后可安全起飞，祝您武运昌隆！", math.ceil(remaining))
 
         -- 合并为单条消息：规则 / 分割线 / 玩法 / 分割线 / 挂载信息 / 分割线 / 倒计时
-        local mergedMsg = table.concat({
-            rulesMsg,
-            "================================",
-            roleTip,
-            "================================",
-            loadoutInfo,
-            countdownMsg
-        }, "\n")
+        -- local mergedMsg = table.concat({
+        --     rulesMsg,
+        --     "================================",
+        --     roleTip,
+        --     "================================",
+        --     loadoutInfo,
+        --     countdownMsg
+        -- }, "\n")
 
-        trigger.action.outTextForGroup(groupId, mergedMsg, 25, true)
+        trigger.action.outTextForGroup(groupId, rulesMsg, 25, true)
+        trigger.action.outTextForGroup(groupId, roleTip, 25, true)
+        trigger.action.outTextForGroup(groupId, loadoutInfo, 25, true)
+        trigger.action.outTextForGroup(groupId, countdownMsg, 25, true)
 
         return timer.getTime() + 15
     else
