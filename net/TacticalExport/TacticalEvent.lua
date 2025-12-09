@@ -7,7 +7,7 @@ tacticalExport.PlayerName = tacticalExport.PlayerName or {}
 package.path  = package.path..";.\\LuaSocket\\?.lua;"
 package.cpath = package.cpath..";.\\LuaSocket\\?.dll;"
 local socket = require("socket")
-local BACKEND_HOST = "localhost"
+local BACKEND_HOST = "stats.insky.cn"
 local BACKEND_PORT = 3002
 -- local BACKEND_PATH = "/api/telemetry"
 

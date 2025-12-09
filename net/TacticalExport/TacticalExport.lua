@@ -10,7 +10,7 @@ tacticalExport.PlayerId = tacticalExport.PlayerId or {}
 -- HTTP sender (socket.tcp)
 --------------------------------------------------------------------
 local socket = require("socket")
-local BACKEND_HOST = "localhost"
+local BACKEND_HOST = "stats.insky.cn"
 local BACKEND_PORT = 3002
 -- local BACKEND_PATH = "/api/telemetry"
 
