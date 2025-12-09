@@ -4397,7 +4397,8 @@ function ctld.unpackFOBCrates(_crates, _heli)
 
         ctld.crateAddPoint(_heli,ctld.cratesRequiredForFOB)
         ctld.processCallback({ unit = _heli, position = _centroid, action = "fob" })
-        trigger.action.smoke({x=_centroid.x+60,y=_centroid.y,z=_centroid.z+60}, trigger.smokeColor.Green)
+        trigger.action.smoke({x=_centroid.x+60,y=_centroid.y,z=_centroid.z+60}, trigger.smokeColor.Green, _name)
+        timer.scheduleFunction(trigger.action.effectSmokeStop(), _name, timer.getTime() + ctld.buildTimeFOB)
         trigger.action.outTextForCoalition(_heli:getCoalition(), _txt, 10)
     else
         --local _txt = string.format("Cannot build FOB!\n\nIt requires %d Large FOB crates ( 3 small FOB crates equal 1 large FOB Crate) and there are the equivalent of %d large FOB crates nearby\n\nOr the crates are not within 750m of each other", ctld.cratesRequiredForFOB, _totalCrates)
@@ -7103,6 +7104,9 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
                 pcall(function()
                     trigger.action.removeMark(markInfo.id)
                 end)
+                pcall(function()
+                    trigger.action.effectSmokeStop(markInfo.id)
+                end)
                 ctld.jtacMarkIDs[_tempUnit:getName()] = nil
             end
         else
@@ -7112,6 +7116,9 @@ function ctld.JTACAutoLase(_jtacGroupName, _laserCode, _smoke, _lock, _colour, _
             if markInfo and markInfo.jtac == _jtacGroupName then
                 pcall(function()
                     trigger.action.removeMark(markInfo.id)
+                end)
+                pcall(function()
+                    trigger.action.effectSmokeStop(markInfo.id)
                 end)
                 ctld.jtacMarkIDs[_tempUnit:getName()] = nil
             end
@@ -7343,6 +7350,9 @@ function ctld.createSmokeMarker(_enemyUnit, _colour, _jtacGroupName)
         pcall(function()
             trigger.action.removeMark(oldID)
         end)
+        pcall(function()
+            trigger.action.effectSmokeStop(oldID)
+        end)
     end
 
     ctld.globalMarkCounter = ctld.globalMarkCounter + 1
@@ -7363,7 +7373,7 @@ function ctld.createSmokeMarker(_enemyUnit, _colour, _jtacGroupName)
     local _coalition = (_enemyCoalition == 1) and 2 or 1
 
     trigger.action.markToCoalition(newID, _enemyUnit:getTypeName() , _randomizedPoint, _coalition,true)
-    -- trigger.action.smoke({ x = _enemyPoint.x, y = _enemyPoint.y + 2.0, z = _enemyPoint.z }, _colour)
+    trigger.action.smoke({ x = _enemyPoint.x, y = _enemyPoint.y + 2.0, z = _enemyPoint.z }, _colour, newID)
 end
 
 function ctld.cancelLase(_jtacGroupName)
@@ -7840,6 +7850,9 @@ function ctld.setJTACTarget(_args)
                             if info.jtac == _jtacGroupName and unitName ~= targetName then
                                 pcall(function()
                                     trigger.action.removeMark(info.id)
+                                end)
+                                pcall(function()
+                                    trigger.action.effectSmokeStop(info.id)
                                 end)
                                 ctld.jtacMarkIDs[unitName] = nil
                             end
