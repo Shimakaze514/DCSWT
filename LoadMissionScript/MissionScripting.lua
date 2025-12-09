@@ -17,6 +17,7 @@ if string.find(serverName, "TD动态战役", 1, true) then
     dofile(lfs.writedir() .. 'Scripts/Mission/Core/DynamicSave.lua')
     dofile(lfs.writedir() .. 'Scripts/StaticDataBase/UnitsList.lua')
     dofile(lfs.writedir() .. 'Scripts/Mission/Core/NPV2.lua')
+    dofile(lfs.writedir() .. 'Scripts/Mission/Modules/GCI.lua')
     dofile(lfs.writedir() .. 'Scripts/Mission/Modules/NPCSAR.lua')
     dofile(lfs.writedir() .. 'Scripts/Mission/Modules/Bomber.lua')
     dofile(lfs.writedir() .. 'Scripts/Mission/Modules/AddEXPL.lua')

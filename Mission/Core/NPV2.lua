@@ -625,6 +625,8 @@ end
 
 function NP.RespawnAwacs()
     for _, _plane in pairs(NP.AWACSList) do
+        local _grp = Group.getByName(_plane)
+        table.insert(ctld.EWRunits,_grp)
         local AWCAS = Group.getByName(_plane):getUnit(1)
         if AWCAS ~= nil then
             if Unit.getFuel(AWCAS) < 0.3 then

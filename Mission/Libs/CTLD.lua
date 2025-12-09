@@ -732,6 +732,7 @@ ctld.spawnableCrates = {
             { weight = 401, desc = "彩蛋(Easter Egg)", unit = "Pz_IV_H" },
             { weight = 325, desc = "无人机 JTAC", unit = "RQ-1A Predator" },
             { weight = 800, desc = "FOB Crate", unit = "FOB" },
+            { weight = 1000, desc = "1L13 EWR雷达(1箱1车)", unit = "1L13 EWR", isEWR = true },
         }
     },
     {
@@ -815,6 +816,12 @@ ctld.jtacUnitTypes = {
     "RQ-1A Predator", --there are some wierd encoding issues so if you write SKP-11 it wont match as the - sign is encoded differently...
 }
 
+ctld.availableUnitTypes = {"MosquitoFBMkVI", "TF-51D", "CH-47Fbl1", "Mi-8MT", "Ka-50", "Ka-50_3",
+                            "AH-64D_BLK_II", "Mi-24P", "OH58D", "UH-1H", "SA342M", "SA342L", "SA342Mistral",
+                            "SA342Minigun",
+                            "C-130J-30"}
+                            
+ctld.EWRunits = ctld.EWRunits or {}
 
 -- ***************************************************************
 -- **************** Mission Editor Functions *********************
@@ -5846,7 +5853,7 @@ function ctld.addEWRTask(_group)
     -- delayed 2 second to work around bug
     timer.scheduleFunction(function(_ewrGroup)
         local _grp = ctld.getAliveGroup(_ewrGroup)
-
+        table.insert(ctld.EWRunits,_grp)
         if _grp ~= nil then
             local _controller = _grp:getController();
             local _EWR = {
@@ -6586,13 +6593,9 @@ function AdditionalEventHandler:onEvent(event)
             ctld.RefreshConfig()
             local unitName = group:getUnit(1):getName()
             local unitType = group:getUnit(1):getTypeName()
-            local availableUnitTypes = {"MosquitoFBMkVI", "TF-51D", "CH-47Fbl1", "Mi-8MT", "Ka-50", "Ka-50_3",
-                                        "AH-64D_BLK_II", "Mi-24P", "OH58D", "UH-1H", "SA342M", "SA342L", "SA342Mistral",
-                                        "SA342Minigun",
-                                        "C-130J-30"}
             --trigger.action.outTextForUnit(event.initiator:getID(), "机型：" .. unitType .. "出生", 20, true) -- 出生时显示机型
             timer.scheduleFunction(ctld.addF10MenuOptionsBomber, unitName, timer.getTime() + 1)
-            for _, typename in ipairs(availableUnitTypes) do
+            for _, typename in ipairs(ctld.availableUnitTypes) do
                 if unitType == typename then
                     --ctld.addF10MenuOptionsDynamic(unitName)
                     timer.scheduleFunction(ctld.addF10MenuOptionsDynamic, unitName, timer.getTime() + 1)
