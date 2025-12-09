@@ -520,7 +520,7 @@ do
   
             local radars = {}
             
-            env.info("GCI - EWR units are "..ctld.p(ctld.EWRunits))
+            --env.info("GCI - EWR units are "..ctld.p(ctld.EWRunits))
             for _,g in ipairs(ctld.EWRunits) do
                 for _,u in ipairs(g:getUnits()) do
                     for _,a in ipairs(self.radarTypes) do
@@ -533,7 +533,7 @@ do
             end
 
             self.radars = radars
-            --env.info("GCI - tracking "..#radars.." radar enabled units")
+            env.info("GCI - tracking "..#radars.." radar enabled units")
 
             return time+10
         end, {context = self}, timer.getTime()+1)

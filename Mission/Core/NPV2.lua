@@ -626,9 +626,19 @@ end
 function NP.RespawnAwacs()
     for _, _plane in pairs(NP.AWACSList) do
         local _grp = Group.getByName(_plane)
-        table.insert(ctld.EWRunits,_grp)
-        local AWCAS = Group.getByName(_plane):getUnit(1)
+        local AWCAS = _grp and _grp:getUnit(1)
         if AWCAS ~= nil then
+            local _found = false
+            for _, _existingEWR in pairs(ctld.EWRunits) do
+                if _existingEWR and _existingEWR:isExist() and _existingEWR:getName() == _grp:getName() then
+                    _found = true
+                    break
+                end
+            end
+            if not _found then
+                table.insert(ctld.EWRunits,_grp)
+            end
+
             if Unit.getFuel(AWCAS) < 0.3 then
                 mist.respawnGroup(_plane, true)
                 NP.logInfo(_plane.."油量低，重生")
