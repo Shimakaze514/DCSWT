@@ -86,12 +86,12 @@ SourceObj.countdownMessage = function(args)
         --     countdownMsg
         -- }, "\n")
 
-        trigger.action.outTextForGroup(groupId, rulesMsg, 25, false)
-        trigger.action.outTextForGroup(groupId, roleTip, 25, false)
-        trigger.action.outTextForGroup(groupId, loadoutInfo, 25, false)
-        trigger.action.outTextForGroup(groupId, countdownMsg, 25, false)
+        trigger.action.outTextForGroup(groupId, rulesMsg, 10, false)
+        trigger.action.outTextForGroup(groupId, roleTip, 10, false)
+        trigger.action.outTextForGroup(groupId, loadoutInfo, 10, false)
+        trigger.action.outTextForGroup(groupId, countdownMsg, 10, false)
 
-        return timer.getTime() + 15
+        return timer.getTime() + 10
     else
         trigger.action.outTextForGroup(groupId, "倒计时结束，您现在可以安全起飞。", 30, true)
 
