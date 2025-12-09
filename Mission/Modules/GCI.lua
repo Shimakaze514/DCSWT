@@ -533,7 +533,7 @@ do
             end
 
             self.radars = radars
-            env.info("GCI - tracking "..#radars.." radar enabled units")
+            --env.info("GCI - tracking "..#radars.." radar enabled units")
 
             return time+10
         end, {context = self}, timer.getTime()+1)
@@ -567,7 +567,7 @@ do
                                 local velocityVec3 = d.object:getVelocity()
                                 local velocity = ( velocityVec3.x ^ 2 + velocityVec3.y ^ 2 + velocityVec3.z ^ 2 ) ^ 0.5
                                 local knots = velocity * 1.943844
-                                env.info("GCI - velocity is "..knots.." knots")
+                                --env.info("GCI - velocity is "..knots.." knots")
                                 if knots >= 40 then
                                     if not dect[d.object:getName()] then
                                         dect[d.object:getName()] = d.object
