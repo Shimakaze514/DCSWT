@@ -86,10 +86,10 @@ SourceObj.countdownMessage = function(args)
         --     countdownMsg
         -- }, "\n")
 
-        trigger.action.outTextForGroup(groupId, rulesMsg, 25, true)
-        trigger.action.outTextForGroup(groupId, roleTip, 25, true)
-        trigger.action.outTextForGroup(groupId, loadoutInfo, 25, true)
-        trigger.action.outTextForGroup(groupId, countdownMsg, 25, true)
+        trigger.action.outTextForGroup(groupId, rulesMsg, 25, false)
+        trigger.action.outTextForGroup(groupId, roleTip, 25, false)
+        trigger.action.outTextForGroup(groupId, loadoutInfo, 25, false)
+        trigger.action.outTextForGroup(groupId, countdownMsg, 25, false)
 
         return timer.getTime() + 15
     else
