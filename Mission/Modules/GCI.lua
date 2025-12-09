@@ -671,4 +671,6 @@ do
             return time+20
         end, {context = self}, timer.getTime()+6)
     end
+    GCI:new(2)
+    GCI:new(1)
 end
