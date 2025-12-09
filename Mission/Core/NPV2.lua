@@ -657,5 +657,6 @@ function NP.InitInvisTemplate()
 end
 
 timer.scheduleFunction(NP.InitInvisTemplate, {}, timer.getTime() + 5)
-NP.RespawnAwacs()
+
+timer.scheduleFunction(NP.RespawnAwacs, {}, timer.getTime() + 90)
 net.log("LOAD SUCCESS - NP version "..NP.Version ..", script by VL")
