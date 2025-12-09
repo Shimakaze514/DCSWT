@@ -55,7 +55,7 @@ NPWeaponList.AG_NLOS = {
   "AGM_84H",
   "CM_802AKG",
 }
-NPWeaponList.AG_NLOSPoint = 65
+NPWeaponList.AG_NLOSPoint = 100
 
 NPWeaponList.AG_SmartMissile = {
   "AGM_88",

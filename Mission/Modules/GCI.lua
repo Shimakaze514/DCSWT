@@ -294,13 +294,10 @@ end
 
 MenuRegistry = {}
 do
-    MenuRegistry.menus = {}
+    MenuRegistry.listeners = {}
     function MenuRegistry:register(order, registerfunction, context)
-        for i=1,order,1 do
-            if not MenuRegistry.menus[i] then MenuRegistry.menus[i] = {func = function() end, context = {}} end
-        end
-
-        MenuRegistry.menus[order] = {func = registerfunction, context = context}
+        table.insert(MenuRegistry.listeners, {order = order, func = registerfunction, context = context})
+        table.sort(MenuRegistry.listeners, function(a,b) return a.order < b.order end)
     end
 
     local ev = {}
@@ -309,7 +306,7 @@ do
             local player = event.initiator:getPlayerName()
             if player then
                 env.info('MenuRegistry - creating menus for player: '..player)
-                for i,v in ipairs(MenuRegistry.menus) do
+                for i,v in ipairs(MenuRegistry.listeners) do
                     local err, msg = pcall(v.func, event, v.context)
                     if not err then
                         env.info("MenuRegistry - ERROR :\n"..msg)
@@ -452,6 +449,9 @@ do
 			if event.id == world.event.S_EVENT_BIRTH and event.initiator and event.initiator.getPlayerName then
 				local player = event.initiator:getPlayerName()
 				if player then
+                    if event.initiator:getCoalition() ~= context.side then
+                        return
+                    end
 					local groupid = event.initiator:getGroup():getID()
                     local groupname = event.initiator:getGroup():getName()
                     local unit = event.initiator
@@ -522,11 +522,13 @@ do
             
             --env.info("GCI - EWR units are "..ctld.p(ctld.EWRunits))
             for _,g in ipairs(ctld.EWRunits) do
-                for _,u in ipairs(g:getUnits()) do
-                    for _,a in ipairs(self.radarTypes) do
-                        if u:hasAttribute(a) and u:isExist() then
-                            table.insert(radars, u)
-                            break
+                if g:isExist() and g:getCoalition() == self.side then
+                    for _,u in ipairs(g:getUnits()) do
+                        for _,a in ipairs(self.radarTypes) do
+                            if u:hasAttribute(a) and u:isExist() then
+                                table.insert(radars, u)
+                                break
+                            end
                         end
                     end
                 end
@@ -634,34 +636,47 @@ do
                         if #closeUnits > 0 then
                             table.sort(closeUnits, function(a, b) return a.range < b.range end)
 
-                            local msg = "GCI 报告:\n"
+                            local msg = "\n【GCI 战场信息报告】\n"
+                            msg = msg .. "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                            msg = msg .. string.format("%-12s %-5s %-8s %-9s %s\n", "机型", "方位", "距离", "高度", "态势")
+                            msg = msg .. "────────────────────────────────────\n"
+                            
                             local count = 0
                             for _,tgt in ipairs(closeUnits) do
+                                local typeStr = tgt.type
+                                if #typeStr > 12 then typeStr = string.sub(typeStr, 1, 12) end -- 截断过长的机型名称
+                                
+                                local brgStr = string.format("%03d", tgt.bearing)
+                                local rngStr = ""
+                                local altStr = ""
+                                
                                 if data.metric then
                                     local km = tgt.range/1000
                                     if km < 1 then
-                                        msg = msg..'\n'..tgt.type..'  交汇 (MERGED)'
+                                        rngStr = "交汇" -- 中文：交汇 (MERGED)
+                                        altStr = "----"
                                     else
-                                        msg = msg..'\n'..tgt.type..'  方位: '..tgt.bearing..' 距离 '
-                                        msg = msg..Utils.round(km)..'公里 高度 '
-                                        msg = msg..(Utils.round(tgt.altitude/250)*250)..'米, '
-                                        msg = msg..tostring(tgt.aspect)
+                                        rngStr = string.format("%dkm", Utils.round(km))
+                                        altStr = string.format("%dm", Utils.round(tgt.altitude/100)*100) -- 四舍五入到最近的100米
                                     end
-                                else
+                                else -- 英制
                                     local nm = tgt.range/1852
                                     if nm < 1 then
-                                        msg = msg..'\n'..tgt.type..'  交汇 (MERGED)'
+                                        rngStr = "交汇" -- 中文：交汇 (MERGED)
+                                        altStr = "----"
                                     else
-                                        msg = msg..'\n'..tgt.type..'  方位: '..tgt.bearing..' 距离 '
-                                        msg = msg..Utils.round(nm)..'海里 高度 '
-                                        msg = msg..(Utils.round((tgt.altitude/0.3048)/1000)*1000)..'英尺, '
-                                        msg = msg..tostring(tgt.aspect)
+                                        rngStr = string.format("%dnm", Utils.round(nm))
+                                        altStr = string.format("%dft", Utils.round((tgt.altitude/0.3048)/1000)*1000) -- 四舍五入到最近的1000英尺
                                     end
                                 end
+                                
+                                -- 格式化行，aspect列为变长，放在最后
+                                msg = msg .. string.format("%-12s %-5s %-8s %-9s %s\n", typeStr, brgStr, rngStr, altStr, tgt.aspect)
                                 
                                 count = count + 1
                                 if count >= 10 then break end
                             end
+                            msg = msg .. "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
                             trigger.action.outTextForUnit(data.unit:getID(), msg, 19)
                         end
