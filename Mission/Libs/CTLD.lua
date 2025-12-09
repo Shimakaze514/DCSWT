@@ -5853,8 +5853,8 @@ function ctld.addEWRTask(_group)
     -- delayed 2 second to work around bug
     timer.scheduleFunction(function(_ewrGroup)
         local _grp = ctld.getAliveGroup(_ewrGroup)
-        table.insert(ctld.EWRunits,_grp)
         if _grp ~= nil then
+            table.insert(ctld.EWRunits,_grp)
             local _controller = _grp:getController();
             local _EWR = {
                 id = 'EWR',

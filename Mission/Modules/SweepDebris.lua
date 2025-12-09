@@ -26,7 +26,7 @@ function dclean.thatsHowTheyClean()
     dclean.logInfo('The World Coordinates of volS are: X: ' .. volS.params.point.x .. ' Y: ' .. volS.params.point.y .. ' Z: ' .. volS.params.point.z)
     dclean.logInfo("已清扫垃圾")
     timer.scheduleFunction(dclean.thatsHowTheyClean, nil, timer.getTime() + dclean.RefreshTime)
-    trigger.action.outText('已清理战场残骸',10)
+    trigger.action.outText('已清理战场残骸',10,true)
 end
 
 timer.scheduleFunction(dclean.thatsHowTheyClean, nil, timer.getTime()+180)

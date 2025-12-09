@@ -99,7 +99,7 @@ end
 function npcsar.addCsar(_coalition , _country, _point, _unitTypeName,_unitName, _playerName)
     local _spawnedGroup = npcsar.spawnPilotModel( _coalition, _country, _point)
 
-    trigger.action.outTextForCoalition(_spawnedGroup:getCoalition(), string.format("紧急求救！我方飞行员 %s (%s) 已跳伞，请附近的直升机前往救援！", tostring(_playerName), tostring(_unitTypeName)), 15)
+    trigger.action.outTextForCoalition(_spawnedGroup:getCoalition(), string.format("紧急求救！我方飞行员 %s (%s) 已跳伞，请附近的直升机前往救援！", tostring(_playerName), tostring(_unitTypeName)), 15,true)
     local _text = "Pilot " .. _playerName .. " of " .. _unitName
 
     if _spawnedGroup ~= nil then
@@ -441,7 +441,7 @@ function npcsar.cleanPilots()
     end
 
     if cleaned then
-        trigger.action.outText('清除了一些好长时间都没人捞的跳伞驾驶员，RIP', 10)
+        trigger.action.outText('清除了一些好长时间都没人捞的跳伞驾驶员，RIP', 10,false)
     end
 
     -- 安排下一次：不要把下一次直接设置为 cleanTime 秒后（可能太长），至少用一个合理最小值

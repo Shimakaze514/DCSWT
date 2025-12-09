@@ -519,6 +519,8 @@ do
             local allunits = coalition.getGroups(self.side)
   
             local radars = {}
+            
+            env.info("GCI - EWR units are "..ctld.p(ctld.EWRunits))
             for _,g in ipairs(ctld.EWRunits) do
                 for _,u in ipairs(g:getUnits()) do
                     for _,a in ipairs(self.radarTypes) do
@@ -565,6 +567,7 @@ do
                                 local velocityVec3 = d.object:getVelocity()
                                 local velocity = ( velocityVec3.x ^ 2 + velocityVec3.y ^ 2 + velocityVec3.z ^ 2 ) ^ 0.5
                                 local knots = velocity * 1.943844
+                                env.info("GCI - velocity is "..knots.." knots")
                                 if knots >= 40 then
                                     if not dect[d.object:getName()] then
                                         dect[d.object:getName()] = d.object
