@@ -42,7 +42,7 @@ if ctld.Debug == false then
 
     ctld.F10RefreshTime = 60
     ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
-    
+
     ctld.hoverPickup = false --  if set to false you can load crates with the F10 menu instead of hovering... Only if not using real crates!
 
     ctld.enableCrates = true -- if false, Helis will not be able to spawn or unpack crates so will be normal CTTS
@@ -820,7 +820,7 @@ ctld.availableUnitTypes = {"MosquitoFBMkVI", "TF-51D", "CH-47Fbl1", "Mi-8MT", "K
                             "AH-64D_BLK_II", "Mi-24P", "OH58D", "UH-1H", "SA342M", "SA342L", "SA342Mistral",
                             "SA342Minigun",
                             "C-130J-30"}
-                            
+
 ctld.EWRunits = ctld.EWRunits or {}
 
 -- ***************************************************************
@@ -2796,7 +2796,9 @@ function ctld.metersToFeet(_meters)
 end
 
 function ctld.inAir(_heli)
-
+    if not _heli then
+        return false
+    end
     if _heli:inAir() == false or (_heli:getDesc().category == Unit.Category.AIRPLANE and ctld.heightDiff(_heli) <= ctld.airDropHeight) then
         return false  -- allow load/unload
     end
@@ -3051,14 +3053,14 @@ end
 function ctld.unloadExtractTroops(_args)
 
     local _heli = ctld.getTransportUnit(_args[1])
+    if _heli == nil then
+        return false
+    end
     if ctld.inLogisticsZone(_heli) ==true then
         ctld.displayMessageToGroup(_heli, "离cc太近，不能放下部队", 10)
         return
     end
 
-    if _heli == nil then
-        return false
-    end
 
     timer.scheduleFunction(function(_args)
         local _heli = _args[1]
@@ -4119,7 +4121,7 @@ function ctld.dropAndUnpackCrates(_arguments)
         for i = 1, _crateCount do
             timer.scheduleFunction(ctld.dropSlingCrate, _arguments, timer.getTime() + 0.2 * (i-1))
         end
-        
+
         -- Schedule the unpack to run after the last crate has been dropped, with a small buffer.
         local unpackDelay = 0.2 * (_crateCount - 1) + 0.5
         timer.scheduleFunction(ctld.unpackCrates, _arguments, timer.getTime() + unpackDelay)
@@ -4154,7 +4156,7 @@ function ctld.unpackCrates(_arguments)--_arguments
         local _heli = ctld.getTransportUnit(_args[1])
         local needCheck = _args[2]
         local inAirCheck = ctld.inAir(_heli)
-        if not needCheck then inAirCheck = false end 
+        if not needCheck then inAirCheck = false end
         if _heli and not ctld.inAir(_heli) then
 
             local _crates = ctld.getCratesAndDistance(_heli)
@@ -4165,8 +4167,11 @@ function ctld.unpackCrates(_arguments)--_arguments
                 ctld.displayMessageToGroup(_heli, "距离指挥中心（CC）或FOB太近，无法部署！把箱子带到离CC或FOB更远的地方！在CC的大圈外才能展开箱子。", 20)
                 return
             end
-
-            if _crate ~= nil and _crate.dist < 750
+            if _crate ~= nil and Transporter.UpgradeCrates[_crateName] and _crate.dist < 1000 then
+                local pos = _nearestCrate:getPoint()
+                Transporter.CheckAndStartUpgrade({x=pos.x, y=pos.z}, _unit:getCoalition(), _crateName, false)
+                return
+            elseif _crate ~= nil and _crate.dist < 750
                     and (_crate.details.unit == "FOB" or _crate.details.unit == "FOB-SMALL") then
                 ctld.unpackFOBCrates(_crates, _heli)
                 return
@@ -5449,13 +5454,13 @@ function ctld.checkPlayerAndCoalitionLimit(_heli, _groupSystemTemplate, unitName
 
     for _, category in ipairs(ctld.spawnableCrates) do
         for _, _crate in ipairs(category.items) do
-            
+
             -- 保留原逻辑判断
             if _groupSystemTemplate ~= nil and _groupSystemTemplate.sysName == _crate.unit then
                 _category = category.name  -- 使用category.name替代_categoryName
                 break
             end
-            
+
             if unitName ~= nil and unitName == _crate.unit then
                 _category = category.name  -- 使用category.name替代_categoryName
                 break
@@ -5591,13 +5596,13 @@ function ctld.groupToPlanes(_group, _x, _y)
                     ["id"] = "ComboTask",
                     ["params"] = {
                         ["tasks"] = {
-                            [1] = 
+                            [1] =
                             {
                                 ["enabled"] = true,
                                 ["auto"] = true,
                                 ["id"] = "FAC",
                                 ["number"] = 1,
-                                ["params"] = 
+                                ["params"] =
                                 {
                                     ["number"] = 1,
                                     ["designation"] = "Auto",
@@ -5607,18 +5612,18 @@ function ctld.groupToPlanes(_group, _x, _y)
                                     ["frequency"] = 133000000,
                                 }, -- end of ["params"]
                             }, -- end of [1]
-                            [2] = 
+                            [2] =
                             {
                                 ["enabled"] = true,
                                 ["auto"] = true,
                                 ["id"] = "WrappedAction",
                                 ["number"] = 2,
-                                ["params"] = 
+                                ["params"] =
                                 {
-                                    ["action"] = 
+                                    ["action"] =
                                     {
                                         ["id"] = "EPLRS",
-                                        ["params"] = 
+                                        ["params"] =
                                         {
                                         }, -- end of ["params"]
                                     }, -- end of ["action"]
@@ -6058,7 +6063,7 @@ function ctld.inLogisticsZone(_heli, needcheck)
     for i = #ctld.fobLocation, 1, -1 do
         local fob = ctld.fobLocation[i]
         local fobObj = fob.obj
-    
+
         if fobObj == nil or not Object.isExist(fobObj) then
             ctld.logInfo("[farEnoughFromLogisticZone] FOB对象为空或已不存在！fob: \"" .. ctld.formatTable(fob) .. "\"") --! For StaticObject, always use nil and isExist to check
         else
@@ -6108,7 +6113,7 @@ function ctld.farEnoughFromLogisticZone(_heli, distance, needcheck)
     for i = #ctld.fobLocation, 1, -1 do
         local fob = ctld.fobLocation[i]
         local fobObj = fob.obj
-    
+
         if fobObj == nil or not Object.isExist(fobObj) then
             ctld.logInfo("[farEnoughFromLogisticZone] FOB对象为空或已不存在！fob: \"" .. ctld.formatTable(fob) .. "\"")
         else
@@ -6126,7 +6131,7 @@ function ctld.farEnoughFromLogisticZone(_heli, distance, needcheck)
             end
         end
     end
-    
+
     return _farEnough
 end
 
@@ -6376,7 +6381,7 @@ function ctld.addF10MenuOptions()
     for _, _groupTable in pairs(mist.DBs.dynGroupsAdded) do
         local _groupID = _groupTable.groupId
         local _groupName = _groupTable.name
-        local _, _groupCategory = pcall(function() 
+        local _, _groupCategory = pcall(function()
             local result =  Group.getByName(_groupName):getCategory()
             --env.info(string.format("%s group has category: %s", tostring(_groupName), tostring(result)), false)
             return result
@@ -6469,9 +6474,9 @@ function ctld.addF10MenuOptionsDynamic(_unitName)
                             for _, category in ipairs(ctld.spawnableCrates) do  -- 用ipairs保证顺序
                                 local _cratePath = missionCommands.addSubMenuForGroup(_groupId, category.name, _rootPath)
                                 for _, _crate in ipairs(category.items) do
-                                    if (not ctld.isJTACUnitType(_crate.unit) or ctld.JTAC_dropEnabled) 
+                                    if (not ctld.isJTACUnitType(_crate.unit) or ctld.JTAC_dropEnabled)
                                         and (_crate.side == nil or _crate.side == _unit:getCoalition()) then
-                                        
+
                                         local _crateRadioMsg = _crate.desc
 
                                         --add in the number of crates required to build something
@@ -6666,7 +6671,7 @@ function ctld.addJTACRadioCommand(_side)
                 local newGroup = false
                 if ctld.jtacRadioAdded[tostring(_groupId)] == nil then
                     --ctld.logDebug("ctld.addJTACRadioCommand - adding JTAC radio menu for unit [%s]", ctld.p(_playerUnit:getName()))
-                    newGroup = true 
+                    newGroup = true
                     local JTACpath = missionCommands.addSubMenuForGroup(_groupId, ctld.jtacMenuName)
                     missionCommands.addCommandForGroup(_groupId, "JTAC 信息", JTACpath,
                         ctld.getJTACStatus, { _playerUnit:getName() })
@@ -6848,11 +6853,11 @@ function ctld.getGroupId(_unit)
 
     if _unit then
         local groupSuccess, group = pcall(function() return _unit:getGroup() end)
-        
+
         if groupSuccess and group then
             -- 安全地获取组的ID
             local idSuccess, id = pcall(function() return group:getID() end)
-            
+
             if idSuccess then
                 return id
             else
@@ -7361,7 +7366,7 @@ function ctld.RandomizePointByRadius(point,r)
     local offsetZ = radius * math.sin(theta)
     point.x = point.x + offsetX
     point.z = point.z + offsetZ
-    return point    
+    return point
 end
 function ctld.createSmokeMarker(_enemyUnit, _colour, _jtacGroupName)
     ctld.jtacMarkIDs = ctld.jtacMarkIDs or {}
@@ -7389,7 +7394,7 @@ function ctld.createSmokeMarker(_enemyUnit, _colour, _jtacGroupName)
 
     --recreate in 5 mins
     ctld.jtacSmokeMarks[_enemyUnit:getName()] = timer.getTime() + 300.0
-    
+
     local _enemyPoint = _enemyUnit:getPoint()
     local _randomizedPoint = ctld.RandomizePointByRadius(_enemyPoint,100)
 
@@ -7881,7 +7886,7 @@ function ctld.setJTACTarget(_args)
                                 ctld.jtacMarkIDs[unitName] = nil
                             end
                         end
-                        
+
                         local message = _jtacGroupName ..
                         ctld.i18n_translate("\n 锁定选择的目标: %1", listedTargetUnit:getTypeName())
                         local fullMessage = message ..
@@ -8352,7 +8357,7 @@ function ctld.initialize(force)
             if ctld.crateLookupTable[crate.desc] == nil then
                 ctld.crateLookupTable[crate.desc] = crate
             else
-                env.error(string.format("[CTLD] 错误: 描述重复 '%s' (单位: %s)", 
+                env.error(string.format("[CTLD] 错误: 描述重复 '%s' (单位: %s)",
                                         crate.desc, crate.unit))
             end
         end

@@ -253,7 +253,7 @@ function Transporter.PerformDeploy(point, coalitionID)
     if not config then return end
     
     local unitsData = {}
-    local groupName = "Transport_Deploy_" .. math.random(1000,9999)
+    local groupName = "Transport_Deploy #" .. ctld.getNextUnitId()
     local countryId = (coalitionID == 1) and country.id.CJTF_RED or country.id.CJTF_BLUE
     
     for i, uConf in ipairs(config) do
@@ -279,7 +279,9 @@ function Transporter.PerformDeploy(point, coalitionID)
 end
 
 function Transporter.PerformUpgrade(point, coalitionID)
-    local crateName = "UpgradeCrate_" .. math.random(1000,9999)
+    local _name = "UpgradeCrate"
+    local _unitId =  ctld.getNextUnitId()
+    local crateName = string.format("%s #%i", _name, _unitId)
     local countryId = (coalitionID == 1) and country.id.CJTF_RED or country.id.CJTF_BLUE
     
     local _point = {x = point.x, z = point.y}
@@ -293,68 +295,27 @@ function Transporter.PerformUpgrade(point, coalitionID)
     }
     
     Transporter.UpgradeCrates[crateName] = true
-    if ctld then
-        if coalitionID == 1 then
-            ctld.spawnedCratesRED[crateName] = crateType
-        else
-            ctld.spawnedCratesBLUE[crateName] = crateType
-        end
-    end
-
-    if ctld and ctld.staticBugWorkaround and ctld.slingLoad == false then
-        local _groupId = ctld.getNextGroupId()
-        local _groupName = "Crate Group #" .. _groupId
-
-        local _group = {
-            ["visible"] = false,
-            ["hidden"] = false,
-            ["units"] = {},
-            ["name"] = _groupName,
-            ["task"] = {},
-            ["category"] = Group.Category.GROUND,
-            ["country"] = countryId
-        }
-
-        _group.units[1] = {
-            ["type"] = "UAZ-469",
-            ["name"] = crateName,
-            ["unitId"] = ctld.getNextUnitId(),
-            ["x"] = _point.x,
-            ["y"] = _point.z,
-            ["heading"] = 0
-        }
-
-        local _spawnedGroup = mist.dynAdd(_group)
-        if _spawnedGroup then
-            local groupObj = Group.getByName(_spawnedGroup.name)
-            if groupObj then trigger.action.setGroupAIOff(groupObj) end
-        end
+    if coalitionID == 1 then
+        ctld.spawnedCratesRED[crateName] = crateType
     else
-        if ctld and ctld.spawnableCratesModel_load then
-            if ctld.slingLoad then
-                _crate = mist.utils.deepCopy(ctld.spawnableCratesModel_sling)
-            else
-                _crate = mist.utils.deepCopy(ctld.spawnableCratesModel_load)
-            end
-            _crate["canCargo"] = true
-            _crate["mass"] = 500
-        else
-            _crate = {
-                ["type"] = "Cargo1",
-                ["category"] = "Cargos",
-                ["canCargo"] = true,
-                ["mass"] = 500
-            }
-        end
-
-        _crate["y"] = _point.z
-        _crate["x"] = _point.x
-        _crate["name"] = crateName
-        _crate["heading"] = 0
-        _crate["country"] = countryId
-
-        mist.dynAddStatic(_crate)
+        ctld.spawnedCratesBLUE[crateName] = crateType
     end
+
+    if ctld.slingLoad then
+        _crate = mist.utils.deepCopy(ctld.spawnableCratesModel_sling)
+    else
+        _crate = mist.utils.deepCopy(ctld.spawnableCratesModel_load)
+    end
+    _crate["canCargo"] = true
+    _crate["mass"] = 500
+
+    _crate["y"] = _point.z
+    _crate["x"] = _point.x
+    _crate["name"] = crateName
+    _crate["heading"] = 0
+    _crate["country"] = countryId
+
+    mist.dynAddStatic(_crate)
     
     Transporter.CheckAndStartUpgrade(point, coalitionID, crateName, true) 
 end
@@ -527,22 +488,24 @@ function Transporter.FinishUpgrade(args)
     end
 end
 
-if ctld and ctld.unpackCrates then
-    local old_unpackCrates = ctld.unpackCrates
-    ctld.unpackCrates = function(_unit)
-        local _nearestCrate = ctld.getClosestCrate(_unit)
-        if _nearestCrate then
-            local _crateName = _nearestCrate:getName()
-            if Transporter.UpgradeCrates[_crateName] then
-                local pos = _nearestCrate:getPoint()
-                Transporter.CheckAndStartUpgrade({x=pos.x, y=pos.z}, _unit:getCoalition(), _crateName, false)
-                return 
-            end
-        end
-        return old_unpackCrates(_unit)
-    end
-    Transporter.logInfo("Hooked ctld.unpackCrates for Upgrade Crates.")
-end
+-- if ctld and ctld.unpackCrates then
+--     local old_unpackCrates = ctld.unpackCrates
+--     ctld.unpackCrates = function(args)
+--         _unit = args[1]
+--         local _crates = ctld.getCratesAndDistance(_unit)
+--         local _nearestCrate = ctld.getClosestCrate(_unit,_crates)
+--         if _nearestCrate then
+--             local _crateName = _nearestCrate:getName()
+--             if Transporter.UpgradeCrates[_crateName] then
+--                 local pos = _nearestCrate:getPoint()
+--                 Transporter.CheckAndStartUpgrade({x=pos.x, y=pos.z}, _unit:getCoalition(), _crateName, false)
+--                 return 
+--             end
+--         end
+--         return old_unpackCrates(args)
+--     end
+--     Transporter.logInfo("Hooked ctld.unpackCrates for Upgrade Crates.")
+-- end
 
 world.addEventHandler(Transporter.eventHandler)
 net.log("LOAD SUCCESS - Transporter Module")

@@ -7,10 +7,11 @@ NPAircraftList.lightFighter = {"Su-27", "MiG-29S", "MiG-29G", "MiG-29A",'MiG-29 
                             "F-4E-45MC", "F-5E-3", "F-5E-3_FC", "F-86F Sabre", "F-86F_FC", "AV8BNA", }
 NPAircraftList.lightFighterPoint = 80
 
-NPAircraftList.attacker = {"A-10A", "A-10C", "Ka-50", "Ka-50_3","AH-64D_BLK_II", "A-10C_2", "AV-8B", "Su-25", "Su-25T","SA342Mistral"}
+NPAircraftList.attacker = {"A-10A", "A-10C", "Ka-50", "Ka-50_3", "AH-64D_BLK_II", "A-10C_2", "AV-8B", "Su-25", "Su-25T", "SA342Mistral"}
 NPAircraftList.attackerPoint = 60
 
-NPAircraftList.helicopter = {"Mi-8MTV2", "Mi-8MT", "UH-1H", "MosquitoFBMkVI", "TF-51D","SA342M", "SA342L","Mi-24P","CH-47Fbl1", "OH58D"}
+NPAircraftList.helicopter = {"Mi-8MTV2", "Mi-8MT", "UH-1H", "SA342M", "SA342L", "Mi-24P", "CH-47Fbl1", "OH58D",
+                            "MosquitoFBMkVI", "TF-51D", "P-47D-40", "P-51D-30-NA"}
 NPAircraftList.helicopterPoint = 50
 
 AircraftPriceMap = {}
