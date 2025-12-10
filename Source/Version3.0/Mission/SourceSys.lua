@@ -30,7 +30,7 @@ SourceObj.onBirth = function(_unit)
         env.info("[SourceObj.onBirth] _unit:getPlayerName()无法获取玩家名字！")
         return
     end
-    local _ucid = SourceObj.playerInfo[_name]
+    local _ucid = SourceObj.playerInfo[_name] --!UCID Fallback or "f9d2d661f13390c288654f90da33a79b"
     if _ucid == nil then
         env.info("[SourceObj.onBirth] 玩家没有UCID！")
         return

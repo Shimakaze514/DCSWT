@@ -20,7 +20,7 @@ if string.find(serverName, "TD动态战役", 1, true) then
     dofile(lfs.writedir() .. 'Scripts/Mission/Modules/GCI.lua')
     dofile(lfs.writedir() .. 'Scripts/Mission/Modules/NPCSAR.lua')
     dofile(lfs.writedir() .. 'Scripts/Mission/Modules/Bomber.lua')
-    --dofile(lfs.writedir() .. 'Scripts/Mission/Modules/Transporter.lua')
+    dofile(lfs.writedir() .. 'Scripts/Mission/Modules/Transporter.lua')
     dofile(lfs.writedir() .. 'Scripts/Mission/Modules/AddEXPL.lua')
     dofile(lfs.writedir() .. 'Scripts/Source/Version3.0/Mission/SourceInit.lua')
     dofile(lfs.writedir() .. 'Scripts/Mission/Modules/SweepDebris.lua')

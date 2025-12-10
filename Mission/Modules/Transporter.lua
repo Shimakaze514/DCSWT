@@ -3,7 +3,7 @@ Transporter.ActiveRequests = {}
 Transporter.ActiveGroups = {} 
 Transporter.Debug = false
 Transporter.Trace = false
-Transporter.UpgradeCrates = {} -- Track our crates: [crateName] = true
+Transporter.UpgradeCrates = {} 
 
 -- Config
 Transporter.CostTable = {
@@ -90,24 +90,11 @@ function Transporter.eventHandler:onEvent(_event)
             if not marker or not _playerName then return end
             local req = Transporter.ActiveRequests[_playerName]
             if req and string.find(marker, req.code) then
-                Transporter.logInfo("Player " .. _playerName .. " verified. Spawning Transporter.")
+                Transporter.logInfo("Player " .. _playerName .. " verified. Spawning Transporter111.")
                 local _point = { x = _pos.x, y = _pos.z }
                 Transporter.addTask(req.coalition, req.unitName, _point)
                 Transporter.ActiveRequests[_playerName] = nil
             end
-        -- elseif _event.id == world.event.S_EVENT_LAND then
-        --     local eventGroup = Unit.getGroup(_event.initiator)
-        --     if eventGroup then
-        --         local eventGroupId = eventGroup:getID()
-        --         for playerName, groupList in pairs(Transporter.ActiveGroups) do
-        --             for i, groupInfo in ipairs(groupList) do
-        --                 if eventGroupId == groupInfo.groupId then
-        --                     -- Logic for landing?
-        --                     break
-        --                 end
-        --             end
-        --         end
-        --     end
         end        
     end, _event)
     if not status then Transporter.logError("Event Handler Error: " .. err) end
@@ -157,48 +144,25 @@ end
 -- Update Route
 function Transporter.updateRoutePoints(newGroupData, targetPoint, transportType)
     local route = newGroupData.route
-    if not route then return end
-    
-    local lastPoint = route.points and route.points[#route.points]
+    --Transporter.logInfo("原来的route是"..Bomber.p(route))
+    local lastPoint = route[#route]
     if not lastPoint then return end
     
-    -- Clone last point
-    local newPoint = mist.utils.deepCopy(lastPoint)
+    -- local newPoint = {}
+    -- for k, v in pairs(lastPoint) do
+    --     newPoint[k] = v
+    -- end
     
-    -- Update Coordinates
-    newPoint.x = targetPoint.x
-    newPoint.y = targetPoint.y
-    newPoint.alt = 2000 
-    newPoint.action = "Turning Point"
-    newPoint.speed_locked = true
+    lastPoint.x = targetPoint.x
+    lastPoint.y = targetPoint.y
+    -- newPoint.alt = 2000 
+    -- newPoint.action = "Turning Point"
+    -- newPoint.speed_locked = true
     
-    -- Add ScriptFile Task
-    -- Points to l10n/DEFAULT/Transport_Arrival.lua
-    local scriptPath = "Transport_Arrival.lua"
     
-    local taskAction = {
-        ["enabled"] = true,
-        ["auto"] = false,
-        ["id"] = "WrappedAction",
-        ["number"] = 1,
-        ["params"] = {
-            ["action"] = {
-                ["id"] = "ScriptFile",
-                ["params"] = {
-                    ["file"] = scriptPath
-                }
-            }
-        }
-    }
+    --table.insert(route, newPoint)
     
-    newPoint.task = {
-        ["id"] = "ComboTask",
-        ["params"] = {
-            ["tasks"] = { taskAction }
-        }
-    }
-    
-    table.insert(route.points, newPoint)
+    --Transporter.logInfo("更新后的route是"..Bomber.p(route))
 end
 
 -- Add Task
@@ -220,12 +184,13 @@ function Transporter.addTask(_coalition, _unitName, _point)
     local currentPoints = SourceObj.playerSource[_ucid].point
 
     local newGroup = mist.getGroupData(templateName, true)
-    if not newGroup then
-        Transporter.logError("Template missing: " .. templateName)
+    
+    if newGroup and newGroup.route then
+        Transporter.updateRoutePoints(newGroup, _point, transportType)
+    else
+        Transporter.logError("Template missing or invalid route: " .. templateName)
         return
     end
-
-    Transporter.updateRoutePoints(newGroup, _point, transportType)
 
     newGroup.clone = true
     local newGroupData = mist.dynAdd(newGroup)
@@ -272,7 +237,7 @@ function Transporter.OnArrival()
                         elseif info.transportType == "Upgrade" then
                             Transporter.PerformUpgrade(info.targetPoint, info.coalition)
                         end
-                        
+                        Group.destroy(group)
                         table.remove(groups, i) 
                         return
                     end
@@ -320,15 +285,13 @@ function Transporter.PerformUpgrade(point, coalitionID)
     local _point = {x = point.x, z = point.y}
     local _crate
 
-    -- Define Crate Type for CTLD tracking
     local crateType = {
         weight = 500,
-        unit = "UpgradeCrate", -- Dummy unit name, or handled by hook
+        unit = "UpgradeCrate", 
         name = "Command Upgrade",
         desc = "Command Upgrade Crate"
     }
     
-    -- Register with CTLD
     Transporter.UpgradeCrates[crateName] = true
     if ctld then
         if coalitionID == 1 then
@@ -338,76 +301,201 @@ function Transporter.PerformUpgrade(point, coalitionID)
         end
     end
 
+    if ctld and ctld.staticBugWorkaround and ctld.slingLoad == false then
+        local _groupId = ctld.getNextGroupId()
+        local _groupName = "Crate Group #" .. _groupId
 
-    if ctld and ctld.spawnableCratesModel_load then
-        if ctld.slingLoad then
-            _crate = mist.utils.deepCopy(ctld.spawnableCratesModel_sling)
-        else
-            _crate = mist.utils.deepCopy(ctld.spawnableCratesModel_load)
-        end
-        _crate["canCargo"] = true
-        _crate["mass"] = 500
-    else
-        _crate = {
-            ["type"] = "Cargo1",
-            ["category"] = "Cargos",
-            ["canCargo"] = true,
-            ["mass"] = 500
+        local _group = {
+            ["visible"] = false,
+            ["hidden"] = false,
+            ["units"] = {},
+            ["name"] = _groupName,
+            ["task"] = {},
+            ["category"] = Group.Category.GROUND,
+            ["country"] = countryId
         }
+
+        _group.units[1] = {
+            ["type"] = "UAZ-469",
+            ["name"] = crateName,
+            ["unitId"] = ctld.getNextUnitId(),
+            ["x"] = _point.x,
+            ["y"] = _point.z,
+            ["heading"] = 0
+        }
+
+        local _spawnedGroup = mist.dynAdd(_group)
+        if _spawnedGroup then
+            local groupObj = Group.getByName(_spawnedGroup.name)
+            if groupObj then trigger.action.setGroupAIOff(groupObj) end
+        end
+    else
+        if ctld and ctld.spawnableCratesModel_load then
+            if ctld.slingLoad then
+                _crate = mist.utils.deepCopy(ctld.spawnableCratesModel_sling)
+            else
+                _crate = mist.utils.deepCopy(ctld.spawnableCratesModel_load)
+            end
+            _crate["canCargo"] = true
+            _crate["mass"] = 500
+        else
+            _crate = {
+                ["type"] = "Cargo1",
+                ["category"] = "Cargos",
+                ["canCargo"] = true,
+                ["mass"] = 500
+            }
+        end
+
+        _crate["y"] = _point.z
+        _crate["x"] = _point.x
+        _crate["name"] = crateName
+        _crate["heading"] = 0
+        _crate["country"] = countryId
+
+        mist.dynAddStatic(_crate)
     end
-
-    _crate["y"] = _point.z
-    _crate["x"] = _point.x
-    _crate["name"] = crateName
-    _crate["heading"] = 0
-    _crate["country"] = countryId
-
-    mist.dynAddStatic(_crate)
     
-    -- Try to auto-upgrade immediately on drop (simulation of deployment)
-    -- If it fails, the crate remains and can be unpacked later via CTLD
     Transporter.CheckAndStartUpgrade(point, coalitionID, crateName, true) 
+end
+
+function Transporter.RestoreCC(ccName, coalitionID)
+    -- Lookup original static data
+    local staticData = mist.DBs.staticsByName[ccName]
+    -- If not static, try unit
+    if not staticData then staticData = mist.DBs.unitsByName[ccName] end
+    
+    if not staticData then
+        Transporter.logError("RestoreCC: Could not find original data for " .. ccName)
+        return
+    end
+    
+    -- Prepare data for spawn
+    -- We need to convert DB data to dynAdd compatible table
+    local countryId = (coalitionID == 1) and country.id.CJTF_RED or country.id.CJTF_BLUE
+    local coalitionStr = (coalitionID == 1) and "red" or "blue"
+    
+    local newStatic = mist.utils.deepCopy(staticData)
+    newStatic.country = countryId
+    newStatic.groupId = nil -- Let mist assign
+    newStatic.unitId = nil 
+    newStatic.clone = true
+    newStatic.dead = false
+    
+    -- Fix coordinates if needed (mist DB uses x, y)
+    if not newStatic.x and newStatic.point then newStatic.x = newStatic.point.x; newStatic.y = newStatic.point.y end
+    
+    -- Spawn
+    mist.dynAddStatic(newStatic)
+    
+    -- Initialize Zone Logic (using NPV2)
+    -- NP.setRelatedZone expects: staticTable, unitName, coalition, firstTime(bool), level
+    -- We need to mock the staticTable structure: { units = { [1] = { ... } } }
+    local mockStatic = {
+        units = {
+            [1] = {
+                x = newStatic.x,
+                y = newStatic.y,
+                country = countryId,
+                heading = newStatic.heading or 0,
+                unitName = ccName -- Important!
+            }
+        }
+    }
+    
+    -- Reset Level to 1
+    if NP.CCStatus[ccName] then
+        NP.CCStatus[ccName].level = 1
+        NP.CCStatus[ccName].upgrading = false
+        NP.CCStatus[ccName].upgradeStartTime = 0
+    else
+        NP.CCStatus[ccName] = { level = 1, crates = 0, upgrading = false }
+    end
+    
+    -- Call setRelatedZone to re-establish base (FARP, markers, etc)
+    -- True for 'firsttime' to skip defense spawn inside setRelatedZone? 
+    -- Actually, we want to reset defenses.
+    -- NPV2 says: if not firsttime then spawnDefenseFromUnitlist.
+    -- We want to spawn Level 1 defenses. So pass firsttime=false.
+    NP.setRelatedZone(mockStatic, ccName, coalitionStr, true, 1)
+    
+    trigger.action.outTextForCoalition(coalitionID, "Command Center " .. ccName .. " 已修复并重置为等级 1!", 20)
 end
 
 function Transporter.CheckAndStartUpgrade(point, coalitionID, crateName, isAuto)
     local foundCC = nil
+    local mode = "upgrade" 
+    
+    -- 1. Try to find ALIVE CC
     for _, ccUnitName in pairs(ctld.logisticUnits) do
         local ccUnit = StaticObject.getByName(ccUnitName)
         if ccUnit and ccUnit:getLife() > 0 and ccUnit:getCoalition() == coalitionID then
             local ccPos = ccUnit:getPoint()
             local dist = mist.utils.get2DDist(point, ccPos)
-            if dist <= Transporter.UpgradeRadius then foundCC = ccUnitName; break end
+            if dist <= Transporter.UpgradeRadius then 
+                foundCC = ccUnitName
+                mode = "upgrade"
+                break 
+            end
+        end
+    end
+
+    -- 2. If not found, try to find DEAD CC (Original position)
+    if not foundCC then
+        for _, ccUnitName in pairs(ctld.logisticUnits) do
+            local ccUnit = StaticObject.getByName(ccUnitName)
+            if not ccUnit or ccUnit:getLife() <= 0 then
+                local staticData = mist.DBs.staticsByName[ccUnitName]
+                if not staticData then staticData = mist.DBs.unitsByName[ccUnitName] end
+                
+                if staticData then
+                    local ccPos = nil
+                    if staticData.point then ccPos = staticData.point end 
+                    if not ccPos and staticData.x then ccPos = {x=staticData.x, y=staticData.y} end
+                    
+                    if ccPos then
+                        local dist = mist.utils.get2DDist(point, ccPos)
+                        if dist <= Transporter.UpgradeRadius then
+                            foundCC = ccUnitName
+                            mode = "restore"
+                            break
+                        end
+                    end
+                end
+            end
         end
     end
 
     if foundCC then
-        trigger.action.outTextForCoalition(coalitionID, "CC Upgrade started for " .. foundCC, 20)
+        trigger.action.outTextForCoalition(coalitionID, "Processing Command Center: " .. foundCC, 20)
         
-        -- Destroy Crate if successful (simulating unpack)
         local cObj = StaticObject.getByName(crateName) or Unit.getByName(crateName)
         if cObj then cObj:destroy() end
         
-        -- Clean up from CTLD lists
         if ctld then
             ctld.spawnedCratesRED[crateName] = nil
             ctld.spawnedCratesBLUE[crateName] = nil
         end
         Transporter.UpgradeCrates[crateName] = nil
 
-        if NP.CCStatus[foundCC] then
-            NP.CCStatus[foundCC].upgrading = true
-            NP.CCStatus[foundCC].upgradeStartTime = timer.getTime()
-            local markerName = foundCC .. "_Upgrading"
-            local ccObj = StaticObject.getByName(foundCC)
-            local ccPos = ccObj:getPoint()
-            local upgradeMarker = {
-                pos = {x=ccPos.x, z=ccPos.z, y=0},
-                name = markerName,
-                markType = 5, text = "正在建设... (" .. Transporter.UpgradeTime .. "s)",
-                color = {0, 1, 1, 1}, fillColor = {0, 0, 0, 0}, readOnly = true
-            }
-            mist.marker.add(upgradeMarker)
-            timer.scheduleFunction(Transporter.FinishUpgrade, {ccName = foundCC, markerName = markerName}, timer.getTime() + Transporter.UpgradeTime)
+        if mode == "upgrade" then
+            if NP.CCStatus[foundCC] then
+                NP.CCStatus[foundCC].upgrading = true
+                NP.CCStatus[foundCC].upgradeStartTime = timer.getTime()
+                local markerName = foundCC .. "_Upgrading"
+                local ccObj = StaticObject.getByName(foundCC)
+                local ccPos = ccObj:getPoint()
+                local upgradeMarker = {
+                    pos = {x=ccPos.x, z=ccPos.z, y=0},
+                    name = markerName,
+                    markType = 5, text = "正在建设... (" .. Transporter.UpgradeTime .. "s)",
+                    color = {255, 184, 18, 1}, fillColor = {0, 0, 0, 0}, readOnly = true
+                }
+                mist.marker.add(upgradeMarker)
+                timer.scheduleFunction(Transporter.FinishUpgrade, {ccName = foundCC, markerName = markerName}, timer.getTime() + Transporter.UpgradeTime)
+            end
+        elseif mode == "restore" then
+             Transporter.RestoreCC(foundCC, coalitionID)
         end
     else
         local msg = "Upgrade Crate deployed. No CC nearby. Move it closer and unpack to upgrade."
@@ -439,7 +527,6 @@ function Transporter.FinishUpgrade(args)
     end
 end
 
--- CTLD Unpack Hook
 if ctld and ctld.unpackCrates then
     local old_unpackCrates = ctld.unpackCrates
     ctld.unpackCrates = function(_unit)
@@ -447,10 +534,9 @@ if ctld and ctld.unpackCrates then
         if _nearestCrate then
             local _crateName = _nearestCrate:getName()
             if Transporter.UpgradeCrates[_crateName] then
-                -- Intercept: Run our upgrade logic
                 local pos = _nearestCrate:getPoint()
                 Transporter.CheckAndStartUpgrade({x=pos.x, y=pos.z}, _unit:getCoalition(), _crateName, false)
-                return -- Stop standard CTLD unpack
+                return 
             end
         end
         return old_unpackCrates(_unit)

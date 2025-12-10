@@ -21,7 +21,7 @@ function SourceCall.onPlayerStart(id)
     net.log("[SourceCall.onPlayerConnect] 无法获取玩家名字！")
     return
   end
-  local ucid = net.get_player_info(id, "ucid")
+  local ucid = net.get_player_info(id, "ucid") --!UCID Fallback or "f9d2d661f13390c288654f90da33a79b"
   if not ucid then
     net.log("[SourceCall.onPlayerConnect] 无法获取玩家UCID！")
     return
@@ -39,7 +39,7 @@ function SourceCall.onPlayerStart(id)
   SourceCall.PlayerNameHistory = SourceCall.PlayerNameHistory or {}
   SourceCall.PlayerNameHistory[ucid] = SourceCall.PlayerNameHistory[ucid] or {}
   SourceCall.PlayerNameHistory[ucid][name] = true
-  if DCS.isServer() and DCS.isMultiplayer() and id ~= net.get_my_player_id() then
+  if true then
     -- 构造 mission 字符串
     local mission_string = [[
         local ok, err = pcall(a_do_script([=[
