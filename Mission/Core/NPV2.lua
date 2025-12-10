@@ -34,7 +34,10 @@ NP.AWACSList = {
     "redAWACS2-1"
 }
 
-local UnitlistHome = {
+NP.CCStatus = {} -- Stores current level, crates delivered, and upgrade status for each CC.
+-- { [ccName] = { level = X, crates = Y, upgrading = false/true, upgradeStartTime = time } }
+
+local UnitlistHome_L3 = {
     { 
         type = {"Tor 9A331","CHAP_TorM2"},
         radius = 2000, 
@@ -68,7 +71,7 @@ local UnitlistHome = {
     },
 }
 
-local UnitlistFront = {
+local UnitlistFront_L3 = {
     { type = {"Tor 9A331","CHAP_TorM2"}, radius = 1500, count = 6, suffix = "_道尔", support = {} },
     { type = {"2S6 Tunguska", "Strela-10M3","CHAP_PantsirS1"}, radius = 2000, count = 6, suffix = "_通古斯卡", support = {} },
     { 
@@ -80,8 +83,41 @@ local UnitlistFront = {
     },
 }
 
-local UnitlistMiddle = {
+local UnitlistMiddle_L3 = {
     { type = {"2S6 Tunguska",'Tor 9A331'}, radius = 100, count = 2, suffix = "_通古斯卡", support = {} },
+}
+
+NP.LevelConfigs = {
+    -- Level 1 configurations (Minimal Defense)
+    Home_L1 = {
+        { type = {"Leclerc", "ZBD04A"}, radius = 1250, count = 2, suffix = "_坦克", support = {} }, -- 少量坦克
+    },
+    Front_L1 = {
+        { type = {"Leclerc","ZBD04A"}, radius = 1000, count = 1, suffix = "_坦克", support = {} }, -- 更少量坦克
+    },
+    Middle_L1 = {
+        { type = {"2S6 Tunguska",'Tor 9A331'}, radius = 100, count = 1, suffix = "_通古斯卡", support = {} }, -- 单个近程防空
+    },
+
+    -- Level 2 configurations (Medium Defense)
+    Home_L2 = {
+        { type = {"Tor 9A331","CHAP_TorM2"}, radius = 2000, count = 4, suffix = "_道尔", support = {} }, -- 中等数量近程防空
+        { type = {"CHAP_PantsirS1","2S6 Tunguska", "Strela-10M3"}, radius = 2500, count = 4, suffix = "_通古斯卡", support = {} },
+        { type = {"Leclerc", "ZBD04A"}, radius = 1250, count = 4, suffix = "_坦克", support = {} }, -- 中等数量坦克
+    },
+    Front_L2 = {
+        { type = {"Tor 9A331","CHAP_TorM2"}, radius = 1500, count = 3, suffix = "_道尔", support = {} },
+        { type = {"2S6 Tunguska", "Strela-10M3","CHAP_PantsirS1"}, radius = 2000, count = 3, suffix = "_通古斯卡", support = {} },
+        { type = {"Leclerc","ZBD04A"}, radius = 1000, count = 2, suffix = "_坦克", support = {} },
+    },
+    Middle_L2 = {
+        { type = {"2S6 Tunguska",'Tor 9A331'}, radius = 100, count = 2, suffix = "_通古斯卡", support = {} },
+    },
+
+    -- Level 3 configurations (Full Defense - same as original Unitlist)
+    Home_L3 = UnitlistHome_L3,
+    Front_L3 = UnitlistFront_L3,
+    Middle_L3 = UnitlistMiddle_L3,
 }
 
 function NP.logError(message)
@@ -143,15 +179,42 @@ function NP.capture(_args)
     local _logisticData = NP.getLogisticData(_targetLogistic)
     local _side = _capUsingUnit:getCoalition()
 
+    -- Determine initial level and defense behavior
+    local initialLevel
+    local skipDefenses = false
+    local oldCCName = _targetLogistic:getName()
+    local oldStatus = NP.CCStatus[oldCCName]
+    local oldLevel = oldStatus and oldStatus.level or 3 -- Default to 3 if unknown (shouldn't happen often for existing CCs)
+
+    -- Check if it's a friendly recapture (same coalition but old CC was destroyed/dead)
+    if _logisticData.coalitionId == _side then
+        initialLevel = oldLevel -- Keep existing level for friendly repair
+        skipDefenses = true -- Only respawn CC, do not add/remove units
+        NP.logInfo("Friendly recapture/repair detected for: " .. _logisticData.groupName .. ". Keeping Level " .. initialLevel .. ", skipping defense spawn.")
+    else
+        initialLevel = 2 -- Enemy capture resets to Level 2
+        skipDefenses = false -- Spawn new defenses
+        NP.logInfo("Enemy/Neutral capture detected for: " .. _logisticData.groupName .. ". Setting to Level 2.")
+    end
+
     if _logisticData.coalitionId ~= _side then
         local defList
+        -- When capturing an enemy base, defenses must be cleared first.
+        -- We check against the current level's defense config.
+        -- If oldStatus is missing, assume L3 to be safe (hardest check).
+        local checkLevel = oldStatus and oldStatus.level or 3
+        
         if string.find(_logisticData.groupName, "本场") then
-            defList =  UnitlistHome
+            defList = (checkLevel == 1 and NP.LevelConfigs.Home_L1) or (checkLevel == 2 and NP.LevelConfigs.Home_L2) or NP.LevelConfigs.Home_L3
         elseif string.find(_logisticData.groupName, "中场") then
-            defList =  UnitlistMiddle
+             defList = (checkLevel == 1 and NP.LevelConfigs.Middle_L1) or (checkLevel == 2 and NP.LevelConfigs.Middle_L2) or NP.LevelConfigs.Middle_L3
         elseif string.find(_logisticData.groupName, "前线") then
-            defList =  UnitlistFront
+             defList = (checkLevel == 1 and NP.LevelConfigs.Front_L1) or (checkLevel == 2 and NP.LevelConfigs.Front_L2) or NP.LevelConfigs.Front_L3
         end
+        
+        -- Fallback if defList is somehow nil
+        if not defList then defList = NP.LevelConfigs.Home_L3 end
+
         for idx, def in ipairs(defList) do
             local groupName = _logisticData.groupName .. def.suffix
             local old = Group.getByName(groupName)
@@ -224,14 +287,96 @@ function NP.capture(_args)
     timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + 20)
     table.insert(ctld.logisticUnits, _logisticData.units[1].unitName)--新的单位加到cc的白名单
 
+    -- Initialize CCStatus for the newly created CC
+    NP.CCStatus[_logisticData.units[1].unitName] = { 
+        level = initialLevel, 
+        crates = 0, 
+        upgrading = false,
+        upgradeStartTime = 0,
+        type = "unknown" -- Placeholder, will be determined by setRelatedZone
+    }
 
-    NP.setRelatedZone(_logisticData,_logisticData.units[1].unitName,_logisticData.units[1].coalition,false)
+    NP.setRelatedZone(_logisticData,_logisticData.units[1].unitName,_logisticData.units[1].coalition, skipDefenses, initialLevel)
     NP.logInfo("战区 ".._logisticData.groupName.." 已被 "..CountrySide.." 阵营占领，操作者：".._capturedPlayerName)
     NP.logDebug("占领后的logisticUnits是："..ctld.p(ctld.logisticUnits))
     trigger.action.outText("战区 ".._logisticData.groupName.." 已被 "..CountrySide.." 阵营占领。操作者：".._capturedPlayerName, 20)
 end
 
-function NP.setRelatedZone(static, unitName,coalition, firsttime)
+function NP.updateCCMarker(ccname, coalition, level, x, y)
+    -- Remove existing markers
+    mist.marker.remove(ccname)
+    mist.marker.remove(ccname .. "_outer")
+    mist.marker.remove(ccname .. "_inner")
+
+    local drawColor
+    local drawFillColor
+    if coalition == "blue" then
+        drawColor = {0.1, 0.1, 0.9, 1}
+        drawFillColor = {0, 0, 1, 0.3} -- Reduced opacity for circles
+    else
+        drawColor = {0.9, 0.1, 0.1, 1}
+        drawFillColor = {1, 0, 0, 0.3}
+    end
+
+    -- Process name: remove "本场", "中场", "前线" and subsequent text
+    local displayName = ccname
+    local s, e = string.find(displayName, "本场")
+    if s then displayName = string.sub(displayName, 1, s - 1) end
+    s, e = string.find(displayName, "中场")
+    if s then displayName = string.sub(displayName, 1, s - 1) end
+    s, e = string.find(displayName, "前线")
+    if s then displayName = string.sub(displayName, 1, s - 1) end
+
+    local text = displayName
+    if level then
+        text = text .. "\nLevel " .. level
+    end
+
+    -- Text Marker (Center)
+    local textMarker = {
+        pos = {x=x+800, z=y+800, y=0},
+        name = ccname, 
+        markType = 5, -- Text
+        --radius = 100, -- Small radius for the center point/text anchor
+        text = text,
+        color = drawColor,
+        fillColor = {drawColor[1], drawColor[2], drawColor[3], 0.05}, 
+        lineType = 1,
+        readOnly = true,
+        fontSize = 16,
+    }
+    mist.marker.add(textMarker)
+
+    -- Outer Circle (Logistic Distance)
+    local innerRadius = ctld.maximumDistanceLogistic or 200
+    local innerMarker = {
+        pos = {x=x, z=y, y=0},
+        name = ccname .. "_outer", 
+        markType = 2, -- Circle
+        radius = innerRadius, 
+        color = drawColor,
+        fillColor = drawFillColor, -- Transparent fill
+        lineType = 1, -- Solid line
+        readOnly = true,
+    }
+    mist.marker.add(innerMarker)
+
+    -- Inner Circle (Deploy Distance + 50)
+    local outerRadius = (ctld.minimumDeployDistance or 1000) + 50
+    local outerMarker = {
+        pos = {x=x, z=y, y=0},
+        name = ccname .. "_inner", 
+        markType = 2, -- Circle
+        radius = outerRadius, 
+        color = drawColor,
+        fillColor = drawFillColor, -- Transparent fill
+        lineType = 2, -- Dashed line for inner? Or solid. Default 1.
+        readOnly = true,
+    }
+    mist.marker.add(outerMarker)
+end
+
+function NP.setRelatedZone(static, unitName, coalition, firsttime, level)
     local originalCCname
     --NP.logDebug("[setRelatedZone] 所有的logisticUnits如下: "..ctld.p(ctld.logisticUnits))
     for k,v in pairs(ctld.logisticUnits) do
@@ -254,6 +399,30 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
         return
     end
 
+    -- If level is not provided (e.g. from legacy save load or other calls), try to retrieve it from Status or default to 1? 
+    -- Actually for save load, we will update it to pass level. 
+    -- If it's missing, we default to 1.
+    if not level then
+        if NP.CCStatus[unitName] then
+            level = NP.CCStatus[unitName].level
+        else
+            level = 3 -- Default to 3
+        end
+    end
+    
+    -- Ensure status is tracked if not already
+    if not NP.CCStatus[unitName] then
+         NP.CCStatus[unitName] = { 
+            level = level, 
+            crates = 0, 
+            upgrading = false,
+            upgradeStartTime = 0
+        }
+    end
+    -- Update level in status just in case
+    NP.CCStatus[unitName].level = level
+
+
     local oppsitecoalition
     if coalition == 'red' then
        oppsitecoalition = 'blue'
@@ -271,7 +440,7 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
     end
 
     timer.scheduleFunction(function(_args)
-        local static, _coalition, _oppsitecoalition,ccname = _args[1],_args[2],_args[3],_args[4]
+        local static, _coalition, _oppsitecoalition, ccname, level = _args[1],_args[2],_args[3],_args[4], _args[5]
         
         NP.logDebug('传进生成补给的函数的值：'..ctld.p(static).."|".._coalition.."|".._oppsitecoalition)
         local CCunit = static.units[1]
@@ -461,53 +630,46 @@ function NP.setRelatedZone(static, unitName,coalition, firsttime)
         })
         _spawnedGroup:getController():setOption(8,false)
 
-        mist.marker.remove(ccname)
-        local drawColor
-        local drawFillColor
-        if _coalition == "blue" then
-            drawColor = {0, 0, 1, 1}
-            drawFillColor = {0, 0, 1, 0.5}
-        else
-            drawColor = {1, 0, 0, 1}
-            drawFillColor = {1, 0, 0, 0.5}
-        end
-        local drawVars = {
-            pos = {x=CCunit.x,z=CCunit.y,y=0},
-            name = ccname, 
-            markType = 2,
-            --ignoreColor = boolean ignoreColor, 
-            radius = 3000, 
-            --text = string text, 
-            --markFor = table markFor,
-            --markForCoa = coalition, 
-            color = drawColor,
-            fillColor = drawFillColor, 
-            lineType = 1,
-            readOnly = true,
-            --message = text message,
-            --fontSize = number fontSize,
-        }
-        mist.marker.add(drawVars)
+        NP.updateCCMarker(ccname, _coalition, level, CCunit.x, CCunit.y)
 
-    end, {static,coalition,oppsitecoalition,ccname} , timer.getTime()+5)
+    end, {static,coalition,oppsitecoalition,ccname, level} , timer.getTime()+5)
 
     NP.logInfo('[setRelatedZone] 占领CC的流程完成: '.. ccname..'| 阵营:'..coalition)
     if not firsttime then
-        if string.find(ccname, "本场") then
-            NP.spawnDefenseFromUnitlist(static, UnitlistHome, coalition, ccname)
-        elseif string.find(ccname, "中场") then
-            NP.spawnDefenseFromUnitlist(static, UnitlistMiddle, coalition, ccname)
-        elseif string.find(ccname, "前线") then
-            NP.spawnDefenseFromUnitlist(static, UnitlistFront, coalition, ccname)
-        end
+        -- Use the updated spawn function which handles selecting the right config based on level
+        NP.spawnDefenseFromUnitlist(static, level, coalition, ccname)
     else
         NP.logInfo('[setRelatedZone] 有保存的存档，不重新生成防御单位：'.. ccname..'| 阵营:'..coalition)
     end
 end
 
-function NP.spawnDefenseFromUnitlist(static, defTable, coalition, ccName)
+function NP.spawnDefenseFromUnitlist(static, level, coalition, ccName)
     local CCunit = static.units[1]
     local country = CCunit.country
+    
+    -- Default to level 1 if not provided (should be provided)
+    if not level then level = 1 end
+
+    local defTable = nil
+    if string.find(ccName, "本场") then
+        if level == 1 then defTable = NP.LevelConfigs.Home_L1
+        elseif level == 2 then defTable = NP.LevelConfigs.Home_L2
+        else defTable = NP.LevelConfigs.Home_L3 end
+    elseif string.find(ccName, "中场") then
+        if level == 1 then defTable = NP.LevelConfigs.Middle_L1
+        elseif level == 2 then defTable = NP.LevelConfigs.Middle_L2
+        else defTable = NP.LevelConfigs.Middle_L3 end
+    elseif string.find(ccName, "前线") then
+        if level == 1 then defTable = NP.LevelConfigs.Front_L1
+        elseif level == 2 then defTable = NP.LevelConfigs.Front_L2
+        else defTable = NP.LevelConfigs.Front_L3 end
+    end
+
+    if not defTable then
+        NP.logError("[spawnDefenseFromUnitlist] Could not determine defense configuration for: " .. ccName .. " Level: " .. level)
+        return
+    end
+
     local groupCount = #defTable
     local totalUnits = 0
     for _, def in ipairs(defTable) do
@@ -540,9 +702,18 @@ function NP.spawnDefenseFromUnitlist(static, defTable, coalition, ccName)
         local angleStep = 2 * math.pi / def.count  -- 群组内部单位均分 360°
 
         for i = 1, def.count do
-            local angle = groupStartAngle + (i - 1) * angleStep
-            local x = CCunit.x + math.cos(angle) * def.radius
-            local y = CCunit.y + math.sin(angle) * def.radius
+            local angleBase = groupStartAngle + (i - 1) * angleStep
+            
+            -- Randomize Phase: Range is pi/2 (+/- pi/4)
+            local angleRandom = (math.random() - 0.5) * (math.pi / 2)
+            local finalAngle = angleBase + angleRandom
+
+            -- Randomize Radius: Range is 50% of radius (+/- 25%)
+            local radiusRandomFactor = 1 + (math.random() - 0.5) * 0.5
+            local finalRadius = def.radius * radiusRandomFactor
+
+            local x = CCunit.x + math.cos(finalAngle) * finalRadius
+            local y = CCunit.y + math.sin(finalAngle) * finalRadius
 
             local launcherName = string.format("%s_unit%d", groupName, i)
             local unitType
@@ -559,7 +730,7 @@ function NP.spawnDefenseFromUnitlist(static, defTable, coalition, ccName)
                 name = launcherName,
                 x = x,
                 y = y,
-                heading = angle,
+                heading = finalAngle,
                 skill = "High"
             })
 
@@ -573,7 +744,7 @@ function NP.spawnDefenseFromUnitlist(static, defTable, coalition, ccName)
                             name = string.format("%s_support_%s_%d", groupName, sup.type, r),
                             x = x + (sup.offset and sup.offset.x or 0) + (r-1) * 10,
                             y = y + (sup.offset and sup.offset.y or 0),
-                            heading = angle,
+                            heading = finalAngle,
                             skill = "High"
                         })
                     end

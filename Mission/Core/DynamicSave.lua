@@ -96,7 +96,7 @@ function dsave.recordAllVehiclesElements(inputDB)
                 if _unitTable.unitName ~= nil and dsave.typeBelongsToBlackList(_unitTable.type)==false then
                     local _unit=Unit.getByName(_unitTable.unitName)
                     if _unit~=nil then
-                        if _unit:getLife()>1 then
+                        if _unit:getLife()>=1 then
                             needSave =true
                             local _point = _unit:getPoint()
                             _group.units[_key].point.x=_point.x
@@ -157,7 +157,11 @@ function dsave.recordAllCCsElements()
         if needSave == true then
             --dsave.logDebug("_group"..ctld.formatTable(_group))
             --dsave.saveToCache(_group)
-            table.insert(dsave.DSaveCCsOutCache,{_group,needKill})
+            local status = nil
+            if NP and NP.CCStatus and _group.units[1] then
+                status = NP.CCStatus[_group.units[1].unitName]
+            end
+            table.insert(dsave.DSaveCCsOutCache,{_group,needKill,status})
         end
     end
     dsave.SaveData(dsave.DSaveCCsFilePath, net.lua2json(dsave.DSaveCCsOutCache))
@@ -333,8 +337,13 @@ end
 function dsave.refreshFlagsAtMissionStart()
     for i, entry in pairs(tableData2) do
         local _group = entry[1]
+        local status = entry[3]
+        local level = nil
+        if status and status.level then
+            level = status.level
+        end
         if _group ~= nil then -- and _logistic:getLife() > 0 
-            NP.setRelatedZone(_group,_group.units[1].unitName,_group.units[1].coalition,dsave.hasSaveFile)
+            NP.setRelatedZone(_group,_group.units[1].unitName,_group.units[1].coalition,dsave.hasSaveFile, level)
         end
     end
     dsave.logInfo("Refresh userFlags complete!")

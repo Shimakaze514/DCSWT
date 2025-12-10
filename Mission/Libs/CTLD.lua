@@ -6584,6 +6584,29 @@ function ctld.addF10MenuOptionsSupport(_unitName)
     end)
 end
 
+ctld.addedTransporterTo = {}
+function ctld.addF10MenuOptionsTransporter(_unitName)
+    local status, error = pcall(function()
+
+        ctld.logTrace(string.format("_unitName=%s",_unitName))
+        local _unit = ctld.getTransportUnit(_unitName)
+        if _unit ~= nil then
+
+            local _groupId = ctld.getGroupId(_unit)
+            env.info("[CTLD] group id is " .. _groupId)
+
+            if _groupId then
+                if ctld.addedTransporterTo[tostring(_groupId)] == nil then
+                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "运输机行动")
+                    missionCommands.addCommandForGroup(_groupId, "呼叫地面部署运输机("..Transporter.CostTable["Deploy"].."分)", _rootPath,  Transporter.CallTransport, { _unitName , "Deploy"})
+                    missionCommands.addCommandForGroup(_groupId, "呼叫机场升级运输机("..Transporter.CostTable["Upgrade"].."分)", _rootPath,  Transporter.CallTransport, { _unitName , "Upgrade"})
+                    ctld.addedTransporterTo[tostring(_groupId)]=true
+                end
+            end
+        end
+    end)
+end
+
 AdditionalEventHandler = {}
 function AdditionalEventHandler:onEvent(event)
     if (event.id == 15 and event.initiator and event.initiator.getPlayerName and event.initiator:getPlayerName() ~= nil) then
@@ -6596,6 +6619,7 @@ function AdditionalEventHandler:onEvent(event)
             local unitType = group:getUnit(1):getTypeName()
             --trigger.action.outTextForUnit(event.initiator:getID(), "机型：" .. unitType .. "出生", 20, true) -- 出生时显示机型
             timer.scheduleFunction(ctld.addF10MenuOptionsBomber, unitName, timer.getTime() + 1)
+            --timer.scheduleFunction(ctld.addF10MenuOptionsTransporter, unitName, timer.getTime() + 1)
             for _, typename in ipairs(ctld.availableUnitTypes) do
                 if unitType == typename then
                     --ctld.addF10MenuOptionsDynamic(unitName)
