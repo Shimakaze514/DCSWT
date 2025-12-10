@@ -1,9 +1,9 @@
 Transporter = {}
 Transporter.ActiveRequests = {}
-Transporter.ActiveGroups = {} 
+Transporter.ActiveGroups = {}
 Transporter.Debug = false
 Transporter.Trace = false
-Transporter.UpgradeCrates = {} 
+Transporter.UpgradeCrates = {}
 
 -- Config
 Transporter.CostTable = {
@@ -95,7 +95,7 @@ function Transporter.eventHandler:onEvent(_event)
                 Transporter.addTask(req.coalition, req.unitName, _point)
                 Transporter.ActiveRequests[_playerName] = nil
             end
-        end        
+        end
     end, _event)
     if not status then Transporter.logError("Event Handler Error: " .. err) end
 end
@@ -116,7 +116,7 @@ function Transporter.CallTransport(_args)
     for _, request in pairs(Transporter.ActiveRequests) do
         if request.coalition == _unit:getCoalition() and request.transportType == _transportType then count = count + 1 end
     end
-    
+
     if count >= Transporter.MaxCount[_transportType] then
         trigger.action.outTextForGroup(_groupId, "Queue full for this type!", 15)
         return
@@ -147,21 +147,21 @@ function Transporter.updateRoutePoints(newGroupData, targetPoint, transportType)
     --Transporter.logInfo("原来的route是"..Bomber.p(route))
     local lastPoint = route[#route]
     if not lastPoint then return end
-    
+
     -- local newPoint = {}
     -- for k, v in pairs(lastPoint) do
     --     newPoint[k] = v
     -- end
-    
+
     lastPoint.x = targetPoint.x
     lastPoint.y = targetPoint.y
     -- newPoint.alt = 2000 
     -- newPoint.action = "Turning Point"
     -- newPoint.speed_locked = true
-    
-    
+
+
     --table.insert(route, newPoint)
-    
+
     --Transporter.logInfo("更新后的route是"..Bomber.p(route))
 end
 
@@ -175,7 +175,7 @@ function Transporter.addTask(_coalition, _unitName, _point)
 
     local transportType = req.transportType
     local templateName = Transporter.TemplateTable[transportType] or "TransportTemplate"
-    
+
     if _coalition == 1 then templateName = templateName .. "Red" end
     if _point.x >= -135000 then templateName = templateName .. "North" end
 
@@ -184,7 +184,7 @@ function Transporter.addTask(_coalition, _unitName, _point)
     local currentPoints = SourceObj.playerSource[_ucid].point
 
     local newGroup = mist.getGroupData(templateName, true)
-    
+
     if newGroup and newGroup.route then
         Transporter.updateRoutePoints(newGroup, _point, transportType)
     else
@@ -205,7 +205,7 @@ function Transporter.addTask(_coalition, _unitName, _point)
 
     Transporter.ActiveRequests[req.playerName] = nil
     if not Transporter.ActiveGroups[req.playerName] then Transporter.ActiveGroups[req.playerName] = {} end
-    
+
     table.insert(Transporter.ActiveGroups[req.playerName], {
         groupName = newGroupData.name,
         groupId = newGroupData.groupId,
@@ -219,7 +219,7 @@ end
 -- OnArrival
 function Transporter.OnArrival()
     Transporter.logInfo("OnArrival triggered!")
-    
+
     for playerName, groups in pairs(Transporter.ActiveGroups) do
         for i, info in ipairs(groups) do
             local group = Group.getByName(info.groupName)
@@ -228,17 +228,17 @@ function Transporter.OnArrival()
                 if unit then
                     local pos = unit:getPoint()
                     local dist = mist.utils.get2DDist(pos, info.targetPoint)
-                    
-                    if dist < 5000 then 
+
+                    if dist < 5000 then
                         Transporter.logInfo("Arrival verified for " .. info.groupName)
-                        
+
                         if info.transportType == "Deploy" then
                             Transporter.PerformDeploy(info.targetPoint, info.coalition)
                         elseif info.transportType == "Upgrade" then
                             Transporter.PerformUpgrade(info.targetPoint, info.coalition)
                         end
                         Group.destroy(group)
-                        table.remove(groups, i) 
+                        table.remove(groups, i)
                         return
                     end
                 end
@@ -251,11 +251,11 @@ function Transporter.PerformDeploy(point, coalitionID)
     local sideStr = (coalitionID == 1) and "Red" or "Blue"
     local config = Transporter.DeployUnits[sideStr]
     if not config then return end
-    
+
     local unitsData = {}
     local groupName = "Transport_Deploy #" .. ctld.getNextUnitId()
     local countryId = (coalitionID == 1) and country.id.CJTF_RED or country.id.CJTF_BLUE
-    
+
     for i, uConf in ipairs(config) do
         table.insert(unitsData, {
             ["type"] = uConf.type,
@@ -283,17 +283,17 @@ function Transporter.PerformUpgrade(point, coalitionID)
     local _unitId =  ctld.getNextUnitId()
     local crateName = string.format("%s #%i", _name, _unitId)
     local countryId = (coalitionID == 1) and country.id.CJTF_RED or country.id.CJTF_BLUE
-    
+
     local _point = {x = point.x, z = point.y}
     local _crate
 
     local crateType = {
         weight = 500,
-        unit = "UpgradeCrate", 
+        unit = "UpgradeCrate",
         name = "Command Upgrade",
         desc = "Command Upgrade Crate"
     }
-    
+
     Transporter.UpgradeCrates[crateName] = true
     if coalitionID == 1 then
         ctld.spawnedCratesRED[crateName] = crateType
@@ -316,8 +316,8 @@ function Transporter.PerformUpgrade(point, coalitionID)
     _crate["country"] = countryId
 
     mist.dynAddStatic(_crate)
-    
-    Transporter.CheckAndStartUpgrade(point, coalitionID, crateName, true) 
+
+    Transporter.CheckAndStartUpgrade(point, coalitionID, crateName, true)
 end
 
 function Transporter.RestoreCC(ccName, coalitionID)
@@ -325,30 +325,30 @@ function Transporter.RestoreCC(ccName, coalitionID)
     local staticData = mist.DBs.staticsByName[ccName]
     -- If not static, try unit
     if not staticData then staticData = mist.DBs.unitsByName[ccName] end
-    
+
     if not staticData then
         Transporter.logError("RestoreCC: Could not find original data for " .. ccName)
         return
     end
-    
+
     -- Prepare data for spawn
     -- We need to convert DB data to dynAdd compatible table
     local countryId = (coalitionID == 1) and country.id.CJTF_RED or country.id.CJTF_BLUE
     local coalitionStr = (coalitionID == 1) and "red" or "blue"
-    
+
     local newStatic = mist.utils.deepCopy(staticData)
     newStatic.country = countryId
     newStatic.groupId = nil -- Let mist assign
-    newStatic.unitId = nil 
+    newStatic.unitId = nil
     newStatic.clone = true
     newStatic.dead = false
-    
+
     -- Fix coordinates if needed (mist DB uses x, y)
     if not newStatic.x and newStatic.point then newStatic.x = newStatic.point.x; newStatic.y = newStatic.point.y end
-    
+
     -- Spawn
     mist.dynAddStatic(newStatic)
-    
+
     -- Initialize Zone Logic (using NPV2)
     -- NP.setRelatedZone expects: staticTable, unitName, coalition, firstTime(bool), level
     -- We need to mock the staticTable structure: { units = { [1] = { ... } } }
@@ -363,7 +363,7 @@ function Transporter.RestoreCC(ccName, coalitionID)
             }
         }
     }
-    
+
     -- Reset Level to 1
     if NP.CCStatus[ccName] then
         NP.CCStatus[ccName].level = 1
@@ -372,31 +372,31 @@ function Transporter.RestoreCC(ccName, coalitionID)
     else
         NP.CCStatus[ccName] = { level = 1, crates = 0, upgrading = false }
     end
-    
+
     -- Call setRelatedZone to re-establish base (FARP, markers, etc)
     -- True for 'firsttime' to skip defense spawn inside setRelatedZone? 
     -- Actually, we want to reset defenses.
     -- NPV2 says: if not firsttime then spawnDefenseFromUnitlist.
     -- We want to spawn Level 1 defenses. So pass firsttime=false.
     NP.setRelatedZone(mockStatic, ccName, coalitionStr, true, 1)
-    
+
     trigger.action.outTextForCoalition(coalitionID, "Command Center " .. ccName .. " 已修复并重置为等级 1!", 20)
 end
 
 function Transporter.CheckAndStartUpgrade(point, coalitionID, crateName, isAuto)
     local foundCC = nil
-    local mode = "upgrade" 
-    
+    local mode = "upgrade"
+
     -- 1. Try to find ALIVE CC
     for _, ccUnitName in pairs(ctld.logisticUnits) do
         local ccUnit = StaticObject.getByName(ccUnitName)
         if ccUnit and ccUnit:getLife() > 0 and ccUnit:getCoalition() == coalitionID then
             local ccPos = ccUnit:getPoint()
             local dist = mist.utils.get2DDist(point, ccPos)
-            if dist <= Transporter.UpgradeRadius then 
+            if dist <= Transporter.UpgradeRadius then
                 foundCC = ccUnitName
                 mode = "upgrade"
-                break 
+                break
             end
         end
     end
@@ -408,12 +408,12 @@ function Transporter.CheckAndStartUpgrade(point, coalitionID, crateName, isAuto)
             if not ccUnit or ccUnit:getLife() <= 0 then
                 local staticData = mist.DBs.staticsByName[ccUnitName]
                 if not staticData then staticData = mist.DBs.unitsByName[ccUnitName] end
-                
+
                 if staticData then
                     local ccPos = nil
-                    if staticData.point then ccPos = staticData.point end 
+                    if staticData.point then ccPos = staticData.point end
                     if not ccPos and staticData.x then ccPos = {x=staticData.x, y=staticData.y} end
-                    
+
                     if ccPos then
                         local dist = mist.utils.get2DDist(point, ccPos)
                         if dist <= Transporter.UpgradeRadius then
@@ -429,10 +429,10 @@ function Transporter.CheckAndStartUpgrade(point, coalitionID, crateName, isAuto)
 
     if foundCC then
         trigger.action.outTextForCoalition(coalitionID, "Processing Command Center: " .. foundCC, 20)
-        
+
         local cObj = StaticObject.getByName(crateName) or Unit.getByName(crateName)
         if cObj then cObj:destroy() end
-        
+
         if ctld then
             ctld.spawnedCratesRED[crateName] = nil
             ctld.spawnedCratesBLUE[crateName] = nil
@@ -471,7 +471,7 @@ function Transporter.FinishUpgrade(args)
     mist.marker.remove(markerName)
     local ccObj = StaticObject.getByName(ccName)
     if not ccObj or ccObj:getLife() <= 0 then trigger.action.outText("建设失败: CC 在完成前已被摧毁.", 20); return end
-    
+
     if NP.CCStatus[ccName] then
         local oldLevel = NP.CCStatus[ccName].level
         local newLevel = math.min(oldLevel + 1, 3)
