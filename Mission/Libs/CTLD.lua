@@ -816,9 +816,8 @@ ctld.jtacUnitTypes = {
     "RQ-1A Predator", --there are some wierd encoding issues so if you write SKP-11 it wont match as the - sign is encoded differently...
 }
 
-ctld.availableUnitTypes = {"MosquitoFBMkVI", "TF-51D", "CH-47Fbl1", "Mi-8MT", "Ka-50", "Ka-50_3",
-                            "AH-64D_BLK_II", "Mi-24P", "OH58D", "UH-1H", "SA342M", "SA342L", "SA342Mistral",
-                            "SA342Minigun",
+ctld.availableUnitTypes = {"CH-47Fbl1", "Mi-8MT", "Ka-50", "Ka-50_3", "AH-64D_BLK_II", "Mi-24P", "OH58D", "UH-1H", "SA342M", "SA342L", "SA342Mistral", "SA342Minigun",
+                            "MosquitoFBMkVI", "TF-51D", "P-47D-40", "P-51D-30-NA",
                             "C-130J-30"}
 
 ctld.EWRunits = ctld.EWRunits or {}
