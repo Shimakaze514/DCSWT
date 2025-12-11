@@ -701,6 +701,7 @@ ctld.spawnableCrates = {
         name = "中远程防空(Mid&Long Range AA)",
         items = {
             { weight = 680, desc = "罗兰(Roland)地空导弹(1箱2车)", unit = "Roland Group" },
+            { weight = 680, desc = "黄蜂(SA-8)地空导弹(1箱2车)", unit = "Osa Group" },
             { weight = 296, desc = "HQ-7LNE地空导弹(2箱2车)", unit = "HQ-7_Group" },
             { weight = 640, desc = "道尔M2地空导弹(3箱1车)", unit = "CHAP_TorM2" , cratesRequired = 3},
             -- { weight = 680, desc = "铠甲S1弹炮一体系统(2箱1车)", unit = "CHAP_PantsirS1", cratesRequired = 2},
@@ -732,7 +733,7 @@ ctld.spawnableCrates = {
             { weight = 401, desc = "彩蛋(Easter Egg)", unit = "Pz_IV_H" },
             { weight = 325, desc = "无人机 JTAC", unit = "RQ-1A Predator" },
             { weight = 800, desc = "FOB Crate", unit = "FOB" },
-            { weight = 1000, desc = "1L13 EWR雷达(1箱1车)", unit = "1L13 EWR", isEWR = true },
+            { weight = 1000, desc = "EWR雷达(1箱1车)", unit = "FPS-117", isEWR = true },
         }
     },
     {
@@ -838,14 +839,14 @@ function ctld.RefreshConfig()
         end
     if totalPlayers > Bomber.MinimumNukePlayers then
         ctld.UnitLimitPerPlayer = {
-            ["主战坦克(Tank)"] = 4,
-            ["步兵战车(IFV)"] = 3,
-            ["远程火力(Artillery)"] = 5,
-            ["近程防空(Short Range AA)"] = 4,
-            ["中远程防空(Mid&Long Range AA)"] = 4,
-            ["无人机、悍马JTAC、FOB等"] = 5,
+            ["主战坦克(Tank)"] = 6,
+            ["步兵战车(IFV)"] = 6,
+            ["远程火力(Artillery)"] = 6,
+            ["近程防空(Short Range AA)"] = 6,
+            ["中远程防空(Mid&Long Range AA)"] = 6,
+            ["无人机、悍马JTAC、FOB等"] = 6,
         }
-        ctld.FOBLimit = 1
+        ctld.FOBLimit = 2
         ctld.CoalitionKillerLimit = 4 --红方的阵营级大杀器
 
         ctld.F10RefreshTime = 60
@@ -898,12 +899,12 @@ function ctld.RefreshConfig()
         ctld.logInfo("当前在线玩家数正常，使用正常参数")
     else
         ctld.UnitLimitPerPlayer = {
-            ["主战坦克(Tank)"] = 4,
-            ["步兵战车(IFV)"] = 3,
-            ["远程火力(Artillery)"] = 5,
-            ["近程防空(Short Range AA)"] = 4,
-            ["中远程防空(Mid&Long Range AA)"] = 4,
-            ["无人机、悍马JTAC、FOB等"] = 5,
+            ["主战坦克(Tank)"] = 6,
+            ["步兵战车(IFV)"] = 6,
+            ["远程火力(Artillery)"] = 6,
+            ["近程防空(Short Range AA)"] = 6,
+            ["中远程防空(Mid&Long Range AA)"] = 6,
+            ["无人机、悍马JTAC、FOB等"] = 6,
         }
         ctld.FOBLimit = 0
         ctld.CoalitionKillerLimit = 1 --红方的阵营级大杀器
@@ -1974,6 +1975,19 @@ ctld.GroupSystemTemplate = {
         hasLimit = false,
         parts = {
             { name = "Roland ADS", desc = "罗兰自行防空导弹车", launcher = true },
+        },
+        --repair = "HQ-7_LN_SP Group Repair",
+    },
+    {
+        name = "黄蜂近程地空导弹小队",
+        sysName = "Osa Group",
+        cratesRequired = 1,
+        aaLaunchers = 2,
+
+        count = 1,
+        hasLimit = false,
+        parts = {
+            { name = "Osa 9A33 ln", desc = "黄蜂自行防空导弹车", launcher = true },
         },
         --repair = "HQ-7_LN_SP Group Repair",
     },
@@ -4235,7 +4249,7 @@ function ctld.unpackCrates(_arguments)--_arguments
                     ctld.crateAddPoint(_heli,1)
                     ctld.processCallback({ unit = _heli, crate = _crate, spawnedGroup = _spawnedGroups, action = "unpack" })
 
-                    if _crate.details.unit == "1L13 EWR" then
+                    if _crate.details.isEWR == true then
                         ctld.addEWRTask(_spawnedGroups)
 
                         --       ctld.logInfo("Added EWR")

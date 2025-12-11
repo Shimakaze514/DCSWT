@@ -22,7 +22,7 @@ net.log("LOAD - NP core script version "..NP.Version ..", script by VL")
 NP.RefreshTime = 10
 
 NP.CaptureDistance = 200
- 
+
 NP.AWACSList = {
     "blueAWACS",
     "blueAWACS-1",
@@ -37,87 +37,136 @@ NP.AWACSList = {
 NP.CCStatus = {} -- Stores current level, crates delivered, and upgrade status for each CC.
 -- { [ccName] = { level = X, crates = Y, upgrading = false/true, upgradeStartTime = time } }
 
-local UnitlistHome_L3 = {
-    { 
-        type = {"Tor 9A331","CHAP_TorM2"},
-        radius = 2000, 
-        count = 8, 
-        suffix = "_道尔", 
-        support = {} 
-    },
-    { 
-        type = {"CHAP_PantsirS1","2S6 Tunguska", "Strela-10M3"}, 
-        radius = 2500, 
-        count = 9, 
-        suffix = "_通古斯卡", 
-        support = {} 
-    },
-    { 
-        type = "SA-11 Buk LN 9A310M1", 
-        radius = 1000, 
-        count = 6, 
-        suffix = "_山毛榉", 
-        support = {
-            { type = "SA-11 Buk SR 9S18M1", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
-            { type = "SA-11 Buk CC 9S470M1", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
-        }
-    },
-    { 
-        type = {"Leclerc", "ZBD04A"}, 
-        radius = 1250, 
-        count = 6, 
-        suffix = "_坦克", 
-        support = {} 
-    },
-}
-
-local UnitlistFront_L3 = {
-    { type = {"Tor 9A331","CHAP_TorM2"}, radius = 1500, count = 6, suffix = "_道尔", support = {} },
-    { type = {"2S6 Tunguska", "Strela-10M3","CHAP_PantsirS1"}, radius = 2000, count = 6, suffix = "_通古斯卡", support = {} },
-    { 
-        type = {"Leclerc","ZBD04A"}, 
-        radius = 1000, 
-        count = 4, 
-        suffix = "_坦克", 
-        support = {} 
-    },
-}
-
-local UnitlistMiddle_L3 = {
-    { type = {"2S6 Tunguska",'Tor 9A331'}, radius = 100, count = 2, suffix = "_通古斯卡", support = {} },
-}
 
 NP.LevelConfigs = {
-    -- Level 1 configurations (Minimal Defense)
     Home_L1 = {
-        { type = {"Leclerc", "ZBD04A"}, radius = 1250, count = 2, suffix = "_坦克", support = {} }, -- 少量坦克
+        { type = {"Tor 9A331"}, radius = 2000, count = 4, suffix = "_中程防空", support = {} },
+        { type = {"CHAP_PantsirS1","2S6 Tunguska"}, radius = 2500, count = 4, suffix = "_近程防空(雷达)", support = {} },
+        { type = {"M1097 Avenger", "Strela-10M3"}, radius = 2500, count = 6, suffix = "_近程防空(红外)", support = {} },
+        { type = "rapier_fsa_launcher", radius = 1000, count = 4, suffix = "_轻剑",
+            support = {
+                { type = "rapier_fsa_blindfire_radar", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
+                { type = "rapier_fsa_blindfire_radar", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
+                { type = "rapier_fsa_optical_tracker_unit", count = 1, offset = {x = -50, y = 50} }, -- 指挥车
+            } },
+        { type = {"M-2 Bradley", "ZBD04A", "Leclerc"}, radius = 1250, count = 5, suffix = "_坦克", support = {} },
     },
-    Front_L1 = {
-        { type = {"Leclerc","ZBD04A"}, radius = 1000, count = 1, suffix = "_坦克", support = {} }, -- 更少量坦克
+    Home_L2 = {
+        { type = {"HEMTT_C-RAM_Phalanx"}, radius = 80, count = 1, suffix = "_近防", support = {} },
+        { type = {"Tor 9A331","CHAP_TorM2"}, radius = 2000, count = 6, suffix = "_中程防空", support = {} },
+        { type = {"CHAP_PantsirS1","2S6 Tunguska"}, radius = 2500, count = 4, suffix = "_近程防空(雷达)", support = {} },
+        { type = {"M1097 Avenger", "Strela-10M3"}, radius = 2500, count = 6, suffix = "_近程防空(红外)", support = {} },
+        { type = "Hawk ln", radius = 1000, count = 6, suffix = "_远程防空(霍克)",
+            support = {
+                { type = "Hawk tr", count = 1, offset = {x = 100, y = 50} }, -- 指挥车
+                { type = "Hawk pcp", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
+                { type = "Hawk sr", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
+                { type = "Hawk cwar", count = 1, offset = {x = -50, y = 50} }, -- 指挥车
+                { type = "Hawk tr", count = 1, offset = {x = -50, y = -50} }, -- 指挥车
+                { type = "Hawk tr", count = 1, offset = {x = -100, y = -50} }, -- 指挥车
+            } },
+        { type = {"ZBD04A", "Leclerc"}, radius = 1250, count = 5, suffix = "_坦克", support = {} },
     },
-    Middle_L1 = {
-        { type = {"2S6 Tunguska",'Tor 9A331'}, radius = 100, count = 1, suffix = "_通古斯卡", support = {} }, -- 单个近程防空
+    Home_L3 = {
+        { type = {"HEMTT_C-RAM_Phalanx"}, radius = 80, count = 2, suffix = "_近防", support = {} },
+        { type = {"Tor 9A331","CHAP_TorM2"}, radius = 2000, count = 8, suffix = "_中程防空", support = {} },
+        { type = {"CHAP_PantsirS1","2S6 Tunguska"}, radius = 2500, count = 6, suffix = "_近程防空(雷达)", support = {} },
+        { type = {"M1097 Avenger", "Strela-10M3"}, radius = 2500, count = 9, suffix = "_近程防空(红外)", support = {} },
+        { type = "SA-11 Buk LN 9A310M1", radius = 1000, count = 6, suffix = "_远程防空(山毛榉)",
+            support = {
+                { type = "SA-11 Buk SR 9S18M1", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
+                { type = "SA-11 Buk CC 9S470M1", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
+            } },
+        { type = {"Leclerc", "ZBD04A"}, radius = 1250, count = 6, suffix = "_坦克", support = {} },
     },
 
-    -- Level 2 configurations (Medium Defense)
-    Home_L2 = {
-        { type = {"Tor 9A331","CHAP_TorM2"}, radius = 2000, count = 4, suffix = "_道尔", support = {} }, -- 中等数量近程防空
-        { type = {"CHAP_PantsirS1","2S6 Tunguska", "Strela-10M3"}, radius = 2500, count = 4, suffix = "_通古斯卡", support = {} },
-        { type = {"Leclerc", "ZBD04A"}, radius = 1250, count = 4, suffix = "_坦克", support = {} }, -- 中等数量坦克
+    Front_L1 = {
+        { type = {"Tor 9A331"}, radius = 1500, count = 4, suffix = "_中程防空", support = {} },
+        { type = {"2S6 Tunguska"}, radius = 2000, count = 3, suffix = "_近程防空(雷达)", support = {} },
+        { type = {"M1097 Avenger", "Strela-10M3"}, radius = 2000, count = 5, suffix = "_近程防空(红外)", support = {} },
+        {
+            type = {"Vulcan", "M-2 Bradley", "ZBD04A"},
+            radius = 1000,
+            count = 5,
+            suffix = "_坦克",
+            support = {}
+        },
     },
     Front_L2 = {
-        { type = {"Tor 9A331","CHAP_TorM2"}, radius = 1500, count = 3, suffix = "_道尔", support = {} },
-        { type = {"2S6 Tunguska", "Strela-10M3","CHAP_PantsirS1"}, radius = 2000, count = 3, suffix = "_通古斯卡", support = {} },
-        { type = {"Leclerc","ZBD04A"}, radius = 1000, count = 2, suffix = "_坦克", support = {} },
+        { type = {"HEMTT_C-RAM_Phalanx"}, radius = 80, count = 1, suffix = "_近防", support = {} },
+        {
+            type = "rapier_fsa_launcher",
+            radius = 1000,
+            count = 4,
+            suffix = "_轻剑",
+            support = {
+                { type = "rapier_fsa_blindfire_radar", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
+                { type = "rapier_fsa_blindfire_radar", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
+                { type = "rapier_fsa_optical_tracker_unit", count = 1, offset = {x = -50, y = 50} }, -- 指挥车
+            }
+        },
+        { type = {"Tor 9A331","CHAP_TorM2"}, radius = 1500, count = 4, suffix = "_中程防空", support = {} },
+        { type = {"2S6 Tunguska","CHAP_PantsirS1"}, radius = 2000, count = 3, suffix = "_近程防空(雷达)", support = {} },
+        { type = {"M1097 Avenger", "Strela-10M3"}, radius = 2000, count = 5, suffix = "_近程防空(红外)", support = {} },
+        {
+            type = {"M-2 Bradley", "ZBD04A", "Leclerc"},
+            radius = 1000,
+            count = 5,
+            suffix = "_坦克",
+            support = {}
+        },
     },
-    Middle_L2 = {
-        { type = {"2S6 Tunguska",'Tor 9A331'}, radius = 100, count = 2, suffix = "_通古斯卡", support = {} },
+    Front_L3 = {
+        { type = {"HEMTT_C-RAM_Phalanx"}, radius = 80, count = 2, suffix = "_近防", support = {} },
+        {
+            type = "Hawk ln",
+            radius = 1000,
+            count = 6,
+            suffix = "_远程防空(霍克)",
+            support = {
+                { type = "Hawk tr", count = 1, offset = {x = 100, y = 50} }, -- 指挥车
+                { type = "Hawk pcp", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
+                { type = "Hawk sr", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
+                { type = "Hawk cwar", count = 1, offset = {x = -50, y = 50} }, -- 指挥车
+                { type = "Hawk tr", count = 1, offset = {x = -50, y = -50} }, -- 指挥车
+                { type = "Hawk tr", count = 1, offset = {x = -100, y = -50} }, -- 指挥车
+            }
+        },
+        { type = {"Tor 9A331","CHAP_TorM2"}, radius = 1500, count = 6, suffix = "_中程防空", support = {} },
+        { type = {"2S6 Tunguska","CHAP_PantsirS1"}, radius = 2000, count = 4, suffix = "_近程防空(雷达)", support = {} },
+        { type = {"M1097 Avenger", "Strela-10M3"}, radius = 2000, count = 6, suffix = "_近程防空(红外)", support = {} },
+        {
+            type = { "ZBD04A", "Leclerc" },
+            radius = 1000,
+            count = 5,
+            suffix = "_坦克",
+            support = {}
+        },
     },
 
-    -- Level 3 configurations (Full Defense - same as original Unitlist)
-    Home_L3 = UnitlistHome_L3,
-    Front_L3 = UnitlistFront_L3,
-    Middle_L3 = UnitlistMiddle_L3,
+    Middle_L1 = {
+        { type = {"2S6 Tunguska"}, radius = 1100, count = 2, suffix = "_近程防空(雷达)", support = {} },
+        { type = {"M1097 Avenger"}, radius = 1200, count = 2, suffix = "_近程防空(红外)", support = {} },
+        { type = {"Vulcan"}, radius = 1050, count = 2, suffix = "_机炮", support = {} },
+        { type = {"M-2 Bradley"}, radius = 500, count = 3, suffix = "_坦克", support = {} },
+    },
+    Middle_L2 = {
+        { type = {"HEMTT_C-RAM_Phalanx"}, radius = 80, count = 1, suffix = "_近防", support = {} },
+        { type = {'Tor 9A331'}, radius = 100, count = 2, suffix = "_中程防空", support = {} },
+        { type = {"2S6 Tunguska"}, radius = 1100, count = 2, suffix = "_近程防空(雷达)", support = {} },
+        { type = {"M1097 Avenger"}, radius = 1200, count = 2, suffix = "_近程防空(红外)", support = {} },
+        { type = {"Vulcan"}, radius = 1050, count = 2, suffix = "_机炮", support = {} },
+        { type = {"M-2 Bradley"}, radius = 500, count = 3, suffix = "_坦克", support = {} },
+        { type = {"M1A2C_SEP_V3"}, radius = 500, count = 1, suffix = "_坦克", support = {} },
+    },
+    Middle_L3 = {
+        { type = {"HEMTT_C-RAM_Phalanx"}, radius = 80, count = 2, suffix = "_近防", support = {} },
+        { type = {'Tor 9A331',"CHAP_TorM2"}, radius = 100, count = 3, suffix = "_中程防空", support = {} },
+        { type = {"2S6 Tunguska"}, radius = 1100, count = 3, suffix = "_近程防空(雷达)", support = {} },
+        { type = {"M1097 Avenger"}, radius = 1200, count = 3, suffix = "_近程防空(红外)", support = {} },
+        { type = {"Vulcan"}, radius = 1050, count = 3, suffix = "_机炮", support = {} },
+        { type = {"M-2 Bradley","M1A2C_SEP_V3"}, radius = 500, count = 5, suffix = "_坦克", support = {} },
+    },
 }
 
 function NP.logError(message)
@@ -177,6 +226,10 @@ function NP.capture(_args)
     end
 
     local _logisticData = NP.getLogisticData(_targetLogistic)
+    if not _logisticData then
+        NP.logError("无法获取目标CC的数据，无法占领。CC名称: " .. _targetLogistic:getName())
+        return
+    end
     local _side = _capUsingUnit:getCoalition()
 
     -- Determine initial level and defense behavior
@@ -203,7 +256,7 @@ function NP.capture(_args)
         -- We check against the current level's defense config.
         -- If oldStatus is missing, assume L3 to be safe (hardest check).
         local checkLevel = oldStatus and oldStatus.level or 3
-        
+
         if string.find(_logisticData.groupName, "本场") then
             defList = (checkLevel == 1 and NP.LevelConfigs.Home_L1) or (checkLevel == 2 and NP.LevelConfigs.Home_L2) or NP.LevelConfigs.Home_L3
         elseif string.find(_logisticData.groupName, "中场") then
@@ -211,14 +264,14 @@ function NP.capture(_args)
         elseif string.find(_logisticData.groupName, "前线") then
              defList = (checkLevel == 1 and NP.LevelConfigs.Front_L1) or (checkLevel == 2 and NP.LevelConfigs.Front_L2) or NP.LevelConfigs.Front_L3
         end
-        
+
         -- Fallback if defList is somehow nil
         if not defList then defList = NP.LevelConfigs.Home_L3 end
 
         for idx, def in ipairs(defList) do
             local groupName = _logisticData.groupName .. def.suffix
             local old = Group.getByName(groupName)
-            if old then 
+            if old then
                 local _units = old:getUnits()
 
                 for _, _leader in pairs(_units) do
@@ -288,9 +341,9 @@ function NP.capture(_args)
     table.insert(ctld.logisticUnits, _logisticData.units[1].unitName)--新的单位加到cc的白名单
 
     -- Initialize CCStatus for the newly created CC
-    NP.CCStatus[_logisticData.units[1].unitName] = { 
-        level = initialLevel, 
-        crates = 0, 
+    NP.CCStatus[_logisticData.units[1].unitName] = {
+        level = initialLevel,
+        crates = 0,
         upgrading = false,
         upgradeStartTime = 0,
         type = "unknown" -- Placeholder, will be determined by setRelatedZone
@@ -335,12 +388,12 @@ function NP.updateCCMarker(ccname, coalition, level, x, y)
     -- Text Marker (Center)
     local textMarker = {
         pos = {x=x+800, z=y+800, y=0},
-        name = ccname, 
+        name = ccname,
         markType = 5, -- Text
         --radius = 100, -- Small radius for the center point/text anchor
         text = text,
         color = drawColor,
-        fillColor = {drawColor[1], drawColor[2], drawColor[3], 0.05}, 
+        fillColor = {drawColor[1], drawColor[2], drawColor[3], 0.05},
         lineType = 1,
         readOnly = true,
         fontSize = 16,
@@ -351,9 +404,9 @@ function NP.updateCCMarker(ccname, coalition, level, x, y)
     local innerRadius = ctld.maximumDistanceLogistic or 200
     local innerMarker = {
         pos = {x=x, z=y, y=0},
-        name = ccname .. "_outer", 
+        name = ccname .. "_outer",
         markType = 2, -- Circle
-        radius = innerRadius, 
+        radius = innerRadius,
         color = drawColor,
         fillColor = drawFillColor, -- Transparent fill
         lineType = 1, -- Solid line
@@ -365,9 +418,9 @@ function NP.updateCCMarker(ccname, coalition, level, x, y)
     local outerRadius = (ctld.minimumDeployDistance or 1000) + 50
     local outerMarker = {
         pos = {x=x, z=y, y=0},
-        name = ccname .. "_inner", 
+        name = ccname .. "_inner",
         markType = 2, -- Circle
-        radius = outerRadius, 
+        radius = outerRadius,
         color = drawColor,
         fillColor = drawFillColor, -- Transparent fill
         lineType = 2, -- Dashed line for inner? Or solid. Default 1.
@@ -409,12 +462,12 @@ function NP.setRelatedZone(static, unitName, coalition, firsttime, level)
             level = 3 -- Default to 3
         end
     end
-    
+
     -- Ensure status is tracked if not already
     if not NP.CCStatus[unitName] then
-         NP.CCStatus[unitName] = { 
-            level = level, 
-            crates = 0, 
+         NP.CCStatus[unitName] = {
+            level = level,
+            crates = 0,
             upgrading = false,
             upgradeStartTime = 0
         }
@@ -441,10 +494,10 @@ function NP.setRelatedZone(static, unitName, coalition, firsttime, level)
 
     timer.scheduleFunction(function(_args)
         local static, _coalition, _oppsitecoalition, ccname, level = _args[1],_args[2],_args[3],_args[4], _args[5]
-        
+
         NP.logDebug('传进生成补给的函数的值：'..ctld.p(static).."|".._coalition.."|".._oppsitecoalition)
         local CCunit = static.units[1]
-        
+
         if 	Unit.getByName(ccname..'_Ammo') ~= nil then
             Unit.getByName(ccname..'_Ammo'):destroy()
         else
@@ -476,23 +529,23 @@ function NP.setRelatedZone(static, unitName, coalition, firsttime, level)
         local front_y = mid_y + fwd_dy * sep_v
         local back_x = mid_x - fwd_dx * sep_v
         local back_y = mid_y - fwd_dy * sep_v
-        
-        
+
+
         if StaticObject.getByName(ccname..'_invisibleFarp') == nil then
-            local vars = 
+            local vars =
             {
-            type = 'Invisible FARP', 
+            type = 'Invisible FARP',
             shape_name = "invisiblefarp",
-            country = CCunit.country, 
-            category = 'Heliports', 
-            x = CCunit.x, 
+            country = CCunit.country,
+            category = 'Heliports',
+            x = CCunit.x,
             y = CCunit.y,
-            name = ccname..'_invisibleFarp', 
+            name = ccname..'_invisibleFarp',
             heading = CCunit.heading,
             --clone = true,
             dead =false,
             }
-            
+
             mist.dynAddStatic(vars)
         else
             NP.logError('[setRelatedZone] Invisible Farp已存在，无需新建: '.. ccname..'_invisibleFarp')
@@ -518,7 +571,7 @@ function NP.setRelatedZone(static, unitName, coalition, firsttime, level)
                 end
             end
         end, {}, timer.getTime()+5)
-        
+
         -- local vars2 = 
         -- {
         -- type = 'FARP Ammo Dump Coating', 
@@ -531,9 +584,9 @@ function NP.setRelatedZone(static, unitName, coalition, firsttime, level)
         -- --clone = true,
         -- dead =false,
         -- }
-        
+
         -- mist.dynAddStatic(vars2)
-        
+
         -- local vars3 = 
         -- {
         -- type = 'FARP Fuel Depot', 
@@ -546,9 +599,9 @@ function NP.setRelatedZone(static, unitName, coalition, firsttime, level)
         -- --clone = true,
         -- dead =false,
         -- }
-        
+
         -- mist.dynAddStatic(vars3)
-        
+
         -- local vars4 = 
         -- {
         -- type = 'FARP CP Blindage', 
@@ -561,11 +614,11 @@ function NP.setRelatedZone(static, unitName, coalition, firsttime, level)
         -- --clone = true,
         -- dead =false,
         -- }
-        
+
         -- mist.dynAddStatic(vars4)
 
         local unitCommand = {
-            ["y"] = mid_x,
+            ["y"] = mid_y,
             ["x"] = mid_x,
             ["name"] = ccname..'_Command',
             ["heading"] = CCunit.heading,
@@ -603,7 +656,7 @@ function NP.setRelatedZone(static, unitName, coalition, firsttime, level)
             ["uncontrollable"] = true,
             ["hiddenOnMFD"] = true,
             ["hidden"] = true,
-            ["country"] = CCunit.country, 
+            ["country"] = CCunit.country,
             ["units"] = {},
             -- ["y"] = mid_x,
             -- ["x"] = mid_y,
@@ -646,7 +699,7 @@ end
 function NP.spawnDefenseFromUnitlist(static, level, coalition, ccName)
     local CCunit = static.units[1]
     local country = CCunit.country
-    
+
     -- Default to level 1 if not provided (should be provided)
     if not level then level = 1 end
 
@@ -681,9 +734,9 @@ function NP.spawnDefenseFromUnitlist(static, level, coalition, ccName)
 
         -- 已存在就销毁
         local old = Group.getByName(groupName)
-        if old then 
+        if old then
             NP.logInfo(string.format("[spawnDefenseFromUnitlist] 已存在同名群组，先销毁: %s", groupName))
-            old:destroy() 
+            old:destroy()
         end
 
         local group = {
@@ -703,7 +756,7 @@ function NP.spawnDefenseFromUnitlist(static, level, coalition, ccName)
 
         for i = 1, def.count do
             local angleBase = groupStartAngle + (i - 1) * angleStep
-            
+
             -- Randomize Phase: Range is pi/2 (+/- pi/4)
             local angleRandom = (math.random() - 0.5) * (math.pi / 2)
             local finalAngle = angleBase + angleRandom
@@ -755,7 +808,7 @@ function NP.spawnDefenseFromUnitlist(static, level, coalition, ccName)
         -- 生成群组
         local newGroup = mist.dynAdd(group)
         if newGroup then
-            NP.logInfo(string.format("[spawnDefenseFromUnitlist] 生成群组: %s (主力 %d + 支援 %d)", 
+            NP.logInfo(string.format("[spawnDefenseFromUnitlist] 生成群组: %s (主力 %d + 支援 %d)",
                 groupName, def.count, def.support and #def.support or 0))
         else
             NP.logError("[spawnDefenseFromUnitlist] 生成失败: " .. groupName)
@@ -815,7 +868,7 @@ function NP.RespawnAwacs()
                 NP.logInfo(_plane.."油量低，重生")
                 trigger.action.outText("预警机梯队没油了，后续梯队正在交接！", 10)
             end
-        else 
+        else
             NP.logError('[RespawnAwacs]检测预警机时找不到该预警机单位'.._plane.."|")
         end
     end
