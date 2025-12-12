@@ -6521,7 +6521,7 @@ function AdditionalEventHandler:onEvent(event)
             local unitName = group:getUnit(1):getName()
             local unitType = group:getUnit(1):getTypeName()
             
-            local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "呼叫支援")
+            local _rootPath = missionCommands.addSubMenuForGroup(group:getID(), "呼叫支援")
             --trigger.action.outTextForUnit(event.initiator:getID(), "机型：" .. unitType .. "出生", 20, true) -- 出生时显示机型
             timer.scheduleFunction(ctld.addF10MenuOptionsBomber, {unitName,_rootPath}, timer.getTime() + 1)
             timer.scheduleFunction(ctld.addF10MenuOptionsTransporter, {unitName,_rootPath}, timer.getTime() + 1)
