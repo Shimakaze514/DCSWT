@@ -6460,7 +6460,8 @@ function ctld.addF10MenuOptionsDynamic(_unitName)
 end
 
 
-function ctld.addF10MenuOptionsBomber(_unitName)
+function ctld.addF10MenuOptionsBomber(args)
+    _unitName,_rootPath = args[1],args[2]
     local status, error = pcall(function()
 
         ctld.logTrace(string.format("_unitName=%s",_unitName))
@@ -6472,7 +6473,6 @@ function ctld.addF10MenuOptionsBomber(_unitName)
 
             if _groupId then
                 if ctld.addedBomberTo[tostring(_groupId)] == nil then
-                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "呼叫支援")
                     local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "轰炸机",_rootPath)
                     missionCommands.addCommandForGroup(_groupId, "呼叫超音速轰炸机("..Bomber.CostTable["Attack"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "Attack"})
                     missionCommands.addCommandForGroup(_groupId, "呼叫低空轰炸机("..Bomber.CostTable["LowBomber"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "LowBomber"})
@@ -6486,32 +6486,9 @@ function ctld.addF10MenuOptionsBomber(_unitName)
     end)
 end
 
-function ctld.addF10MenuOptionsSupport(_unitName)
-    local status, error = pcall(function()
-
-        ctld.logTrace(string.format("_unitName=%s",_unitName))
-        local _unit = ctld.getTransportUnit(_unitName)
-        if _unit ~= nil then
-
-            local _groupId = ctld.getGroupId(_unit)
-            env.info("[CTLD] group id is " .. _groupId)
-
-            if _groupId then
-                if ctld.addedSupportTo[tostring(_groupId)] == nil then
-                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "呼叫支援")
-                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "后勤",_rootPath)
-                    missionCommands.addCommandForGroup(_groupId, "呼叫侦查无人机("..Support.CostTable["Attack"].."分)", _rootPath,  Support.CallAttack, { _unitName , "Attack"})
-                    missionCommands.addCommandForGroup(_groupId, "呼叫低空运输机("..Support.CostTable["LowBomber"].."分)", _rootPath,  Support.CallAttack, { _unitName , "LowBomber"})
-                    missionCommands.addCommandForGroup(_groupId, "呼叫高空运输机("..Support.CostTable["StealthBomber"].."分)", _rootPath,  Support.CallAttack, { _unitName , "StealthBomber"})
-                    ctld.addedSupportTo[tostring(_groupId)]=true
-                end
-            end
-        end
-    end)
-end
-
 ctld.addedTransporterTo = {}
-function ctld.addF10MenuOptionsTransporter(_unitName)
+function ctld.addF10MenuOptionsTransporter(args)
+    _unitName,_rootPath = args[1],args[2]
     local status, error = pcall(function()
 
         ctld.logTrace(string.format("_unitName=%s",_unitName))
@@ -6523,7 +6500,6 @@ function ctld.addF10MenuOptionsTransporter(_unitName)
 
             if _groupId then
                 if ctld.addedTransporterTo[tostring(_groupId)] == nil then
-                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "呼叫支援")
                     local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "后勤",_rootPath)
                     --missionCommands.addCommandForGroup(_groupId, "呼叫地面部署运输机("..Transporter.CostTable["Deploy"].."分)", _rootPath,  Transporter.CallTransport, { _unitName , "Deploy"})
                     missionCommands.addCommandForGroup(_groupId, "呼叫机场升级运输机("..Transporter.CostTable["Upgrade"].."分)", _rootPath,  Transporter.CallTransport, { _unitName , "Upgrade"})
@@ -6544,9 +6520,11 @@ function AdditionalEventHandler:onEvent(event)
             ctld.RefreshConfig()
             local unitName = group:getUnit(1):getName()
             local unitType = group:getUnit(1):getTypeName()
+            
+            local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "呼叫支援")
             --trigger.action.outTextForUnit(event.initiator:getID(), "机型：" .. unitType .. "出生", 20, true) -- 出生时显示机型
-            timer.scheduleFunction(ctld.addF10MenuOptionsBomber, unitName, timer.getTime() + 1)
-            timer.scheduleFunction(ctld.addF10MenuOptionsTransporter, unitName, timer.getTime() + 1)
+            timer.scheduleFunction(ctld.addF10MenuOptionsBomber, {unitName,_rootPath}, timer.getTime() + 1)
+            timer.scheduleFunction(ctld.addF10MenuOptionsTransporter, {unitName,_rootPath}, timer.getTime() + 1)
             local config = ctld.unitActions[unitType]
             if config and config.crates == true then
                 timer.scheduleFunction(ctld.addF10MenuOptionsDynamic, unitName, timer.getTime() + 1)
