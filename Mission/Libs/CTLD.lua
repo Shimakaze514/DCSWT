@@ -38,7 +38,7 @@ if ctld.Debug == false then
     ctld.logisticUnits = {}
     ctld.fobLocation = {}
     ctld.FOBLimit = 1
-    ctld.CoalitionKillerLimit = 4 --红方的阵营级大杀器
+    ctld.CoalitionKillerLimit = 2 --红方的阵营级大杀器
 
     ctld.F10RefreshTime = 60
     ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
@@ -103,7 +103,7 @@ else
     }--动态保存会刷新一次，所以不用手动添加了
     ctld.fobLocation = {}
     ctld.FOBLimit = 1
-    ctld.CoalitionKillerLimit = 2 --红方的阵营级大杀器
+    ctld.CoalitionKillerLimit = 1 --红方的阵营级大杀器
     ctld.F10RefreshTime = 60
     ctld.IsCheckfarEnoughFromLogisticZone = false
     ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
@@ -695,30 +695,31 @@ ctld.spawnableCrates = {
             --{ weight = 965, desc = "ZU-23卡车高炮(1箱2车)", unit = "ZU23 Group" },
             { weight = 960, desc = "猎豹(Gepard)双管自行高炮(1箱2车)", unit = "Gepard Group" },
             { weight = 964, desc = "箭-10(SA-13)红外地空导弹发射车(1箱2车)", unit = "Strela-10M3 Group" },
+            { weight = 963, desc = "后卫(M6)野战红外地空导弹战车(1箱2车)", unit = "M6 Linebacker Group" },
             { weight = 966, desc = "C-RAM近防炮(1箱1车)", unit = "HEMTT_C-RAM_Phalanx" },
-            { weight = 1206, desc = "通古斯卡(SA-19)弹炮一体系统(1箱1车)", unit = "2S6 Tunguska" },
         }
     },
     {
         name = "中远程防空(Mid&Long Range AA)",
         items = {
-            { weight = 680, desc = "罗兰(Roland)地空导弹(1箱2车)", unit = "Roland Group" },
-            { weight = 680, desc = "黄蜂(SA-8)地空导弹(1箱2车)", unit = "Osa Group" },
+            { weight = 1206, desc = "通古斯卡(SA-19)弹炮一体系统(1箱2车)", unit = "2S6 Group" },
+            -- { weight = 680, desc = "罗兰(Roland)地空导弹(1箱2车)", unit = "Roland Group" },
             { weight = 296, desc = "HQ-7LNE地空导弹(2箱2车)", unit = "HQ-7_Group" },
-            { weight = 640, desc = "道尔M2地空导弹(3箱1车)", unit = "CHAP_TorM2" , cratesRequired = 3},
+            { weight = 1480, desc = "【阵地】道尔M1地空导弹(2箱3车+补给)", unit = "SA-15 Buk" },
+            { weight = 640, desc = "【阵地】道尔M2地空导弹(3箱2车+近防)", unit = "TorM2 Group" },
             -- { weight = 680, desc = "铠甲S1弹炮一体系统(2箱1车)", unit = "CHAP_PantsirS1", cratesRequired = 2},
-            -- { weight = 1480, desc = "【阵地】道尔M1地空导弹(2箱3车+补给)", unit = "SA-15 Buk" },
             -- { weight = 560, desc = "【阵地】IRIS-T地空导弹(2箱2车+补给)", unit = "IRIST" },
             -- --{ weight = 1449, desc = "(小队)库班河(SA-6)地空导弹阵地(3箱4车+补给)", unit = "SA-6 Buk" },
-            -- { weight = 1880, desc = "【阵地】山毛榉地空导弹(3箱3车+补给)", unit = "SA-11 Buk" },
+            --{ weight = 1880, desc = "【阵地】山毛榉地空导弹(3箱3车+补给)", unit = "SA-11 Buk" },
         }
     },
     {
         name = "修理箱(repair)",
         items = {
             -- { weight = 823, desc = "IRIS-T维护箱", unit = "IRIST Repair" },
-            -- { weight = 823, desc = "道尔M1维护箱", unit = "SA-15 BUK Repair" },
-            -- { weight = 821, desc = "山毛榉维护箱", unit = "SA-11 BUK Repair" },
+            { weight = 823, desc = "道尔M1维护箱", unit = "SA-15 BUK Repair" },
+            { weight = 823, desc = "道尔M2维护箱", unit = "TorM2 Repair" },
+            { weight = 821, desc = "山毛榉维护箱", unit = "SA-11 BUK Repair" },
             { weight = 824, desc = "TOS-1A火箭炮阵地维护箱", unit = "TOS1A Group Repair" },
             --{ weight = 824, desc = "BM27火箭炮阵地维护箱", unit = "BM27 Group Repair" },
             --{ weight = 824, desc = "BM30火箭炮阵地维护箱", unit = "Smerch_HE Group Repair" },
@@ -741,7 +742,7 @@ ctld.spawnableCrates = {
     {
         name = "阵营级大杀器",
         items = {
-            { weight = 963, desc = "后卫(M6)野战红外地空导弹战车", unit = "M6 Linebacker" },
+            { weight = 1880, desc = "【阵地】山毛榉地空导弹(4箱3车+补给)", unit = "SA-11 Buk" },
         }
     },
     {
@@ -849,7 +850,7 @@ function ctld.RefreshConfig()
             ["无人机、悍马JTAC、FOB等"] = 6,
         }
         ctld.FOBLimit = 2
-        ctld.CoalitionKillerLimit = 4 --红方的阵营级大杀器
+        ctld.CoalitionKillerLimit = 2 --红方的阵营级大杀器
         ctld.logInfo("当前在线玩家数正常，使用正常参数")
     else
         ctld.UnitLimitPerPlayer = {
@@ -1997,7 +1998,7 @@ ctld.GroupSystemTemplate = {
     {
         name = "山毛榉(SA-11)地空导弹阵地",
         sysName = "SA-11 Buk",
-        cratesRequired = 3,
+        cratesRequired = 4,
         aaLaunchers = 3,
         unitsCnt = 7,
         count = 5,
@@ -2006,6 +2007,7 @@ ctld.GroupSystemTemplate = {
             { name = "SA-11 Buk LN 9A310M1", desc = "山毛榉地空导弹发射车", launcher = true },
             { name = "SA-11 Buk CC 9S470M1", desc = "山毛榉地空导弹指挥车" },
             { name = "SA-11 Buk SR 9S18M1", desc = "山毛榉地空导弹雷达车" },
+            { name = "HEMTT_C-RAM_Phalanx", desc = "山毛榉配套近防" },
             { name = "ZIL-135", desc = "山毛榉(SA-11)地空导弹阵地补弹车2" },
         },
         repair = "SA-11 BUK Repair",
@@ -2042,6 +2044,28 @@ ctld.GroupSystemTemplate = {
         repair = "NASAMS Repair",
     },]]
     {
+        name = "通古斯卡小队",
+        sysName = "2S6 Group",
+        cratesRequired = 1,
+        aaLaunchers = 2,
+
+        count = 1,
+        hasLimit = false,
+        parts = {
+            { name = "2S6 Tunguska", desc = "通古斯卡", launcher = true },
+        }, },
+    {
+        name = "后卫小队",
+        sysName = "M6 Linebacker Group",
+        cratesRequired = 1,
+        aaLaunchers = 2,
+
+        count = 1,
+        hasLimit = false,
+        parts = {
+            { name = "M6 Linebacker", desc = "M6后卫防空步战车", launcher = true },
+        }, },
+    {
         name = "道尔阵地（2箱3车+补给）",
         sysName = "SA-15 Buk",
         cratesRequired = 2,
@@ -2060,6 +2084,19 @@ ctld.GroupSystemTemplate = {
             --{ weight = 775, desc = "山毛榉(SA-11)地空导弹阵地", unit = "SA-11 Buk", cratesRequired = 2, loadable = false },
         },
         repair = "SA-15 BUK Repair",
+    },
+    {
+        name = "道尔M2阵地",
+        sysName = "TorM2 Group",
+        cratesRequired = 3,
+        aaLaunchers = 2,
+        count = 3,
+        hasLimit = true,
+        parts = {
+            { name = "CHAP_TorM2", desc = "道尔M2雷达地空导弹发射车", launcher = true },
+            { name = "HEMTT_C-RAM_Phalanx", desc = "道尔M2配套近防"},
+        },
+        repair = "TorM2 Repair",
     },
     {
         name = "IRIST阵地（2箱2车+补给）",

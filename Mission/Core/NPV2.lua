@@ -43,11 +43,14 @@ NP.LevelConfigs = {
         { type = {"Tor 9A331"}, radius = 2000, count = 4, suffix = "_中程防空", support = {} },
         { type = {"CHAP_PantsirS1","2S6 Tunguska"}, radius = 2500, count = 4, suffix = "_近程防空(雷达)", support = {} },
         { type = {"M1097 Avenger", "Strela-10M3"}, radius = 2500, count = 6, suffix = "_近程防空(红外)", support = {} },
-        { type = "rapier_fsa_launcher", radius = 1000, count = 4, suffix = "_轻剑",
+        { type = "Hawk ln", radius = 1000, count = 6, suffix = "_远程防空(霍克)",
             support = {
-                { type = "rapier_fsa_blindfire_radar", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
-                { type = "rapier_fsa_blindfire_radar", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
-                { type = "rapier_fsa_optical_tracker_unit", count = 1, offset = {x = -50, y = 50} }, -- 指挥车
+                { type = "Hawk tr", count = 1, offset = {x = 100, y = 50} }, -- 指挥车
+                { type = "Hawk pcp", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
+                { type = "Hawk sr", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
+                { type = "Hawk cwar", count = 1, offset = {x = -50, y = 50} }, -- 指挥车
+                { type = "Hawk tr", count = 1, offset = {x = -50, y = -50} }, -- 指挥车
+                { type = "Hawk tr", count = 1, offset = {x = -100, y = -50} }, -- 指挥车
             } },
         { type = {"M-2 Bradley", "ZBD04A", "Leclerc"}, radius = 1250, count = 5, suffix = "_坦克", support = {} },
     },
@@ -77,11 +80,25 @@ NP.LevelConfigs = {
                 { type = "SA-11 Buk SR 9S18M1", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
                 { type = "SA-11 Buk CC 9S470M1", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
             } },
+        { type = "SA-11 Buk LN 9A310M1", radius = 1500, count = 6, suffix = "_远程防空(山毛榉)2",
+            support = {
+                { type = "SA-11 Buk SR 9S18M1", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
+                { type = "SA-11 Buk CC 9S470M1", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
+            } },
         { type = {"Leclerc", "ZBD04A"}, radius = 1250, count = 6, suffix = "_坦克", support = {} },
     },
 
     Front_L1 = {
         { type = {"Tor 9A331"}, radius = 1500, count = 4, suffix = "_中程防空", support = {} },
+        { type = "Hawk ln", radius = 1000, count = 6, suffix = "_远程防空(霍克)",
+            support = {
+                { type = "Hawk tr", count = 1, offset = {x = 100, y = 50} }, -- 指挥车
+                { type = "Hawk pcp", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
+                { type = "Hawk sr", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
+                { type = "Hawk cwar", count = 1, offset = {x = -50, y = 50} }, -- 指挥车
+                { type = "Hawk tr", count = 1, offset = {x = -50, y = -50} }, -- 指挥车
+                { type = "Hawk tr", count = 1, offset = {x = -100, y = -50} }, -- 指挥车
+            } },
         { type = {"2S6 Tunguska"}, radius = 2000, count = 3, suffix = "_近程防空(雷达)", support = {} },
         { type = {"M1097 Avenger", "Strela-10M3"}, radius = 2000, count = 5, suffix = "_近程防空(红外)", support = {} },
         {
@@ -94,17 +111,15 @@ NP.LevelConfigs = {
     },
     Front_L2 = {
         { type = {"HEMTT_C-RAM_Phalanx"}, radius = 80, count = 1, suffix = "_近防", support = {} },
-        {
-            type = "rapier_fsa_launcher",
-            radius = 1000,
-            count = 4,
-            suffix = "_轻剑",
+        { type = "Hawk ln", radius = 1000, count = 6, suffix = "_远程防空(霍克)",
             support = {
-                { type = "rapier_fsa_blindfire_radar", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
-                { type = "rapier_fsa_blindfire_radar", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
-                { type = "rapier_fsa_optical_tracker_unit", count = 1, offset = {x = -50, y = 50} }, -- 指挥车
-            }
-        },
+                { type = "Hawk tr", count = 1, offset = {x = 100, y = 50} }, -- 指挥车
+                { type = "Hawk pcp", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
+                { type = "Hawk sr", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
+                { type = "Hawk cwar", count = 1, offset = {x = -50, y = 50} }, -- 指挥车
+                { type = "Hawk tr", count = 1, offset = {x = -50, y = -50} }, -- 指挥车
+                { type = "Hawk tr", count = 1, offset = {x = -100, y = -50} }, -- 指挥车
+            } },
         { type = {"Tor 9A331","CHAP_TorM2"}, radius = 1500, count = 4, suffix = "_中程防空", support = {} },
         { type = {"2S6 Tunguska","CHAP_PantsirS1"}, radius = 2000, count = 3, suffix = "_近程防空(雷达)", support = {} },
         { type = {"M1097 Avenger", "Strela-10M3"}, radius = 2000, count = 5, suffix = "_近程防空(红外)", support = {} },
@@ -118,20 +133,16 @@ NP.LevelConfigs = {
     },
     Front_L3 = {
         { type = {"HEMTT_C-RAM_Phalanx"}, radius = 80, count = 2, suffix = "_近防", support = {} },
-        {
-            type = "Hawk ln",
-            radius = 1000,
-            count = 6,
-            suffix = "_远程防空(霍克)",
+        { type = "SA-11 Buk LN 9A310M1", radius = 1000, count = 3, suffix = "_远程防空(山毛榉)",
             support = {
-                { type = "Hawk tr", count = 1, offset = {x = 100, y = 50} }, -- 指挥车
-                { type = "Hawk pcp", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
-                { type = "Hawk sr", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
-                { type = "Hawk cwar", count = 1, offset = {x = -50, y = 50} }, -- 指挥车
-                { type = "Hawk tr", count = 1, offset = {x = -50, y = -50} }, -- 指挥车
-                { type = "Hawk tr", count = 1, offset = {x = -100, y = -50} }, -- 指挥车
-            }
-        },
+                { type = "SA-11 Buk SR 9S18M1", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
+                { type = "SA-11 Buk CC 9S470M1", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
+            } },
+        { type = "SA-11 Buk LN 9A310M1", radius = 1300, count = 3, suffix = "_远程防空(山毛榉)2",
+            support = {
+                { type = "SA-11 Buk SR 9S18M1", count = 1, offset = {x = 50, y = 0} },   -- 雷达车
+                { type = "SA-11 Buk CC 9S470M1", count = 1, offset = {x = -50, y = 0} }, -- 指挥车
+            } },
         { type = {"Tor 9A331","CHAP_TorM2"}, radius = 1500, count = 6, suffix = "_中程防空", support = {} },
         { type = {"2S6 Tunguska","CHAP_PantsirS1"}, radius = 2000, count = 4, suffix = "_近程防空(雷达)", support = {} },
         { type = {"M1097 Avenger", "Strela-10M3"}, radius = 2000, count = 6, suffix = "_近程防空(红外)", support = {} },

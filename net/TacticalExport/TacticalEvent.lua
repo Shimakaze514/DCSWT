@@ -4,6 +4,17 @@ tacticalExport = base.tacticalExport or {}
 tacticalExport.eventHandler = tacticalExport.eventHandler or {}
 tacticalExport.PlayerName = tacticalExport.PlayerName or {}
 
+local ignoredTargets = {
+    ["Soldier stinger"] = true,
+    ["SA-18 Igla manpad"] = true,
+    ["Soldier M4"] = true,
+    ["Soldier AK"] = true,
+    ["Soldier M249"] = true,
+    ["Paratrooper AKS-74"] = true,
+    ["Paratrooper RPG-16"] = true,
+    ["2B11 mortar"] = true,
+}
+
 package.path  = package.path..";.\\LuaSocket\\?.lua;"
 package.cpath = package.cpath..";.\\LuaSocket\\?.dll;"
 local socket = require("socket")
@@ -250,6 +261,9 @@ function onMissionEvent(event)
 			local unit = event.target
 			local targetName = unit:getPlayerName() or 'AI'
 			local targetType = getUnitTypeName(unit) or ''
+            if ignoredTargets[targetType] then
+                return
+            end
 
 			payload.target = targetName
             payload.target_airframe = targetType
