@@ -6523,7 +6523,8 @@ function ctld.addF10MenuOptionsTransporter(_unitName)
 
             if _groupId then
                 if ctld.addedTransporterTo[tostring(_groupId)] == nil then
-                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "运输机行动")
+                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "呼叫支援")
+                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "后勤",_rootPath)
                     --missionCommands.addCommandForGroup(_groupId, "呼叫地面部署运输机("..Transporter.CostTable["Deploy"].."分)", _rootPath,  Transporter.CallTransport, { _unitName , "Deploy"})
                     missionCommands.addCommandForGroup(_groupId, "呼叫机场升级运输机("..Transporter.CostTable["Upgrade"].."分)", _rootPath,  Transporter.CallTransport, { _unitName , "Upgrade"})
                     ctld.addedTransporterTo[tostring(_groupId)]=true
