@@ -12,8 +12,11 @@ function AddEXPL.eventHandler:onEvent(_event)
                 timer.scheduleFunction(
                 function(_args)
                     local target, weapon = _args[1], _args[2]
-                    if not target or not target:isExist() then
-                        env.info('[AddEXPL] Warning: 单位在定时器执行前已被摧毁或不可用。')
+                    if not target then
+                        env.info('[AddEXPL] Warning: 单位在定时器执行前已不可用。')
+                        return
+                    elseif not target:isExist() then
+                        env.info('[AddEXPL] Warning: 单位在定时器执行前已被摧毁？')
                         return
                     end
                     local currentHP = target:getLife()
@@ -33,9 +36,9 @@ function AddEXPL.eventHandler:onEvent(_event)
                             if unitCategory == Unit.Category.AIRPLANE or
                             unitCategory == Unit.Category.HELICOPTER
                             then
-                                if lifeRatio <= 0.5 then
-                                    env.info('[AddEXPL] Info: 单位血量小于爆炸临界0.5，血量分数(0,1)为' .. lifeRatio)
-                                    trigger.action.explosion(target:getPoint(), 50)
+                                if lifeRatio <= 0.9 then
+                                    env.info('[AddEXPL] Info: 单位血量小于爆炸临界0.9，血量分数(0,1)为' .. lifeRatio)
+                                    trigger.action.explosion(target:getPoint(), math.min(warheadMass * 10,80))
                                 end
                                 if target:getTypeName() == "CH-47Fbl1" then
                                     env.info('[AddEXPL] Info: CH-47Fbl1被击中')
@@ -54,7 +57,7 @@ function AddEXPL.eventHandler:onEvent(_event)
                     end
                 end,
                 {_event.target,_event.weapon_name},
-                timer.getTime() + 0.1
+                timer.getTime() + 0.06
                 )
 			elseif _event.id == world.event.S_EVENT_SHOT and _event.weapon and _event.weapon.isExist and _event.weapon:isExist() and Object.getCategory(_event.weapon) == Object.Category.WEAPON then 
                 local weaponObj = _event.weapon
