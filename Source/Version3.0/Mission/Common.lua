@@ -99,7 +99,16 @@ SourceObj.getGroupId = function(_unit)
     end
     return nil
 end
-
+local ignoredTargets = {
+    ["Soldier stinger"] = true,
+    ["SA-18 Igla manpad"] = true,
+    ["Soldier M4"] = true,
+    ["Soldier AK"] = true,
+    ["Soldier M249"] = true,
+    ["Paratrooper AKS-74"] = true,
+    ["Paratrooper RPG-16"] = true,
+    ["2B11 mortar"] = true,
+}
 SourceObj.getSourceKillChange = function(_unit)
     local sourcePointChange = 0
     if _unit:getDesc().category == 0 then
@@ -107,7 +116,11 @@ SourceObj.getSourceKillChange = function(_unit)
     elseif _unit:getDesc().category == 1 then
         sourcePointChange = Category.HELICOPTER
     elseif _unit:getDesc().category == 2 then
-        sourcePointChange = Category.GROUND_UNIT
+        if ignoredTargets[_unit:getTypeName()] then
+            sourcePointChange = Category.TROOPER
+        else
+            sourcePointChange = Category.GROUND_UNIT
+        end
     elseif _unit:getDesc().category == 3 then
         sourcePointChange = Category.SHIP
     end
