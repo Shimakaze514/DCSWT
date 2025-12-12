@@ -11,7 +11,7 @@ NPAircraftList.attacker = {"A-10A", "A-10C", "Ka-50", "Ka-50_3", "AH-64D_BLK_II"
 NPAircraftList.attackerPoint = 60
 
 NPAircraftList.helicopter = {"Mi-8MTV2", "Mi-8MT", "UH-1H", "SA342M", "SA342L", "Mi-24P", "CH-47Fbl1", "OH58D",
-                            "MosquitoFBMkVI", "TF-51D", "P-47D-40", "P-51D-30-NA"}
+                            "MosquitoFBMkVI", "TF-51D", "P-47D-40", "P-51D-30-NA", "Christen Eagle II"}
 NPAircraftList.helicopterPoint = 50
 
 AircraftPriceMap = {}
