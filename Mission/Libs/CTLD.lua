@@ -28,12 +28,12 @@ ctld.staticBugWorkaround = false --  DCS had a bug where destroying statics woul
 
 if ctld.Debug == false then
     ctld.UnitLimitPerPlayer = {
-        ["主战坦克(Tank)"] = 4,
-        ["步兵战车(IFV)"] = 3,
-        ["远程火力(Artillery)"] = 5,
-        ["近程防空(Short Range AA)"] = 3,
-        ["中远程防空(Mid&Long Range AA)"] = 3,
-        ["无人机、悍马JTAC、FOB等"] = 4,
+        ["主战坦克(Tank)"] = 6,
+        ["步兵战车(IFV)"] = 6,
+        ["远程火力(Artillery)"] = 6,
+        ["近程防空(Short Range AA)"] = 6,
+        ["中远程防空(Mid&Long Range AA)"] = 6,
+        ["无人机、悍马JTAC、FOB等"] = 6,
     }
     ctld.logisticUnits = {}
     ctld.fobLocation = {}
@@ -77,15 +77,15 @@ if ctld.Debug == false then
     ctld.crateWaitTime = 1
     ctld.forceCrateToBeMoved = false -- a crate must be picked up at least once and moved before it can be unpacked. Helps to reduce crate spam
     ctld.UseInfraRed = false
-    ctld.unitActions = {
-        --["SA342Mistral"] = {crates=true, troops=true},
-        --["SA342L"] = {crates=true, troops=true},
-        --["SA342M"] = {crates=true, troops=true},
-        ["UH-1H"] = {crates=true, troops=true},
-        ["Mi-8MT"] = {crates=true, troops=true},
-        ["Mi-8MTV2"] = {crates=true, troops=true},
-        ["Mi-24P"] = {crates=true, troops=true},
-    }
+    -- ctld.unitActions = {
+    --     --["SA342Mistral"] = {crates=true, troops=true},
+    --     --["SA342L"] = {crates=true, troops=true},
+    --     --["SA342M"] = {crates=true, troops=true},
+    --     ["UH-1H"] = {crates=true, troops=true},
+    --     ["Mi-8MT"] = {crates=true, troops=true},
+    --     ["Mi-8MTV2"] = {crates=true, troops=true},
+    --     ["Mi-24P"] = {crates=true, troops=true},
+    -- }
     ctld.unloadTroopsTime = 10
 else
     --测试用的参数
@@ -142,15 +142,15 @@ else
     ctld.crateWaitTime = 1
     ctld.forceCrateToBeMoved = false -- a crate must be picked up at least once and moved before it can be unpacked. Helps to reduce crate spam
 	ctld.UseInfraRed = false
-    ctld.unitActions = {
-        --["SA342Mistral"] = {crates=true, troops=true},
-        --["SA342L"] = {crates=true, troops=true},
-        --["SA342M"] = {crates=true, troops=true},
-        ["UH-1H"] = {crates=true, troops=true},
-        ["Mi-8MT"] = {crates=true, troops=true},
-        ["Mi-8MTV2"] = {crates=true, troops=true},
-        ["Mi-24P"] = {crates=true, troops=true},
-    }
+    -- ctld.unitActions = {
+    --     --["SA342Mistral"] = {crates=true, troops=true},
+    --     --["SA342L"] = {crates=true, troops=true},
+    --     --["SA342M"] = {crates=true, troops=true},
+    --     ["UH-1H"] = {crates=true, troops=true},
+    --     ["Mi-8MT"] = {crates=true, troops=true},
+    --     ["Mi-8MTV2"] = {crates=true, troops=true},
+    --     ["Mi-24P"] = {crates=true, troops=true},
+    -- }
     ctld.unloadTroopsTime = 10
 end
 
@@ -553,14 +553,16 @@ ctld.unitActions = {
     --["T-45"] = {crates=true, troops=true},
 
     --%%%%% CHOPPERS %%%%%
-    --["Ka-50"] = {crates=true, troops=false},
-    --["Ka-50_3"] = {crates=true, troops=false},
+    ["AH-64D_BLK_II"] = {crates=true, troops=false},
+    ["OH58D"] = {crates=true, troops=false},
+    ["Ka-50"] = {crates=true, troops=false},
+    ["Ka-50_3"] = {crates=true, troops=false},
     ["Mi-8MT"] = { crates = true, troops = true },
     ["Mi-24P"] = { crates = true, troops = true },
-    --["SA342L"] = {crates=false, troops=true},
-    --["SA342M"] = {crates=false, troops=true},
-    --["SA342Mistral"] = {crates=false, troops=true},
-    --["SA342Minigun"] = {crates=false, troops=true},
+    ["SA342L"] = {crates=true, troops=true},
+    ["SA342M"] = {crates=true, troops=true},
+    ["SA342Mistral"] = {crates=true, troops=true},
+    ["SA342Minigun"] = {crates=true, troops=true},
     ["UH-1H"] = { crates = true, troops = true },
     ["CH-47Fbl1"] = { crates = true, troops = true },
 
@@ -581,18 +583,18 @@ ctld.unitActions = {
     --["Yak-52"] = {crates=true, troops=true},
 
     --%%%%% WARBIRDS %%%%%
-    --["Bf-109K-4"] = {crates=true, troops=false},
-    --["Fw 190A8"] = {crates=true, troops=false},
-    --["FW-190D9"] = {crates=true, troops=false},
-    --["I-16"] = {crates=true, troops=false},
-    --["MosquitoFBMkVI"] = {crates=true, troops=true},
-    --["P-47D-30"] = {crates=true, troops=false},
-    --["P-47D-40"] = {crates=true, troops=false},
-    --["P-51D"] = {crates=true, troops=false},
-    --["P-51D-30-NA"] = {crates=true, troops=false},
-    --["SpitfireLFMkIX"] = {crates=true, troops=false},
-    --["SpitfireLFMkIXCW"] = {crates=true, troops=false},
-    --["TF-51D"] = {crates=true, troops=true},
+    ["Bf-109K-4"] = {crates=true, troops=false},
+    ["Fw 190A8"] = {crates=true, troops=false},
+    ["FW-190D9"] = {crates=true, troops=false},
+    ["I-16"] = {crates=true, troops=false},
+    ["MosquitoFBMkVI"] = {crates=true, troops=true},
+    ["P-47D-30"] = {crates=true, troops=false},
+    ["P-47D-40"] = {crates=true, troops=false},
+    ["P-51D"] = {crates=true, troops=false},
+    ["P-51D-30-NA"] = {crates=true, troops=false},
+    ["SpitfireLFMkIX"] = {crates=true, troops=false},
+    ["SpitfireLFMkIXCW"] = {crates=true, troops=false},
+    ["TF-51D"] = {crates=true, troops=true},
 }
 
 -- ************** WEIGHT CALCULATIONS FOR INFANTRY GROUPS ******************
@@ -627,21 +629,21 @@ ctld.JTAC_WEIGHT = 15    -- kg
 -- You can also add an optional coalition side to limit the group to one side
 -- for the side - 2 is BLUE and 1 is RED
 ctld.loadableGroups = {
-    { name = "Standard Group",                   inf = 6,    mg = 2,  at = 2 }, -- will make a loadable group with 6 infantry, 2 MGs and 2 anti-tank for both coalitions
+    -- { name = "Standard Group",                   inf = 6,    mg = 2,  at = 2 }, -- will make a loadable group with 6 infantry, 2 MGs and 2 anti-tank for both coalitions
     { name = "Anti Air",                         inf = 2,    aa = 3 },
     { name = "Anti Tank",                        inf = 2,    at = 6 },
     { name = "Mortar Squad",                     mortar = 6 },
-    { name = "JTAC Group",                       inf = 4,    jtac = 1 }, -- will make a loadable group with 4 infantry and a JTAC soldier for both coalitions
+    -- { name = "JTAC Group",                       inf = 4,    jtac = 1 }, -- will make a loadable group with 4 infantry and a JTAC soldier for both coalitions
     { name = "Single JTAC",                      jtac = 1 }, -- will make a loadable group witha single JTAC soldier for both coalitions
-    { name = "2x - Standard Groups",             inf = 12,   mg = 4,  at = 4 },
+    -- { name = "2x - Standard Groups",             inf = 12,   mg = 4,  at = 4 },
     { name = "2x - Anti Air",                    inf = 4,    aa = 6 },
     { name = "2x - Anti Tank",                   inf = 4,    at = 12 },
-    { name = "2x - Standard Groups + 2x Mortar", inf = 12,   mg = 4,  at = 4, mortar = 12 },
-    { name = "3x - Standard Groups",             inf = 18,   mg = 6,  at = 6 },
-    { name = "3x - Anti Air",                    inf = 6,    aa = 9 },
-    { name = "3x - Anti Tank",                   inf = 6,    at = 18 },
-    { name = "3x - Mortar Squad",                mortar = 18 },
-    { name = "5x - Mortar Squad",                mortar = 30 },
+    -- { name = "2x - Standard Groups + 2x Mortar", inf = 12,   mg = 4,  at = 4, mortar = 12 },
+    -- { name = "3x - Standard Groups",             inf = 18,   mg = 6,  at = 6 },
+    -- { name = "3x - Anti Air",                    inf = 6,    aa = 9 },
+    -- { name = "3x - Anti Tank",                   inf = 6,    at = 18 },
+    -- { name = "3x - Mortar Squad",                mortar = 18 },
+    -- { name = "5x - Mortar Squad",                mortar = 30 },
     -- {name = "Mortar Squad Red"), inf = 2, mortar = 5, side =1 }, --would make a group loadable by RED only
 }
 
@@ -848,54 +850,6 @@ function ctld.RefreshConfig()
         }
         ctld.FOBLimit = 2
         ctld.CoalitionKillerLimit = 4 --红方的阵营级大杀器
-
-        ctld.F10RefreshTime = 60
-        ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
-
-        ctld.hoverPickup = false --  if set to false you can load crates with the F10 menu instead of hovering... Only if not using real crates!
-
-        ctld.enableCrates = true -- if false, Helis will not be able to spawn or unpack crates so will be normal CTTS
-        ctld.slingLoad = false -- if false, crates can be used WITHOUT slingloading, by hovering above the crate, simulating slingloading but not the weight...
-        -- There are some bug with Sling-loading that can cause crashes, if these occur set slingLoad to false
-        -- to use the other method.
-        -- Set staticBugFix  to FALSE if use set ctld.slingLoad to TRUE
-
-        ctld.enableSmokeDrop = false -- if false, helis and c-130 will not be able to drop smoke
-
-        ctld.maxExtractDistance = 125 -- max distance from vehicle to troops to allow a group extraction
-        ctld.multiCrateMaxDistance = 100 --生成一个组需要的箱子之间的最大距离
-        ctld.maximumDistanceLogistic = 200 -- max distance from vehicle to logistics to allow a loading or spawning operation
-        ctld.maximumSearchDistance = 4000 -- max distance for troops to search for enemy
-        ctld.maximumMoveDistance = 2000 -- max distance for troops to move from drop point if no enemy is nearby
-
-        ctld.minimumDeployDistance = 900 -- minimum distance from a friendly pickup zone where you can deploy a crate
-        ctld.minimumDistanceBetweenFobs = 1
-        ctld.spawnRPGWithCoalition = true --spawns a friendly RPG unit with Coalition forces
-        ctld.spawnStinger = false -- spawns a stinger / igla soldier with a group of 6 or more soldiers!
-
-        ctld.enabledFOBBuilding = true -- if true, you can load a crate INTO a C-130 than when unpacked creates a Forward Operating Base (FOB) which is a new place to spawn (crates) and carry crates from
-        -- In future i'd like it to be a FARP but so far that seems impossible...
-        -- You can also enable troop Pickup at FOBS
-        ctld.cratesRequiredForFOB = 1 -- The amount of crates required to build a FOB. Once built, helis can spawn crates at this outpost to be carried and deployed in another area.
-        -- The large crates can only be loaded and dropped by large aircraft, like the C-130 and listed in ctld.vehicleTransportEnabled
-        -- Small FOB crates can be moved by helicopter. The FOB will require ctld.cratesRequiredForFOB larges crates and small crates are 1/3 of a large fob crate
-        -- To build the FOB entirely out of small crates you will need ctld.cratesRequiredForFOB * 3
-        ctld.troopPickupAtFOB = true -- if true, troops can also be picked up at a created FOB
-        ctld.buildTimeFOB = 60 --time in seconds for the FOB to be built
-        --ctld.crateWaitTime = 20 -- time in seconds to wait before you can spawn another crate
-        ctld.crateWaitTime = 1
-        ctld.forceCrateToBeMoved = false -- a crate must be picked up at least once and moved before it can be unpacked. Helps to reduce crate spam
-        ctld.UseInfraRed = false
-        ctld.unitActions = {
-            --["SA342Mistral"] = {crates=true, troops=true},
-            --["SA342L"] = {crates=true, troops=true},
-            --["SA342M"] = {crates=true, troops=true},
-            ["UH-1H"] = {crates=true, troops=true},
-            ["Mi-8MT"] = {crates=true, troops=true},
-            ["Mi-8MTV2"] = {crates=true, troops=true},
-            ["Mi-24P"] = {crates=true, troops=true},
-        }
-        ctld.unloadTroopsTime = 10
         ctld.logInfo("当前在线玩家数正常，使用正常参数")
     else
         ctld.UnitLimitPerPlayer = {
@@ -908,54 +862,6 @@ function ctld.RefreshConfig()
         }
         ctld.FOBLimit = 0
         ctld.CoalitionKillerLimit = 1 --红方的阵营级大杀器
-
-        ctld.F10RefreshTime = 60
-        ctld.disableAllSmoke = false -- if true, all smoke is diabled at pickup and drop off zones regardless of settings below. Leave false to respect settings below
-
-        ctld.hoverPickup = false --  if set to false you can load crates with the F10 menu instead of hovering... Only if not using real crates!
-
-        ctld.enableCrates = true -- if false, Helis will not be able to spawn or unpack crates so will be normal CTTS
-        ctld.slingLoad = false -- if false, crates can be used WITHOUT slingloading, by hovering above the crate, simulating slingloading but not the weight...
-        -- There are some bug with Sling-loading that can cause crashes, if these occur set slingLoad to false
-        -- to use the other method.
-        -- Set staticBugFix  to FALSE if use set ctld.slingLoad to TRUE
-
-        ctld.enableSmokeDrop = false -- if false, helis and c-130 will not be able to drop smoke
-
-        ctld.maxExtractDistance = 125 -- max distance from vehicle to troops to allow a group extraction
-        ctld.multiCrateMaxDistance = 100 --生成一个组需要的箱子之间的最大距离
-        ctld.maximumDistanceLogistic = 200 -- max distance from vehicle to logistics to allow a loading or spawning operation
-        ctld.maximumSearchDistance = 4000 -- max distance for troops to search for enemy
-        ctld.maximumMoveDistance = 2000 -- max distance for troops to move from drop point if no enemy is nearby
-
-        ctld.minimumDeployDistance = 900 -- minimum distance from a friendly pickup zone where you can deploy a crate
-        ctld.minimumDistanceBetweenFobs = 1
-        ctld.spawnRPGWithCoalition = true --spawns a friendly RPG unit with Coalition forces
-        ctld.spawnStinger = false -- spawns a stinger / igla soldier with a group of 6 or more soldiers!
-
-        ctld.enabledFOBBuilding = true -- if true, you can load a crate INTO a C-130 than when unpacked creates a Forward Operating Base (FOB) which is a new place to spawn (crates) and carry crates from
-        -- In future i'd like it to be a FARP but so far that seems impossible...
-        -- You can also enable troop Pickup at FOBS
-        ctld.cratesRequiredForFOB = 1 -- The amount of crates required to build a FOB. Once built, helis can spawn crates at this outpost to be carried and deployed in another area.
-        -- The large crates can only be loaded and dropped by large aircraft, like the C-130 and listed in ctld.vehicleTransportEnabled
-        -- Small FOB crates can be moved by helicopter. The FOB will require ctld.cratesRequiredForFOB larges crates and small crates are 1/3 of a large fob crate
-        -- To build the FOB entirely out of small crates you will need ctld.cratesRequiredForFOB * 3
-        ctld.troopPickupAtFOB = true -- if true, troops can also be picked up at a created FOB
-        ctld.buildTimeFOB = 60 --time in seconds for the FOB to be built
-        --ctld.crateWaitTime = 20 -- time in seconds to wait before you can spawn another crate
-        ctld.crateWaitTime = 1
-        ctld.forceCrateToBeMoved = false -- a crate must be picked up at least once and moved before it can be unpacked. Helps to reduce crate spam
-        ctld.UseInfraRed = false
-        ctld.unitActions = {
-            --["SA342Mistral"] = {crates=true, troops=true},
-            --["SA342L"] = {crates=true, troops=true},
-            --["SA342M"] = {crates=true, troops=true},
-            ["UH-1H"] = {crates=true, troops=true},
-            ["Mi-8MT"] = {crates=true, troops=true},
-            ["Mi-8MTV2"] = {crates=true, troops=true},
-            ["Mi-24P"] = {crates=true, troops=true},
-        }
-        ctld.unloadTroopsTime = 10
         ctld.logInfo("当前在线玩家数过少，已启用低人数参数")
         trigger.action.outText("当前在线玩家数小于"..Bomber.MinimumNukePlayers.."人，禁止部署FOB！",15)
     end
@@ -6384,7 +6290,7 @@ function ctld.getUnitActions(_unitType)
         return ctld.unitActions[_unitType]
     end
 
-    return { crates = true, troops = false }
+    return { crates = false, troops = false }
 end
 
 
@@ -6566,7 +6472,8 @@ function ctld.addF10MenuOptionsBomber(_unitName)
 
             if _groupId then
                 if ctld.addedBomberTo[tostring(_groupId)] == nil then
-                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "轰炸机行动")
+                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "呼叫支援")
+                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "轰炸机",_rootPath)
                     missionCommands.addCommandForGroup(_groupId, "呼叫超音速轰炸机("..Bomber.CostTable["Attack"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "Attack"})
                     missionCommands.addCommandForGroup(_groupId, "呼叫低空轰炸机("..Bomber.CostTable["LowBomber"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "LowBomber"})
                     missionCommands.addCommandForGroup(_groupId, "呼叫隐身轰炸机("..Bomber.CostTable["StealthBomber"].."分)", _rootPath,  Bomber.CallAttack, { _unitName , "StealthBomber"})
@@ -6591,7 +6498,8 @@ function ctld.addF10MenuOptionsSupport(_unitName)
 
             if _groupId then
                 if ctld.addedSupportTo[tostring(_groupId)] == nil then
-                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "后勤支援")
+                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "呼叫支援")
+                    local _rootPath = missionCommands.addSubMenuForGroup(_groupId, "后勤",_rootPath)
                     missionCommands.addCommandForGroup(_groupId, "呼叫侦查无人机("..Support.CostTable["Attack"].."分)", _rootPath,  Support.CallAttack, { _unitName , "Attack"})
                     missionCommands.addCommandForGroup(_groupId, "呼叫低空运输机("..Support.CostTable["LowBomber"].."分)", _rootPath,  Support.CallAttack, { _unitName , "LowBomber"})
                     missionCommands.addCommandForGroup(_groupId, "呼叫高空运输机("..Support.CostTable["StealthBomber"].."分)", _rootPath,  Support.CallAttack, { _unitName , "StealthBomber"})
@@ -6638,13 +6546,17 @@ function AdditionalEventHandler:onEvent(event)
             --trigger.action.outTextForUnit(event.initiator:getID(), "机型：" .. unitType .. "出生", 20, true) -- 出生时显示机型
             timer.scheduleFunction(ctld.addF10MenuOptionsBomber, unitName, timer.getTime() + 1)
             timer.scheduleFunction(ctld.addF10MenuOptionsTransporter, unitName, timer.getTime() + 1)
-            for _, typename in ipairs(ctld.availableUnitTypes) do
-                if unitType == typename then
-                    --ctld.addF10MenuOptionsDynamic(unitName)
-                    timer.scheduleFunction(ctld.addF10MenuOptionsDynamic, unitName, timer.getTime() + 1)
-                    break -- Exit loop once found to save time
-                end
+            local config = ctld.unitActions[unitType]
+            if config and config.crates == true then
+                timer.scheduleFunction(ctld.addF10MenuOptionsDynamic, unitName, timer.getTime() + 1)
             end
+            -- for _, typename in ipairs(ctld.availableUnitTypes) do
+            --     if unitType == typename then
+            --         --ctld.addF10MenuOptionsDynamic(unitName)
+            --         timer.scheduleFunction(ctld.addF10MenuOptionsDynamic, unitName, timer.getTime() + 1)
+            --         break -- Exit loop once found to save time
+            --     end
+            -- end
         end
     end
 end
