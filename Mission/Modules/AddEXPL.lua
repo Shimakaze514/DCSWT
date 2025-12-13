@@ -45,9 +45,9 @@ function AddEXPL.eventHandler:onEvent(_event)
                                     trigger.action.explosion(target:getPoint(), warheadMass * 10)
                                     return
                                 end
-                            elseif lifeRatio <= 0.1 then
-                                env.info('[AddEXPL] Info: 单位是地面或海面目标，单位血量小于爆炸临界0.1，血量分数(0,1)为' .. lifeRatio)
-                                trigger.action.explosion(target:getPoint(), 100)
+                            -- elseif lifeRatio <= 0.1 then
+                            --     env.info('[AddEXPL] Info: 单位是地面或海面目标，单位血量小于爆炸临界0.1，血量分数(0,1)为' .. lifeRatio)
+                            --     trigger.action.explosion(target:getPoint(), 100)
                             end
                         else
                             env.info('[AddEXPL] Info: AddEXPL.warheadMass中没有对应的weaponTypeName')
