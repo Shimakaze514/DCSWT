@@ -5168,8 +5168,8 @@ function ctld.repairGroupSystem(_heli, _nearestCrate, _groupTemplate)
     local _nearestGroup = ctld.findNearestGroupSystem(_heli, _groupTemplate)
     local lastRepairTime = ctld.lastRepairTimes[_nearestGroup.group:getName()]
 
-    if lastRepairTime ~= nil and timer.getTime() - lastRepairTime < 1200 then
-        ctld.displayMessageToGroup(_heli, "无法修复  " .. _groupTemplate.name .. ". 距离你上次维修" .. _groupTemplate.name .. " 没有超过20分钟！工兵太忙了！", 10)
+    if lastRepairTime ~= nil and timer.getTime() - lastRepairTime < 1800 then
+        ctld.displayMessageToGroup(_heli, "无法修复  " .. _groupTemplate.name .. ". 距离你上次维修" .. _groupTemplate.name .. " 没有超过30分钟！工兵太忙了！", 10)
     elseif _nearestGroup ~= nil and _nearestGroup.dist < 300 then
 
         local _oldGroup = ctld.completeGroupSystems[_nearestGroup.group:getName()]
