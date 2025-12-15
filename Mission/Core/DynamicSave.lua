@@ -96,7 +96,7 @@ function dsave.recordAllVehiclesElements(inputDB)
                 if _unitTable.unitName ~= nil and dsave.typeBelongsToBlackList(_unitTable.type)==false then
                     local _unit=Unit.getByName(_unitTable.unitName)
                     if _unit~=nil then
-                        if _unit:getLife()>=1 then
+                        if _unit:getLife() > 1 and _unit.isExist and _unit:isExist() then
                             needSave =true
                             local _point = _unit:getPoint()
                             _group.units[_key].point.x=_point.x
@@ -167,7 +167,7 @@ function dsave.recordAllCCsElements()
     dsave.SaveData(dsave.DSaveCCsFilePath, net.lua2json(dsave.DSaveCCsOutCache))
     dsave.DSaveCCsOutCache={}
     dsave.logInfo("CC目标已经写入 动态保存物体.json")
-    --timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + dsave.RefreshTime )
+    timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + dsave.RefreshTime )
 end
 
 
