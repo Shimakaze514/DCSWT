@@ -96,15 +96,31 @@ function dsave.recordAllVehiclesElements(inputDB)
                 if _unitTable.unitName ~= nil and dsave.typeBelongsToBlackList(_unitTable.type)==false then
                     local _unit=Unit.getByName(_unitTable.unitName)
                     if _unit~=nil then
-                        if _unit:getLife() > 1 and _unit.isExist and _unit:isExist() then
-                            needSave =true
-                            local _point = _unit:getPoint()
-                            _group.units[_key].point.x=_point.x
-                            _group.units[_key].x=_point.x
-                            _group.units[_key].point.y=_point.z
-                            _group.units[_key].y=_point.z
+                        local lifeRatio = 0
+                        
+                            
+                        if _unit.isExist and _unit:isExist() then
+                            if _unit.getLife and _unit.getDesc then
+                                lifeRatio = _unit:getLife()/_unit:getDesc().life
+                                dsave.logInfo("当前单位生命值(0,1)为"..lifeRatio)
+                                if lifeRatio >= 0.1 then
+                                    needSave =true
+                                    local _point = _unit:getPoint()
+                                    _group.units[_key].point.x=_point.x
+                                    _group.units[_key].x=_point.x
+                                    _group.units[_key].point.y=_point.z
+                                    _group.units[_key].y=_point.z
+                                else
+                                    _group.units[_key]=nil
+                                    dsave.logInfo("当前单位生命值低！该单位将不会保存！")
+                                end
+                            else
+                                _group.units[_key]=nil
+                                dsave.logInfo("无法获取当前单位生命值信息！该单位将不会保存！")
+                            end
                         else
                             _group.units[_key]=nil
+                            dsave.logInfo("当前单位已不存在于战场中，该单位将不会保存")
                         end
                     end
                 else
