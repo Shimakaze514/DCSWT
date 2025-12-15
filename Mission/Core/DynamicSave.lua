@@ -35,6 +35,7 @@ dsave.DSaveGroupsFilePath = dsave.Config_Dir .. "动态保存单位.json"
 dsave.DSaveCCsFilePath = dsave.Config_Dir .. "动态保存物体.json"
 dsave.DSaveCTLDFilePath = dsave.Config_Dir .. "动态保存ctld.json"
 dsave.hasSaveFile = false
+dsave.timerHandle = nil
 
 function dsave.logError(message)
     env.info("[DSAVE] Err: "  .. message)
@@ -122,6 +123,8 @@ function dsave.recordAllVehiclesElements(inputDB)
                             _group.units[_key]=nil
                             dsave.logInfo("当前单位已不存在于战场中，该单位将不会保存")
                         end
+                    else
+                        _group.units[_key]=nil
                     end
                 else
                     _group.units[_key]=nil
@@ -183,7 +186,15 @@ function dsave.recordAllCCsElements()
     dsave.SaveData(dsave.DSaveCCsFilePath, net.lua2json(dsave.DSaveCCsOutCache))
     dsave.DSaveCCsOutCache={}
     dsave.logInfo("CC目标已经写入 动态保存物体.json")
-    timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + dsave.RefreshTime )
+    if dsave.timerHandle then
+        timer.removeFunction(dsave.timerHandle)
+    end
+    dsave.timerHandle = timer.scheduleFunction(
+            dsave.recordAllCCsElements,
+            nil,
+            timer.getTime() + dsave.RefreshTime
+        )--! 不能直接以赋值的方式运行！
+    --timer.scheduleFunction(dsave.recordAllCCsElements, nil, timer.getTime() + dsave.RefreshTime )
 end
 
 

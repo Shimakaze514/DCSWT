@@ -6405,25 +6405,6 @@ function ctld.addF10MenuOptionsDynamic(_unitName)
                     local _unitActions = ctld.getUnitActions(_unit:getTypeName())
                     ctld.logTrace(string.format("_unitActions=%s", ctld.p(_unitActions)))
 
-                    --TODO
-                    if _unitActions.troops then
-                        local _troopCommandsPath = missionCommands.addSubMenuForGroup(_groupId, "Troop Transport", _rootPath)
-                        missionCommands.addCommandForGroup(_groupId, "Unload / Extract Troops", _troopCommandsPath, ctld.unloadExtractTroops, { _unitName })
-
-                        -- local _loadPath = missionCommands.addSubMenuForGroup(_groupId, "Load From Zone", _troopCommandsPath)
-                        local _transportLimit = ctld.getTransportLimit(_unit:getTypeName())
-                        ctld.logTrace(string.format("_transportLimit=%s", ctld.p(_transportLimit)))
-                        for _,_loadGroup in pairs(ctld.loadableGroups) do
-                            ctld.logTrace(string.format("_loadGroup=%s", ctld.p(_loadGroup)))
-                            if not _loadGroup.side or _loadGroup.side == _unit:getCoalition() then
-                                -- check size & unit
-                                if _transportLimit >= _loadGroup.total then
-                                    missionCommands.addCommandForGroup(_groupId, "Load ".._loadGroup.name, _troopCommandsPath, ctld.loadTroopsFromZone, { _unitName, true,_loadGroup,false })
-                                end
-                            end
-                        end
-                    end
-
                     if ctld.enableCrates and _unitActions.crates then
                         _rootPath = missionCommands.addSubMenuForGroup(_groupId, "集装箱", _rootPath)
                         if not ctld.unitCanCarryVehicles(_unit) then
@@ -6463,6 +6444,25 @@ function ctld.addF10MenuOptionsDynamic(_unitName)
                         missionCommands.addCommandForGroup(_groupId, "列出附近箱子", _crateCommands, ctld.listNearbyCrates, { _unitName })
                         if ctld.enabledFOBBuilding then
                             missionCommands.addCommandForGroup(_groupId, "列出FOB", _crateCommands, ctld.listFOBS, { _unitName })
+                        end
+                    end
+
+                    --TODO
+                    if _unitActions.troops then
+                        local _troopCommandsPath = missionCommands.addSubMenuForGroup(_groupId, "Troop Transport", _rootPath)
+                        missionCommands.addCommandForGroup(_groupId, "Unload / Extract Troops", _troopCommandsPath, ctld.unloadExtractTroops, { _unitName })
+
+                        -- local _loadPath = missionCommands.addSubMenuForGroup(_groupId, "Load From Zone", _troopCommandsPath)
+                        local _transportLimit = ctld.getTransportLimit(_unit:getTypeName())
+                        ctld.logTrace(string.format("_transportLimit=%s", ctld.p(_transportLimit)))
+                        for _,_loadGroup in pairs(ctld.loadableGroups) do
+                            ctld.logTrace(string.format("_loadGroup=%s", ctld.p(_loadGroup)))
+                            if not _loadGroup.side or _loadGroup.side == _unit:getCoalition() then
+                                -- check size & unit
+                                if _transportLimit >= _loadGroup.total then
+                                    missionCommands.addCommandForGroup(_groupId, "Load ".._loadGroup.name, _troopCommandsPath, ctld.loadTroopsFromZone, { _unitName, true,_loadGroup,false })
+                                end
+                            end
                         end
                     end
 

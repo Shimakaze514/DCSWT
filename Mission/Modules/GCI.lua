@@ -520,7 +520,7 @@ do
   
             local radars = {}
             
-            env.info("GCI - EWR units are "..ctld.formatTable(ctld.EWRunits,4))
+            --env.info("GCI - EWR units are "..ctld.formatTable(ctld.EWRunits,4))
             for _,g in ipairs(ctld.EWRunits) do
                 if g:isExist() and g:getCoalition() == self.side then
                     for _,u in ipairs(g:getUnits()) do
