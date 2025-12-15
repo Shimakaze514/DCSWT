@@ -4100,7 +4100,7 @@ function ctld.crateAddPoint(_heli,_num)
     SourceObj.SaveSourcePoint()
     local text = string.format("吊箱子奖励%d点", SourceObj.addCrate*_num)
     ctld.displayMessageToGroup(_heli, text, 20)
-    trigger.action.outSoundForGroup(_heli, "chest-open.ogg")
+    trigger.action.outSoundForGroup(_heli:getID(), "chest-open.ogg")
 end
 
 function ctld.unpackCrates(_arguments)--_arguments
