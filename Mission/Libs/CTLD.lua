@@ -736,7 +736,7 @@ ctld.spawnableCrates = {
             { weight = 401, desc = "彩蛋(Easter Egg)", unit = "Pz_IV_H" },
             { weight = 325, desc = "无人机 JTAC", unit = "RQ-1A Predator" },
             { weight = 800, desc = "FOB Crate", unit = "FOB" },
-            { weight = 1000, desc = "EWR雷达(1箱1车)", unit = "1L13 EWR", isEWR = true },
+            { weight = 1000, desc = "EWR雷达(1箱1车)", unit = "FPS-117", isEWR = true },
         }
     },
     {
