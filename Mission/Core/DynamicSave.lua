@@ -169,6 +169,8 @@ function dsave.recordAllCCsElements()
                     if (_unitObject.isExist and not _unitObject:isExist()) or _unitObject:getLife() <= 1 then
                         needKill = true
                     end
+                else
+                    needKill = true
                 end
             end
         end
