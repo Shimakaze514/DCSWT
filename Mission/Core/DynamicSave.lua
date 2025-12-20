@@ -309,7 +309,7 @@ function dsave.loadDsaveUnitsData()
             end
         end
 
-        if ctld.isJTACUnitType(_group.units[1].type) and ctld.JTAC_dropEnabled  and _spawnedGroup~=nil then --为jtac激活
+        if _group.units and _group.units[1] and ctld.isJTACUnitType(_group.units[1].type) and ctld.JTAC_dropEnabled  and _spawnedGroup~=nil then --为jtac激活
             local _code = table.remove(ctld.jtacGeneratedLaserCodes, 1)
             table.insert(ctld.jtacGeneratedLaserCodes, _code)
             ctld.JTACAutoLase(_spawnedGroup:getName(), _code) --(_jtacGroupName, _laserCode, _smoke, _lock, _colour)
