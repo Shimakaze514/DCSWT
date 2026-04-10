@@ -720,10 +720,15 @@ function NP.checkVictoryCondition()
         return
     end
 
-    if counts.blue == 0 then
-        NP.startVictoryCountdown("red")
-    elseif counts.red == 0 then
+    -- A side loses if it holds no CCs.
+    -- Point-based defeat is handled separately in SourceTeam via NP.declarePointDefeat.
+    local redLosing  = counts.red  == 0
+    local blueLosing = counts.blue == 0
+
+    if redLosing and not blueLosing then
         NP.startVictoryCountdown("blue")
+    elseif blueLosing and not redLosing then
+        NP.startVictoryCountdown("red")
     else
         NP.cancelVictoryCountdown()
     end
@@ -776,6 +781,22 @@ function NP.declareVictory(winner)
     NP.logInfo("[Victory] " .. winner .. " wins. Scheduling reset in 30 s.")
 
     timer.scheduleFunction(NP._missionReset, {}, timer.getTime() + 30)
+end
+
+-- Called when a team's resource points drop below zero.
+-- Immediately announces defeat and restarts after 1 minute (no 5-min countdown).
+function NP.declarePointDefeat(loserSide)
+    local winnerStr = loserSide == "red" and "蓝方" or "红方"
+    local loserStr  = loserSide == "red" and "红方" or "蓝方"
+    trigger.action.outText(string.format(
+        "【任务结束】%s阵营资源点耗尽，%s阵营全面胜利！\n任务将在1分钟后重置，存档将被清除。",
+        loserStr, winnerStr), 60)
+    NP.logInfo("[Victory] " .. loserSide .. " ran out of points. Scheduling reset in 60 s.")
+
+    -- Cancel any CC-based countdown that might be running
+    NP.cancelVictoryCountdown()
+
+    timer.scheduleFunction(NP._missionReset, {}, timer.getTime() + 60)
 end
 
 -- Delete the two save files and restart the mission.

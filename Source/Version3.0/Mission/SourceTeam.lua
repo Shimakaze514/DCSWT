@@ -10,24 +10,22 @@ SourceObj.updateTeamSourcePointsByEvent = function(_unit, _ucid, _event)
         if SourceObj.playerSource[_ucid]["point"] - sourcePointChange > 0 then
             if _unit:getCoalition() == 1 then
                 SourceObj.REDPOINT = SourceObj.REDPOINT - sourcePointChange
-                if SourceObj.REDPOINT > 0 then
-                    local text = string.format("红方阵营消耗点数:%d,当前阵营剩余:%d点",
-                        tostring(sourcePointChange), tostring(SourceObj.REDPOINT))
-                    trigger.action.outTextForGroup(_groupId, text, 20)
-                    env.info("红方点数:" .. tostring(SourceObj.REDPOINT))
-                else
-                    trigger.action.outText("红方战败,剩余点数:" .. tostring(SourceObj.REDPOINT), 1000)
+                trigger.action.outTextForGroup(_groupId, string.format("红方阵营消耗点数:%d,当前阵营剩余:%d点",
+                    sourcePointChange, SourceObj.REDPOINT), 20)
+                env.info("红方点数:" .. tostring(SourceObj.REDPOINT))
+                if SourceObj.REDPOINT < 0 then
+                    NP.declarePointDefeat("red")
+                    return
                 end
             end
             if _unit:getCoalition() == 2 then
                 SourceObj.BLUEPOINT = SourceObj.BLUEPOINT - sourcePointChange
-                if SourceObj.BLUEPOINT > 0 then
-                    local text = string.format("蓝方阵营消耗点数:%d,当前阵营剩余:%d点",
-                        tostring(sourcePointChange), tostring(SourceObj.BLUEPOINT))
-                    trigger.action.outTextForGroup(_groupId, text, 20)
-                    env.info("蓝方点数:" .. tostring(SourceObj.BLUEPOINT))
-                else
-                    trigger.action.outText("蓝方战败,剩余点数:" .. tostring(SourceObj.BLUEPOINT), 1000)
+                trigger.action.outTextForGroup(_groupId, string.format("蓝方阵营消耗点数:%d,当前阵营剩余:%d点",
+                    sourcePointChange, SourceObj.BLUEPOINT), 20)
+                env.info("蓝方点数:" .. tostring(SourceObj.BLUEPOINT))
+                if SourceObj.BLUEPOINT < 0 then
+                    NP.declarePointDefeat("blue")
+                    return
                 end
             end
         end
@@ -37,65 +35,53 @@ SourceObj.updateTeamSourcePointsByEvent = function(_unit, _ucid, _event)
         local sourcePointChange = SourceObj.getSourceObjChange(_unit)
         if _unit:getCoalition() == 1 then
             SourceObj.REDPOINT = SourceObj.REDPOINT + sourcePointChange
-            if SourceObj.REDPOINT > 0 then
-                local text = string.format("红方阵营返还点数:%d,当前阵营剩余:%d点",
-                    tostring(sourcePointChange), tostring(SourceObj.REDPOINT))
-                trigger.action.outTextForGroup(_groupId, text, 20)
-                env.info("红方点数:" .. tostring(SourceObj.REDPOINT))
-            else
-                trigger.action.outText("红方战败,剩余点数:" .. tostring(SourceObj.REDPOINT), 1000)
-            end
+            trigger.action.outTextForGroup(_groupId, string.format("红方阵营返还点数:%d,当前阵营剩余:%d点",
+                sourcePointChange, SourceObj.REDPOINT), 20)
+            env.info("红方点数:" .. tostring(SourceObj.REDPOINT))
         end
         if _unit:getCoalition() == 2 then
             SourceObj.BLUEPOINT = SourceObj.BLUEPOINT + sourcePointChange
-            if SourceObj.BLUEPOINT > 0 then
-                local text = string.format("蓝方阵营返还点数:%d,当前阵营剩余:%d点",
-                    tostring(sourcePointChange), tostring(SourceObj.BLUEPOINT))
-                trigger.action.outTextForGroup(_groupId, text, 20)
-            else
-                trigger.action.outText("蓝方战败,剩余点数:" .. tostring(SourceObj.BLUEPOINT), 1000)
-                env.info("蓝方点数:" .. tostring(SourceObj.BLUEPOINT))
-            end
+            trigger.action.outTextForGroup(_groupId, string.format("蓝方阵营返还点数:%d,当前阵营剩余:%d点",
+                sourcePointChange, SourceObj.BLUEPOINT), 20)
+            env.info("蓝方点数:" .. tostring(SourceObj.BLUEPOINT))
         end
+        -- Landing returns points; re-check in case a bankruptcy countdown can now be cancelled.
+        timer.scheduleFunction(NP.checkVictoryCondition, {}, timer.getTime() + 1)
     elseif _event == "kill" then
         local _groupId = SourceObj.getGroupId(_unit.initiator)
         local sourcePointChange = SourceObj.getTeamSourceKillChange(_unit.target)
         if _unit.target:getCoalition() == 1 then
             SourceObj.REDPOINT = SourceObj.REDPOINT - sourcePointChange
-            if SourceObj.REDPOINT > 0 then
-                local text
-                if _unit.target:getDesc().category == 2 then
-                    text = string.format("地面单位被摧毁扣阵营点数:%d,当前阵营剩余:%d点",
-                        tostring(sourcePointChange), tostring(SourceObj.REDPOINT))
-                elseif _unit.target:getDesc().category == 3 then
-                    text = string.format("海上船只被摧毁扣阵营点数:%d,当前阵营剩余:%d点",
-                        tostring(sourcePointChange), tostring(SourceObj.REDPOINT))
-                end
-                if text then
-                    trigger.action.outTextForCoalition(coalition.side.RED, text, 10)
-                    env.info("红方点数:" .. tostring(SourceObj.REDPOINT))
-                end
-            else
-                trigger.action.outText("红方战败,剩余点数:" .. tostring(SourceObj.REDPOINT), 1000)
+            local text
+            if _unit.target:getDesc().category == 2 then
+                text = string.format("地面单位被摧毁扣阵营点数:%d,当前阵营剩余:%d点",
+                    sourcePointChange, SourceObj.REDPOINT)
+            elseif _unit.target:getDesc().category == 3 then
+                text = string.format("海上船只被摧毁扣阵营点数:%d,当前阵营剩余:%d点",
+                    sourcePointChange, SourceObj.REDPOINT)
+            end
+            if text then trigger.action.outTextForCoalition(coalition.side.RED, text, 10) end
+            env.info("红方点数:" .. tostring(SourceObj.REDPOINT))
+            if SourceObj.REDPOINT < 0 then
+                NP.declarePointDefeat("red")
+                return
             end
         end
         if _unit.target:getCoalition() == 2 then
             SourceObj.BLUEPOINT = SourceObj.BLUEPOINT - sourcePointChange
-            if SourceObj.BLUEPOINT > 0 then
-                local text
-                if _unit.target:getDesc().category == 2 then
-                    text = string.format("地面单位被摧毁扣阵营点数:%d,当前阵营剩余:%d点",
-                        tostring(sourcePointChange), tostring(SourceObj.REDPOINT))
-                elseif _unit.target:getDesc().category == 3 then
-                    text = string.format("海上船只被摧毁扣阵营点数:%d,当前阵营剩余:%d点",
-                        tostring(sourcePointChange), tostring(SourceObj.REDPOINT))
-                end
-                if text then
-                    trigger.action.outTextForCoalition(coalition.side.BLUE, text, 10)
-                    env.info("蓝方点数:" .. tostring(SourceObj.BLUEPOINT))
-                end
-            else
-                trigger.action.outText("蓝方战败,剩余点数:" .. tostring(SourceObj.BLUEPOINT), 1000)
+            local text
+            if _unit.target:getDesc().category == 2 then
+                text = string.format("地面单位被摧毁扣阵营点数:%d,当前阵营剩余:%d点",
+                    sourcePointChange, SourceObj.BLUEPOINT)
+            elseif _unit.target:getDesc().category == 3 then
+                text = string.format("海上船只被摧毁扣阵营点数:%d,当前阵营剩余:%d点",
+                    sourcePointChange, SourceObj.BLUEPOINT)
+            end
+            if text then trigger.action.outTextForCoalition(coalition.side.BLUE, text, 10) end
+            env.info("蓝方点数:" .. tostring(SourceObj.BLUEPOINT))
+            if SourceObj.BLUEPOINT < 0 then
+                NP.declarePointDefeat("blue")
+                return
             end
         end
         -- if _unit.initiator:getCoalition() ~= _unit.target:getCoalition() then
@@ -109,8 +95,14 @@ SourceObj.lessSourceTeamPoint = function(team, point)
     env.info(team, tostring(point))
     if team == "RED" then
         SourceObj.REDPOINT = SourceObj.REDPOINT - point
+        if SourceObj.REDPOINT < 0 then
+            NP.declarePointDefeat("red")
+        end
     elseif team == "BLUE" then
         SourceObj.BLUEPOINT = SourceObj.BLUEPOINT - point
+        if SourceObj.BLUEPOINT < 0 then
+            NP.declarePointDefeat("blue")
+        end
     end
 end
 SourceObj.addSourceTeamPoint = function(team, point)
