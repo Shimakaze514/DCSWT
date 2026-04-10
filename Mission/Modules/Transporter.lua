@@ -321,9 +321,9 @@ function Transporter.PerformUpgrade(point, coalitionID)
 end
 
 function Transporter.RestoreCC(ccName, coalitionID)
-    -- Lookup original static data
-    local staticData = mist.DBs.staticsByName[ccName]
-    -- If not static, try unit
+    -- mist.DBs.staticsByName does not exist in mist; dynamically spawned CCs are
+    -- tracked in groupsByName (via S_EVENT_BIRTH → dbUpdate → writeDBTables).
+    local staticData = mist.DBs.groupsByName[ccName]
     if not staticData then staticData = mist.DBs.unitsByName[ccName] end
 
     if not staticData then
@@ -406,7 +406,7 @@ function Transporter.CheckAndStartUpgrade(point, coalitionID, crateName, isAuto)
         for _, ccUnitName in pairs(ctld.logisticUnits) do
             local ccUnit = StaticObject.getByName(ccUnitName)
             if not ccUnit or ccUnit:getLife() <= 0 then
-                local staticData = mist.DBs.staticsByName[ccUnitName]
+                local staticData = mist.DBs.groupsByName[ccUnitName]
                 if not staticData then staticData = mist.DBs.unitsByName[ccUnitName] end
 
                 if staticData then
