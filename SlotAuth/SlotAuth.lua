@@ -132,11 +132,8 @@ function SLOT.callbacks.onPlayerTryChangeSlot(playerID, side, slotID)
 	end
 
 	if balance ~= true then
-		-- 按你原先逻辑建议加入另一边并清空冷却
-		local goSide = 1
-		if SLOT.LastSideSwitch[_ucid].side == 1 then
-			goSide = 2
-		end
+		-- 玩家被拒绝加入side，建议加入对面（人少的一方）
+		local goSide = (side == 1) and 2 or 1
 		local sideNames = {[1] = '红方', [2] = '蓝方'}
 		local sideName = sideNames[goSide] or '中立'
 		SLOT.LastSideSwitch[_ucid].time = nil
@@ -170,7 +167,7 @@ function SLOT.resetSideSwitch(playerID, ucid)
 
 	local lastTBTime = SLOT.LastSideSwitch[ucid].tbTime or 0
 	local now = os.time()
-	local cooldown = 1 -- 1小时冷却 -- 管理员用，无需冷却了
+	local cooldown = 1800 -- 0.5小时冷却，确保每局只能跳一次
 
 	if now - lastTBTime < cooldown then
 		local remain = cooldown - (now - lastTBTime)
@@ -264,6 +261,9 @@ function SLOT.teamBalance(_side, _playerID)
 	end
 
 	local _playerDetails = net.get_player_info(_playerID)
+	if _playerDetails == nil then
+		return false
+	end
 
 	if _playerDetails.side ~= 0 then
 		if _side == 1 and _playerDetails.side == 2 then
