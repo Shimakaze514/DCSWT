@@ -12,7 +12,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
         local sourcePointChange, countInfo = SourceObj.getSourceObjChange(_unit)
 
         local ps = SourceObj.playerSource[_ucid] or {}
-        if ps.birthTime and (timer.getTime() - ps.birthTime < 120) then
+        if ps.birthTime and (timer.getTime() - ps.birthTime < SourceConfig.TakeoffRule.birthGracePeriod) then
             trigger.action.outSoundForGroup(_groupId, "overspeed.ogg")
             trigger.action.outSoundForGroup(_groupId, "descend-descend-now.ogg")
             for i = 0, 14 do
@@ -26,7 +26,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
                 local unit = args[2]
                 if unit and Unit.isExist(unit) then
                     --local alt = _unit:getPoint().y
-                    if unit:inAir() and (timer.getTime() - ps.birthTime < 120) then
+                    if unit:inAir() and (timer.getTime() - ps.birthTime < SourceConfig.TakeoffRule.birthGracePeriod) then
                         trigger.action.outTextForGroup(groupId, "处罚：未在规定时间内着陆，飞机已被销毁。请遵守出生起飞规则。", 15, true)
                         SourceObj.unitExplosion(unit)
                         trigger.action.outSoundForGroup(groupId, "takeoff-config-warning.ogg")
@@ -103,7 +103,7 @@ SourceObj.updateSourcePointsByEvent = function(_unit, _ucid, _event)
         local _groupId = SourceObj.getGroupId(_unit)
         local halfPoint = 0
         if SourceObj.pendingKillPoint[_ucid] then
-            halfPoint = math.floor(SourceObj.pendingKillPoint[_ucid] / 2)
+            halfPoint = math.floor(SourceObj.pendingKillPoint[_ucid] * SourceConfig.PilotDeathPendingRatio)
             SourceObj.pendingKillPoint[_ucid] = nil
         end
         SourceObj.playerSource[_ucid].point = SourceObj.playerSource[_ucid].point + halfPoint

@@ -7,7 +7,7 @@ NPWeaponList.AA_newARH = {
   "SD-10",
   "PL-12",
 }
-NPWeaponList.AA_newARHPoint = 25
+NPWeaponList.AA_newARHPoint = SourceConfig.WeaponPrice.AA_newARH
 
 NPWeaponList.AA_oldARH = {
   "AIM_54C_Mk47",
@@ -18,7 +18,7 @@ NPWeaponList.AA_oldARH = {
   "P_27TE",
   "P_27PE",
 }
-NPWeaponList.AA_oldARHPoint = 15
+NPWeaponList.AA_oldARHPoint = SourceConfig.WeaponPrice.AA_oldARH
 
 NPWeaponList.AA_SARH = {
   "AIM-7P",
@@ -29,13 +29,13 @@ NPWeaponList.AA_SARH = {
   "P_27T",
   "Matra Super 530D",
 }
-NPWeaponList.AA_SARHPoint = 10
+NPWeaponList.AA_SARHPoint = SourceConfig.WeaponPrice.AA_SARH
 
 NPWeaponList.AA_newIR = {
   "AIM_9X",
   "P_73",
 }
-NPWeaponList.AA_newIRPoint = 10
+NPWeaponList.AA_newIRPoint = SourceConfig.WeaponPrice.AA_newIR
 
 NPWeaponList.AA_oldIR = {
   "AIM_9", --M
@@ -46,7 +46,7 @@ NPWeaponList.AA_oldIR = {
   "OH58D_FIM_92",
   "Mistral"
 }
-NPWeaponList.AA_oldIRPoint = 5
+NPWeaponList.AA_oldIRPoint = SourceConfig.WeaponPrice.AA_oldIR
 
 
 -----------------------------------AG----------------------------------
@@ -55,7 +55,7 @@ NPWeaponList.AG_NLOS = {
   "AGM_84H",
   "CM_802AKG",
 }
-NPWeaponList.AG_NLOSPoint = 100
+NPWeaponList.AG_NLOSPoint = SourceConfig.WeaponPrice.AG_NLOS
 
 NPWeaponList.AG_SmartMissile = {
   "AGM_88",
@@ -74,7 +74,7 @@ NPWeaponList.AG_SmartMissile = {
   
   "AGM_114",
 }
-NPWeaponList.AG_SmartMissilePoint = 35
+NPWeaponList.AG_SmartMissilePoint = SourceConfig.WeaponPrice.AG_SmartMissile
 
 NPWeaponList.AG_SmartBomb = {
   "GBU_31",
@@ -100,7 +100,7 @@ NPWeaponList.AG_SmartBomb = {
   "Kh25MP_PRGS1VP",  --MPU
   "X_58",
 }
-NPWeaponList.AG_SmartBombPoint = 20
+NPWeaponList.AG_SmartBombPoint = SourceConfig.WeaponPrice.AG_SmartBomb
 
 NPWeaponList.AG_Laser = {
   "GBU_10",
@@ -117,7 +117,7 @@ NPWeaponList.AG_Laser = {
   "Ataka_9M120F",
   "Ataka_9M220",
 }
-NPWeaponList.AG_LaserPoint = 15
+NPWeaponList.AG_LaserPoint = SourceConfig.WeaponPrice.AG_Laser
 
 NPWeaponList.AG_Dumb = {
   "Mk_82",
@@ -146,7 +146,7 @@ NPWeaponList.AG_Dumb = {
   "C_25",
   "S-25-O",  --OFM
 }
-NPWeaponList.AG_DumbPoint = 5
+NPWeaponList.AG_DumbPoint = SourceConfig.WeaponPrice.AG_Dumb
 
 ----------------------吊舱-------------------
 -- NPWeaponList.ATGPod = {

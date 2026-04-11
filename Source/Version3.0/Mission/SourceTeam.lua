@@ -1,7 +1,7 @@
 SourceObj = SourceObj or {}
 SourceObj.addTeamF10Menu = {}
-SourceObj.REDPOINT = 80000
-SourceObj.BLUEPOINT = 80000
+SourceObj.REDPOINT = SourceConfig.Team.redInitPoint
+SourceObj.BLUEPOINT = SourceConfig.Team.blueInitPoint
 SourceObj.updateTeamSourcePointsByEvent = function(_unit, _ucid, _event)
     if _event == "takeoff" then
         local _groupId = SourceObj.getGroupId(_unit)
@@ -186,10 +186,9 @@ end
 SourceObj.getTeamSourceKillChange = function(_unit)
     local sourcePointChange = 0
     if _unit:getDesc().category == 2 then
-        sourcePointChange = 80
+        sourcePointChange = SourceConfig.TeamKillCost.GROUND_UNIT
     elseif _unit:getDesc().category == 3 then
-        -- sourcePointChange = Category.SHIP
-        sourcePointChange = 300
+        sourcePointChange = SourceConfig.TeamKillCost.SHIP
     end
     return sourcePointChange
 end

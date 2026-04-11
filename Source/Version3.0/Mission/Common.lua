@@ -1,10 +1,10 @@
 SourceObj = SourceObj or {}
 SourceObj.playerInfo = SourceObj.playerInfo or {}
 SourceObj.playerSource = {}
-SourceObj.sourceInitPoint = 1500 --初始资源点
-SourceObj.sourceMaxPoint = 3000 --资源点上限
-SourceObj.recoverPoint = 400 --低保的阈值，以及低保指标
-SourceObj.realRecoverTime = 600 
+SourceObj.sourceInitPoint = SourceConfig.Player.initPoint
+SourceObj.sourceMaxPoint = SourceConfig.Player.maxPoint
+SourceObj.recoverPoint = SourceConfig.Player.recoverPoint
+SourceObj.realRecoverTime = SourceConfig.Player.recoverInterval
 SourceObj.autoAddID = {}
 -- SourceObj.landRecoverTime = 60 -- 以秒为单位
 -- SourceObj.skyRecoverTime = 30 -- 以秒为单位
@@ -99,16 +99,7 @@ SourceObj.getGroupId = function(_unit)
     end
     return nil
 end
-local ignoredTargets = {
-    ["Soldier stinger"] = true,
-    ["SA-18 Igla manpad"] = true,
-    ["Soldier M4"] = true,
-    ["Soldier AK"] = true,
-    ["Soldier M249"] = true,
-    ["Paratrooper AKS-74"] = true,
-    ["Paratrooper RPG-16"] = true,
-    ["2B11 mortar"] = true,
-}
+local ignoredTargets = SourceConfig.IgnoredTargets
 SourceObj.getSourceKillChange = function(_unit)
     local sourcePointChange = 0
     if _unit:getDesc().category == 0 then

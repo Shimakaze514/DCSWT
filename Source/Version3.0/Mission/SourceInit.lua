@@ -5,6 +5,7 @@ SourceObj.JSON = loadfile("Scripts/JSON.lua")()
 local status, error =
   pcall(
   function()
+    dofile(lfs.writedir() .. "Scripts/Source/" .. loadVersion .. "/Database/SourceConfig.lua")
     dofile(lfs.writedir() .. "Scripts/Source/" .. loadVersion .. "/Database/AircraftList.lua")
     dofile(lfs.writedir() .. "Scripts/Source/" .. loadVersion .. "/Database/Category.lua")
     dofile(lfs.writedir() .. "Scripts/Source/" .. loadVersion .. "/Database/WeaponList.lua")

@@ -1,7 +1,7 @@
 Category = {}
-Category.AIRPLANE = 170
-Category.HELICOPTER = 150
-Category.GROUND_UNIT = 65
-Category.TROOPER = 5
-Category.SHIP = 150
-Category.STRUCTURE = 0
+Category.AIRPLANE    = SourceConfig.KillReward.AIRPLANE
+Category.HELICOPTER  = SourceConfig.KillReward.HELICOPTER
+Category.GROUND_UNIT = SourceConfig.KillReward.GROUND_UNIT
+Category.TROOPER     = SourceConfig.KillReward.TROOPER
+Category.SHIP        = SourceConfig.KillReward.SHIP
+Category.STRUCTURE   = SourceConfig.KillReward.STRUCTURE
