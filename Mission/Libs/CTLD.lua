@@ -201,8 +201,17 @@ ctld.airDropHeight = 15
 --ctld.AASystemLimitRED = 20 -- Red side limit --不再使用阵营总计数
 --ctld.AASystemLimitBLUE = 20 -- Blue side limit
 
-ctld.UnitLimitPlayerInfo = {}
+ctld.UnitLimitPlayerInfo = {} -- keyed by UCID
 ctld.UnitLimitCoalitionInfo = {}
+
+function ctld.getPlayerUCID(_heli)
+    local _name = _heli:getPlayerName()
+    if _name and SourceObj and SourceObj.playerInfo and SourceObj.playerInfo[_name] then
+        return SourceObj.playerInfo[_name]
+    end
+    ctld.logInfo("UCID not found for player: " .. tostring(_name) .. ", falling back to name")
+    return _name
+end
 
 --END AA SYSTEM CONFIG --
 -- ***************** JTAC CONFIGURATION *****************
@@ -4324,31 +4333,31 @@ function ctld.unpackFOBCrates(_crates, _heli)
             end
 
             local _heli = _args[4]
-            local _playerName = _heli:getPlayerName()
-            if ctld.UnitLimitPlayerInfo[_playerName] == nil then
-                ctld.UnitLimitPlayerInfo[_playerName] = {}
+            local _playerKey = ctld.getPlayerUCID(_heli)
+            if ctld.UnitLimitPlayerInfo[_playerKey] == nil then
+                ctld.UnitLimitPlayerInfo[_playerKey] = {}
             end
-            if ctld.UnitLimitPlayerInfo[_playerName]["FOB"] == nil then
-                ctld.UnitLimitPlayerInfo[_playerName]["FOB"] = {}
+            if ctld.UnitLimitPlayerInfo[_playerKey]["FOB"] == nil then
+                ctld.UnitLimitPlayerInfo[_playerKey]["FOB"] = {}
             end
             local _aliveFOBs = 0
-            ctld.logDebug("生成新FOB前，玩家FOB列表"..ctld.formatTable(ctld.UnitLimitPlayerInfo[_playerName]["FOB"]))
-            for i = #ctld.UnitLimitPlayerInfo[_playerName]["FOB"], 1, -1 do
-                local _fobName = ctld.UnitLimitPlayerInfo[_playerName]["FOB"][i]
+            ctld.logDebug("生成新FOB前，玩家FOB列表"..ctld.formatTable(ctld.UnitLimitPlayerInfo[_playerKey]["FOB"]))
+            for i = #ctld.UnitLimitPlayerInfo[_playerKey]["FOB"], 1, -1 do
+                local _fobName = ctld.UnitLimitPlayerInfo[_playerKey]["FOB"][i]
                 if _fobName then
                     _aliveFOBs = _aliveFOBs + 1
                 else
-                    table.remove(ctld.UnitLimitPlayerInfo[_playerName]["FOB"], i)
+                    table.remove(ctld.UnitLimitPlayerInfo[_playerKey]["FOB"], i)
                 end
             end
             ctld.logDebug("当前_aliveFOBs:".._aliveFOBs)
             if _aliveFOBs >= ctld.FOBLimit then
-                local _toDeleteName = table.remove(ctld.UnitLimitPlayerInfo[_playerName]["FOB"], 1)
+                local _toDeleteName = table.remove(ctld.UnitLimitPlayerInfo[_playerKey]["FOB"], 1)
                 local _toDeleteStatic = StaticObject.getByName(_toDeleteName)
                 if _toDeleteStatic then _toDeleteStatic:destroy() end
                 ctld.displayMessageToGroup(_heli, "你已经超过 FOB 限制，最早的 FOB 被销毁: " .. _toDeleteName, 10)
             end
-            table.insert(ctld.UnitLimitPlayerInfo[_playerName]["FOB"], _name)
+            table.insert(ctld.UnitLimitPlayerInfo[_playerKey]["FOB"], _name)
 
 
         end, { _centroid, _heli:getCountry(), _heli:getCoalition(), _heli }, timer.getTime() + ctld.buildTimeFOB)
@@ -5390,15 +5399,16 @@ function ctld.addUnitInfoToPlayer(_heli, _category, _groupName)
         return
     end
 
-    if ctld.UnitLimitPlayerInfo[_heli:getPlayerName()] == nil then
-        ctld.UnitLimitPlayerInfo[_heli:getPlayerName()] = {}
+    local _playerKey = ctld.getPlayerUCID(_heli)
+    if ctld.UnitLimitPlayerInfo[_playerKey] == nil then
+        ctld.UnitLimitPlayerInfo[_playerKey] = {}
     end
-    if ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category] == nil then
-        ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category] = {}
+    if ctld.UnitLimitPlayerInfo[_playerKey][_category] == nil then
+        ctld.UnitLimitPlayerInfo[_playerKey][_category] = {}
     end
 
-    table.insert(ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category], _groupName)
-    local _leftNum = ctld.UnitLimitPerPlayer[_category] - #ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category]
+    table.insert(ctld.UnitLimitPlayerInfo[_playerKey][_category], _groupName)
+    local _leftNum = ctld.UnitLimitPerPlayer[_category] - #ctld.UnitLimitPlayerInfo[_playerKey][_category]
 
     local _message = string.format("你生成了%s, 你还可以生成%d组 %s 类型的单位。超过的话会按顺序回收", _groupName, _leftNum, _category)
     ctld.displayMessageToGroup(_heli, _message, 10)
@@ -5493,7 +5503,8 @@ function ctld.handleCoalitionLimitInfo(_heli)
 end
 
 function ctld.handlePlayerLimitInfo(_heli, _category)
-    local _playerInfo = ctld.UnitLimitPlayerInfo[_heli:getPlayerName()]
+    local _playerKey = ctld.getPlayerUCID(_heli)
+    local _playerInfo = ctld.UnitLimitPlayerInfo[_playerKey]
     if _playerInfo == nil or _playerInfo[_category] == nil then
         return
     end
@@ -5506,21 +5517,21 @@ function ctld.handlePlayerLimitInfo(_heli, _category)
         if ctld.ifGroupHasAliveUnits(_groupName) then
             _aliveGroupNum = _aliveGroupNum + 1
         else
-            ctld.logInfo(_heli:getPlayerName() .. '没血所以移除了' .. _category .. '类别的' .. ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category][index])
-            table.remove(ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category], index)
+            ctld.logInfo(_playerKey .. '没血所以移除了' .. _category .. '类别的' .. ctld.UnitLimitPlayerInfo[_playerKey][_category][index])
+            table.remove(ctld.UnitLimitPlayerInfo[_playerKey][_category], index)
         end
     end
 
     ctld.logDebug('存活组数：'.._aliveGroupNum)
 
     if _aliveGroupNum >= ctld.UnitLimitPerPlayer[_category] then
-        local _toDeleteGroupName = table.remove(ctld.UnitLimitPlayerInfo[_heli:getPlayerName()][_category], 1)
+        local _toDeleteGroupName = table.remove(ctld.UnitLimitPlayerInfo[_playerKey][_category], 1)
         local _toDeleteGroup = Group.getByName(_toDeleteGroupName)
         --TODO 动态保存的时间到了吗
         _toDeleteGroup:destroy()
         local _message = string.format("你存活%d组 %s 单位，超过了限制数量%d组,自动为你销毁了最早的组:%s", _aliveGroupNum, _category, ctld.UnitLimitPerPlayer[_category], _toDeleteGroupName)
         ctld.displayMessageToGroup(_heli, _message, 10)
-        ctld.logInfo(_heli:getPlayerName() .. '销毁了' .. _category .. '类别的' .. _toDeleteGroupName)
+        ctld.logInfo(_playerKey .. '销毁了' .. _category .. '类别的' .. _toDeleteGroupName)
     end
 end
 
