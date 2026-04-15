@@ -28,7 +28,7 @@ SourceConfig.KillReward = {
     GROUND_UNIT = 80,
     TROOPER     = 5,    -- ignoredTargets 列表中的步兵类单位
     SHIP        = 200,
-    STRUCTURE   = 0,
+    STRUCTURE   = 200,
 }
 
 -- 阵亡时 pending 击杀奖励的结算比例（0.5 = 减半）
